@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- SEO & PWA Manifest via Data URI -->
-    <title id="pageTitle">PrivacyConvert - All-in-One Free, Fast & 100% Private Converters</title>
-    <meta name="description" content="Convert PDF, HEIC, JPG images, format JSON, compare text diff, preview Markdown, generate passwords, QR codes, and extract text online for free. 100% local in-browser conversion.">
+    <!-- Dynamic SEO Meta Tags -->
+    <title id="pageTitle">PrivacyConvert - Secure PDF to PNG Converter (100% Local)</title>
+    <meta name="description" id="pageMetaDesc" content="Extract PDF pages into high-resolution PNG images directly in your browser. 100% private, free, and secure.">
     <link rel="manifest" href="data:application/json;charset=utf-8,%7B%22name%22%3A%22PrivacyConvert%22%2C%22short_name%22%3A%22PrivacyConvert%22%2C%22start_url%22%3A%22%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23f8fafc%22%2C%22theme_color%22%3A%22%234f46e5%22%7D">
 
     <!-- Tailwind CSS -->
@@ -26,7 +26,6 @@
     <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-    <!-- Marked.js for Markdown Previewer -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 
@@ -375,7 +374,7 @@
                     
                     <div id="resizeContainer" class="pt-2">
                         <label for="resizeWidth" class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Max Output Width (px):</label>
-                        <input type="number" id="resizeWidth" placeholder="Keep Original Resolution" class="w-full p-2 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 dark:text-white">
+                        <input type="number" id="resizeWidth" placeholder="Keep Original Resolution" class="w-full p-2 text-sm border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-slate-800 dark:text-white">
                     </div>
                 </div>
 
@@ -415,11 +414,34 @@
         } catch(e) { console.warn("PDF worker init warning:", e); }
 
         let currentLang = 'en';
+        const toolSeoMeta = {
+            'pdf-to-png': { title: 'PrivacyConvert - Secure PDF to PNG Converter (100% Local)', desc: 'Extract PDF pages into high-resolution PNG images directly in your browser. 100% private, free, and secure.' },
+            'pdf-to-jpg': { title: 'PrivacyConvert - Secure PDF to JPG Converter (100% Local)', desc: 'Extract PDF pages into high-resolution JPG images directly in your browser.' },
+            'merge-pdf': { title: 'PrivacyConvert - Merge PDF Files Securely Online', desc: 'Combine multiple PDF documents into a single file locally without server uploads.' },
+            'split-pdf': { title: 'PrivacyConvert - Split PDF Pages Locally', desc: 'Extract specific pages from a PDF into a new separate document securely in-browser.' },
+            'extract-pdf-img': { title: 'PrivacyConvert - Extract Images from PDF', desc: 'Extract all embedded images and visual pages from PDF documents locally.' },
+            'encrypt-pdf': { title: 'PrivacyConvert - Encrypt PDF Password Protection', desc: 'Add password protection to secure your confidential PDF documents locally.' },
+            'bates-pdf': { title: 'PrivacyConvert - Bates Numbering for PDF', desc: 'Stamp custom bates numbers and page indexes onto PDF documents securely.' },
+            'ocr-reader': { title: 'PrivacyConvert - AI OCR Text Reader (Client-Side)', desc: 'Extract editable text from images instantly inside your browser using client-side AI OCR.' },
+            'redact-tool': { title: 'PrivacyConvert - Redact & Censor Images Securely', desc: 'Blackout sensitive information or censor areas securely on images locally.' },
+            'sign-tool': { title: 'PrivacyConvert - Sign Documents Online Securely', desc: 'Draw your digital signature and stamp it onto documents inside your browser.' },
+            'qr-tool': { title: 'PrivacyConvert - QR Code Generator & Reader', desc: 'Generate QR codes locally or read them instantly in your browser.' },
+            'password-gen': { title: 'PrivacyConvert - Secure Password Generator', desc: 'Generate robust, secure cryptographic passwords instantly in your browser.' },
+            'uuid-gen': { title: 'PrivacyConvert - Cryptographic UUID Generator', desc: 'Generate standard unique cryptographic UUID identifiers locally.' },
+            'base64-tool': { title: 'PrivacyConvert - Base64 Encoder and Decoder', desc: 'Encode plain text to Base64 or decode Base64 strings securely in-browser.' },
+            'url-tool': { title: 'PrivacyConvert - URL Encoder and Decoder', desc: 'Encode text/URLs for web safety or decode URL-encoded strings locally.' },
+            'hash-calc': { title: 'PrivacyConvert - File Checksum Hash Calculator', desc: 'Calculate local SHA-256 and MD5 cryptographic checksum hashes of any file.' },
+            'heic-to-jpg': { title: 'PrivacyConvert - HEIC to JPG Converter', desc: 'Convert Apple HEIC photos to standard JPG images instantly inside your browser.' },
+            'webp-converter': { title: 'PrivacyConvert - WebP & AVIF Image Converter', desc: 'Convert standard images to next-gen WebP or AVIF formats locally.' },
+            'jpg-to-pdf': { title: 'PrivacyConvert - JPG to PDF Converter', desc: 'Combine and convert multiple images into a single PDF document securely.' },
+            'compress-image': { title: 'PrivacyConvert - Image Compressor Online', desc: 'Shrink image file sizes significantly without losing visible quality locally.' },
+            'json-tool': { title: 'PrivacyConvert - JSON Formatter & Validator', desc: 'Format, validate, and beautify raw JSON strings instantly in your browser.' },
+            'diff-tool': { title: 'PrivacyConvert - Text Diff Checker & Comparator', desc: 'Compare two text blocks side-by-side to highlight differences instantly.' },
+            'md-tool': { title: 'PrivacyConvert - Markdown Previewer & HTML Renderer', desc: 'Preview and render Markdown documents into rich HTML locally.' }
+        };
+
         const translations = {
             en: {
-                titlePrefix: "Secure", titleSuffix: "Converter",
-                secTitle: "100% Local & Secure Processing Guarantee",
-                secDesc: "All file conversions, OCR readings, hashes, and edits occur entirely inside your web browser using client-side Web APIs and script libraries.",
                 descPdfPng: "Extract PDF pages into high-resolution PNG images directly in your browser. Fast, free, and completely private.",
                 descPdfJpg: "Extract PDF pages into high-resolution JPG images directly in your browser.",
                 descMerge: "Combine multiple PDF documents into a single organized file securely.",
@@ -448,9 +470,6 @@
                 copied: "Text copied to clipboard!"
             },
             es: {
-                titlePrefix: "Seguro", titleSuffix: "Convertidor",
-                secTitle: "Garantía de Procesamiento 100% Local y Seguro",
-                secDesc: "Todas las conversiones ocurren enteramente dentro de su navegador web.",
                 descPdfPng: "Extraiga páginas de PDF en imágenes PNG de alta resolución directamente en su navegador.",
                 descPdfJpg: "Extraiga páginas de PDF en imágenes JPG de alta resolución directamente en su navegador.",
                 descMerge: "Combine múltiples documentos PDF en un solo archivo organizado.",
@@ -479,9 +498,6 @@
                 copied: "¡Texto copiado al portapapeles!"
             },
             ar: {
-                titlePrefix: "آمن", titleSuffix: "محول",
-                secTitle: "ضمان المعالجة المحلية الآمنة بنسبة 100%",
-                secDesc: "تتم جميع العمليات بالكامل داخل متصفحك.",
                 descPdfPng: "استخراج صفحات ملفات PDF إلى صور PNG عالية الدقة مباشرة في متصفحك.",
                 descPdfJpg: "استخراج صفحات ملفات PDF إلى صور JPG عالية الدقة.",
                 descMerge: "دمج مستندات PDF متعددة في ملف واحد منظم.",
@@ -559,31 +575,23 @@
             if(!mainDesc || !t) return;
 
             const map = {
-                'pdf-to-png': t.descPdfPng,
-                'pdf-to-jpg': t.descPdfJpg,
-                'merge-pdf': t.descMerge,
-                'split-pdf': t.descSplit,
-                'extract-pdf-img': t.descExtImg,
-                'encrypt-pdf': t.descEnc,
-                'bates-pdf': t.descBates,
-                'ocr-reader': t.descOcr,
-                'redact-tool': t.descRedact,
-                'sign-tool': t.descSign,
-                'qr-tool': t.descQr,
-                'password-gen': t.descPass,
-                'uuid-gen': t.descUuid,
-                'base64-tool': t.descBase64,
-                'url-tool': t.descUrl,
-                'hash-calc': t.descHash,
-                'heic-to-jpg': t.descHeic,
-                'webp-converter': t.descWebp,
-                'jpg-to-pdf': t.descJpgPdf,
-                'compress-image': t.descComp,
-                'json-tool': t.descJson,
-                'diff-tool': t.descDiff,
-                'md-tool': t.descMd
+                'pdf-to-png': t.descPdfPng, 'pdf-to-jpg': t.descPdfJpg, 'merge-pdf': t.descMerge,
+                'split-pdf': t.descSplit, 'extract-pdf-img': t.descExtImg, 'encrypt-pdf': t.descEnc,
+                'bates-pdf': t.descBates, 'ocr-reader': t.descOcr, 'redact-tool': t.descRedact,
+                'sign-tool': t.descSign, 'qr-tool': t.descQr, 'password-gen': t.descPass,
+                'uuid-gen': t.descUuid, 'base64-tool': t.descBase64, 'url-tool': t.descUrl,
+                'hash-calc': t.descHash, 'heic-to-jpg': t.descHeic, 'webp-converter': t.descWebp,
+                'jpg-to-pdf': t.descJpgPdf, 'compress-image': t.descComp, 'json-tool': t.descJson,
+                'diff-tool': t.descDiff, 'md-tool': t.descMd
             };
-            mainDesc.textContent = map[tool] || t.secDesc;
+            mainDesc.textContent = map[tool] || t.descPdfPng;
+
+            // Update Dynamic SEO Meta Tags & Title
+            if (toolSeoMeta[tool]) {
+                document.title = toolSeoMeta[tool].title;
+                const metaDesc = document.getElementById('pageMetaDesc');
+                if (metaDesc) metaDesc.setAttribute('content', toolSeoMeta[tool].desc);
+            }
         }
 
         function copyJsonText() { const ta = document.getElementById('jsonTextArea'); if(!ta) return; ta.select(); document.execCommand('copy'); showToast(translations[currentLang].copied); }
@@ -657,10 +665,15 @@
 
         if(clearBtn) clearBtn.addEventListener('click', resetApp);
 
-        function switchTool(tool) {
+        function switchTool(tool, updateHash = true) {
+            if (!toolSeoMeta[tool]) tool = 'pdf-to-png';
             currentTool = tool;
             resetApp();
             updateToolDescription(tool);
+
+            if (updateHash) {
+                window.location.hash = tool;
+            }
 
             document.querySelectorAll('.tool-tab').forEach(btn => {
                 if (btn.id === `tab-${tool}`) {
@@ -720,6 +733,20 @@
                 generateNewPassword();
             }
         }
+
+        // Handle direct deep-linking via URL hash on load & hash change
+        window.addEventListener('DOMContentLoaded', () => {
+            const hash = window.location.hash.replace('#', '');
+            if (hash && toolSeoMeta[hash]) {
+                switchTool(hash, false);
+            }
+        });
+        window.addEventListener('hashchange', () => {
+            const hash = window.location.hash.replace('#', '');
+            if (hash && toolSeoMeta[hash] && hash !== currentTool) {
+                switchTool(hash, false);
+            }
+        });
 
         function processJson() {
             const inputField = document.getElementById('jsonInputField');
