@@ -65,14 +65,14 @@
     <!-- Global Drag & Drop Overlay -->
     <div id="globalDropOverlay" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex flex-col items-center justify-center text-white border-4 border-dashed border-indigo-400 m-4 rounded-3xl pointer-events-none transition-all">
         <svg class="w-20 h-20 text-indigo-400 animate-bounce mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
-        <h2 id="overlayTitle" class="text-3xl font-bold">Drop your files anywhere to process locally!</h2>
+        <h2 data-i18n="overlayTitle" class="text-3xl font-bold">Drop your files anywhere to process locally!</h2>
     </div>
 
     <!-- Progress Overlay Modal -->
     <div id="progressModal" class="hidden fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 z-40 flex items-center justify-center backdrop-blur-sm transition-opacity">
         <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-2xl w-80 text-center flex flex-col items-center border border-slate-200 dark:border-slate-700 animate-pulse">
             <div class="w-14 h-14 border-4 border-indigo-100 dark:border-slate-600 border-t-indigo-600 dark:border-t-indigo-400 rounded-full animate-spin mb-4"></div>
-            <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-2" id="progressTitle">Processing Locally...</h3>
+            <h3 data-i18n="progressTitle" class="text-lg font-bold text-slate-800 dark:text-white mb-2">Processing Locally...</h3>
             <p id="progressText" class="text-sm text-slate-500 dark:text-slate-400 font-medium">0 KB transferred to servers (100% Secure)</p>
         </div>
     </div>
@@ -82,7 +82,7 @@
         <div class="bg-white dark:bg-slate-800 w-full max-w-lg rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col">
             <div class="p-4 border-b border-slate-100 dark:border-slate-700 flex items-center gap-3">
                 <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                <input type="text" id="cmdInput" placeholder="Type a tool name..." class="w-full bg-transparent text-sm focus:outline-none dark:text-white">
+                <input type="text" id="cmdInput" data-i18n-placeholder="cmdPlaceholder" placeholder="Type a tool name..." class="w-full bg-transparent text-sm focus:outline-none dark:text-white">
                 <span class="text-[10px] bg-slate-100 dark:bg-slate-700 text-slate-500 px-2 py-1 rounded font-mono">ESC</span>
             </div>
             <div id="cmdResultsList" class="max-h-72 overflow-y-auto p-2 space-y-1"></div>
@@ -93,11 +93,11 @@
     <div id="shortcutsModal" class="hidden fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 z-50 flex items-center justify-center backdrop-blur-sm">
         <div class="bg-white dark:bg-slate-800 w-full max-w-md rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-700 relative">
             <button onclick="toggleShortcutsModal(false)" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600">✕</button>
-            <h3 id="shortcutsTitle" class="text-lg font-bold mb-4 text-slate-800 dark:text-white">Keyboard Shortcuts</h3>
+            <h3 data-i18n="shortcutsTitle" class="text-lg font-bold mb-4 text-slate-800 dark:text-white">Keyboard Shortcuts</h3>
             <ul class="space-y-3 text-sm text-slate-600 dark:text-slate-300">
-                <li class="flex justify-between items-center bg-slate-50 dark:bg-slate-900 p-2.5 rounded-xl"><span id="shortcutCmdLabel" class="font-medium">Command Palette</span><kbd class="bg-slate-200 dark:bg-slate-700 px-2 py-1 rounded font-mono text-xs">Ctrl + K</kbd></li>
-                <li class="flex justify-between items-center bg-slate-50 dark:bg-slate-900 p-2.5 rounded-xl"><span id="shortcutResetLabel" class="font-medium">Reset Workspace</span><kbd class="bg-slate-200 dark:bg-slate-700 px-2 py-1 rounded font-mono text-xs">Esc</kbd></li>
-                <li class="flex justify-between items-center bg-slate-50 dark:bg-slate-900 p-2.5 rounded-xl"><span id="shortcutConvertLabel" class="font-medium">Convert & Download</span><kbd class="bg-slate-200 dark:bg-slate-700 px-2 py-1 rounded font-mono text-xs">Ctrl + Enter</kbd></li>
+                <li class="flex justify-between items-center bg-slate-50 dark:bg-slate-900 p-2.5 rounded-xl"><span data-i18n="shortcutCmd" class="font-medium">Command Palette</span><kbd class="bg-slate-200 dark:bg-slate-700 px-2 py-1 rounded font-mono text-xs">Ctrl + K</kbd></li>
+                <li class="flex justify-between items-center bg-slate-50 dark:bg-slate-900 p-2.5 rounded-xl"><span data-i18n="shortcutReset" class="font-medium">Reset Workspace</span><kbd class="bg-slate-200 dark:bg-slate-700 px-2 py-1 rounded font-mono text-xs">Esc</kbd></li>
+                <li class="flex justify-between items-center bg-slate-50 dark:bg-slate-900 p-2.5 rounded-xl"><span data-i18n="shortcutConvert" class="font-medium">Convert & Download</span><kbd class="bg-slate-200 dark:bg-slate-700 px-2 py-1 rounded font-mono text-xs">Ctrl + Enter</kbd></li>
             </ul>
         </div>
     </div>
@@ -155,13 +155,13 @@
                     <svg class="w-7 h-7 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.966 11.966 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                 </div>
                 <div>
-                    <strong id="secBannerTitle" class="block font-bold text-emerald-900 dark:text-emerald-300 text-base mb-1">100% Local & Secure Processing Guarantee</strong>
-                    <p id="secBannerDesc" class="text-sm opacity-90 dark:opacity-80">All conversions run client-side. Zero bytes uploaded to any remote server.</p>
+                    <strong data-i18n="secTitle" class="block font-bold text-emerald-900 dark:text-emerald-300 text-base mb-1">100% Local & Secure Processing Guarantee</strong>
+                    <p data-i18n="secDesc" class="text-sm opacity-90 dark:opacity-80">All conversions run client-side. Zero bytes uploaded to any remote server.</p>
                 </div>
             </div>
             <!-- Live Security Metric Counter -->
             <div class="bg-white/80 dark:bg-slate-900/80 px-4 py-2.5 rounded-xl border border-emerald-200 dark:border-emerald-800 text-center shrink-0 shadow-inner">
-                <span id="blockedCloudDataLabel" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Blocked Cloud Data</span>
+                <span data-i18n="blockedCloudData" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Blocked Cloud Data</span>
                 <span id="liveCounterStat" class="text-base font-extrabold text-emerald-600 dark:text-emerald-400">0.0 MB Safe</span>
             </div>
         </div>
@@ -171,7 +171,7 @@
             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none rtl:left-auto rtl:right-4">
                 <svg class="h-5 w-5 text-slate-400 group-focus-within:text-indigo-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
             </div>
-            <input type="text" id="toolSearchInput" placeholder="Search 22 secure tools (Ctrl+K)..." class="w-full pl-11 pr-4 rtl:pl-4 rtl:pr-11 py-3.5 text-sm bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm focus:outline-none focus:border-indigo-500 dark:text-white transition-all">
+            <input type="text" id="toolSearchInput" data-i18n-placeholder="searchPlaceholder" placeholder="Search 22 secure tools (Ctrl+K)..." class="w-full pl-11 pr-4 rtl:pl-4 rtl:pr-11 py-3.5 text-sm bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm focus:outline-none focus:border-indigo-500 dark:text-white transition-all">
         </div>
 
         <!-- Categorized Converter Navigation (22 Tools) -->
@@ -179,7 +179,7 @@
             
             <!-- Category: PDF -->
             <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3 tool-category" data-cat="pdf">
-                <h3 id="catPdf" class="text-xs font-extrabold dynamic-text uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">📄 PDF Tools</h3>
+                <h3 data-i18n="catPdf" class="text-xs font-extrabold dynamic-text uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">📄 PDF Tools</h3>
                 <div class="flex flex-col gap-2">
                     <button onclick="switchTool('pdf-to-png')" id="tab-pdf-to-png" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
                         <span class="text-base shrink-0">🖼️</span> <span class="truncate">PDF to PNG</span>
@@ -201,7 +201,7 @@
 
             <!-- Category: Image -->
             <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3 tool-category" data-cat="image">
-                <h3 id="catImage" class="text-xs font-extrabold dynamic-text uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">🖼️ Image Tools</h3>
+                <h3 data-i18n="catImage" class="text-xs font-extrabold dynamic-text uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">🖼️ Image Tools</h3>
                 <div class="flex flex-col gap-2">
                     <button onclick="switchTool('compress-image')" id="tab-compress-image" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
                         <span class="text-base shrink-0">🗜️</span> <span class="truncate">Compress Image</span>
@@ -226,7 +226,7 @@
 
             <!-- Category: Dev & Text -->
             <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3 tool-category" data-cat="dev">
-                <h3 id="catDev" class="text-xs font-extrabold dynamic-text uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">💻 Text & Dev</h3>
+                <h3 data-i18n="catDev" class="text-xs font-extrabold dynamic-text uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">💻 Text & Dev</h3>
                 <div class="flex flex-col gap-2">
                     <button onclick="switchTool('json-tool')" id="tab-json-tool" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
                         <span class="text-base shrink-0">{}</span> <span class="truncate">JSON Formatter</span>
@@ -248,7 +248,7 @@
 
             <!-- Category: Security & Utils -->
             <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3 tool-category" data-cat="security">
-                <h3 id="catSec" class="text-xs font-extrabold dynamic-text uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">🔐 Security & Utils</h3>
+                <h3 data-i18n="catSec" class="text-xs font-extrabold dynamic-text uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">🔐 Security & Utils</h3>
                 <div class="flex flex-col gap-2">
                     <button onclick="switchTool('password-gen')" id="tab-password-gen" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
                         <span class="text-base shrink-0">🔑</span> <span class="truncate">Password Generator</span>
@@ -276,7 +276,7 @@
         <div class="max-w-3xl mx-auto p-6 sm:p-8 bg-white dark:bg-slate-800 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-700 relative transition-colors duration-300">
             
             <!-- Clear Button -->
-            <button id="clearBtn" class="hidden absolute top-6 right-6 rtl:right-auto rtl:left-6 text-xs font-bold text-red-500 dark:text-red-400 hover:text-red-700 bg-red-50 dark:bg-red-900/30 px-3 py-2 rounded-lg transition-all flex items-center gap-1.5 z-10">
+            <button id="clearBtn" data-i18n="reset" class="hidden absolute top-6 right-6 rtl:right-auto rtl:left-6 text-xs font-bold text-red-500 dark:text-red-400 hover:text-red-700 bg-red-50 dark:bg-red-900/30 px-3 py-2 rounded-lg transition-all flex items-center gap-1.5 z-10">
                 Reset
             </button>
 
@@ -285,8 +285,8 @@
                 <div class="bg-indigo-100 dark:bg-slate-700 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
                     <svg class="w-8 h-8 dynamic-text" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
                 </div>
-                <p id="dropText" class="text-slate-800 dark:text-slate-200 font-bold text-lg">Click to browse or drag files here</p>
-                <p id="dropSubText" class="text-sm text-slate-500 dark:text-slate-400 mt-2">Support for single or batch processing (Drag to reorder list items below!)</p>
+                <p data-i18n="dropText" class="text-slate-800 dark:text-slate-200 font-bold text-lg">Click to browse or drag files here</p>
+                <p data-i18n="dropSubText" class="text-sm text-slate-500 dark:text-slate-400 mt-2">Support for single or batch processing (Drag to reorder list items below!)</p>
             </div>
             <input type="file" id="fileInput" class="hidden" />
 
@@ -305,14 +305,14 @@
                     <div id="textDataBoxes" class="w-full h-full flex flex-col gap-4">
                         <div id="genericTextBox" class="hidden w-full flex flex-col gap-2">
                             <div class="flex justify-between items-center px-1">
-                                <span id="genericTextLabel" class="text-xs font-bold text-slate-500 uppercase">Output:</span>
-                                <button id="copyGenericBtn" onclick="copyGenericText()" class="text-xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-lg font-semibold">📋 Copy</button>
+                                <span data-i18n="output" class="text-xs font-bold text-slate-500 uppercase">Output:</span>
+                                <button onclick="copyGenericText()" data-i18n="copy" class="text-xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-lg font-semibold">📋 Copy</button>
                             </div>
-                            <textarea id="genericTextArea" class="w-full h-48 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 text-sm p-4 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none resize-none font-mono shadow-inner" placeholder="Result will appear here..."></textarea>
+                            <textarea id="genericTextArea" data-i18n-placeholder="resultPlaceholder" class="w-full h-48 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 text-sm p-4 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none resize-none font-mono shadow-inner" placeholder="Result will appear here..."></textarea>
                         </div>
 
                         <div id="diffResultBox" class="hidden w-full flex flex-col space-y-2">
-                            <span id="diffResultLabel" class="text-xs font-bold text-slate-500 uppercase px-1">Comparison Output:</span>
+                            <span data-i18n="comparisonOutput" class="text-xs font-bold text-slate-500 uppercase px-1">Comparison Output:</span>
                             <div id="diffOutputContainer" class="w-full min-h-[160px] bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-mono text-sm p-4 rounded-xl border border-slate-200 dark:border-slate-700 whitespace-pre-wrap overflow-y-auto max-h-64"></div>
                         </div>
 
@@ -324,9 +324,9 @@
                         <div id="generatorResultBox" class="hidden w-full flex flex-col items-center justify-center py-8 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 gap-4">
                             <div class="w-full max-w-md flex items-center gap-2 px-4">
                                 <input type="text" id="generatedDisplay" readonly class="w-full p-3 bg-white dark:bg-slate-800 dynamic-text font-mono font-bold text-center rounded-xl border border-slate-200 dark:border-slate-700 text-lg">
-                                <button id="copyGenBtn" onclick="copyGenerated()" class="px-4 py-3 dynamic-bg hover:opacity-90 text-white font-bold rounded-xl shadow-sm">Copy</button>
+                                <button onclick="copyGenerated()" data-i18n="copy" class="px-4 py-3 dynamic-bg hover:opacity-90 text-white font-bold rounded-xl shadow-sm">Copy</button>
                             </div>
-                            <button id="genAnotherBtn" class="text-sm font-semibold text-slate-500 hover:text-slate-700 dark:text-slate-400">🔄 Generate Another</button>
+                            <button id="genAnotherBtn" data-i18n="generateAnother" class="text-sm font-semibold text-slate-500 hover:text-slate-700 dark:text-slate-400">🔄 Generate Another</button>
                         </div>
 
                         <div id="primaryInputsArea" class="w-full flex flex-col gap-4">
@@ -340,15 +340,15 @@
                                     <input type="range" id="passLength" min="8" max="64" value="16" class="w-full accent-indigo-600 cursor-pointer" oninput="document.getElementById('passLenVal').textContent=this.value; generateNewPassword();">
                                 </div>
                                 <div class="flex flex-wrap gap-4 text-sm font-semibold text-slate-700 dark:text-slate-300">
-                                    <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="passSymbols" checked class="w-4 h-4 rounded text-indigo-600" onchange="generateNewPassword()"> <span id="passSymText">Symbols</span></label>
-                                    <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="passNumbers" checked class="w-4 h-4 rounded text-indigo-600" onchange="generateNewPassword()"> <span id="passNumText">Numbers</span></label>
-                                    <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="passUppercase" checked class="w-4 h-4 rounded text-indigo-600" onchange="generateNewPassword()"> <span id="passUpText">Uppercase</span></label>
+                                    <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="passSymbols" checked class="w-4 h-4 rounded text-indigo-600" onchange="generateNewPassword()"> <span data-i18n="passSym">Symbols</span></label>
+                                    <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="passNumbers" checked class="w-4 h-4 rounded text-indigo-600" onchange="generateNewPassword()"> <span data-i18n="passNum">Numbers</span></label>
+                                    <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="passUppercase" checked class="w-4 h-4 rounded text-indigo-600" onchange="generateNewPassword()"> <span data-i18n="passUp">Uppercase</span></label>
                                 </div>
                             </div>
 
                             <div id="diffInputGroup" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <textarea id="diffOriginal" placeholder="Original text..." class="w-full h-32 p-3 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 dark:text-white focus:outline-none resize-none font-mono" oninput="processDiff()"></textarea>
-                                <textarea id="diffModified" placeholder="Modified text..." class="w-full h-32 p-3 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 dark:text-white focus:outline-none resize-none font-mono" oninput="processDiff()"></textarea>
+                                <textarea id="diffOriginal" data-i18n-placeholder="diffOrigPlaceholder" placeholder="Original text..." class="w-full h-32 p-3 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 dark:text-white focus:outline-none resize-none font-mono" oninput="processDiff()"></textarea>
+                                <textarea id="diffModified" data-i18n-placeholder="diffModPlaceholder" placeholder="Modified text..." class="w-full h-32 p-3 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 dark:text-white focus:outline-none resize-none font-mono" oninput="processDiff()"></textarea>
                             </div>
                         </div>
                     </div>
@@ -357,38 +357,38 @@
                 <!-- Advanced Settings Accordion -->
                 <div id="advancedAccordionWrapper" class="hidden w-full border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden bg-white dark:bg-slate-800 shadow-sm">
                     <button id="accordionToggleBtn" class="w-full flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors focus:outline-none">
-                        <div id="advSettingsTitle" class="flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-300">⚙️ Advanced Settings</div>
+                        <div data-i18n="advancedSettings" class="flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-300">⚙️ Advanced Settings</div>
                         <svg id="accordionChevron" class="w-5 h-5 text-slate-400 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                     </button>
                     
                     <div id="accordionContent" class="hidden p-5 border-t border-slate-200 dark:border-slate-700 space-y-4">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
                             <div id="qualityContainer">
-                                <label id="renderQualityLabel" class="block text-xs font-bold text-slate-500 uppercase mb-2">Render Quality:</label>
+                                <label data-i18n="renderQuality" class="block text-xs font-bold text-slate-500 uppercase mb-2">Render Quality:</label>
                                 <select id="renderScale" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-sm rounded-xl p-2.5 font-semibold">
-                                    <option value="1.5" id="optStd">Standard (150 DPI)</option>
-                                    <option value="2.0" id="optHigh" selected>High Quality (200 DPI)</option>
-                                    <option value="3.0" id="optUltra">Ultra HD (300 DPI)</option>
+                                    <option value="1.5" data-i18n="qualityStd">Standard (150 DPI)</option>
+                                    <option value="2.0" data-i18n="qualityHigh" selected>High Quality (200 DPI)</option>
+                                    <option value="3.0" data-i18n="qualityUltra">Ultra HD (300 DPI)</option>
                                 </select>
                             </div>
                             <div id="formatContainer">
-                                <label id="outputInfoLabel" class="block text-xs font-bold text-slate-500 uppercase mb-2">Output Info:</label>
+                                <label data-i18n="outputInfo" class="block text-xs font-bold text-slate-500 uppercase mb-2">Output Info:</label>
                                 <div id="outputFormatBadge" class="p-2.5 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-bold flex items-center justify-center gap-2">🖼️ PNG</div>
                             </div>
                         </div>
 
                         <div id="encryptOptionsGroup" class="hidden space-y-2">
-                            <label id="setPdfPassLabel" class="block text-xs font-bold text-slate-500 uppercase">Set PDF Password:</label>
-                            <input type="password" id="pdfPassInput" placeholder="Enter secure password" class="w-full p-2.5 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white">
+                            <label data-i18n="setPdfPass" class="block text-xs font-bold text-slate-500 uppercase">Set PDF Password:</label>
+                            <input type="password" id="pdfPassInput" data-i18n-placeholder="pdfPassPlaceholder" placeholder="Enter secure password" class="w-full p-2.5 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white">
                         </div>
 
                         <div id="compressOptionsGroup" class="hidden space-y-2">
-                            <label id="targetFileSizeLabel" class="block text-xs font-bold text-slate-500 uppercase">Target File Size (Max MB):</label>
+                            <label data-i18n="targetFileSize" class="block text-xs font-bold text-slate-500 uppercase">Target File Size (Max MB):</label>
                             <input type="number" id="compressionLevel" value="1" step="0.5" min="0.1" class="w-full p-2.5 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white">
                         </div>
 
                         <div id="webpOptionsGroup" class="hidden space-y-2">
-                            <label id="targetWebFormatLabel" class="block text-xs font-bold text-slate-500 uppercase">Target Web Format:</label>
+                            <label data-i18n="targetWebFormat" class="block text-xs font-bold text-slate-500 uppercase">Target Web Format:</label>
                             <select id="webpFormatSelect" class="w-full p-2.5 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white">
                                 <option value="image/webp">WebP (.webp)</option>
                                 <option value="image/avif">AVIF (.avif)</option>
@@ -396,7 +396,7 @@
                         </div>
 
                         <div id="pdfRangeGroup" class="hidden space-y-2">
-                            <label id="pageRangeLabel" class="block text-xs font-bold text-slate-500 uppercase">Page Range (e.g. 1, 3-5 or 'all'):</label>
+                            <label data-i18n="pageRange" class="block text-xs font-bold text-slate-500 uppercase">Page Range (e.g. 1, 3-5 or 'all'):</label>
                             <input type="text" id="pdfPageRange" value="all" class="w-full p-2.5 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white">
                         </div>
                     </div>
@@ -405,30 +405,30 @@
                 <!-- Convert Button -->
                 <button id="convertBtn" class="w-full dynamic-bg hover:opacity-90 text-white font-bold py-4 px-6 rounded-2xl shadow-lg transition-all active:scale-95 text-lg flex items-center justify-center gap-3">
                     <svg class="w-6 h-6 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                    <span id="convertBtnText">Convert & Download</span>
+                    <span id="convertBtnText" data-i18n="convertBtn">Convert & Download</span>
                 </button>
             </div>
         </div>
 
         <!-- FAQ & Security Architecture Trust Section -->
         <div class="max-w-3xl mx-auto mt-12 bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 space-y-6 transition-colors duration-300">
-            <h2 id="faqMainTitle" class="text-xl font-extrabold text-slate-900 dark:text-white text-center mb-6">Frequently Asked Questions & Security Architecture</h2>
+            <h2 data-i18n="faqMainTitle" class="text-xl font-extrabold text-slate-900 dark:text-white text-center mb-6">Frequently Asked Questions & Security Architecture</h2>
             <div class="space-y-4 text-sm text-slate-600 dark:text-slate-300">
                 <div class="border-b border-slate-100 dark:border-slate-700 pb-4">
-                    <h3 id="faq1Title" class="font-bold text-slate-800 dark:text-slate-200 mb-1">How does PrivacyConvert process files without a server?</h3>
-                    <p id="faq1Desc" class="leading-relaxed opacity-90">PrivacyConvert uses advanced client-side browser technologies (WebAssembly, PDF.js, Canvas API). When you select or drop a file, your browser's own CPU and memory handle the conversion locally.</p>
+                    <h3 data-i18n="faq1Title" class="font-bold text-slate-800 dark:text-slate-200 mb-1">How does PrivacyConvert process files without a server?</h3>
+                    <p data-i18n="faq1Desc" class="leading-relaxed opacity-90">PrivacyConvert uses advanced client-side browser technologies (WebAssembly, PDF.js, Canvas API). When you select or drop a file, your browser's own CPU and memory handle the conversion locally.</p>
                 </div>
                 <div class="border-b border-slate-100 dark:border-slate-700 pb-4">
-                    <h3 id="faq2Title" class="font-bold text-slate-800 dark:text-slate-200 mb-1">Do my files ever leave my device?</h3>
-                    <p id="faq2Desc" class="leading-relaxed opacity-90">Never. Because there is no backend server processing your files, your sensitive documents, PDFs, and images never touch the internet or any remote cloud storage. They remain 100% on your local machine.</p>
+                    <h3 data-i18n="faq2Title" class="font-bold text-slate-800 dark:text-slate-200 mb-1">Do my files ever leave my device?</h3>
+                    <p data-i18n="faq2Desc" class="leading-relaxed opacity-90">Never. Because there is no backend server processing your files, your sensitive documents, PDFs, and images never touch the internet or any remote cloud storage. They remain 100% on your local machine.</p>
                 </div>
                 <div class="border-b border-slate-100 dark:border-slate-700 pb-4">
-                    <h3 id="faq3Title" class="font-bold text-slate-800 dark:text-slate-200 mb-1">Why is this approach safer than traditional online converters?</h3>
-                    <p id="faq3Desc" class="leading-relaxed opacity-90">Traditional online converters require you to upload your sensitive files to their remote servers, posing major data breach and privacy risks. PrivacyConvert eliminates this risk entirely.</p>
+                    <h3 data-i18n="faq3Title" class="font-bold text-slate-800 dark:text-slate-200 mb-1">Why is this approach safer than traditional online converters?</h3>
+                    <p data-i18n="faq3Desc" class="leading-relaxed opacity-90">Traditional online converters require you to upload your sensitive files to their remote servers, posing major data breach and privacy risks. PrivacyConvert eliminates this risk entirely.</p>
                 </div>
                 <div>
-                    <h3 id="faq4Title" class="font-bold text-slate-800 dark:text-slate-200 mb-1">How can you verify this yourself (Zero Network Proof)?</h3>
-                    <p id="faq4Desc" class="leading-relaxed opacity-90 mb-3">You don't just have to take our word for it. You can inspect and prove this right now:</p>
+                    <h3 data-i18n="faq4Title" class="font-bold text-slate-800 dark:text-slate-200 mb-1">How can you verify this yourself (Zero Network Proof)?</h3>
+                    <p data-i18n="faq4Desc" class="leading-relaxed opacity-90 mb-3">You don't just have to take our word for it. You can inspect and prove this right now:</p>
                     <ul class="list-disc pl-5 space-y-2 opacity-90">
                         <li id="verifyStep1"><strong>Network Inspector Test:</strong> Press <kbd class="bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded font-mono text-xs">F12</kbd> to open browser Developer Tools, go to the <strong>Network</strong> tab, and convert any file. You will observe zero outbound file upload requests.</li>
                         <li id="verifyStep2"><strong>Offline Mode Test:</strong> Completely disconnect your computer from Wi-Fi or internet. PrivacyConvert will continue to convert and process your files without interruption.</li>
@@ -440,8 +440,8 @@
         <!-- Local History Section -->
         <div id="historyContainer" class="max-w-3xl mx-auto mt-8 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50">
-                <h3 id="recentActivityTitle" class="text-sm font-bold text-slate-700 dark:text-slate-300">🕒 Recent Local Activity</h3>
-                <button onclick="clearHistory()" id="clearHistoryBtn" class="text-xs font-semibold text-slate-400 hover:text-red-500">Clear</button>
+                <h3 data-i18n="recentActivity" class="text-sm font-bold text-slate-700 dark:text-slate-300">🕒 Recent Local Activity</h3>
+                <button onclick="clearHistory()" data-i18n="clear" id="clearHistoryBtn" class="text-xs font-semibold text-slate-400 hover:text-red-500">Clear</button>
             </div>
             <ul id="historyList" class="divide-y divide-slate-100 dark:divide-slate-700/50"></ul>
         </div>
@@ -473,9 +473,11 @@
         }
         updateLiveCounter(0);
 
-        // Comprehensive 6 Languages Translation Map (Fully Localized UI, Inputs, and Placeholders)
+        // Comprehensive 6 Languages Translation Map
         const translations = {
             en: {
+                overlayTitle: "Drop your files anywhere to process locally!",
+                progressTitle: "Processing Locally...",
                 secTitle: "100% Local & Secure Processing Guarantee",
                 secDesc: "All conversions run client-side. Zero bytes uploaded to any remote server.",
                 blockedCloudData: "Blocked Cloud Data",
@@ -553,6 +555,8 @@
                 }
             },
             zh: {
+                overlayTitle: "将文件拖放到任何地方即可在本地处理！",
+                progressTitle: "正在本地处理...",
                 secTitle: "100% 本地与安全处理保证",
                 secDesc: "所有转换均在客户端运行。零字节上传至任何远程服务器。",
                 blockedCloudData: "已拦截的云数据",
@@ -630,6 +634,8 @@
                 }
             },
             de: {
+                overlayTitle: "Dateien zum lokalen Verarbeiten hierher ziehen!",
+                progressTitle: "Wird lokal verarbeitet...",
                 secTitle: "100% lokale & sichere Verarbeitungsgarantie",
                 secDesc: "Alle Konvertierungen laufen im Browser. Keine Datenübertragung an Server.",
                 blockedCloudData: "Blockierte Cloud-Daten",
@@ -707,6 +713,8 @@
                 }
             },
             fr: {
+                overlayTitle: 'Glissez vos fichiers ici pour un traitement local !',
+                progressTitle: 'Traitement local en cours...',
                 secTitle: "Garantie de traitement 100% local et sécurisé",
                 secDesc: "Toutes les conversions s'exécutent côté client. Zéro octet envoyé sur un serveur.",
                 blockedCloudData: "Données cloud bloquées",
@@ -784,6 +792,8 @@
                 }
             },
             es: {
+                overlayTitle: '¡Suelta tus archivos en cualquier lugar para procesarlos localmente!',
+                progressTitle: 'Procesando localmente...',
                 secTitle: "Garantía de procesamiento 100% local y seguro",
                 secDesc: "Todas las conversiones se ejecutan localmente. Cero bytes subidos a servidores.",
                 blockedCloudData: "Datos en la nube bloqueados",
@@ -861,6 +871,8 @@
                 }
             },
             ar: {
+                overlayTitle: 'أفلت ملفاتك في أي مكان لمعالجتها محلياً!',
+                progressTitle: 'جاري المعالجة محلياً...',
                 secTitle: "ضمان المعالجة المحلية الآمنة 100%",
                 secDesc: "تتم جميع العمليات محلياً. صفر بايت مرفوعة لأي خادم خارجي.",
                 blockedCloudData: "بيانات السحابة المحظورة",
@@ -952,78 +964,35 @@
             document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
             
             const t = translations[lang] || translations['en'];
-            document.getElementById('secBannerTitle').textContent = t.secTitle;
-            document.getElementById('secBannerDesc').textContent = t.secDesc;
-            document.getElementById('blockedCloudDataLabel').textContent = t.blockedCloudData;
-            document.getElementById('dropText').textContent = t.dropText;
-            document.getElementById('dropSubText').textContent = t.dropSubText;
-            document.getElementById('convertBtnText').textContent = t.convertBtn;
-            document.getElementById('clearBtn').textContent = t.reset;
-            
-            document.getElementById('catPdf').textContent = t.catPdf;
-            document.getElementById('catImage').textContent = t.catImage;
-            document.getElementById('catDev').textContent = t.catDev;
-            document.getElementById('catSec').textContent = t.catSec;
-            document.getElementById('recentActivityTitle').textContent = t.recentActivity;
-            document.getElementById('clearHistoryBtn').textContent = t.clear;
-            document.getElementById('advSettingsTitle').textContent = t.advancedSettings;
-            document.getElementById('renderQualityLabel').textContent = t.renderQuality;
-            document.getElementById('outputInfoLabel').textContent = t.outputInfo;
 
-            // Search, Modals, and Tool Placeholders
-            document.getElementById('toolSearchInput').placeholder = t.searchPlaceholder;
-            document.getElementById('cmdInput').placeholder = t.cmdPlaceholder;
-            document.getElementById('shortcutsTitle').textContent = t.shortcutsTitle;
-            document.getElementById('shortcutCmdLabel').textContent = t.shortcutCmd;
-            document.getElementById('shortcutResetLabel').textContent = t.shortcutReset;
-            document.getElementById('shortcutConvertLabel').textContent = t.shortcutConvert;
-            
-            document.getElementById('copyGenericBtn').textContent = t.copy;
-            document.getElementById('copyGenBtn').textContent = t.copy.replace('📋 ', '');
-            document.getElementById('genAnotherBtn').textContent = t.generateAnother;
-            document.getElementById('genericTextLabel').textContent = t.output;
-            document.getElementById('diffResultLabel').textContent = t.comparisonOutput;
-            document.getElementById('setPdfPassLabel').textContent = t.setPdfPass;
-            document.getElementById('pdfPassInput').placeholder = t.pdfPassPlaceholder;
-            document.getElementById('targetFileSizeLabel').textContent = t.targetFileSize;
-            document.getElementById('targetWebFormatLabel').textContent = t.targetWebFormat;
-            document.getElementById('pageRangeLabel').textContent = t.pageRange;
-            document.getElementById('passLengthLabel').childNodes[0].nodeValue = `${t.passLen} `;
-            document.getElementById('passSymText').textContent = t.passSym;
-            document.getElementById('passNumText').textContent = t.passNum;
-            document.getElementById('passUpText').textContent = t.passUp;
+            // Robust data-i18n UI translation engine
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (t[key]) el.textContent = t[key];
+            });
 
-            document.getElementById('optStd').textContent = t.qualityStd;
-            document.getElementById('optHigh').textContent = t.qualityHigh;
-            document.getElementById('optUltra').textContent = t.qualityUltra;
-            document.getElementById('genericTextArea').placeholder = t.resultPlaceholder;
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (t[key]) el.placeholder = t[key];
+            });
 
-            document.getElementById('diffOriginal').placeholder = t.diffOrigPlaceholder;
-            document.getElementById('diffModified').placeholder = t.diffModPlaceholder;
-
-            // Update active tool input placeholders on language switch
+            // Update active tool input placeholder if active
             const mainInput = document.getElementById('mainInputField');
             if (currentTool === 'json-tool') mainInput.placeholder = t.jsonPlaceholder;
             else if (currentTool === 'md-tool') mainInput.placeholder = t.mdPlaceholder;
             else if (currentTool === 'base64-tool' || currentTool === 'url-tool') mainInput.placeholder = t.urlPlaceholder;
             else if (currentTool === 'qr-tool') mainInput.placeholder = t.qrPlaceholder;
 
+            // Password generator length label prefix update
+            const passLenLabel = document.getElementById('passLengthLabel');
+            if (passLenLabel) {
+                passLenLabel.childNodes[0].nodeValue = `${t.passLen} `;
+            }
+
             // Update Live Counter text immediately on language switch
             updateLiveCounter(0);
 
-            // FAQ Translations Update
-            document.getElementById('faqMainTitle').textContent = t.faqMainTitle;
-            document.getElementById('faq1Title').textContent = t.faq1Title;
-            document.getElementById('faq1Desc').textContent = t.faq1Desc;
-            document.getElementById('faq2Title').textContent = t.faq2Title;
-            document.getElementById('faq2Desc').textContent = t.faq2Desc;
-            document.getElementById('faq3Title').textContent = t.faq3Title;
-            document.getElementById('faq3Desc').textContent = t.faq3Desc;
-            document.getElementById('faq4Title').textContent = t.faq4Title;
-            document.getElementById('faq4Desc').textContent = t.faq4Desc;
-            document.getElementById('verifyStep1').innerHTML = `<strong>${t.verifyStep1.split(':')[0]}:</strong>${t.verifyStep1.split(':')[1]}`;
-            document.getElementById('verifyStep2').innerHTML = `<strong>${t.verifyStep2.split(':')[0]}:</strong>${t.verifyStep2.split(':')[1]}`;
-
+            // Update tool selection sidebar labels
             Object.keys(t.tools).forEach(key => {
                 const btn = document.getElementById(`tab-${key}`);
                 if (btn) {
@@ -1267,7 +1236,6 @@
                     document.getElementById('genericTextBox').classList.remove('hidden');
                     actionArea.classList.remove('hidden');
                     mainInput.placeholder = t.jsonPlaceholder;
-                    document.getElementById('genericTextLabel').textContent = t.output;
                     break;
                 case 'md-tool':
                     requiresFile = false; showAdvanced = false;
@@ -1275,7 +1243,6 @@
                     document.getElementById('genericTextBox').classList.remove('hidden');
                     actionArea.classList.remove('hidden');
                     mainInput.placeholder = t.mdPlaceholder;
-                    document.getElementById('genericTextLabel').textContent = t.output;
                     break;
                 case 'diff-tool':
                     requiresFile = false; showAdvanced = false;
