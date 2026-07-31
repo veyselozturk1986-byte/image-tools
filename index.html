@@ -1,37 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="google-site-verification" content="biAamtdnpwC5Ock9uj5Lu0xEBRP3YvkqO12ngzzPh-M" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- SEO Optimization Meta Tags -->
-    <title>PrivacyConvert - 100% Private Image & PDF Converter</title>
-    <meta name="description" content="Convert and compress JPG, PNG, WEBP, HEIC, and PDF files 100% privately in your browser. No files uploaded to any server. Fast, free, and secure.">
-    <meta name="keywords" content="image converter, pdf to jpg, jpg to pdf, privacy first converter, webp to jpg, png to webp, compress image free, offline image converter">
+    <title>PrivacyConvert - 100% Private File & Image Converter with Editor</title>
+    <meta name="description" content="Convert PDF, HEIC, JPG, PNG, WEBP files instantly in your browser. Features live preview, image cropping, rotation, resizing, and watermarking with zero server uploads.">
+    <meta name="keywords" content="file converter, image converter, pdf to jpg, heic to jpg, crop image online, rotate image, privacy converter, client side converter">
     <meta name="author" content="PrivacyConvert">
 
-    <!-- Open Graph (Social Media Sharing) -->
-    <meta property="og:title" content="PrivacyConvert - Private Image & PDF Converter">
-    <meta property="og:description" content="Convert images and PDFs right inside your browser. Your files never leave your computer.">
-    <meta property="og:type" content="website">
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://yourdomain.com/index.html" />
 
-    <!-- Tailwind CSS & Google AdSense -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4444769373675024" crossorigin="anonymous"></script>
 
-    <!-- PDF & DÖNÜŞTÜRÜCÜ KÜTÜPHANELERİ -->
+    <!-- Cropper.js CSS (Kırpma Aracı Stil Dosyası) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
+
+    <!-- DÖNÜŞTÜRÜCÜ VE EDİTÖR KÜTÜPHANELERİ -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/heic2any/0.0.4/heic2any.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "PrivacyConvert",
+      "operatingSystem": "All",
+      "applicationCategory": "UtilitiesApplication",
+      "offers": { "@type": "Offer", "price": "0.00", "priceCurrency": "USD" },
+      "description": "Convert, crop, rotate, and resize PDF, HEIC, JPG, PNG, WEBP files locally in your browser."
+    }
+    </script>
 </head>
 
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans">
 
     <!-- Header / Navbar -->
     <header class="bg-white border-b border-slate-200 py-4 px-6 shadow-sm">
-        <div class="max-w-4xl mx-auto flex justify-between items-center">
+        <div class="max-w-5xl mx-auto flex justify-between items-center">
             <a href="index.html" class="text-xl font-bold text-indigo-600 flex items-center gap-2 hover:opacity-90 transition">
                 ⚡ PrivacyConvert
             </a>
@@ -40,185 +53,211 @@
                     <a href="pdf-to-jpg/index.html" class="hover:text-indigo-600 transition">PDF to JPG</a>
                     <a href="heic-to-jpg/index.html" class="hover:text-indigo-600 transition">HEIC to JPG</a>
                     <a href="jpg-to-pdf/index.html" class="hover:text-indigo-600 transition">JPG to PDF</a>
+                    <a href="png-to-jpg/index.html" class="hover:text-indigo-600 transition">PNG to JPG</a>
                 </nav>
                 <span class="hidden sm:inline-flex bg-emerald-100 text-emerald-800 text-xs px-3 py-1 rounded-full font-medium items-center gap-1">
-                    🔒 100% In-Browser
+                    🔒 100% Local Processing
                 </span>
             </div>
         </div>
     </header>
 
     <!-- Ana İçerik Konteyneri -->
-    <main class="flex-grow max-w-4xl mx-auto w-full px-4 py-8">
+    <main class="flex-grow max-w-5xl mx-auto w-full px-4 py-8">
 
-        <!-- Top AdSpace Placeholder -->
+        <!-- Reklam Alanı (AdSpace) -->
         <div class="w-full mb-8">
             <div class="bg-slate-100 border border-dashed border-slate-300 rounded-lg p-3 text-center text-xs text-slate-400">
                 <span>Advertisement</span>
             </div>
         </div>
 
-        <!-- PrivacyConvert Ana Dönüştürücü Kartı -->
-        <div class="max-w-xl mx-auto p-6 bg-white rounded-2xl shadow-lg border border-slate-100">
+        <!-- H1 Başlık -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+                Universal <span class="text-indigo-600">File Converter & Editor</span>
+            </h1>
+            <p class="text-slate-500 text-sm sm:text-base mt-2 max-w-xl mx-auto">
+                Convert, crop, rotate, and resize PDF, HEIC, JPG, PNG, WEBP files instantly inside your browser. No files are uploaded to any server.
+            </p>
+        </div>
+
+        <!-- Ana Dönüştürücü Kartı -->
+        <div class="max-w-2xl mx-auto p-6 bg-white rounded-2xl shadow-lg border border-slate-100">
             
             <!-- Sürükle-Bırak Yükleme Alanı -->
             <div id="dropZone" class="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center cursor-pointer hover:border-indigo-500 hover:bg-slate-50 transition-all">
                 <svg class="w-12 h-12 mx-auto text-slate-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
                 </svg>
-                <p class="text-slate-600 font-medium">Click to upload or drag & drop</p>
-                <p class="text-xs text-slate-400 mt-1">PNG, JPG, WEBP, HEIC, or PDF (100% Client-Side)</p>
+                <p class="text-slate-700 font-semibold">Click to select files or drag & drop</p>
+                <p class="text-xs text-slate-400 mt-1">Supports PDF, HEIC, JPG, PNG, WEBP (Multiple files supported)</p>
             </div>
 
-            <!-- Gizli Dosya Seçici Input -->
-            <input type="file" id="fileInput" accept="image/png, image/jpeg, image/webp, .pdf, .heic, .heif" multiple class="hidden" />
+            <!-- Dosya Seçici -->
+            <input type="file" id="fileInput" accept=".pdf, .heic, .heif, .jpg, .jpeg, .png, .webp" multiple class="hidden" />
 
-            <!-- Dosya Bilgisi ve Önizleme / Kalite Alanı -->
+            <!-- Dosya Bilgisi, Editör Araçları ve Dönüştürme Paneli -->
             <div id="actionArea" class="mt-6 hidden space-y-5">
                 
-                <!-- Canlı Dosya Önizleme Alanı -->
-                <div id="previewContainer" class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center gap-4">
-                    <div id="previewThumbnail" class="w-16 h-16 bg-slate-200 rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0 text-slate-400 text-xs font-bold">
-                        Preview
-                    </div>
-                    <div class="overflow-hidden flex-grow">
-                        <p class="text-sm font-semibold text-slate-800 truncate" id="fileName">No file selected</p>
-                        <p class="text-xs text-slate-400 mt-0.5" id="fileSize">Ready for processing</p>
-                    </div>
-                </div>
-
-                <!-- Format Seçimi -->
-                <div class="flex items-center justify-between gap-4">
-                    <label for="targetFormat" class="text-sm font-medium text-slate-700">Convert to:</label>
-                    <select id="targetFormat" class="bg-white border border-slate-300 text-slate-800 text-sm rounded-lg p-2.5 focus:ring-indigo-500 focus:border-indigo-500 font-medium cursor-pointer">
-                        <option value="jpg">JPG (Image)</option>
-                        <option value="png">PNG (Image)</option>
-                        <option value="webp">WEBP (Image)</option>
-                        <option value="pdf">PDF (Document)</option>
-                    </select>
-                </div>
-
-                <!-- Sıkıştırma ve Kalite Ayarı -->
-                <div id="qualityOption" class="space-y-2 pt-2 border-t border-slate-100">
-                    <div class="flex justify-between items-center text-xs font-medium text-slate-600">
-                        <span>Image Quality & Compression:</span>
-                        <span id="qualityVal" class="font-bold text-indigo-600">85%</span>
-                    </div>
-                    <input type="range" id="qualityRange" min="30" max="100" value="85" step="5" class="w-full accent-indigo-600 cursor-pointer">
-                    <div class="flex justify-between text-[10px] text-slate-400">
-                        <span>Smaller File (Compressed)</span>
-                        <span>Best Quality</span>
+                <!-- Canlı Dosya Önizleme Konteyneri -->
+                <div id="previewWrapper" class="p-4 bg-slate-900 rounded-xl border border-slate-800 flex flex-col items-center justify-center min-h-[200px] max-h-[380px] overflow-hidden relative">
+                    <img id="imagePreview" class="max-w-full max-h-[320px] object-contain rounded hidden" alt="Live Preview" />
+                    <div id="nonImagePreview" class="text-center text-slate-300 py-8 space-y-2">
+                        <span class="text-4xl block">📄</span>
+                        <p class="text-sm font-medium" id="fileName">File Loaded</p>
+                        <p class="text-xs text-slate-400" id="fileSize">0 KB</p>
                     </div>
                 </div>
 
-                <!-- Dönüştür Butonu -->
-                <button id="convertBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3.5 px-4 rounded-xl transition-all shadow-md active:scale-95">
-                    Convert Now
+                <!-- 🛠️ DÜZENLEME ARAÇ ÇUBUĞU (Görseller İçin Aktif Olur) -->
+                <div id="editorTools" class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-4">
+                    <h3 class="text-xs font-bold text-slate-600 uppercase tracking-wider">🛠️ Quick Editing Tools</h3>
+                    
+                    <div class="flex flex-wrap items-center gap-2">
+                        <!-- Sağa Döndür -->
+                        <button type="button" id="rotateRightBtn" class="px-3 py-1.5 bg-white border border-slate-300 hover:bg-slate-100 text-xs font-semibold rounded-lg text-slate-700 transition flex items-center gap-1 shadow-sm">
+                            🔄 Rotate 90°
+                        </button>
+
+                        <!-- Kırpma Aracı -->
+                        <button type="button" id="toggleCropBtn" class="px-3 py-1.5 bg-indigo-50 border border-indigo-200 hover:bg-indigo-100 text-xs font-semibold rounded-lg text-indigo-700 transition flex items-center gap-1 shadow-sm">
+                            ✂️ Enable Crop
+                        </button>
+                    </div>
+
+                    <!-- Genişlik ve Filigran Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-200 text-xs">
+                        <div>
+                            <label for="resizeWidth" class="block font-medium text-slate-700 mb-1">Resize Max Width (px):</label>
+                            <input type="number" id="resizeWidth" placeholder="Original Size" class="w-full p-2 border border-slate-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-white">
+                        </div>
+                        <div>
+                            <label for="watermarkText" class="block font-medium text-slate-700 mb-1">Watermark Text:</label>
+                            <input type="text" id="watermarkText" placeholder="e.g. Confidential" class="w-full p-2 border border-slate-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-white">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Format ve Kalite Ayarları -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center pt-2">
+                    <div>
+                        <label for="targetFormat" class="block text-xs font-bold text-slate-600 uppercase mb-1">Convert To:</label>
+                        <select id="targetFormat" class="w-full bg-white border border-slate-300 text-slate-800 text-sm rounded-lg p-2.5 font-semibold focus:ring-indigo-500 focus:border-indigo-500 cursor-pointer">
+                            <option value="jpg">JPG (Image)</option>
+                            <option value="png">PNG (Image)</option>
+                            <option value="webp">WEBP (Image)</option>
+                            <option value="pdf">PDF (Document)</option>
+                        </select>
+                    </div>
+
+                    <div id="qualityGroup">
+                        <div class="flex justify-between items-center text-xs font-medium text-slate-600 mb-1">
+                            <span>Image Quality:</span>
+                            <span id="qualityVal" class="font-bold text-indigo-600">85%</span>
+                        </div>
+                        <input type="range" id="qualityRange" min="30" max="100" value="85" step="5" class="w-full accent-indigo-600 cursor-pointer">
+                    </div>
+                </div>
+
+                <!-- İşlem Butonu -->
+                <button id="convertBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3.5 px-4 rounded-xl shadow-md transition-all active:scale-95">
+                    Process & Download File
                 </button>
             </div>
 
-            <!-- Durum Bildirimi -->
-            <div id="statusText" class="mt-4 text-center text-sm font-medium text-indigo-600 hidden">
-                Processing file locally...
+            <!-- Durum Mesajı -->
+            <div id="statusText" class="mt-4 text-center text-sm font-semibold text-indigo-600 hidden">
+                Processing file...
             </div>
         </div>
 
-        <!-- Popular Dedicated Converters -->
+        <!-- Popüler İhtisas Dönüştürücüler (SEO Grid - 6'lı) -->
         <section class="mt-16">
             <h2 class="text-2xl font-bold text-slate-900 mb-6 text-center">Popular Dedicated Converters</h2>
-            <div class="grid sm:grid-cols-3 gap-6">
+            <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
                 <a href="pdf-to-jpg/index.html" class="block bg-white p-6 rounded-xl border border-slate-200 hover:border-indigo-500 hover:shadow-md transition">
                     <div class="text-indigo-600 text-2xl mb-2">📄➔🖼️</div>
                     <h3 class="font-bold text-slate-900 mb-1">PDF to JPG</h3>
                     <p class="text-xs text-slate-500">Extract PDF pages into clear JPG images without server uploads.</p>
                 </a>
-
                 <a href="heic-to-jpg/index.html" class="block bg-white p-6 rounded-xl border border-slate-200 hover:border-indigo-500 hover:shadow-md transition">
                     <div class="text-indigo-600 text-2xl mb-2">📱➔🖼️</div>
                     <h3 class="font-bold text-slate-900 mb-1">HEIC to JPG</h3>
-                    <p class="text-xs text-slate-500">Convert iPhone HEIC photos to standard JPG format on any device.</p>
+                    <p class="text-xs text-slate-500">Convert iPhone HEIC photos to standard JPG format instantly.</p>
                 </a>
-
                 <a href="jpg-to-pdf/index.html" class="block bg-white p-6 rounded-xl border border-slate-200 hover:border-indigo-500 hover:shadow-md transition">
                     <div class="text-indigo-600 text-2xl mb-2">🖼️➔📄</div>
                     <h3 class="font-bold text-slate-900 mb-1">JPG to PDF</h3>
                     <p class="text-xs text-slate-500">Combine photos, scans, or receipts into a single PDF file securely.</p>
                 </a>
+                <a href="png-to-jpg/index.html" class="block bg-white p-6 rounded-xl border border-slate-200 hover:border-indigo-500 hover:shadow-md transition">
+                    <div class="text-indigo-600 text-2xl mb-2">🖼️➔📸</div>
+                    <h3 class="font-bold text-slate-900 mb-1">PNG to JPG</h3>
+                    <p class="text-xs text-slate-500">Convert PNG images to JPG format to reduce file size instantly.</p>
+                </a>
+                <a href="webp-to-jpg/index.html" class="block bg-white p-6 rounded-xl border border-slate-200 hover:border-indigo-500 hover:shadow-md transition">
+                    <div class="text-indigo-600 text-2xl mb-2">🌐➔🖼️</div>
+                    <h3 class="font-bold text-slate-900 mb-1">WEBP to JPG</h3>
+                    <p class="text-xs text-slate-500">Turn modern WebP web graphics back into universal JPG photos.</p>
+                </a>
+                <a href="pdf-to-png/index.html" class="block bg-white p-6 rounded-xl border border-slate-200 hover:border-indigo-500 hover:shadow-md transition">
+                    <div class="text-indigo-600 text-2xl mb-2">📄➔🖼️</div>
+                    <h3 class="font-bold text-slate-900 mb-1">PDF to PNG</h3>
+                    <p class="text-xs text-slate-500">Convert document pages into high-quality transparent PNG images.</p>
+                </a>
             </div>
         </section>
-
-        <!-- FAQ & Privacy Section -->
-        <section class="mt-16 bg-white p-8 rounded-2xl border border-slate-200 space-y-6 text-slate-700 leading-relaxed text-sm">
-            <h2 class="text-xl font-bold text-slate-900">Frequently Asked Questions (FAQ)</h2>
-            
-            <div>
-                <h3 class="font-semibold text-slate-800">Is PrivacyConvert completely safe and private?</h3>
-                <p class="text-slate-600 mt-1">Yes, 100%! Unlike traditional online converters, PrivacyConvert runs entirely inside your web browser using modern Web APIs. Your files are converted locally and are never uploaded to any external server.</p>
-            </div>
-
-            <div>
-                <h3 class="font-semibold text-slate-800">Which file formats are supported?</h3>
-                <p class="text-slate-600 mt-1">PrivacyConvert allows you to convert and compress popular image formats including JPG, PNG, WEBP, HEIC, and multi-page PDF documents seamlessly.</p>
-            </div>
-
-            <div>
-                <h3 class="font-semibold text-slate-800">Is this service free to use?</h3>
-                <p class="text-slate-600 mt-1">Yes, PrivacyConvert is 100% free with no hidden fees, subscriptions, or file size limits.</p>
-            </div>
-
-            <hr class="border-slate-200 my-6">
-
-            <h2 class="text-xl font-bold text-slate-900">Privacy Policy Summary</h2>
-            <p>At <strong>PrivacyConvert</strong>, user privacy is our top priority. We do not collect, store, or transmit any images or personal data you process through our website. All conversion tasks take place client-side.</p>
-        </section>
-
-        <!-- Bottom AdSpace Placeholder -->
-        <div class="w-full mt-8">
-            <div class="bg-slate-100 border border-dashed border-slate-300 rounded-lg p-3 text-center text-xs text-slate-400">
-                <span>Advertisement</span>
-            </div>
-        </div>
 
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200 py-8 text-center text-xs text-slate-500">
-        <div class="max-w-4xl mx-auto px-4 space-y-3">
-            <div class="flex justify-center gap-6 font-medium text-slate-600">
+    <footer class="bg-white border-t border-slate-200 py-8 text-center text-xs text-slate-500 mt-12">
+        <div class="max-w-5xl mx-auto px-4 space-y-3">
+            <div class="flex justify-center flex-wrap gap-6 font-medium text-slate-600">
                 <a href="pdf-to-jpg/index.html" class="hover:text-indigo-600">PDF to JPG</a>
                 <a href="heic-to-jpg/index.html" class="hover:text-indigo-600">HEIC to JPG</a>
                 <a href="jpg-to-pdf/index.html" class="hover:text-indigo-600">JPG to PDF</a>
-                <a href="privacy.html" class="hover:text-indigo-600 underline">Privacy Policy</a>
+                <a href="png-to-jpg/index.html" class="hover:text-indigo-600">PNG to JPG</a>
+                <a href="webp-to-jpg/index.html" class="hover:text-indigo-600">WEBP to JPG</a>
+                <a href="pdf-to-png/index.html" class="hover:text-indigo-600">PDF to PNG</a>
             </div>
-            <p>© 2026 PrivacyConvert — 100% Client-Side Processing. No Data Collected.</p>
+            <p>© 2026 PrivacyConvert — 100% Client-Side Private File Processing.</p>
         </div>
     </footer>
 
-    <!-- JavaScript Mantık Kodu -->
+    <!-- JAVASCRIPT MANTIĞI -->
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
+        // DOM Elemanları
         const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('fileInput');
         const actionArea = document.getElementById('actionArea');
+        const imagePreview = document.getElementById('imagePreview');
+        const nonImagePreview = document.getElementById('nonImagePreview');
         const fileNameDisplay = document.getElementById('fileName');
         const fileSizeDisplay = document.getElementById('fileSize');
-        const previewThumbnail = document.getElementById('previewThumbnail');
         const targetFormat = document.getElementById('targetFormat');
         const convertBtn = document.getElementById('convertBtn');
         const statusText = document.getElementById('statusText');
         const qualityRange = document.getElementById('qualityRange');
         const qualityVal = document.getElementById('qualityVal');
+        
+        // Editör Elemanları
+        const editorTools = document.getElementById('editorTools');
+        const toggleCropBtn = document.getElementById('toggleCropBtn');
+        const rotateRightBtn = document.getElementById('rotateRightBtn');
+        const resizeWidthInput = document.getElementById('resizeWidth');
+        const watermarkInput = document.getElementById('watermarkText');
 
         let selectedFiles = [];
-        let currentObjectUrl = null;
+        let cropper = null;
+        let currentRotation = 0;
 
-        // Kalite Slider Ayarı
-        qualityRange.addEventListener('input', (e) => {
-            qualityVal.textContent = `${e.target.value}%`;
-        });
+        qualityRange.addEventListener('input', (e) => qualityVal.textContent = `${e.target.value}%`);
 
-        // Sürükle-Bırak Olayları
+        // Sürükle-Bırak Etkinlikleri
         dropZone.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
 
@@ -226,114 +265,258 @@
             e.preventDefault();
             dropZone.classList.add('border-indigo-500', 'bg-slate-50');
         });
-
-        dropZone.addEventListener('dragleave', () => {
-            dropZone.classList.remove('border-indigo-500', 'bg-slate-50');
-        });
-
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('border-indigo-500', 'bg-slate-50'));
         dropZone.addEventListener('drop', (e) => {
             e.preventDefault();
             dropZone.classList.remove('border-indigo-500', 'bg-slate-50');
             handleFiles(e.dataTransfer.files);
         });
 
+        // Dosya Seçim Mantığı
         async function handleFiles(files) {
             if (!files.length) return;
             selectedFiles = Array.from(files);
             
-            // Eski belleği temizle
-            if (currentObjectUrl) {
-                URL.revokeObjectURL(currentObjectUrl);
-                currentObjectUrl = null;
+            // Cropper varsa temizle
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+                toggleCropBtn.textContent = "✂️ Enable Crop";
             }
+            currentRotation = 0;
+            imagePreview.style.transform = 'none';
 
-            if (selectedFiles.length === 1) {
-                const file = selectedFiles[0];
-                fileNameDisplay.textContent = file.name;
-                fileSizeDisplay.textContent = `${(file.size / 1024).toFixed(1)} KB`;
-
-                // HEIC uzantısı kontrolü
-                const isHeic = file.name.match(/\.(heic|heif)$/i);
-
-                if (file.type.startsWith('image/') || isHeic) {
-                    previewThumbnail.innerHTML = `<span class="text-xs text-slate-400">Loading...</span>`;
-                    try {
-                        let renderableBlob = file;
-                        if (isHeic && typeof heic2any === 'function') {
-                            const converted = await heic2any({ blob: file, toType: 'image/png' });
-                            renderableBlob = Array.isArray(converted) ? converted[0] : converted;
-                        }
-                        currentObjectUrl = URL.createObjectURL(renderableBlob);
-                        previewThumbnail.innerHTML = `<img src="${currentObjectUrl}" class="w-full h-full object-cover">`;
-                    } catch (e) {
-                        previewThumbnail.innerHTML = `<span class="text-2xl">🖼️</span>`;
-                    }
-                } else if (file.type === 'application/pdf') {
-                    previewThumbnail.innerHTML = `<span class="text-2xl">📄</span>`;
-                } else {
-                    previewThumbnail.innerHTML = `<span class="text-2xl">📁</span>`;
-                }
-            } else {
-                fileNameDisplay.textContent = `${selectedFiles.length} files selected`;
-                fileSizeDisplay.textContent = "Batch processing mode";
-                previewThumbnail.innerHTML = `<span class="text-2xl">📚</span>`;
-            }
-            
             actionArea.classList.remove('hidden');
+
+            const firstFile = selectedFiles[0];
+
+            if (selectedFiles.length === 1 && firstFile.type.startsWith('image/') && !firstFile.name.toLowerCase().endsWith('.heic')) {
+                // Görsel Önizlemesi Göster
+                const url = URL.createObjectURL(firstFile);
+                imagePreview.src = url;
+                imagePreview.classList.remove('hidden');
+                nonImagePreview.classList.add('hidden');
+                editorTools.classList.remove('hidden');
+            } else if (firstFile.name.toLowerCase().endsWith('.heic')) {
+                // HEIC Önizleme Dönüştürme
+                nonImagePreview.classList.remove('hidden');
+                imagePreview.classList.add('hidden');
+                fileNameDisplay.textContent = firstFile.name;
+                fileSizeDisplay.textContent = `${(firstFile.size/1024).toFixed(1)} KB (HEIC Image)`;
+                editorTools.classList.add('hidden');
+            } else {
+                // PDF veya Çoklu Dosya
+                imagePreview.classList.add('hidden');
+                nonImagePreview.classList.remove('hidden');
+                fileNameDisplay.textContent = selectedFiles.length === 1 ? firstFile.name : `${selectedFiles.length} files selected`;
+                fileSizeDisplay.textContent = selectedFiles.length === 1 ? `${(firstFile.size/1024).toFixed(1)} KB` : 'Batch Mode';
+                editorTools.classList.add('hidden');
+            }
         }
 
-        // Dönüştürme Mantığı
+        // Kırpma Etkinleştir/Kapat
+        toggleCropBtn.addEventListener('click', () => {
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+                toggleCropBtn.textContent = "✂️ Enable Crop";
+            } else {
+                cropper = new Cropper(imagePreview, {
+                    viewMode: 1,
+                    autoCropArea: 0.9,
+                    responsive: true
+                });
+                toggleCropBtn.textContent = "✅ Apply / Close Crop";
+            }
+        });
+
+        // Sağa Döndürme
+        rotateRightBtn.addEventListener('click', () => {
+            if (cropper) {
+                cropper.rotate(90);
+            } else {
+                currentRotation = (currentRotation + 90) % 360;
+                imagePreview.style.transform = `rotate(${currentRotation}deg)`;
+            }
+        });
+
+        // ANA İŞLEME BUTONU
         convertBtn.addEventListener('click', async () => {
             if (!selectedFiles.length) return;
 
             const format = targetFormat.value;
             const quality = parseFloat(qualityRange.value) / 100;
-            const firstFile = selectedFiles[0];
 
-            showStatus("Processing locally... Please wait.");
+            showStatus("Processing file(s)... Please wait.");
 
             try {
-                if (firstFile.type === "application/pdf") {
-                    await processPdfToImage(firstFile, format, quality);
-                } else if (format === "pdf") {
-                    await processImagesToPdf(selectedFiles);
-                } else {
-                    await processStandardImages(selectedFiles, format, quality);
+                const firstFile = selectedFiles[0];
+
+                // SENARYO A: Görselleri PDF'e Dönüştürme
+                if (format === 'pdf' && !firstFile.type.includes('pdf')) {
+                    await convertImagesToPdf(selectedFiles);
+                } 
+                // SENARYO B: PDF'i Görsellere Dönüştürme
+                else if (firstFile.type.includes('pdf') || firstFile.name.endsWith('.pdf')) {
+                    await convertPdfToImages(firstFile, format, quality);
+                }
+                // SENARYO C: HEIC Fotoğraflarını Dönüştürme
+                else if (firstFile.name.toLowerCase().endsWith('.heic')) {
+                    await convertHeicImages(selectedFiles, format, quality);
+                }
+                // SENARYO D: Standart Görseller (JPG, PNG, WEBP) + Editör Özellikleri
+                else {
+                    await convertStandardImages(selectedFiles, format, quality);
                 }
             } catch (err) {
                 console.error(err);
-                alert("An error occurred during conversion: " + (err.message || err));
+                alert("An error occurred during process: " + err.message);
             } finally {
                 hideStatus();
             }
         });
 
-        // PDF -> Görsel Motoru
-        async function processPdfToImage(file, outputFormat, quality) {
+        // GÖRSEL DÜZENLEME & CANVAS İŞLEME FONKSİYONU
+        async function getProcessedCanvas(imgElement) {
+            let canvas;
+            if (cropper) {
+                canvas = cropper.getCroppedCanvas();
+            } else {
+                canvas = document.createElement('canvas');
+                if (currentRotation % 180 !== 0) {
+                    canvas.width = imgElement.naturalHeight;
+                    canvas.height = imgElement.naturalWidth;
+                } else {
+                    canvas.width = imgElement.naturalWidth;
+                    canvas.height = imgElement.naturalHeight;
+                }
+                const ctx = canvas.getContext('2d');
+                ctx.translate(canvas.width / 2, canvas.height / 2);
+                ctx.rotate((currentRotation * Math.PI) / 180);
+                ctx.drawImage(imgElement, -imgElement.naturalWidth / 2, -imgElement.naturalHeight / 2);
+            }
+
+            // Yeniden Boyutlandırma (Resize)
+            const maxWidth = parseInt(resizeWidthInput.value);
+            if (maxWidth && maxWidth < canvas.width) {
+                const scale = maxWidth / canvas.width;
+                const resizedCanvas = document.createElement('canvas');
+                resizedCanvas.width = maxWidth;
+                resizedCanvas.height = canvas.height * scale;
+                const rCtx = resizedCanvas.getContext('2d');
+                rCtx.drawImage(canvas, 0, 0, resizedCanvas.width, resizedCanvas.height);
+                canvas = resizedCanvas;
+            }
+
+            // Filigran / Watermark
+            const watermark = watermarkInput.value.trim();
+            if (watermark) {
+                const ctx = canvas.getContext('2d');
+                const fontSize = Math.max(18, Math.floor(canvas.width / 22));
+                ctx.font = `bold ${fontSize}px sans-serif`;
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                ctx.shadowColor = 'rgba(0,0,0,0.6)';
+                ctx.shadowBlur = 6;
+                ctx.textAlign = 'right';
+                ctx.fillText(watermark, canvas.width - 25, canvas.height - 25);
+            }
+
+            return canvas;
+        }
+
+        // 1. Standart Görsel İşleme
+        async function convertStandardImages(files, format, quality) {
+            const zip = new JSZip();
+            const isSingle = files.length === 1;
+
+            for (let i = 0; i < files.length; i++) {
+                showStatus(`Processing image ${i + 1} of ${files.length}...`);
+                const file = files[i];
+                let canvas;
+
+                if (i === 0 && imagePreview.src && !imagePreview.classList.contains('hidden')) {
+                    canvas = await getProcessedCanvas(imagePreview);
+                } else {
+                    const img = new Image();
+                    img.src = URL.createObjectURL(file);
+                    await new Promise(res => img.onload = res);
+                    canvas = document.createElement('canvas');
+                    canvas.width = img.width; canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    if (format === 'jpg') { ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, canvas.width, canvas.height); }
+                    ctx.drawImage(img, 0, 0);
+                }
+
+                const mimeType = format === 'png' ? 'image/png' : format === 'webp' ? 'image/webp' : 'image/jpeg';
+                const blob = await new Promise(res => canvas.toBlob(res, mimeType, quality));
+                const baseName = file.name.replace(/\.[^/.]+$/, "");
+
+                if (isSingle) triggerDownload(blob, `${baseName}.${format}`);
+                else zip.file(`${baseName}.${format}`, blob);
+            }
+
+            if (!isSingle) {
+                showStatus("Creating ZIP file...");
+                const zipBlob = await zip.generateAsync({ type: 'blob' });
+                triggerDownload(zipBlob, `converted_images_${Date.now()}.zip`);
+            }
+        }
+
+        // 2. HEIC Dönüştürme
+        async function convertHeicImages(files, format, quality) {
+            const zip = new JSZip();
+            const isSingle = files.length === 1;
+
+            for (let i = 0; i < files.length; i++) {
+                showStatus(`Converting HEIC ${i + 1} of ${files.length}...`);
+                const file = files[i];
+                const pngBlob = await heic2any({ blob: file, toType: 'image/png' });
+                const blobResult = Array.isArray(pngBlob) ? pngBlob[0] : pngBlob;
+
+                const img = new Image();
+                img.src = URL.createObjectURL(blobResult);
+                await new Promise(res => img.onload = res);
+
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width; canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                if (format === 'jpg') { ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, canvas.width, canvas.height); }
+                ctx.drawImage(img, 0, 0);
+
+                const mimeType = format === 'png' ? 'image/png' : 'image/jpeg';
+                const outBlob = await new Promise(res => canvas.toBlob(res, mimeType, quality));
+                const baseName = file.name.replace(/\.(heic|heif)$/i, "");
+
+                if (isSingle) triggerDownload(outBlob, `${baseName}.${format}`);
+                else zip.file(`${baseName}.${format}`, outBlob);
+            }
+
+            if (!isSingle) {
+                const zipBlob = await zip.generateAsync({ type: 'blob' });
+                triggerDownload(zipBlob, `heic_converted_${Date.now()}.zip`);
+            }
+        }
+
+        // 3. PDF'den Görsele
+        async function convertPdfToImages(file, format, quality) {
             const arrayBuffer = await file.arrayBuffer();
             const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
             const zip = new JSZip();
-            const mimeType = outputFormat === 'png' ? 'image/png' : 'image/jpeg';
-            const ext = outputFormat === 'png' ? 'png' : 'jpg';
+            const mimeType = format === 'png' ? 'image/png' : 'image/jpeg';
 
             for (let i = 1; i <= pdf.numPages; i++) {
-                showStatus(`Processing page ${i} of ${pdf.numPages}...`);
+                showStatus(`Rendering PDF page ${i} of ${pdf.numPages}...`);
                 const page = await pdf.getPage(i);
                 const viewport = page.getViewport({ scale: 2.0 });
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
+                canvas.height = viewport.height; canvas.width = viewport.width;
 
-                // PNG harici formatlarda arka planı beyaza boya (saydamlık siyah olmasın)
-                if (outputFormat !== 'png') {
-                    ctx.fillStyle = '#FFFFFF';
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
-                }
-
+                if (format !== 'png') { ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, canvas.width, canvas.height); }
                 await page.render({ canvasContext: ctx, viewport }).promise;
 
                 const blob = await new Promise(res => canvas.toBlob(res, mimeType, quality));
+                const ext = format === 'pdf' ? 'jpg' : format;
 
                 if (pdf.numPages === 1) {
                     triggerDownload(blob, `${file.name.replace(/\.pdf$/i, '')}.${ext}`);
@@ -343,37 +526,26 @@
             }
 
             if (pdf.numPages > 1) {
-                showStatus("Generating ZIP file...");
+                showStatus("Creating ZIP package...");
                 const zipBlob = await zip.generateAsync({ type: 'blob' });
-                triggerDownload(zipBlob, `${file.name.replace(/\.pdf$/i, '')}_images.zip`);
+                triggerDownload(zipBlob, `${file.name.replace(/\.pdf$/i, '')}_pages.zip`);
             }
         }
 
-        // Görsel -> PDF Motoru
-        async function processImagesToPdf(files) {
+        // 4. Görsellerden PDF Oluşturma
+        async function convertImagesToPdf(files) {
             const { jsPDF } = window.jspdf;
             let doc = null;
 
             for (let i = 0; i < files.length; i++) {
-                showStatus(`Adding image ${i + 1} of ${files.length} to PDF...`);
-                let file = files[i];
-
-                // HEIC Desteği
-                if (file.name.match(/\.(heic|heif)$/i) && typeof heic2any === 'function') {
-                    const converted = await heic2any({ blob: file, toType: 'image/png' });
-                    file = Array.isArray(converted) ? converted[0] : converted;
-                }
-
+                showStatus(`Adding image ${i + 1} to PDF...`);
+                const file = files[i];
                 const imgUrl = URL.createObjectURL(file);
                 const img = new Image();
                 img.src = imgUrl;
-                await new Promise((res, rej) => {
-                    img.onload = res;
-                    img.onerror = rej;
-                });
+                await new Promise(res => img.onload = res);
 
                 const orientation = img.width > img.height ? 'l' : 'p';
-                
                 if (i === 0) {
                     doc = new jsPDF({ orientation, unit: 'px', format: [img.width, img.height] });
                 } else {
@@ -384,65 +556,10 @@
                 URL.revokeObjectURL(imgUrl);
             }
 
-            doc.save('privacyconvert_document.pdf');
+            doc.save(`privacyconvert_document_${Date.now()}.pdf`);
         }
 
-        // Görsel -> Görsel Motoru (ZIP Destekli)
-        async function processStandardImages(files, format, quality) {
-            const mimeType = `image/${format}`;
-            const zip = new JSZip();
-            const isSingle = files.length === 1;
-
-            for (let i = 0; i < files.length; i++) {
-                let file = files[i];
-                showStatus(`Converting image ${i + 1} of ${files.length}...`);
-
-                // HEIC Desteği
-                if (file.name.match(/\.(heic|heif)$/i) && typeof heic2any === 'function') {
-                    const converted = await heic2any({ blob: file, toType: 'image/png' });
-                    file = Array.isArray(converted) ? converted[0] : converted;
-                }
-
-                const imgUrl = URL.createObjectURL(file);
-                const img = new Image();
-                img.src = imgUrl;
-                await new Promise((res, rej) => {
-                    img.onload = res;
-                    img.onerror = rej;
-                });
-
-                const canvas = document.createElement('canvas');
-                canvas.width = img.width;
-                canvas.height = img.height;
-                const ctx = canvas.getContext('2d');
-
-                // PNG harici formatlarda arka planı beyaza boya
-                if (format !== 'png') {
-                    ctx.fillStyle = '#FFFFFF';
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
-                }
-
-                ctx.drawImage(img, 0, 0);
-
-                const blob = await new Promise(res => canvas.toBlob(res, mimeType, quality));
-                const nameWithoutExt = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
-
-                if (isSingle) {
-                    triggerDownload(blob, `${nameWithoutExt}.${format}`);
-                } else {
-                    zip.file(`${nameWithoutExt}.${format}`, blob);
-                }
-
-                URL.revokeObjectURL(imgUrl);
-            }
-
-            if (!isSingle) {
-                showStatus("Creating ZIP package...");
-                const zipBlob = await zip.generateAsync({ type: 'blob' });
-                triggerDownload(zipBlob, `converted_images_${Date.now()}.zip`);
-            }
-        }
-
+        // Yardımcı Fonksiyonlar
         function triggerDownload(blob, filename) {
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
@@ -450,7 +567,6 @@
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            setTimeout(() => URL.revokeObjectURL(link.href), 1000);
         }
 
         function showStatus(text) {
