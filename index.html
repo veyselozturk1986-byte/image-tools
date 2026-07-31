@@ -11,6 +11,7 @@
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4444769373675024" crossorigin="anonymous"></script>
 
     <!-- Cropper.js CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
@@ -326,7 +327,6 @@
                     imagePreview.classList.remove('hidden');
                     nonImagePreview.classList.add('hidden');
                 } else if (currentTool === 'heic-to-jpg') {
-                    // Convert first HEIC to blob/preview via heic2any
                     const convertedBlob = await heic2any({ blob: firstFile, toType: 'image/jpeg', quality: 0.8 });
                     const url = URL.createObjectURL(Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob);
                     imagePreview.src = url;
