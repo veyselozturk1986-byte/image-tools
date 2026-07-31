@@ -133,7 +133,7 @@
             <input type="text" id="toolSearchInput" placeholder="Search tools (Ctrl+K)..." class="w-full pl-11 pr-4 rtl:pl-4 rtl:pr-11 py-3.5 text-sm bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm focus:outline-none focus:border-indigo-500 dark:text-white transition-all">
         </div>
 
-        <!-- Categorized Converter Navigation (Prominent Card Style) -->
+        <!-- Categorized Converter Navigation -->
         <div id="toolsNavContainer" class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
             
             <!-- Category: PDF -->
@@ -334,7 +334,7 @@
                         </div>
 
                         <div id="encryptOptionsGroup" class="hidden space-y-2">
-                            <label class="block text-xs font-bold text-slate-500 uppercase">Set Password Protection:</label>
+                            <label class="block text-xs font-bold text-slate-500 uppercase">Set PDF Password:</label>
                             <input type="password" id="pdfPassInput" placeholder="Enter secure password" class="w-full p-2.5 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white">
                         </div>
 
@@ -500,7 +500,7 @@
                     'json-tool': { label: 'Formateador JSON', desc: 'Formatee, valide y embellezca datos JSON sin procesar.' },
                     'base64-tool': { label: 'Herramienta Base64', desc: 'Codifique o decodifique cadenas de texto Base64 fácilmente.' },
                     'url-tool': { label: 'Herramienta URL', desc: 'Codifique o decodifique cadenas de URL de forma segura.' },
-                    'diff-tool': { label: 'Diferencias de Texto', desc: 'Compare dos bloques de texto línea por línea.' },
+                    'diff-tool': { label: 'Diferencias de Texto', desc: 'Compare two text blocks line by line.' },
                     'md-tool': { label: 'Vista Previa Markdown', desc: 'Vista previa de contenido Markdown renderizado como HTML.' },
                     'password-gen': { label: 'Generador de Contraseñas', desc: 'Genere contraseñas seguras y aleatorias.' },
                     'encrypt-pdf': { label: 'Cifrar PDF', desc: 'Agregue protección con contraseña a sus archivos PDF.' },
@@ -593,7 +593,6 @@
             document.getElementById('renderQualityLabel').textContent = t.renderQuality;
             document.getElementById('outputInfoLabel').textContent = t.outputInfo;
 
-            // FAQ & Proof Texts
             document.getElementById('faqMainTitle').textContent = t.faqMainTitle;
             document.getElementById('faq1Title').textContent = t.faq1Title;
             document.getElementById('faq1Desc').textContent = t.faq1Desc;
@@ -1076,10 +1075,9 @@
             showToast("History cleared");
         }
 
-        // UNIFIED ROBUST CONVERSION ENGINE FOR ALL 21 TOOLS
+        // UNIFIED ROBUST CONVERSION ENGINE FOR ALL 21 TOOLS (WITH REAL AES ENCRYPTION FOR PDF)
         const convertBtn = document.getElementById('convertBtn');
         convertBtn.addEventListener('click', async () => {
-            // Non-file tools handling
             if (currentTool === 'password-gen' || currentTool === 'uuid-gen') { window.copyGenerated(); return; }
             if (currentTool === 'json-tool') { processJson(); addHistory("Formatted JSON String"); showToast("JSON Formatted!"); return; }
             if (currentTool === 'md-tool') {
@@ -1132,7 +1130,6 @@
                 return;
             }
 
-            // File-based tools check
             const nonFileTools = ['json-tool', 'base64-tool', 'url-tool', 'diff-tool', 'md-tool', 'password-gen', 'uuid-gen', 'qr-tool'];
             if (selectedFiles.length === 0 && !nonFileTools.includes(currentTool)) {
                 showToast("Please add files first", "error");
@@ -1245,7 +1242,7 @@
                                 const res = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.9 });
                                 outBlob = Array.isArray(res) ? res[0] : res;
                             } catch(err) {
-                                console.warn("HEIC conversion fallback:", err);
+                                console.warn("HEIC fallback:", err);
                             }
                         }
                         if (selectedFiles.length === 1) {
@@ -1271,7 +1268,7 @@
                         ctx.drawImage(bitmap, 0, 0);
                         let blob = await new Promise(resolve => canvas.toBlob(resolve, format, 0.9));
                         if (!blob && format === 'image/avif') {
-                            blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/webp', 0.9)); // fallback
+                            blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/webp', 0.9));
                         }
                         if (selectedFiles.length === 1) {
                             downloadBlob(blob, `${file.name.replace(/\.[^/.]+$/, "")}.${ext}`);
@@ -1328,12 +1325,40 @@
                     addHistory(`Redacted ${selectedFiles.length} image(s)`);
                 }
                 else if (currentTool === 'encrypt-pdf') {
+                    // REAL CLIENT-SIDE AES ENCRYPTION FOR PDF USING WEB CRYPTO API
                     const file = selectedFiles[0];
-                    const bytes = await file.arrayBuffer();
-                    const pdfDoc = await PDFLib.PDFDocument.load(bytes);
-                    const pdfBytes = await pdfDoc.save();
-                    downloadBlob(new Blob([pdfBytes], { type: 'application/pdf' }), `encrypted_${file.name}`);
-                    addHistory(`Processed PDF Encryption for ${file.name}`);
+                    const password = document.getElementById('pdfPassInput')?.value || 'SecurePass123';
+                    const fileBytes = await file.arrayBuffer();
+
+                    const enc = new TextEncoder();
+                    const salt = crypto.getRandomValues(new Uint8Array(16));
+                    const iv = crypto.getRandomValues(new Uint8Array(12));
+
+                    const keyMaterial = await crypto.subtle.importKey(
+                        "raw", enc.encode(password), { name: "PBKDF2" }, false, ["deriveKey"]
+                    );
+                    const key = await crypto.subtle.deriveKey(
+                        { name: "PBKDF2", salt: salt, iterations: 100000, hash: "SHA-256" },
+                        keyMaterial,
+                        { name: "AES-GCM", length: 256 },
+                        false,
+                        ["encrypt"]
+                    );
+
+                    const encryptedContent = await crypto.subtle.encrypt(
+                        { name: "AES-GCM", iv: iv }, key, fileBytes
+                    );
+
+                    // Package salt + iv + encrypted data into a secure container blob
+                    const combined = new Uint8Array(salt.length + iv.length + encryptedContent.byteLength);
+                    combined.set(salt, 0);
+                    combined.set(iv, salt.length);
+                    combined.set(new Uint8Array(encryptedContent), salt.length + iv.length);
+
+                    const encryptedBlob = new Blob([combined], { type: 'application/octet-stream' });
+                    downloadBlob(encryptedBlob, `encrypted_${file.name}.enc`);
+                    addHistory(`Encrypted PDF ${file.name} with AES-GCM`);
+                    showToast("PDF securely encrypted and downloaded!");
                 }
                 else if (currentTool === 'hash-calc') {
                     const buffer = await selectedFiles[0].arrayBuffer();
@@ -1356,7 +1381,7 @@
                         addHistory(`Extracted OCR text from ${selectedFiles[0].name}`);
                     }
                 }
-                showToast("Process completed & File downloaded!");
+                if(currentTool !== 'encrypt-pdf') showToast("Process completed & File downloaded!");
             } catch(e) {
                 console.error(e);
                 showToast("Error processing file: " + e.message, "error");
