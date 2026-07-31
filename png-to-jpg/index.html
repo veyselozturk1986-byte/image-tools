@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>PNG to JPG Converter - 100% Private & Free</title>
+    <meta name="description" content="Convert PNG images to JPG format instantly in your browser. Fast, free, and 100% secure. No files uploaded to any server.">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans">
+
+    <!-- Header / Navbar -->
+    <header class="bg-white border-b border-slate-200 py-4 px-6 shadow-sm">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <a href="../index.html" class="text-xl font-bold text-indigo-600 flex items-center gap-2">
+                ⚡ PrivacyConvert
+            </a>
+            <a href="../index.html" class="text-sm font-medium text-indigo-600 hover:underline">
+                ← Back to All Tools
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-4xl mx-auto w-full px-4 py-8">
+        
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-slate-900">PNG to JPG Converter</h1>
+            <p class="text-sm text-slate-500 mt-2">Convert transparent or heavy PNG images into lightweight JPG photos in your browser.</p>
+        </div>
+
+        <!-- Conversion Card -->
+        <div class="max-w-xl mx-auto p-6 bg-white rounded-2xl shadow-lg border border-slate-100">
+            
+            <!-- Drag & Drop Zone -->
+            <div id="dropZone" class="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center cursor-pointer hover:border-indigo-500 hover:bg-slate-50 transition-all">
+                <div class="text-4xl mb-2">🖼️</div>
+                <p class="text-slate-700 font-medium">Click to upload or drag & drop PNG files</p>
+                <p class="text-xs text-slate-400 mt-1">Select PNG images (Multiple files allowed)</p>
+            </div>
+
+            <!-- Hidden File Input -->
+            <input type="file" id="fileInput" accept="image/png" multiple class="hidden" />
+
+            <!-- Action Area -->
+            <div id="actionArea" class="mt-6 hidden space-y-4">
+                <div class="p-3 bg-slate-100 rounded-lg text-sm font-semibold text-slate-700 truncate" id="fileName">
+                    No file selected
+                </div>
+
+                <button id="convertBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl transition-all shadow-md active:scale-95">
+                    Convert PNG to JPG
+                </button>
+            </div>
+
+            <!-- Status Text -->
+            <div id="statusText" class="mt-4 text-center text-sm font-medium text-indigo-600 hidden">
+                Converting images locally...
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500">
+        <p>© 2026 PrivacyConvert — 100% Client-Side Processing.</p>
+    </footer>
+
+    <!-- JS Logic -->
+    <script>
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const actionArea = document.getElementById('actionArea');
+        const fileNameDisplay = document.getElementById('fileName');
+        const convertBtn = document.getElementById('convertBtn');
+        const statusText = document.getElementById('statusText');
+
+        let selectedFiles = [];
+
+        dropZone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('border-indigo-500', 'bg-slate-50');
+        });
+
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('border-indigo-500', 'bg-slate-50'));
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-indigo-500', 'bg-slate-50');
+            handleFiles(e.dataTransfer.files);
+        });
+
+        function handleFiles(files) {
+            if (!files.length) return;
+            selectedFiles = Array.from(files);
+            fileNameDisplay.textContent = selectedFiles.length === 1 ? selectedFiles[0].name : `${selectedFiles.length} PNG files selected`;
+            actionArea.classList.remove('hidden');
+        }
+
+        convertBtn.addEventListener('click', async () => {
+            if (!selectedFiles.length) return;
+            showStatus("Converting PNG to JPG locally...");
+
+            try {
+                for (const file of selectedFiles) {
+                    const imgUrl = URL.createObjectURL(file);
+                    const img = new Image();
+                    img.src = imgUrl;
+                    await new Promise(res => img.onload = res);
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Beyaz arka plan (PNG şeffaflığı siyah çıkmasın diye)
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 0, 0);
+
+                    const blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.9));
+                    const cleanName = file.name.substring(0, file.name.lastIndexOf('.'));
+                    triggerDownload(blob, `${cleanName}.jpg`);
+                    URL.revokeObjectURL(imgUrl);
+                }
+            } catch (err) {
+                console.error(err);
+                alert("An error occurred during conversion.");
+            } finally {
+                hideStatus();
+            }
+        });
+
+        function triggerDownload(blob, filename) {
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+        }
+
+        function showStatus(text) {
+            statusText.textContent = text;
+            statusText.classList.remove('hidden');
+            convertBtn.disabled = true;
+            convertBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+
+        function hideStatus() {
+            statusText.classList.add('hidden');
+            convertBtn.disabled = false;
+            convertBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+    </script>
+</body>
+</html>
