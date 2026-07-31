@@ -11,7 +11,6 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        // Check Local Storage for Theme before rendering to prevent flicker
         if (localStorage.getItem('privacyConvert_theme') === 'dark' || (!('privacyConvert_theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
         } else {
@@ -226,14 +225,12 @@
                             </button>
                         </div>
 
-                        <!-- Input specific areas (These sit outside advanced accordion so user can type) -->
+                        <!-- Input specific areas -->
                         <div id="primaryInputsArea" class="w-full flex flex-col gap-4">
-                            <!-- JSON / MD Options -->
                             <div id="textInputGroup" class="hidden">
                                 <textarea id="mainInputField" class="w-full h-32 p-4 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none resize-none shadow-sm" placeholder="Paste data here..."></textarea>
                             </div>
                             
-                            <!-- Password Config -->
                             <div id="passwordOptionsGroup" class="hidden bg-white dark:bg-slate-800 p-4 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm">
                                 <div class="mb-4">
                                     <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 flex justify-between">Length: <span id="passLenVal" class="text-indigo-600 dark:text-indigo-400">16</span></label>
@@ -246,7 +243,6 @@
                                 </div>
                             </div>
 
-                            <!-- Diff Tool Inputs -->
                             <div id="diffInputGroup" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <textarea id="diffOriginal" placeholder="Original text..." class="w-full h-32 p-3 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 dark:text-white focus:outline-none resize-none font-mono shadow-sm" oninput="processDiff()"></textarea>
                                 <textarea id="diffModified" placeholder="Modified text..." class="w-full h-32 p-3 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 dark:text-white focus:outline-none resize-none font-mono shadow-sm" oninput="processDiff()"></textarea>
@@ -266,8 +262,6 @@
                     </button>
                     
                     <div id="accordionContent" class="hidden p-5 border-t border-slate-200 dark:border-slate-700 space-y-4">
-                        
-                        <!-- Format & Quality (Always at top of advanced) -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
                             <div id="qualityContainer">
                                 <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2">Render Quality:</label>
@@ -285,7 +279,6 @@
                             </div>
                         </div>
 
-                        <!-- Tool Specific Hidden Options -->
                         <div id="encryptOptionsGroup" class="hidden space-y-2">
                             <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Set Password Protection:</label>
                             <input type="password" placeholder="Enter secure password" class="w-full p-2.5 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
@@ -314,7 +307,6 @@
                             <input type="text" value="all" class="w-full p-2.5 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                         </div>
 
-                        <!-- Watermark Grid -->
                         <div id="watermarkContainer" class="hidden grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-slate-200 dark:border-slate-700">
                             <div>
                                 <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Text Watermark:</label>
@@ -345,18 +337,14 @@
                 </h3>
                 <button onclick="clearHistory()" class="text-xs font-semibold text-slate-400 hover:text-red-500 transition-colors">Clear</button>
             </div>
-            <ul id="historyList" class="divide-y divide-slate-100 dark:divide-slate-700/50">
-                <!-- History items injected here via JS -->
-            </ul>
+            <ul id="historyList" class="divide-y divide-slate-100 dark:divide-slate-700/50"></ul>
         </div>
     </main>
 
     <!-- UI & LOGIC SCRIPT -->
     <script>
-        // PDF.js Worker Setup
         try { if (typeof pdfjsLib !== 'undefined') pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; } catch(e) {}
 
-        // Meta Info for Tools
         const toolSeoMeta = {
             'pdf-to-png': { title: 'PDF to PNG - PrivacyConvert', desc: 'Extract PDF pages into PNG images.', label: 'PDF to PNG', cat: 'pdf' },
             'pdf-to-jpg': { title: 'PDF to JPG - PrivacyConvert', desc: 'Extract PDF pages into JPG images.', label: 'PDF to JPG', cat: 'pdf' },
@@ -384,7 +372,6 @@
             'ocr-reader': { title: 'OCR Reader - PrivacyConvert', desc: 'Extract text from images using AI.', label: 'OCR Text Reader', cat: 'security' }
         };
 
-        // Theme Toggle Logic
         const themeToggle = document.getElementById('themeToggle');
         themeToggle.addEventListener('click', () => {
             const html = document.documentElement;
@@ -393,10 +380,8 @@
             themeToggle.textContent = isDark ? '☀️' : '🌙';
             localStorage.setItem('privacyConvert_theme', isDark ? 'dark' : 'light');
         });
-        // Set initial icon
         themeToggle.textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
 
-        // Search Logic
         const searchInput = document.getElementById('toolSearchInput');
         searchInput.addEventListener('input', (e) => {
             const query = e.target.value.toLowerCase().trim();
@@ -404,14 +389,12 @@
                 const text = tab.textContent.toLowerCase();
                 tab.style.display = text.includes(query) ? 'block' : 'none';
             });
-            // Hide category headers if empty
             document.querySelectorAll('.tool-category').forEach(cat => {
                 const hasVisible = Array.from(cat.querySelectorAll('.tool-tab')).some(t => t.style.display !== 'none');
                 cat.style.display = hasVisible ? 'block' : 'none';
             });
         });
 
-        // Toast Notification
         function showToast(message, type = 'success') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
@@ -425,18 +408,15 @@
             }, 3000);
         }
 
-        // Core App State
         let currentTool = 'pdf-to-png';
         let selectedFiles = [];
 
-        // Elements
         const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('fileInput');
         const actionArea = document.getElementById('actionArea');
         const clearBtn = document.getElementById('clearBtn');
         const fileListContainer = document.getElementById('fileListContainer');
         
-        // Advanced Accordion Logic
         const accordionBtn = document.getElementById('accordionToggleBtn');
         const accordionContent = document.getElementById('accordionContent');
         const accordionChevron = document.getElementById('accordionChevron');
@@ -453,7 +433,6 @@
             fileInput.value = "";
             fileListContainer.innerHTML = '';
             
-            // Hide all result boxes
             ['imagePreviewBox', 'genericTextBox', 'diffResultBox', 'qrResultBox', 'generatorResultBox', 'textInputGroup', 'passwordOptionsGroup', 'diffInputGroup', 'advancedAccordionWrapper'].forEach(id => {
                 const el = document.getElementById(id);
                 if(el) el.classList.add('hidden');
@@ -471,7 +450,6 @@
             const prefix = document.getElementById('mainTitlePrefix');
             const accent = document.getElementById('mainTitleAccent');
             
-            // Nice split for titles (e.g. "JSON Formatter" -> Prefix: "JSON", Accent: "Formatter")
             const parts = meta.label.split(' ');
             if (parts.length > 1) {
                 accent.textContent = parts.pop();
@@ -494,7 +472,6 @@
                 localStorage.setItem('privacyConvert_lastTool', tool);
             }
 
-            // Styling tabs
             document.querySelectorAll('.tool-tab').forEach(btn => {
                 if (btn.id === `tab-${tool}`) {
                     btn.className = "tool-tab w-full text-left px-4 py-2.5 text-sm font-bold rounded-xl transition-all shadow-md bg-indigo-600 text-white transform scale-105";
@@ -503,7 +480,6 @@
                 }
             });
 
-            // Hide specific advanced options initially
             ['encryptOptionsGroup', 'batesOptionsGroup', 'compressOptionsGroup', 'webpOptionsGroup', 'pdfRangeGroup', 'watermarkContainer', 'qualityContainer'].forEach(id => {
                 const el = document.getElementById(id);
                 if(el) el.classList.add('hidden');
@@ -512,13 +488,12 @@
             let requiresFile = true;
             let showAdvanced = true;
 
-            // Configure based on tool
             switch(tool) {
                 case 'pdf-to-png': case 'pdf-to-jpg':
                     fileInput.accept = ".pdf"; fileInput.multiple = true;
                     document.getElementById('qualityContainer').classList.remove('hidden');
                     document.getElementById('pdfRangeGroup').classList.remove('hidden');
-                    document.getElementById('watermarkContainer').classList.remove('hidden', 'hidden');
+                    document.getElementById('watermarkContainer').classList.remove('hidden');
                     document.getElementById('outputFormatBadge').innerHTML = tool === 'pdf-to-png' ? "🖼️ PNG" : "🖼️ JPG";
                     break;
                 case 'merge-pdf': case 'split-pdf':
@@ -536,6 +511,16 @@
                     document.getElementById('encryptOptionsGroup').classList.remove('hidden');
                     document.getElementById('outputFormatBadge').innerHTML = "🔒 Encrypted PDF";
                     break;
+                case 'heic-to-jpg': case 'webp-converter': case 'redact-tool': case 'extract-pdf-img':
+                    fileInput.accept = "image/*,.pdf"; fileInput.multiple = true;
+                    showAdvanced = false;
+                    break;
+                case 'hash-calc': case 'ocr-reader': case 'sign-tool':
+                    fileInput.accept = "*/*"; fileInput.multiple = false;
+                    showAdvanced = false;
+                    break;
+                
+                // NO-FILE TOOLS
                 case 'json-tool': case 'md-tool':
                     requiresFile = false; showAdvanced = false;
                     document.getElementById('textInputGroup').classList.remove('hidden');
@@ -579,21 +564,16 @@
                     document.getElementById('mainInputField').placeholder = "Enter URL or text for QR Code...";
                     document.getElementById('convertBtnText').textContent = "Generate QR";
                     break;
-                default: // Fallback generic file tools (Hash, OCR, etc)
-                    fileInput.accept = "*/*"; fileInput.multiple = false;
-                    showAdvanced = false;
-                    break;
             }
 
             if (!requiresFile) {
                 dropZone.style.display = 'none';
-                actionArea.classList.remove('hidden');
             } else {
+                dropZone.style.display = 'block';
                 if(showAdvanced) document.getElementById('advancedAccordionWrapper').classList.remove('hidden');
             }
         }
 
-        // Initialize Router & State
         window.addEventListener('DOMContentLoaded', () => {
             renderHistory();
             const hash = window.location.hash.replace('#', '');
@@ -603,9 +583,7 @@
             else switchTool('pdf-to-png', false);
         });
 
-        // ==========================================
-        // DRAG & DROP / FILE LIST LOGIC
-        // ==========================================
+        // Drag & Drop & Input Listeners
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(e => dropZone.addEventListener(e, preventD, false));
         function preventD(e) { e.preventDefault(); e.stopPropagation(); }
         
@@ -618,7 +596,6 @@
 
         function handleFiles(files) {
             if(files.length === 0) return;
-            // Append if multiple allowed, replace if single
             if(fileInput.multiple) {
                 selectedFiles = [...selectedFiles, ...Array.from(files)];
             } else {
@@ -632,7 +609,6 @@
             renderFileList();
             showToast(`${files.length} file(s) loaded.`);
             
-            // Auto trigger OCR or Hash preview logic if applicable
             if(currentTool === 'hash-calc' || currentTool === 'ocr-reader') {
                 document.getElementById('genericTextBox').classList.remove('hidden');
                 document.getElementById('genericTextArea').value = `Ready to process: ${selectedFiles[0].name}\nClick Convert to begin...`;
@@ -667,7 +643,6 @@
                 fileListContainer.appendChild(card);
             });
             
-            // Show single image preview if only 1 image loaded
             const previewBox = document.getElementById('imagePreviewBox');
             if (selectedFiles.length === 1 && selectedFiles[0].type.startsWith('image/')) {
                 const reader = new FileReader();
@@ -685,11 +660,6 @@
             selectedFiles.splice(index, 1);
             renderFileList();
         }
-
-
-        // ==========================================
-        // TEXT & UTILITY TOOL IMPLEMENTATIONS
-        // ==========================================
 
         function processJson() {
             const input = document.getElementById('mainInputField').value.trim();
@@ -737,13 +707,9 @@
             document.getElementById('generatedDisplay').value = uuid;
         }
 
-        // Clipboards
         window.copyGenericText = () => { document.getElementById('genericTextArea').select(); document.execCommand('copy'); showToast("Copied to clipboard!"); }
         window.copyGenerated = () => { document.getElementById('generatedDisplay').select(); document.execCommand('copy'); showToast("Copied to clipboard!"); }
 
-        // ==========================================
-        // HISTORY MANAGEMENT
-        // ==========================================
         function renderHistory() {
             const list = document.getElementById('historyList');
             let history = JSON.parse(localStorage.getItem('privacyConvert_history')) || [];
@@ -765,7 +731,7 @@
             let history = JSON.parse(localStorage.getItem('privacyConvert_history')) || [];
             const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             history.unshift({ action: action, time: timeStr });
-            if(history.length > 5) history.pop(); // Keep last 5
+            if(history.length > 5) history.pop();
             localStorage.setItem('privacyConvert_history', JSON.stringify(history));
             renderHistory();
         }
@@ -775,13 +741,8 @@
             showToast("History cleared");
         }
 
-        // ==========================================
-        // MAIN CONVERT ENGINE
-        // ==========================================
         const convertBtn = document.getElementById('convertBtn');
         convertBtn.addEventListener('click', async () => {
-            
-            // Text Generators & Converters
             if (currentTool === 'password-gen' || currentTool === 'uuid-gen') { window.copyGenerated(); return; }
             if (currentTool === 'json-tool') { processJson(); addHistory("Formatted JSON String"); return; }
             
@@ -816,27 +777,21 @@
                 return;
             }
 
-            // File Operations checking
             if (selectedFiles.length === 0 && currentTool !== 'md-tool' && currentTool !== 'diff-tool') {
                 showToast("Please add files first", "error");
-                // Animate dropzone to grab attention
                 dropZone.classList.add('border-red-500', 'bg-red-50');
                 setTimeout(() => dropZone.classList.remove('border-red-500', 'bg-red-50'), 500);
                 return;
             }
 
-            // Show Processing UI
             const modal = document.getElementById('progressModal');
             modal.classList.remove('hidden');
             
-            // Mock Async Processing (Here you will hook up PDF.js, JSZip etc)
             setTimeout(() => {
                 modal.classList.add('hidden');
-                
                 const filesCount = selectedFiles.length;
                 let historyMsg = `Processed ${filesCount} file(s) via ${toolSeoMeta[currentTool].label}`;
                 
-                // Simulate output based on tool
                 if (currentTool === 'hash-calc') {
                     document.getElementById('genericTextArea').value = `SHA-256 for ${selectedFiles[0].name}:\ne3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n(Mock implementation)`;
                 } 
@@ -846,7 +801,7 @@
 
                 addHistory(historyMsg);
                 showToast("Process completed securely!");
-            }, 1200); // Fake delay
+            }, 1200);
         });
     </script>
 </body>
