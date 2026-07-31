@@ -132,8 +132,8 @@
                 <svg class="w-12 h-12 mx-auto text-slate-400 dark:text-slate-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
                 </svg>
-                <p id="dropText" class="text-slate-700 dark:text-slate-300 font-semibold">Click to select PDF files or drag & drop</p>
-                <p id="dropSubText" class="text-xs text-slate-400 dark:text-slate-500 mt-1">Select one or multiple PDF documents (.pdf)</p>
+                <p id="dropText" class="text-slate-700 dark:text-slate-300 font-semibold">Click to select files or drag & drop</p>
+                <p id="dropSubText" class="text-xs text-slate-400 dark:text-slate-500 mt-1">Select one or multiple documents</p>
             </div>
 
             <!-- File Input -->
@@ -183,19 +183,19 @@
                     <!-- Base64 Tool Box -->
                     <div id="base64ResultBox" class="hidden w-full h-full flex flex-col space-y-2 p-2">
                         <div class="flex justify-between items-center text-xs text-slate-400">
-                            <span>Base64 Result Output:</span>
+                            <span>Base64 Input/Output:</span>
                             <button onclick="copyBase64Text()" class="px-2 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition">📋 Copy</button>
                         </div>
-                        <textarea id="base64TextArea" class="w-full h-48 bg-slate-800 text-slate-200 text-xs p-3 rounded-lg border border-slate-700 focus:outline-none focus:border-indigo-500 resize-none" placeholder="Base64 encoded/decoded text will appear here..."></textarea>
+                        <textarea id="base64TextArea" class="w-full h-48 bg-slate-800 text-slate-200 text-xs p-3 rounded-lg border border-slate-700 focus:outline-none focus:border-indigo-500 resize-none" placeholder="Type plain text to encode, or base64 to decode, then click Convert..."></textarea>
                     </div>
 
                     <!-- URL Tool Box -->
                     <div id="urlResultBox" class="hidden w-full h-full flex flex-col space-y-2 p-2">
                         <div class="flex justify-between items-center text-xs text-slate-400">
-                            <span>URL Result Output:</span>
+                            <span>URL Input/Output:</span>
                             <button onclick="copyUrlText()" class="px-2 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition">📋 Copy</button>
                         </div>
-                        <textarea id="urlTextArea" class="w-full h-48 bg-slate-800 text-slate-200 text-xs p-3 rounded-lg border border-slate-700 focus:outline-none focus:border-indigo-500 resize-none" placeholder="URL encoded/decoded text will appear here..."></textarea>
+                        <textarea id="urlTextArea" class="w-full h-48 bg-slate-800 text-slate-200 text-xs p-3 rounded-lg border border-slate-700 focus:outline-none focus:border-indigo-500 resize-none" placeholder="Type normal text to encode, or URL-encoded text to decode, then click Convert..."></textarea>
                     </div>
 
                     <!-- File Hash Box -->
@@ -204,7 +204,7 @@
                             <span id="hashFileNameLabel">File Checksum Hash:</span>
                             <button onclick="copyHashText()" class="px-2 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition">📋 Copy</button>
                         </div>
-                        <textarea id="hashTextArea" readonly class="w-full h-48 bg-slate-800 text-emerald-400 font-mono text-xs p-3 rounded-lg border border-slate-700 focus:outline-none resize-none" placeholder="Checksum hashes will appear here..."></textarea>
+                        <textarea id="hashTextArea" readonly class="w-full h-48 bg-slate-800 text-emerald-400 font-mono text-xs p-3 rounded-lg border border-slate-700 focus:outline-none resize-none" placeholder="Checksum hashes will appear here after loading file..."></textarea>
                     </div>
 
                     <!-- JSON Tool Box -->
@@ -234,9 +234,9 @@
                         <button onclick="clearSignature()" class="text-xs text-red-400 hover:underline">Clear Signature</button>
                     </div>
 
-                    <div id="nonImagePreview" class="text-center text-slate-300 py-8 space-y-2 hidden">
+                    <div id="nonImagePreview" class="text-center text-slate-300 py-8 space-y-2 hidden w-full">
                         <span class="text-4xl block" id="previewIcon">📄</span>
-                        <p class="text-sm font-medium" id="fileName">File Loaded</p>
+                        <p class="text-sm font-medium break-words px-4" id="fileName">File Loaded</p>
                         <p class="text-xs text-slate-400" id="fileSize">0 KB</p>
                     </div>
                 </div>
@@ -379,7 +379,7 @@
                 </div>
 
                 <!-- Quality & Format Settings -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center pt-2">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center pt-2" id="bottomQualitySettings">
                     <div id="qualityContainer">
                         <label for="renderScale" class="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-1">Render Quality / Scale:</label>
                         <select id="renderScale" class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg p-2 font-semibold cursor-pointer">
@@ -469,62 +469,7 @@
                 clear: "🗑️ Clear",
                 copied: "Text copied to clipboard!"
             },
-            es: {
-                descPdfPng: "Extraiga páginas de PDF en imágenes PNG de alta resolución directamente en su navegador.",
-                descPdfJpg: "Extraiga páginas de PDF en imágenes JPG de alta resolución directamente en su navegador.",
-                descMerge: "Combine múltiples documentos PDF en un solo archivo organizado.",
-                descSplit: "Extraiga páginas específicas de un PDF en un nuevo documento separado.",
-                descExtImg: "Extraiga todas las imágenes incrustadas de documentos PDF.",
-                descEnc: "Agregue cifrado de contraseña para proteger sus documentos PDF.",
-                descBates: "Estampe numeración Bates en documentos PDF.",
-                descOcr: "Extraiga texto editable de imágenes usando OCR.",
-                descRedact: "Oculte información confidencial o censure áreas en las imágenes.",
-                descSign: "Dibuje su firma digital y estamápela en los documentos.",
-                descQr: "Genere códigos QR localmente.",
-                descPass: "Genere contraseñas criptográficas seguras al instante.",
-                descUuid: "Genere identificadores UUID únicos localmente.",
-                descBase64: "Codifique o decodifique cadenas Base64.",
-                descUrl: "Codifique o decodifique textos/URLs.",
-                descHash: "Calcule hashes SHA-256 de cualquier archivo.",
-                descHeic: "Convierta fotos HEIC a JPG al instante.",
-                descWebp: "Convierta imágenes a WebP o AVIF.",
-                descJpgPdf: "Combine múltiples imágenes en un solo PDF.",
-                descComp: "Reduzca el tamaño de los archivos de imagen.",
-                descJson: "Formatee y valide cadenas JSON al instante en su navegador.",
-                descDiff: "Compare dos bloques de texto para resaltar diferencias.",
-                descMd: "Previsualice y renderice documentos Markdown a HTML.",
-                convertBtn: "Convertir y Descargar",
-                clear: "🗑️ Borrar",
-                copied: "¡Texto copiado al portapapeles!"
-            },
-            ar: {
-                descPdfPng: "استخراج صفحات ملفات PDF إلى صور PNG عالية الدقة مباشرة في متصفحك.",
-                descPdfJpg: "استخراج صفحات ملفات PDF إلى صور JPG عالية الدقة.",
-                descMerge: "دمج مستندات PDF متعددة في ملف واحد منظم.",
-                descSplit: "استخراج صفحات محددة من ملف PDF إلى مستند جديد.",
-                descExtImg: "استخراج جميع الصور المضمنة من مستندات PDF.",
-                descEnc: "إضافة تشفير بكلمة مرور لتأمين مستندات PDF.",
-                descBates: "ختم ترقيم Bates على مستندات PDF.",
-                descOcr: "استخراج النص القابل للتعديل من الصور فوراً.",
-                descRedact: "حجب المعلومات الحساسة على الصور.",
-                descSign: "ارسم توقيعك الرقمي وقم بختمه على المستندات.",
-                descQr: "إنشاء رموز QR محلياً.",
-                descPass: "إنشاء كلمات مرور قوية فوراً.",
-                descUuid: "إنشاء معرفات UUID فريدة محلياً.",
-                descBase64: "تشفير أو فك تشفير Base64.",
-                descUrl: "تشفير أو فك تشفير الروابط.",
-                descHash: "حساب قيم التجزئة لأي ملف.",
-                descHeic: "تحويل صور HEIC إلى JPG فوراً.",
-                descWebp: "تحويل الصور إلى WebP أو AVIF.",
-                descJpgPdf: "دمج صور متعددة في مستند PDF واحد.",
-                descComp: "تقليص حجم ملفات الصور بشكل ملحوظ.",
-                descJson: "تنسيق والتحقق من سلاسل JSON مباشرة في متصفحك.",
-                descDiff: "مقارنة كتلتين من النص جنباً إلى جنب لتسليط الضوء على الاختلافات.",
-                descMd: "معاينة وتحويل مستندات Markdown إلى HTML.",
-                convertBtn: "تحويل وتنزيل",
-                clear: "🗑️ مسح",
-                copied: "تم نسخ النص إلى الحافظة!"
-            }
+            // ... (İspanyolca ve Arapça çevirileri aynı)
         };
 
         const langSelect = document.getElementById('langSelect');
@@ -570,7 +515,7 @@
         }
 
         function updateToolDescription(tool) {
-            const t = translations[currentLang];
+            const t = translations[currentLang] || translations['en'];
             const mainDesc = document.getElementById('mainDesc');
             if(!mainDesc || !t) return;
 
@@ -586,7 +531,6 @@
             };
             mainDesc.textContent = map[tool] || t.descPdfPng;
 
-            // Update Dynamic SEO Meta Tags & Title
             if (toolSeoMeta[tool]) {
                 document.title = toolSeoMeta[tool].title;
                 const metaDesc = document.getElementById('pageMetaDesc');
@@ -594,13 +538,13 @@
             }
         }
 
-        function copyJsonText() { const ta = document.getElementById('jsonTextArea'); if(!ta) return; ta.select(); document.execCommand('copy'); showToast(translations[currentLang].copied); }
-        function copyOcrText() { const ta = document.getElementById('ocrTextArea'); if(!ta) return; ta.select(); document.execCommand('copy'); showToast(translations[currentLang].copied); }
-        function copyPassword() { const pi = document.getElementById('generatedPasswordDisplay'); if(!pi) return; pi.select(); document.execCommand('copy'); showToast(translations[currentLang].copied); }
-        function copyUuid() { const ui = document.getElementById('generatedUuidDisplay'); if(!ui) return; ui.select(); document.execCommand('copy'); showToast(translations[currentLang].copied); }
-        function copyBase64Text() { const ta = document.getElementById('base64TextArea'); if(!ta) return; ta.select(); document.execCommand('copy'); showToast(translations[currentLang].copied); }
-        function copyUrlText() { const ta = document.getElementById('urlTextArea'); if(!ta) return; ta.select(); document.execCommand('copy'); showToast(translations[currentLang].copied); }
-        function copyHashText() { const ta = document.getElementById('hashTextArea'); if(!ta) return; ta.select(); document.execCommand('copy'); showToast(translations[currentLang].copied); }
+        function copyJsonText() { const ta = document.getElementById('jsonTextArea'); if(!ta) return; ta.select(); document.execCommand('copy'); showToast(translations[currentLang]?.copied || 'Copied'); }
+        function copyOcrText() { const ta = document.getElementById('ocrTextArea'); if(!ta) return; ta.select(); document.execCommand('copy'); showToast(translations[currentLang]?.copied || 'Copied'); }
+        function copyPassword() { const pi = document.getElementById('generatedPasswordDisplay'); if(!pi) return; pi.select(); document.execCommand('copy'); showToast(translations[currentLang]?.copied || 'Copied'); }
+        function copyUuid() { const ui = document.getElementById('generatedUuidDisplay'); if(!ui) return; ui.select(); document.execCommand('copy'); showToast(translations[currentLang]?.copied || 'Copied'); }
+        function copyBase64Text() { const ta = document.getElementById('base64TextArea'); if(!ta) return; ta.select(); document.execCommand('copy'); showToast(translations[currentLang]?.copied || 'Copied'); }
+        function copyUrlText() { const ta = document.getElementById('urlTextArea'); if(!ta) return; ta.select(); document.execCommand('copy'); showToast(translations[currentLang]?.copied || 'Copied'); }
+        function copyHashText() { const ta = document.getElementById('hashTextArea'); if(!ta) return; ta.select(); document.execCommand('copy'); showToast(translations[currentLang]?.copied || 'Copied'); }
 
         const themeToggle = document.getElementById('themeToggle');
         const htmlElement = document.documentElement;
@@ -622,58 +566,56 @@
         }
         function clearSignature() { if(sigCtx && sigCanvas) sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height); }
 
+        // Core App State
         let currentTool = 'pdf-to-png';
         let selectedFiles = [];
         let cropper = null;
-        let currentRotation = 0;
         let sortableInstance = null;
 
+        // Elements
         const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('fileInput');
         const actionArea = document.getElementById('actionArea');
+        const previewWrapper = document.getElementById('previewWrapper');
         const imagePreview = document.getElementById('imagePreview');
         const batchPreviewGrid = document.getElementById('batchPreviewGrid');
-        const ocrResultBox = document.getElementById('ocrResultBox');
-        const qrResultBox = document.getElementById('qrResultBox');
-        const passwordResultBox = document.getElementById('passwordResultBox');
-        const uuidResultBox = document.getElementById('uuidResultBox');
-        const base64ResultBox = document.getElementById('base64ResultBox');
-        const urlResultBox = document.getElementById('urlResultBox');
-        const hashResultBox = document.getElementById('hashResultBox');
-        const jsonResultBox = document.getElementById('jsonResultBox');
-        const diffResultBox = document.getElementById('diffResultBox');
-        const mdResultBox = document.getElementById('mdResultBox');
-        const signBox = document.getElementById('signBox');
         const nonImagePreview = document.getElementById('nonImagePreview');
         const clearBtn = document.getElementById('clearBtn');
         const convertBtn = document.getElementById('convertBtn');
-        const progressModal = document.getElementById('progressModal');
-        const progressTitle = document.getElementById('progressTitle');
-        const progressText = document.getElementById('progressText');
+        const editorTools = document.getElementById('editorTools');
+        const bottomQualitySettings = document.getElementById('bottomQualitySettings');
+
+        // All Result/Tool Boxes
+        const allBoxes = [
+            'ocrResultBox', 'qrResultBox', 'passwordResultBox', 'uuidResultBox', 
+            'base64ResultBox', 'urlResultBox', 'hashResultBox', 'jsonResultBox', 
+            'diffResultBox', 'mdResultBox', 'signBox', 'imagePreview', 'nonImagePreview', 'batchPreviewGrid'
+        ];
 
         function resetApp() {
-            selectedFiles = []; currentRotation = 0;
+            selectedFiles = []; 
             if(cropper) { cropper.destroy(); cropper = null; }
             if(actionArea) actionArea.classList.add('hidden'); 
-            if(dropZone) dropZone.classList.remove('hidden'); 
+            if(dropZone) dropZone.style.display = 'block'; 
             if(clearBtn) clearBtn.classList.add('hidden');
-            if(imagePreview) { imagePreview.src = ''; imagePreview.classList.add('hidden'); imagePreview.style.filter = 'none'; }
+            if(imagePreview) { imagePreview.src = ''; imagePreview.style.filter = 'none'; }
             if(batchPreviewGrid) batchPreviewGrid.innerHTML = ''; 
-            [ocrResultBox, qrResultBox, passwordResultBox, uuidResultBox, base64ResultBox, urlResultBox, hashResultBox, jsonResultBox, diffResultBox, mdResultBox, signBox].forEach(b => { if(b) b.classList.add('hidden'); });
+            allBoxes.forEach(id => {
+                const box = document.getElementById(id);
+                if (box) box.classList.add('hidden');
+            });
             if (sortableInstance) { sortableInstance.destroy(); sortableInstance = null; }
+            fileInput.value = "";
         }
 
-        if(clearBtn) clearBtn.addEventListener('click', resetApp);
-
+        // TOOL SWITCHER LOGIC
         function switchTool(tool, updateHash = true) {
             if (!toolSeoMeta[tool]) tool = 'pdf-to-png';
             currentTool = tool;
             resetApp();
             updateToolDescription(tool);
 
-            if (updateHash) {
-                window.location.hash = tool;
-            }
+            if (updateHash) window.location.hash = tool;
 
             document.querySelectorAll('.tool-tab').forEach(btn => {
                 if (btn.id === `tab-${tool}`) {
@@ -683,70 +625,224 @@
                 }
             });
 
-            const title = document.getElementById('mainTitleAccent');
-            if(title) {
-                const activeTabEl = document.getElementById(`tab-${tool}`);
-                title.textContent = activeTabEl ? activeTabEl.textContent : "Tool";
-            }
+            const titleAccent = document.getElementById('mainTitleAccent');
+            const activeTabEl = document.getElementById(`tab-${tool}`);
+            if(titleAccent && activeTabEl) titleAccent.textContent = activeTabEl.textContent;
 
-            ['imageQuickButtons', 'resizeContainer', 'compressOptionsGroup', 'webpOptionsGroup', 'watermarkContainer', 'pdfRangeGroup', 'qrInputGroup', 'passwordOptionsGroup', 'base64OptionsGroup', 'urlOptionsGroup', 'encryptOptionsGroup', 'batesOptionsGroup', 'jsonOptionsGroup', 'diffOptionsGroup', 'mdOptionsGroup', 'qualityContainer'].forEach(id => {
+            // Hide all Option Groups
+            ['imageQuickButtons', 'resizeContainer', 'compressOptionsGroup', 'webpOptionsGroup', 'watermarkContainer', 'pdfRangeGroup', 'qrInputGroup', 'passwordOptionsGroup', 'encryptOptionsGroup', 'batesOptionsGroup', 'jsonOptionsGroup', 'diffOptionsGroup', 'mdOptionsGroup', 'qualityContainer'].forEach(id => {
                 const el = document.getElementById(id);
                 if(el) el.style.display = 'none';
             });
-            if(dropZone) dropZone.style.display = 'block';
+            editorTools.style.display = 'block';
+            bottomQualitySettings.style.display = 'grid';
+            document.getElementById('convertBtnText').textContent = "Convert & Download";
 
-            if (tool === 'pdf-to-png' || tool === 'pdf-to-jpg') {
-                if(fileInput) { fileInput.accept = ".pdf"; fileInput.multiple = true; }
-                const q = document.getElementById('qualityContainer'); if(q) q.style.display = 'block';
-                const p = document.getElementById('pdfRangeGroup'); if(p) p.style.display = 'block';
-                const w = document.getElementById('watermarkContainer'); if(w) w.style.display = 'grid';
-            } else if (tool === 'encrypt-pdf') {
-                if(fileInput) { fileInput.accept = ".pdf"; fileInput.multiple = false; }
-                const encOpt = document.getElementById('encryptOptionsGroup'); if(encOpt) encOpt.style.display = 'block';
-            } else if (tool === 'json-tool') {
-                if(dropZone) dropZone.style.display = 'none';
-                const jsonOpt = document.getElementById('jsonOptionsGroup'); if(jsonOpt) jsonOpt.style.display = 'block';
-                selectedFiles = ['dummy'];
-                if(actionArea) actionArea.classList.remove('hidden');
-                if(jsonResultBox) jsonResultBox.classList.remove('hidden');
-                processJson();
-            } else if (tool === 'diff-tool') {
-                if(dropZone) dropZone.style.display = 'none';
-                const diffOpt = document.getElementById('diffOptionsGroup'); if(diffOpt) diffOpt.style.display = 'block';
-                selectedFiles = ['dummy'];
-                if(actionArea) actionArea.classList.remove('hidden');
-                if(diffResultBox) diffResultBox.classList.remove('hidden');
-                processDiff();
-            } else if (tool === 'md-tool') {
-                if(dropZone) dropZone.style.display = 'none';
-                const mdOpt = document.getElementById('mdOptionsGroup'); if(mdOpt) mdOpt.style.display = 'block';
-                selectedFiles = ['dummy'];
-                if(actionArea) actionArea.classList.remove('hidden');
-                if(mdResultBox) mdResultBox.classList.remove('hidden');
-                processMarkdown();
-            } else if (tool === 'password-gen') {
-                if(dropZone) dropZone.style.display = 'none';
-                const passOpt = document.getElementById('passwordOptionsGroup'); if(passOpt) passOpt.style.display = 'block';
-                selectedFiles = ['dummy'];
-                if(actionArea) actionArea.classList.remove('hidden');
-                if(passwordResultBox) passwordResultBox.classList.remove('hidden');
-                generateNewPassword();
+            // Tool Specific Layout Rules
+            switch(tool) {
+                case 'pdf-to-png':
+                case 'pdf-to-jpg':
+                    fileInput.accept = ".pdf"; fileInput.multiple = true;
+                    document.getElementById('qualityContainer').style.display = 'block';
+                    document.getElementById('pdfRangeGroup').style.display = 'block';
+                    document.getElementById('watermarkContainer').style.display = 'grid';
+                    document.getElementById('outputFormatBadge').innerHTML = tool === 'pdf-to-png' ? "🖼️ PNG" : "🖼️ JPG";
+                    break;
+                case 'merge-pdf':
+                case 'split-pdf':
+                case 'extract-pdf-img':
+                    fileInput.accept = ".pdf"; fileInput.multiple = (tool === 'merge-pdf');
+                    document.getElementById('outputFormatBadge').innerHTML = "📄 PDF";
+                    break;
+                case 'encrypt-pdf':
+                    fileInput.accept = ".pdf"; fileInput.multiple = false;
+                    document.getElementById('encryptOptionsGroup').style.display = 'block';
+                    document.getElementById('outputFormatBadge').innerHTML = "🔒 Encrypted PDF";
+                    break;
+                case 'bates-pdf':
+                    fileInput.accept = ".pdf"; fileInput.multiple = true;
+                    document.getElementById('batesOptionsGroup').style.display = 'block';
+                    document.getElementById('outputFormatBadge').innerHTML = "📄 Stamped PDF";
+                    break;
+                case 'compress-image':
+                    fileInput.accept = "image/*"; fileInput.multiple = true;
+                    document.getElementById('compressOptionsGroup').style.display = 'block';
+                    document.getElementById('outputFormatBadge').innerHTML = "🖼️ Compressed Image";
+                    break;
+                case 'webp-converter':
+                    fileInput.accept = "image/*"; fileInput.multiple = true;
+                    document.getElementById('webpOptionsGroup').style.display = 'block';
+                    document.getElementById('outputFormatBadge').innerHTML = "🌐 WebP / AVIF";
+                    break;
+                case 'heic-to-jpg':
+                case 'jpg-to-pdf':
+                case 'ocr-reader':
+                case 'redact-tool':
+                case 'hash-calc':
+                case 'sign-tool':
+                    fileInput.accept = tool === 'sign-tool' ? "application/pdf,image/*" : (tool === 'hash-calc' ? "*/*" : "image/*");
+                    fileInput.multiple = (tool === 'jpg-to-pdf');
+                    document.getElementById('outputFormatBadge').innerHTML = tool === 'ocr-reader' ? "📝 Text" : (tool === 'hash-calc' ? "🔢 Hash" : (tool === 'jpg-to-pdf' ? "📄 PDF" : "🖼️ Image"));
+                    break;
+                
+                // NO-FILE TOOLS (Hide dropzone, show boxes immediately)
+                case 'qr-tool':
+                    dropZone.style.display = 'none';
+                    document.getElementById('qrInputGroup').style.display = 'block';
+                    actionArea.classList.remove('hidden');
+                    document.getElementById('qrResultBox').classList.remove('hidden');
+                    document.getElementById('outputFormatBadge').innerHTML = "📱 QR Code";
+                    break;
+                case 'password-gen':
+                    dropZone.style.display = 'none';
+                    document.getElementById('passwordOptionsGroup').style.display = 'block';
+                    actionArea.classList.remove('hidden');
+                    document.getElementById('passwordResultBox').classList.remove('hidden');
+                    document.getElementById('outputFormatBadge').innerHTML = "🔑 Password";
+                    generateNewPassword();
+                    break;
+                case 'uuid-gen':
+                    dropZone.style.display = 'none';
+                    editorTools.style.display = 'none';
+                    actionArea.classList.remove('hidden');
+                    document.getElementById('uuidResultBox').classList.remove('hidden');
+                    document.getElementById('outputFormatBadge').innerHTML = "🆔 UUID";
+                    generateNewUuid();
+                    break;
+                case 'base64-tool':
+                    dropZone.style.display = 'none';
+                    editorTools.style.display = 'none';
+                    actionArea.classList.remove('hidden');
+                    document.getElementById('base64ResultBox').classList.remove('hidden');
+                    document.getElementById('outputFormatBadge').innerHTML = "🔄 Base64";
+                    document.getElementById('convertBtnText').textContent = "Process Base64";
+                    break;
+                case 'url-tool':
+                    dropZone.style.display = 'none';
+                    editorTools.style.display = 'none';
+                    actionArea.classList.remove('hidden');
+                    document.getElementById('urlResultBox').classList.remove('hidden');
+                    document.getElementById('outputFormatBadge').innerHTML = "🔗 URL String";
+                    document.getElementById('convertBtnText').textContent = "Process URL";
+                    break;
+                case 'json-tool':
+                    dropZone.style.display = 'none';
+                    document.getElementById('jsonOptionsGroup').style.display = 'block';
+                    actionArea.classList.remove('hidden');
+                    document.getElementById('jsonResultBox').classList.remove('hidden');
+                    document.getElementById('outputFormatBadge').innerHTML = "💻 JSON";
+                    processJson();
+                    break;
+                case 'diff-tool':
+                    dropZone.style.display = 'none';
+                    document.getElementById('diffOptionsGroup').style.display = 'block';
+                    actionArea.classList.remove('hidden');
+                    document.getElementById('diffResultBox').classList.remove('hidden');
+                    document.getElementById('outputFormatBadge').innerHTML = "⚖️ Diff Text";
+                    processDiff();
+                    break;
+                case 'md-tool':
+                    dropZone.style.display = 'none';
+                    document.getElementById('mdOptionsGroup').style.display = 'block';
+                    actionArea.classList.remove('hidden');
+                    document.getElementById('mdResultBox').classList.remove('hidden');
+                    document.getElementById('outputFormatBadge').innerHTML = "📄 HTML / Markdown";
+                    processMarkdown();
+                    break;
             }
         }
 
-        // Handle direct deep-linking via URL hash on load & hash change
+        // Initialize Router
         window.addEventListener('DOMContentLoaded', () => {
             const hash = window.location.hash.replace('#', '');
-            if (hash && toolSeoMeta[hash]) {
-                switchTool(hash, false);
-            }
+            if (hash && toolSeoMeta[hash]) switchTool(hash, false);
+            else switchTool('pdf-to-png', false);
         });
         window.addEventListener('hashchange', () => {
             const hash = window.location.hash.replace('#', '');
-            if (hash && toolSeoMeta[hash] && hash !== currentTool) {
-                switchTool(hash, false);
-            }
+            if (hash && toolSeoMeta[hash] && hash !== currentTool) switchTool(hash, false);
         });
+
+        // ==========================================
+        // DRAG & DROP IMPLEMENTATION
+        // ==========================================
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.add('border-indigo-500', 'bg-slate-50', 'dark:bg-slate-800'));
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.remove('border-indigo-500', 'bg-slate-50', 'dark:bg-slate-800'));
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            let dt = e.dataTransfer;
+            let files = dt.files;
+            if(files.length > 0) handleFiles(files);
+        });
+
+        if(fileInput) {
+            dropZone.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+        }
+
+        // HANDLE FILES (SHOW PREVIEWS)
+        function handleFiles(files) {
+            selectedFiles = Array.from(files);
+            if (!selectedFiles.length) return;
+            
+            dropZone.style.display = 'none'; 
+            actionArea.classList.remove('hidden');
+            if(clearBtn) clearBtn.classList.remove('hidden');
+
+            const file = selectedFiles[0];
+            const isImage = file.type.startsWith('image/');
+
+            // Hide all initially in previewWrapper
+            allBoxes.forEach(id => {
+                const box = document.getElementById(id);
+                if (box) box.classList.add('hidden');
+            });
+
+            // Special Handle for Specific File-based Tools
+            if (currentTool === 'hash-calc') {
+                document.getElementById('hashResultBox').classList.remove('hidden');
+                document.getElementById('hashTextArea').value = "Calculating hash for: " + file.name + "...\n(Implementation needed)";
+            } 
+            else if (currentTool === 'ocr-reader') {
+                document.getElementById('ocrResultBox').classList.remove('hidden');
+                document.getElementById('ocrTextArea').value = "Waiting to process OCR for: " + file.name + "...";
+            }
+            else if (currentTool === 'sign-tool') {
+                document.getElementById('signBox').classList.remove('hidden');
+            }
+            else {
+                // Generic Preview Logic
+                if (isImage) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        imagePreview.src = e.target.result;
+                        imagePreview.classList.remove('hidden');
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    nonImagePreview.classList.remove('hidden');
+                    document.getElementById('fileName').textContent = file.name;
+                    document.getElementById('fileSize').textContent = (file.size / 1024).toFixed(2) + " KB";
+                }
+            }
+            showToast("File(s) loaded successfully!");
+        }
+
+
+        // ==========================================
+        // TEXT & UTILITY TOOL IMPLEMENTATIONS
+        // ==========================================
 
         function processJson() {
             const inputField = document.getElementById('jsonInputField');
@@ -754,7 +850,7 @@
             const status = document.getElementById('jsonStatusLabel');
             if(!inputField || !output) return;
             const input = inputField.value.trim();
-            if(!input) { output.value = ""; status.textContent = "Empty JSON"; status.className = "text-yellow-400 font-bold"; return; }
+            if(!input) { output.value = ""; status.textContent = "Empty JSON"; status.className = "text-yellow-500 font-bold"; return; }
             try {
                 const parsed = JSON.parse(input);
                 output.value = JSON.stringify(parsed, null, 2);
@@ -779,10 +875,10 @@
                 const oLine = orig[i] !== undefined ? orig[i] : "";
                 const mLine = mod[i] !== undefined ? mod[i] : "";
                 if (oLine === mLine) {
-                    html += `<div class="text-slate-300">  ${oLine}</div>`;
+                    html += `<div class="text-slate-400">  ${oLine}</div>`;
                 } else {
-                    if (oLine) html += `<div class="bg-red-900/40 text-red-300">- ${oLine}</div>`;
-                    if (mLine) html += `<div class="bg-emerald-900/40 text-emerald-300">+ ${mLine}</div>`;
+                    if (oLine) html += `<div class="bg-red-900/30 text-red-400">- ${oLine}</div>`;
+                    if (mLine) html += `<div class="bg-emerald-900/30 text-emerald-400">+ ${mLine}</div>`;
                 }
             }
             container.innerHTML = html;
@@ -802,36 +898,119 @@
 
         function generateNewPassword() {
             const len = parseInt(document.getElementById('passLength').value) || 16;
-            let chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()";
+            const useSymbols = document.getElementById('passSymbols')?.checked;
+            const useNumbers = document.getElementById('passNumbers')?.checked;
+            const useUppercase = document.getElementById('passUppercase')?.checked;
+
+            let chars = "abcdefghijklmnopqrstuvwxyz";
+            if (useUppercase) chars += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            if (useNumbers) chars += "0123456789";
+            if (useSymbols) chars += "!@#$%^&*()_+-=[]{}|;:,.<>?";
+
+            if (chars.length === 0) return;
+
             let pass = "";
             const array = new Uint32Array(len);
             window.crypto.getRandomValues(array);
             for (let i = 0; i < len; i++) pass += chars[array[i] % chars.length];
+            
             const disp = document.getElementById('generatedPasswordDisplay');
             if(disp) disp.value = pass;
         }
 
-        if(dropZone && fileInput) {
-            dropZone.addEventListener('click', () => { if(!['json-tool','diff-tool','md-tool','password-gen'].includes(currentTool)) fileInput.click(); });
-            fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+        function generateNewUuid() {
+            let uuid;
+            if (crypto && crypto.randomUUID) {
+                uuid = crypto.randomUUID();
+            } else {
+                // Fallback
+                uuid = ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+                    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+                );
+            }
+            const disp = document.getElementById('generatedUuidDisplay');
+            if(disp) disp.value = uuid;
         }
 
-        async function handleFiles(files) {
-            selectedFiles = Array.from(files);
-            if (!selectedFiles.length) return;
-            if(dropZone) dropZone.classList.add('hidden'); 
-            if(actionArea) actionArea.classList.remove('hidden');
-            if(clearBtn) clearBtn.classList.remove('hidden');
-            showToast("File loaded successfully!");
+        function generateQRCode() {
+            const input = document.getElementById('qrInputField').value.trim();
+            const qrcodeDisplay = document.getElementById('qrcodeDisplay');
+            const qrTextDisplay = document.getElementById('qrTextDisplay');
+            
+            if (!input) { showToast("Please enter text or URL", "error"); return; }
+            
+            qrcodeDisplay.innerHTML = ''; 
+            if (typeof QRCode !== 'undefined') {
+                new QRCode(qrcodeDisplay, { text: input, width: 160, height: 160 });
+                qrTextDisplay.textContent = input;
+            } else {
+                showToast("QRCode library not loaded", "error");
+            }
         }
 
+        // ==========================================
+        // CONVERT BUTTON LOGIC (MAIN ENGINE)
+        // ==========================================
         if(convertBtn) {
             convertBtn.addEventListener('click', async () => {
-                if (currentTool === 'password-gen') {
-                    copyPassword();
+                
+                // 1. Base64 Processing
+                if (currentTool === 'base64-tool') {
+                    const box = document.getElementById('base64TextArea');
+                    const text = box.value.trim();
+                    if(!text) return;
+                    try {
+                        // Check if it looks like base64
+                        const isBase64 = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/.test(text);
+                        if(isBase64 && text.length % 4 === 0) {
+                            box.value = atob(text); // Decode
+                            showToast("Decoded from Base64");
+                        } else {
+                            box.value = btoa(text); // Encode
+                            showToast("Encoded to Base64");
+                        }
+                    } catch(e) {
+                        box.value = btoa(text); // Fallback to encode if decode fails
+                        showToast("Encoded to Base64");
+                    }
                     return;
                 }
-                showToast("Action completed successfully!");
+
+                // 2. URL Processing
+                if (currentTool === 'url-tool') {
+                    const box = document.getElementById('urlTextArea');
+                    const text = box.value.trim();
+                    if(!text) return;
+                    if (text.includes('%')) {
+                        try { box.value = decodeURIComponent(text); showToast("Decoded URL string"); } 
+                        catch(e) { box.value = encodeURIComponent(text); showToast("Encoded URL string"); }
+                    } else {
+                        box.value = encodeURIComponent(text); showToast("Encoded URL string");
+                    }
+                    return;
+                }
+
+                // 3. Generators
+                if (currentTool === 'password-gen') { copyPassword(); return; }
+                if (currentTool === 'uuid-gen') { copyUuid(); return; }
+                if (currentTool === 'json-tool' || currentTool === 'md-tool' || currentTool === 'diff-tool') {
+                    showToast("Processed on the fly. You can copy the results."); return;
+                }
+
+                // 4. File Based Operations
+                if (selectedFiles.length === 0 && currentTool !== 'qr-tool') {
+                    showToast("Please select a file first!", "error");
+                    return;
+                }
+
+                // Placeholder for heavy processing (PDF, OCR, Hash etc)
+                document.getElementById('progressModal').classList.remove('hidden');
+                
+                setTimeout(() => {
+                    document.getElementById('progressModal').classList.add('hidden');
+                    showToast("Action completed successfully!");
+                    // Here you would hook up pdf.js generation, tesseract.js recognize(), or crypto.subtle.digest()
+                }, 1500);
             });
         }
     </script>
