@@ -258,9 +258,13 @@
         </div>
     </main>
 
-    <!-- JAVASCRIPT LOGIC -->
+    <!-- JAVASCRIPT LOGIC (Safety-Wrapped) -->
     <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        try {
+            if (typeof pdfjsLib !== 'undefined') {
+                pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+            }
+        } catch(e) { console.warn("PDF worker init warning:", e); }
 
         let currentLang = 'en';
         const translations = {
@@ -383,63 +387,77 @@
             }
         };
 
-        document.getElementById('langSelect').addEventListener('change', (e) => {
-            currentLang = e.target.value;
-            if (currentLang === 'ar') {
-                document.documentElement.setAttribute('dir', 'rtl');
-            } else {
-                document.documentElement.removeAttribute('dir');
-            }
-            updateUITexts();
-        });
+        const langSelect = document.getElementById('langSelect');
+        if(langSelect) {
+            langSelect.addEventListener('change', (e) => {
+                currentLang = e.target.value;
+                if (currentLang === 'ar') {
+                    document.documentElement.setAttribute('dir', 'rtl');
+                } else {
+                    document.documentElement.removeAttribute('dir');
+                }
+                updateUITexts();
+            });
+        }
 
         function updateUITexts() {
             const t = translations[currentLang];
-            document.getElementById('mainTitlePrefix').textContent = t.titlePrefix;
-            document.getElementById('mainTitleSuffix').textContent = t.titleSuffix;
-            document.getElementById('clearBtn').innerHTML = t.clear;
-            document.getElementById('convertBtnText').textContent = t.convertBtn;
+            if(!t) return;
+            const elPrefix = document.getElementById('mainTitlePrefix');
+            const elSuffix = document.getElementById('mainTitleSuffix');
+            const elClear = document.getElementById('clearBtn');
+            const elBtnText = document.getElementById('convertBtnText');
             
+            if(elPrefix) elPrefix.textContent = t.titlePrefix;
+            if(elSuffix) elSuffix.textContent = t.titleSuffix;
+            if(elClear) elClear.innerHTML = t.clear;
+            if(elBtnText) elBtnText.textContent = t.convertBtn;
+            
+            const mainDesc = document.getElementById('mainDesc');
+            const dropText = document.getElementById('dropText');
+            const dropSubText = document.getElementById('dropSubText');
+
             if (currentTool === 'pdf-to-png' || currentTool === 'pdf-to-jpg') {
-                document.getElementById('mainDesc').textContent = currentTool === 'pdf-to-png' ? t.descPdfPng : t.descPdfJpg;
-                document.getElementById('dropText').textContent = t.dropPdf;
-                document.getElementById('dropSubText').textContent = t.dropSubPdf;
+                if(mainDesc) mainDesc.textContent = currentTool === 'pdf-to-png' ? t.descPdfPng : t.descPdfJpg;
+                if(dropText) dropText.textContent = t.dropPdf;
+                if(dropSubText) dropSubText.textContent = t.dropSubPdf;
             } else if (currentTool === 'merge-pdf') {
-                document.getElementById('mainDesc').textContent = t.descMergePdf;
-                document.getElementById('dropText').textContent = t.dropMergePdf;
-                document.getElementById('dropSubText').textContent = t.dropSubMerge;
+                if(mainDesc) mainDesc.textContent = t.descMergePdf;
+                if(dropText) dropText.textContent = t.dropMergePdf;
+                if(dropSubText) dropSubText.textContent = t.dropSubMerge;
             } else if (currentTool === 'split-pdf') {
-                document.getElementById('mainDesc').textContent = t.descSplitPdf;
+                if(mainDesc) mainDesc.textContent = t.descSplitPdf;
             } else if (currentTool === 'ocr-reader') {
-                document.getElementById('mainDesc').textContent = t.descOcr;
-                document.getElementById('dropText').textContent = t.dropOcr;
+                if(mainDesc) mainDesc.textContent = t.descOcr;
+                if(dropText) dropText.textContent = t.dropOcr;
             } else if (currentTool === 'redact-tool') {
-                document.getElementById('mainDesc').textContent = t.descRedact;
-                document.getElementById('dropText').textContent = t.dropRedact;
+                if(mainDesc) mainDesc.textContent = t.descRedact;
+                if(dropText) dropText.textContent = t.dropRedact;
             } else if (currentTool === 'sign-tool') {
-                document.getElementById('mainDesc').textContent = t.descSign;
-                document.getElementById('dropText').textContent = t.dropSign;
+                if(mainDesc) mainDesc.textContent = t.descSign;
+                if(dropText) dropText.textContent = t.dropSign;
             } else if (currentTool === 'qr-tool') {
-                document.getElementById('mainDesc').textContent = t.descQr;
-                document.getElementById('dropText').textContent = t.dropQr;
+                if(mainDesc) mainDesc.textContent = t.descQr;
+                if(dropText) dropText.textContent = t.dropQr;
             } else if (currentTool === 'color-palette') {
-                document.getElementById('mainDesc').textContent = t.descPalette;
-                document.getElementById('dropText').textContent = t.dropPalette;
+                if(mainDesc) mainDesc.textContent = t.descPalette;
+                if(dropText) dropText.textContent = t.dropPalette;
             } else if (currentTool === 'heic-to-jpg') {
-                document.getElementById('mainDesc').textContent = t.descHeic;
-                document.getElementById('dropText').textContent = t.dropHeic;
+                if(mainDesc) mainDesc.textContent = t.descHeic;
+                if(dropText) dropText.textContent = t.dropHeic;
             } else if (currentTool === 'jpg-to-pdf') {
-                document.getElementById('mainDesc').textContent = t.descJpgPdf;
-                document.getElementById('dropText').textContent = t.dropJpgPdf;
+                if(mainDesc) mainDesc.textContent = t.descJpgPdf;
+                if(dropText) dropText.textContent = t.dropJpgPdf;
             } else if (currentTool === 'compress-image') {
-                document.getElementById('mainDesc').textContent = t.descCompress;
-                document.getElementById('dropText').textContent = t.dropCompress;
+                if(mainDesc) mainDesc.textContent = t.descCompress;
+                if(dropText) dropText.textContent = t.dropCompress;
             }
         }
 
         // Toast Notification System
         function showToast(message, type = 'success') {
             const container = document.getElementById('toastContainer');
+            if(!container) return;
             const toast = document.createElement('div');
             const bgCol = type === 'success' ? 'bg-emerald-600' : 'bg-red-600';
             toast.className = `${bgCol} text-white px-4 py-3 rounded-xl shadow-lg text-sm font-semibold flex items-center gap-2 pointer-events-auto transform translate-y-2 opacity-0 transition-all duration-300`;
@@ -455,6 +473,7 @@
 
         function copyOcrText() {
             const textarea = document.getElementById('ocrTextArea');
+            if(!textarea) return;
             textarea.select();
             document.execCommand('copy');
             showToast(translations[currentLang].copied);
@@ -465,21 +484,45 @@
         const htmlElement = document.documentElement;
         if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
             htmlElement.classList.add('dark');
-            themeToggle.textContent = '☀️';
+            if(themeToggle) themeToggle.textContent = '☀️';
         }
-        themeToggle.addEventListener('click', () => {
-            htmlElement.classList.toggle('dark');
-            themeToggle.textContent = htmlElement.classList.contains('dark') ? '☀️' : '🌙';
-        });
+        if(themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                htmlElement.classList.toggle('dark');
+                themeToggle.textContent = htmlElement.classList.contains('dark') ? '☀️' : '🌙';
+            });
+        }
 
         // Signature Pad Drawing Logic
         const sigCanvas = document.getElementById('sigCanvas');
-        const sigCtx = sigCanvas.getContext('2d');
-        let isDrawing = false;
-        sigCanvas.addEventListener('mousedown', (e) => { isDrawing = true; sigCtx.beginPath(); sigCtx.moveTo(e.offsetX, e.offsetY); });
-        sigCanvas.addEventListener('mousemove', (e) => { if (!isDrawing) return; sigCtx.lineTo(e.offsetX, e.offsetY); sigCtx.stroke(); });
-        window.addEventListener('mouseup', () => { isDrawing = false; });
-        function clearSignature() { sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height); }
+        let sigCtx = null;
+        if(sigCanvas) {
+            sigCtx = sigCanvas.getContext('2d');
+            let isDrawing = false;
+            sigCanvas.addEventListener('mousedown', (e) => { isDrawing = true; sigCtx.beginPath(); sigCtx.moveTo(e.offsetX, e.offsetY); });
+            sigCanvas.addEventListener('mousemove', (e) => { if (!isDrawing) return; sigCtx.lineTo(e.offsetX, e.offsetY); sigCtx.stroke(); });
+            window.addEventListener('mouseup', () => { isDrawing = false; });
+            
+            // Touch support for mobile canvas
+            sigCanvas.addEventListener('touchstart', (e) => {
+                const rect = sigCanvas.getBoundingClientRect();
+                const touch = e.touches[0];
+                isDrawing = true;
+                sigCtx.beginPath();
+                sigCtx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
+                e.preventDefault();
+            });
+            sigCanvas.addEventListener('touchmove', (e) => {
+                if (!isDrawing) return;
+                const rect = sigCanvas.getBoundingClientRect();
+                const touch = e.touches[0];
+                sigCtx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
+                sigCtx.stroke();
+                e.preventDefault();
+            });
+            sigCanvas.addEventListener('touchend', () => { isDrawing = false; });
+        }
+        function clearSignature() { if(sigCtx && sigCanvas) sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height); }
 
         // State variables
         let currentTool = 'pdf-to-png';
@@ -515,30 +558,46 @@
         const watermarkContainer = document.getElementById('watermarkContainer');
         const qrInputGroup = document.getElementById('qrInputGroup');
 
-        function showProgress(title, text) { progressTitle.textContent = title; progressText.textContent = text; progressModal.classList.remove('hidden'); }
-        function hideProgress() { progressModal.classList.add('hidden'); }
+        function showProgress(title, text) { 
+            if(progressTitle) progressTitle.textContent = title; 
+            if(progressText) progressText.textContent = text; 
+            if(progressModal) progressModal.classList.remove('hidden'); 
+        }
+        function hideProgress() { if(progressModal) progressModal.classList.add('hidden'); }
         async function yieldToMain() { return new Promise(resolve => setTimeout(resolve, 10)); }
 
         function resetApp() {
             selectedFiles = []; currentRotation = 0;
             isGrayscale = false; customLogo = null;
-            document.getElementById('logoInput').value = '';
-            document.getElementById('watermarkText').value = '';
-            document.getElementById('ocrTextArea').value = '';
-            document.getElementById('qrInputField').value = '';
-            document.getElementById('toggleGrayscaleBtn').classList.remove('bg-slate-200', 'dark:bg-slate-600', 'border-slate-400');
-            imagePreview.style.filter = 'none';
+            const logoInput = document.getElementById('logoInput');
+            const watermarkText = document.getElementById('watermarkText');
+            const ocrTextArea = document.getElementById('ocrTextArea');
+            const qrInputField = document.getElementById('qrInputField');
+            const toggleGrayscaleBtn = document.getElementById('toggleGrayscaleBtn');
+
+            if(logoInput) logoInput.value = '';
+            if(watermarkText) watermarkText.value = '';
+            if(ocrTextArea) ocrTextArea.value = '';
+            if(qrInputField) qrInputField.value = '';
+            if(toggleGrayscaleBtn) toggleGrayscaleBtn.classList.remove('bg-slate-200', 'dark:bg-slate-600', 'border-slate-400');
+            if(imagePreview) imagePreview.style.filter = 'none';
 
             if (cropper) { cropper.destroy(); cropper = null; }
-            actionArea.classList.add('hidden'); dropZone.classList.remove('hidden'); clearBtn.classList.add('hidden');
-            imagePreview.src = ''; batchPreviewGrid.innerHTML = ''; 
-            ocrResultBox.classList.add('hidden'); qrResultBox.classList.add('hidden'); 
-            paletteResultBox.classList.add('hidden'); signBox.classList.add('hidden');
+            if(actionArea) actionArea.classList.add('hidden'); 
+            if(dropZone) dropZone.classList.remove('hidden'); 
+            if(clearBtn) clearBtn.classList.add('hidden');
+            if(imagePreview) imagePreview.src = ''; 
+            if(batchPreviewGrid) batchPreviewGrid.innerHTML = ''; 
+            if(ocrResultBox) ocrResultBox.classList.add('hidden'); 
+            if(qrResultBox) qrResultBox.classList.add('hidden'); 
+            if(paletteResultBox) paletteResultBox.classList.add('hidden'); 
+            if(signBox) signBox.classList.add('hidden');
             if (sortableInstance) { sortableInstance.destroy(); sortableInstance = null; }
-            document.getElementById('toggleCropBtn').innerHTML = "✂️ Crop Area";
+            const toggleCropBtn = document.getElementById('toggleCropBtn');
+            if(toggleCropBtn) toggleCropBtn.innerHTML = "✂️ Crop Area";
         }
 
-        clearBtn.addEventListener('click', resetApp);
+        if(clearBtn) clearBtn.addEventListener('click', resetApp);
 
         function switchTool(tool) {
             currentTool = tool;
@@ -557,149 +616,205 @@
             const quality = document.getElementById('qualityContainer');
             const formatBadge = document.getElementById('outputFormatBadge');
             
-            imageQuickButtons.style.display = 'flex'; batchSortHint.style.display = 'none';
-            resizeContainer.style.display = 'block'; compressOptionsGroup.style.display = 'none';
-            watermarkContainer.style.display = 'grid'; pdfGroup.style.display = 'block';
-            qrInputGroup.style.display = 'none'; dropZone.style.display = 'block';
+            if(imageQuickButtons) imageQuickButtons.style.display = 'flex'; 
+            if(batchSortHint) batchSortHint.style.display = 'none';
+            if(resizeContainer) resizeContainer.style.display = 'block'; 
+            if(compressOptionsGroup) compressOptionsGroup.style.display = 'none';
+            if(watermarkContainer) watermarkContainer.style.display = 'grid'; 
+            if(pdfGroup) pdfGroup.style.display = 'block';
+            if(qrInputGroup) qrInputGroup.style.display = 'none'; 
+            if(dropZone) dropZone.style.display = 'block';
 
             if (tool === 'pdf-to-png' || tool === 'pdf-to-jpg') {
-                title.textContent = tool === 'pdf-to-png' ? "PDF to PNG" : "PDF to JPG";
-                fileInput.accept = ".pdf"; fileInput.multiple = true;
-                quality.style.display = 'block';
-                document.getElementById('pdfRangeLabel').textContent = "📄 PDF Page Range to Process:";
-                formatBadge.innerHTML = tool === 'pdf-to-png' ? "🖼️ PNG (Lossless)" : "🖼️ JPG (Compressed)";
+                if(title) title.textContent = tool === 'pdf-to-png' ? "PDF to PNG" : "PDF to JPG";
+                if(fileInput) { fileInput.accept = ".pdf"; fileInput.multiple = true; }
+                if(quality) quality.style.display = 'block';
+                const pdfRangeLabel = document.getElementById('pdfRangeLabel');
+                if(pdfRangeLabel) pdfRangeLabel.textContent = "📄 PDF Page Range to Process:";
+                if(formatBadge) formatBadge.innerHTML = tool === 'pdf-to-png' ? "🖼️ PNG (Lossless)" : "🖼️ JPG (Compressed)";
             } else if (tool === 'merge-pdf') {
-                title.textContent = "Merge PDFs";
-                fileInput.accept = ".pdf"; fileInput.multiple = true;
-                quality.style.display = 'none'; imageQuickButtons.style.display = 'none'; watermarkContainer.style.display = 'none'; resizeContainer.style.display = 'none'; pdfGroup.style.display = 'none';
-                batchSortHint.style.display = 'block';
-                formatBadge.innerHTML = "📄 Merged PDF Document";
+                if(title) title.textContent = "Merge PDFs";
+                if(fileInput) { fileInput.accept = ".pdf"; fileInput.multiple = true; }
+                if(quality) quality.style.display = 'none'; 
+                if(imageQuickButtons) imageQuickButtons.style.display = 'none'; 
+                if(watermarkContainer) watermarkContainer.style.display = 'none'; 
+                if(resizeContainer) resizeContainer.style.display = 'none'; 
+                if(pdfGroup) pdfGroup.style.display = 'none';
+                if(batchSortHint) batchSortHint.style.display = 'block';
+                if(formatBadge) formatBadge.innerHTML = "📄 Merged PDF Document";
             } else if (tool === 'split-pdf') {
-                title.textContent = "Split PDF";
-                fileInput.accept = ".pdf"; fileInput.multiple = false;
-                quality.style.display = 'none'; imageQuickButtons.style.display = 'none'; watermarkContainer.style.display = 'none'; resizeContainer.style.display = 'none';
-                formatBadge.innerHTML = "📄 Split PDF Document";
+                if(title) title.textContent = "Split PDF";
+                if(fileInput) { fileInput.accept = ".pdf"; fileInput.multiple = false; }
+                if(quality) quality.style.display = 'none'; 
+                if(imageQuickButtons) imageQuickButtons.style.display = 'none'; 
+                if(watermarkContainer) watermarkContainer.style.display = 'none'; 
+                if(resizeContainer) resizeContainer.style.display = 'none';
+                if(formatBadge) formatBadge.innerHTML = "📄 Split PDF Document";
             } else if (tool === 'ocr-reader') {
-                title.textContent = "OCR Text Reader";
-                fileInput.accept = "image/jpeg,image/png,image/webp,image/heic"; fileInput.multiple = false;
-                pdfGroup.style.display = 'none'; quality.style.display = 'none'; imageQuickButtons.style.display = 'none'; watermarkContainer.style.display = 'none'; resizeContainer.style.display = 'none';
-                formatBadge.innerHTML = "📝 Text File (.txt)";
+                if(title) title.textContent = "OCR Text Reader";
+                if(fileInput) { fileInput.accept = "image/jpeg,image/png,image/webp,image/heic"; fileInput.multiple = false; }
+                if(pdfGroup) pdfGroup.style.display = 'none'; 
+                if(quality) quality.style.display = 'none'; 
+                if(imageQuickButtons) imageQuickButtons.style.display = 'none'; 
+                if(watermarkContainer) watermarkContainer.style.display = 'none'; 
+                if(resizeContainer) resizeContainer.style.display = 'none';
+                if(formatBadge) formatBadge.innerHTML = "📝 Text File (.txt)";
             } else if (tool === 'redact-tool') {
-                title.textContent = "Redact / Censor";
-                fileInput.accept = "image/jpeg,image/png,image/webp"; fileInput.multiple = false;
-                pdfGroup.style.display = 'none'; quality.style.display = 'none'; imageQuickButtons.style.display = 'none'; watermarkContainer.style.display = 'none'; resizeContainer.style.display = 'none';
-                formatBadge.innerHTML = "🔒 Redacted Image";
-                convertBtn.innerHTML = "Apply Redaction & Download";
+                if(title) title.textContent = "Redact / Censor";
+                if(fileInput) { fileInput.accept = "image/jpeg,image/png,image/webp"; fileInput.multiple = false; }
+                if(pdfGroup) pdfGroup.style.display = 'none'; 
+                if(quality) quality.style.display = 'none'; 
+                if(imageQuickButtons) imageQuickButtons.style.display = 'none'; 
+                if(watermarkContainer) watermarkContainer.style.display = 'none'; 
+                if(resizeContainer) resizeContainer.style.display = 'none';
+                if(formatBadge) formatBadge.innerHTML = "🔒 Redacted Image";
+                if(convertBtn) convertBtn.innerHTML = "Apply Redaction & Download";
             } else if (tool === 'sign-tool') {
-                title.textContent = "Sign Document";
-                fileInput.accept = "image/jpeg,image/png,image/webp"; fileInput.multiple = false;
-                pdfGroup.style.display = 'none'; quality.style.display = 'none'; imageQuickButtons.style.display = 'none'; watermarkContainer.style.display = 'none'; resizeContainer.style.display = 'none';
-                formatBadge.innerHTML = "✍️ Signed Image";
-                convertBtn.innerHTML = "Stamp Signature & Download";
+                if(title) title.textContent = "Sign Document";
+                if(fileInput) { fileInput.accept = "image/jpeg,image/png,image/webp"; fileInput.multiple = false; }
+                if(pdfGroup) pdfGroup.style.display = 'none'; 
+                if(quality) quality.style.display = 'none'; 
+                if(imageQuickButtons) imageQuickButtons.style.display = 'none'; 
+                if(watermarkContainer) watermarkContainer.style.display = 'none'; 
+                if(resizeContainer) resizeContainer.style.display = 'none';
+                if(formatBadge) formatBadge.innerHTML = "✍️ Signed Image";
+                if(convertBtn) convertBtn.innerHTML = "Stamp Signature & Download";
             } else if (tool === 'qr-tool') {
-                title.textContent = "QR Code Generator";
-                dropZone.style.display = 'none';
-                qrInputGroup.style.display = 'block';
-                pdfGroup.style.display = 'none'; quality.style.display = 'none'; imageQuickButtons.style.display = 'none'; watermarkContainer.style.display = 'none'; resizeContainer.style.display = 'none';
-                formatBadge.innerHTML = "📱 QR Code Image";
-                convertBtn.innerHTML = "Download QR Code";
+                if(title) title.textContent = "QR Code Generator";
+                if(dropZone) dropZone.style.display = 'none';
+                if(qrInputGroup) qrInputGroup.style.display = 'block';
+                if(pdfGroup) pdfGroup.style.display = 'none'; 
+                if(quality) quality.style.display = 'none'; 
+                if(imageQuickButtons) imageQuickButtons.style.display = 'none'; 
+                if(watermarkContainer) watermarkContainer.style.display = 'none'; 
+                if(resizeContainer) resizeContainer.style.display = 'none';
+                if(formatBadge) formatBadge.innerHTML = "📱 QR Code Image";
+                if(convertBtn) convertBtn.innerHTML = "Download QR Code";
                 selectedFiles = ['dummy'];
-                actionArea.classList.remove('hidden');
-                qrResultBox.classList.remove('hidden');
+                if(actionArea) actionArea.classList.remove('hidden');
+                if(qrResultBox) qrResultBox.classList.remove('hidden');
                 generateQRCode("https://example.com");
             } else if (tool === 'color-palette') {
-                title.textContent = "Color Palette Extractor";
-                fileInput.accept = "image/jpeg,image/png,image/webp"; fileInput.multiple = false;
-                pdfGroup.style.display = 'none'; quality.style.display = 'none'; imageQuickButtons.style.display = 'none'; watermarkContainer.style.display = 'none'; resizeContainer.style.display = 'none';
-                formatBadge.innerHTML = "🎨 Color Swatches";
-                convertBtn.innerHTML = "Download Palette JSON";
+                if(title) title.textContent = "Color Palette Extractor";
+                if(fileInput) { fileInput.accept = "image/jpeg,image/png,image/webp"; fileInput.multiple = false; }
+                if(pdfGroup) pdfGroup.style.display = 'none'; 
+                if(quality) quality.style.display = 'none'; 
+                if(imageQuickButtons) imageQuickButtons.style.display = 'none'; 
+                if(watermarkContainer) watermarkContainer.style.display = 'none'; 
+                if(resizeContainer) resizeContainer.style.display = 'none';
+                if(formatBadge) formatBadge.innerHTML = "🎨 Color Swatches";
+                if(convertBtn) convertBtn.innerHTML = "Download Palette JSON";
             } else if (tool === 'heic-to-jpg') {
-                title.textContent = "HEIC to JPG";
-                fileInput.accept = ".heic,.HEIC"; fileInput.multiple = true;
-                pdfGroup.style.display = 'none'; quality.style.display = 'none';
-                formatBadge.innerHTML = "🖼️ JPG";
+                if(title) title.textContent = "HEIC to JPG";
+                if(fileInput) { fileInput.accept = ".heic,.HEIC"; fileInput.multiple = true; }
+                if(pdfGroup) pdfGroup.style.display = 'none'; 
+                if(quality) quality.style.display = 'none';
+                if(formatBadge) formatBadge.innerHTML = "🖼️ JPG";
             } else if (tool === 'jpg-to-pdf') {
-                title.textContent = "JPG to PDF";
-                fileInput.accept = "image/jpeg,image/png,image/webp"; fileInput.multiple = true;
-                pdfGroup.style.display = 'none'; quality.style.display = 'none';
-                imageQuickButtons.style.display = 'none'; watermarkContainer.style.display = 'none';
-                batchSortHint.style.display = 'block'; resizeContainer.style.display = 'none';
-                formatBadge.innerHTML = "📄 PDF Document";
+                if(title) title.textContent = "JPG to PDF";
+                if(fileInput) { fileInput.accept = "image/jpeg,image/png,image/webp"; fileInput.multiple = true; }
+                if(pdfGroup) pdfGroup.style.display = 'none'; 
+                if(quality) quality.style.display = 'none';
+                if(imageQuickButtons) imageQuickButtons.style.display = 'none'; 
+                if(watermarkContainer) watermarkContainer.style.display = 'none';
+                if(batchSortHint) batchSortHint.style.display = 'block'; 
+                if(resizeContainer) resizeContainer.style.display = 'none';
+                if(formatBadge) formatBadge.innerHTML = "📄 PDF Document";
             } else if (tool === 'compress-image') {
-                title.textContent = "Compress Image";
-                fileInput.accept = "image/jpeg,image/png,image/webp"; fileInput.multiple = true;
-                pdfGroup.style.display = 'none'; quality.style.display = 'none';
-                imageQuickButtons.style.display = 'none'; resizeContainer.style.display = 'none';
-                watermarkContainer.style.display = 'none';
-                compressOptionsGroup.style.display = 'block'; batchSortHint.style.display = 'block';
-                formatBadge.innerHTML = "🗜️ Compressed Image";
+                if(title) title.textContent = "Compress Image";
+                if(fileInput) { fileInput.accept = "image/jpeg,image/png,image/webp"; fileInput.multiple = true; }
+                if(pdfGroup) pdfGroup.style.display = 'none'; 
+                if(quality) quality.style.display = 'none';
+                if(imageQuickButtons) imageQuickButtons.style.display = 'none'; 
+                if(resizeContainer) resizeContainer.style.display = 'none';
+                if(watermarkContainer) watermarkContainer.style.display = 'none';
+                if(compressOptionsGroup) compressOptionsGroup.style.display = 'block'; 
+                if(batchSortHint) batchSortHint.style.display = 'block';
+                if(formatBadge) formatBadge.innerHTML = "🗜️ Compressed Image";
             }
             updateUITexts();
         }
 
         function generateQRCode(customText) {
-            const text = customText || document.getElementById('qrInputField').value.trim() || "https://example.com";
+            const text = customText || (document.getElementById('qrInputField') ? document.getElementById('qrInputField').value.trim() : "https://example.com");
             const container = document.getElementById('qrcodeDisplay');
+            if(!container || typeof QRCode === 'undefined') return;
             container.innerHTML = "";
             QRCode.toCanvas(text, { width: 180 }, function (err, canvas) {
-                if (!err) container.appendChild(canvas);
+                if (!err && canvas) container.appendChild(canvas);
             });
-            document.getElementById('qrTextDisplay').textContent = text;
+            const qrTextDisplay = document.getElementById('qrTextDisplay');
+            if(qrTextDisplay) qrTextDisplay.textContent = text;
         }
 
         // Drag & Drop Handling
-        dropZone.addEventListener('click', () => { if(currentTool !== 'qr-tool') fileInput.click(); });
-        fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
-        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('border-indigo-500'); });
-        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('border-indigo-500'));
-        dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('border-indigo-500'); handleFiles(e.dataTransfer.files); });
+        if(dropZone && fileInput) {
+            dropZone.addEventListener('click', () => { if(currentTool !== 'qr-tool') fileInput.click(); });
+            fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+            dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('border-indigo-500'); });
+            dropZone.addEventListener('dragleave', () => dropZone.classList.remove('border-indigo-500'));
+            dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('border-indigo-500'); handleFiles(e.dataTransfer.files); });
+        }
 
         async function handleFiles(files) {
             const validFiles = Array.from(files);
             if (!validFiles.length) return;
             selectedFiles = validFiles;
 
-            dropZone.classList.add('hidden'); actionArea.classList.remove('hidden');
-            clearBtn.classList.remove('hidden'); clearBtn.style.display = 'inline-flex';
+            if(dropZone) dropZone.classList.add('hidden'); 
+            if(actionArea) actionArea.classList.remove('hidden');
+            if(clearBtn) { clearBtn.classList.remove('hidden'); clearBtn.style.display = 'inline-flex'; }
             showProgress("Loading...", "Preparing preview layout");
 
             try {
                 if (currentTool === 'jpg-to-pdf' || currentTool === 'compress-image' || currentTool === 'merge-pdf') {
-                    imagePreview.classList.add('hidden'); nonImagePreview.classList.add('hidden'); ocrResultBox.classList.add('hidden');
-                    batchPreviewGrid.classList.remove('hidden'); batchPreviewGrid.innerHTML = '';
-                    
-                    for (let i = 0; i < selectedFiles.length; i++) {
-                        const file = selectedFiles[i];
-                        const div = document.createElement('div');
-                        div.className = 'relative aspect-square bg-slate-800 rounded-lg overflow-hidden border-2 border-transparent hover:border-indigo-500 cursor-grab flex flex-col items-center justify-center p-2 text-center text-white';
-                        div.dataset.index = i;
-                        const sizeText = (file.size / 1024 / 1024).toFixed(2) + " MB";
+                    if(imagePreview) imagePreview.classList.add('hidden'); 
+                    if(nonImagePreview) nonImagePreview.classList.add('hidden'); 
+                    if(ocrResultBox) ocrResultBox.classList.add('hidden');
+                    if(batchPreviewGrid) {
+                        batchPreviewGrid.classList.remove('hidden'); 
+                        batchPreviewGrid.innerHTML = '';
                         
-                        if (currentTool === 'merge-pdf') {
-                            div.innerHTML = `<span class="text-3xl mb-1">📄</span><span class="text-[11px] font-bold truncate w-full">${file.name}</span><span class="absolute bottom-1 right-1 bg-black/70 text-[9px] px-1.5 rounded">${sizeText}</span><span class="absolute top-1 left-1 bg-indigo-600 text-[10px] px-1.5 rounded">${i+1}</span>`;
-                        } else {
-                            const reader = new FileReader();
-                            reader.onload = (e) => {
-                                div.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover opacity-90 hover:opacity-100 transition"><span class="absolute top-1 left-1 bg-black/70 text-white text-[10px] px-1.5 rounded">${i+1}</span><span class="absolute bottom-1 right-1 bg-black/70 text-white text-[9px] px-1.5 rounded">${sizeText}</span>`;
-                            };
-                            reader.readAsDataURL(file);
+                        for (let i = 0; i < selectedFiles.length; i++) {
+                            const file = selectedFiles[i];
+                            const div = document.createElement('div');
+                            div.className = 'relative aspect-square bg-slate-800 rounded-lg overflow-hidden border-2 border-transparent hover:border-indigo-500 cursor-grab flex flex-col items-center justify-center p-2 text-center text-white';
+                            div.dataset.index = i;
+                            const sizeText = (file.size / 1024 / 1024).toFixed(2) + " MB";
+                            
+                            if (currentTool === 'merge-pdf') {
+                                div.innerHTML = `<span class="text-3xl mb-1">📄</span><span class="text-[11px] font-bold truncate w-full">${file.name}</span><span class="absolute bottom-1 right-1 bg-black/70 text-[9px] px-1.5 rounded">${sizeText}</span><span class="absolute top-1 left-1 bg-indigo-600 text-[10px] px-1.5 rounded">${i+1}</span>`;
+                            } else {
+                                const reader = new FileReader();
+                                reader.onload = (e) => {
+                                    div.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover opacity-90 hover:opacity-100 transition"><span class="absolute top-1 left-1 bg-black/70 text-white text-[10px] px-1.5 rounded">${i+1}</span><span class="absolute bottom-1 right-1 bg-black/70 text-white text-[9px] px-1.5 rounded">${sizeText}</span>`;
+                                };
+                                reader.readAsDataURL(file);
+                            }
+                            batchPreviewGrid.appendChild(div);
                         }
-                        batchPreviewGrid.appendChild(div);
+                        if(typeof Sortable !== 'undefined') {
+                            sortableInstance = new Sortable(batchPreviewGrid, { animation: 150, ghostClass: 'opacity-50' });
+                        }
                     }
-                    sortableInstance = new Sortable(batchPreviewGrid, { animation: 150, ghostClass: 'opacity-50' });
                 } else if (currentTool === 'ocr-reader') {
-                    imagePreview.classList.add('hidden'); batchPreviewGrid.classList.add('hidden'); nonImagePreview.classList.add('hidden');
-                    ocrResultBox.classList.remove('hidden');
+                    if(imagePreview) imagePreview.classList.add('hidden'); 
+                    if(batchPreviewGrid) batchPreviewGrid.classList.add('hidden'); 
+                    if(nonImagePreview) nonImagePreview.classList.add('hidden');
+                    if(ocrResultBox) ocrResultBox.classList.remove('hidden');
                     const reader = new FileReader();
                     reader.onload = async (e) => {
                         showProgress("OCR Reading", "Extracting text from image via AI...");
                         await yieldToMain();
                         try {
-                            const result = await Tesseract.recognize(e.target.result, 'eng+spa+ara', {
-                                logger: m => console.log(m)
-                            });
-                            document.getElementById('ocrTextArea').value = result.data.text;
-                            showToast(translations[currentLang].successOcr);
+                            if(typeof Tesseract !== 'undefined') {
+                                const result = await Tesseract.recognize(e.target.result, 'eng+spa+ara');
+                                const ocrTextArea = document.getElementById('ocrTextArea');
+                                if(ocrTextArea) ocrTextArea.value = result.data.text;
+                                showToast(translations[currentLang].successOcr);
+                            } else {
+                                showToast("Tesseract library not loaded.", "error");
+                            }
                         } catch (err) {
                             showToast("OCR failed: " + err.message, 'error');
                         } finally {
@@ -708,8 +823,10 @@
                     };
                     reader.readAsDataURL(selectedFiles[0]);
                 } else if (currentTool === 'color-palette') {
-                    imagePreview.classList.add('hidden'); batchPreviewGrid.classList.add('hidden'); nonImagePreview.classList.add('hidden');
-                    paletteResultBox.classList.remove('hidden');
+                    if(imagePreview) imagePreview.classList.add('hidden'); 
+                    if(batchPreviewGrid) batchPreviewGrid.classList.add('hidden'); 
+                    if(nonImagePreview) nonImagePreview.classList.add('hidden');
+                    if(paletteResultBox) paletteResultBox.classList.remove('hidden');
                     const reader = new FileReader();
                     reader.onload = (e) => {
                         const img = new Image();
@@ -726,91 +843,125 @@
                             }
                             const uniqueColors = [...new Set(colors)].slice(0, 5);
                             const grid = document.getElementById('paletteContainerGrid');
-                            grid.innerHTML = '';
-                            uniqueColors.forEach(col => {
-                                const box = document.createElement('div');
-                                box.className = 'w-12 h-16 rounded-lg shadow flex flex-col items-center justify-end pb-1 text-[9px] font-mono text-white';
-                                box.style.backgroundColor = col;
-                                box.textContent = col;
-                                grid.appendChild(box);
-                            });
+                            if(grid) {
+                                grid.innerHTML = '';
+                                uniqueColors.forEach(col => {
+                                    const box = document.createElement('div');
+                                    box.className = 'w-12 h-16 rounded-lg shadow flex flex-col items-center justify-end pb-1 text-[9px] font-mono text-white';
+                                    box.style.backgroundColor = col;
+                                    box.textContent = col;
+                                    grid.appendChild(box);
+                                });
+                            }
                             showToast(translations[currentLang].successPalette);
                             hideProgress();
                         };
                     };
                     reader.readAsDataURL(selectedFiles[0]);
                 } else if (currentTool === 'sign-tool') {
-                    batchPreviewGrid.classList.add('hidden'); ocrResultBox.classList.add('hidden'); paletteResultBox.classList.add('hidden');
-                    signBox.classList.remove('hidden');
+                    if(batchPreviewGrid) batchPreviewGrid.classList.add('hidden'); 
+                    if(ocrResultBox) ocrResultBox.classList.add('hidden'); 
+                    if(paletteResultBox) paletteResultBox.classList.add('hidden');
+                    if(signBox) signBox.classList.remove('hidden');
                     const reader = new FileReader();
                     reader.onload = (e) => {
-                        imagePreview.src = e.target.result;
-                        imagePreview.classList.remove('hidden');
+                        if(imagePreview) {
+                            imagePreview.src = e.target.result;
+                            imagePreview.classList.remove('hidden');
+                        }
                     };
                     reader.readAsDataURL(selectedFiles[0]);
                 } else {
-                    batchPreviewGrid.classList.add('hidden'); ocrResultBox.classList.add('hidden'); paletteResultBox.classList.add('hidden');
+                    if(batchPreviewGrid) batchPreviewGrid.classList.add('hidden'); 
+                    if(ocrResultBox) ocrResultBox.classList.add('hidden'); 
+                    if(paletteResultBox) paletteResultBox.classList.add('hidden');
                     const firstFile = selectedFiles[0];
 
                     if (currentTool === 'pdf-to-png' || currentTool === 'pdf-to-jpg' || currentTool === 'split-pdf') {
                         const arrayBuffer = await firstFile.arrayBuffer();
-                        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-                        const page = await pdf.getPage(1);
-                        const canvas = document.createElement('canvas');
-                        const viewport = page.getViewport({ scale: 1.0 });
-                        canvas.height = viewport.height; canvas.width = viewport.width;
-                        await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
-                        imagePreview.src = canvas.toDataURL('image/png');
-                        imagePreview.classList.remove('hidden'); nonImagePreview.classList.add('hidden');
+                        if(typeof pdfjsLib !== 'undefined') {
+                            const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                            const page = await pdf.getPage(1);
+                            const canvas = document.createElement('canvas');
+                            const viewport = page.getViewport({ scale: 1.0 });
+                            canvas.height = viewport.height; canvas.width = viewport.width;
+                            await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+                            if(imagePreview) {
+                                imagePreview.src = canvas.toDataURL('image/png');
+                                imagePreview.classList.remove('hidden');
+                            }
+                            if(nonImagePreview) nonImagePreview.classList.add('hidden');
+                        }
                     } else if (currentTool === 'heic-to-jpg' || currentTool === 'redact-tool') {
                         const isHeic = currentTool === 'heic-to-jpg';
-                        const convertedBlob = isHeic ? await heic2any({ blob: firstFile, toType: 'image/jpeg', quality: 0.5 }) : firstFile;
-                        imagePreview.src = URL.createObjectURL(Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob);
-                        imagePreview.classList.remove('hidden'); nonImagePreview.classList.add('hidden');
+                        let convertedBlob = firstFile;
+                        if(isHeic && typeof heic2any !== 'undefined') {
+                            convertedBlob = await heic2any({ blob: firstFile, toType: 'image/jpeg', quality: 0.5 });
+                        }
+                        if(imagePreview) {
+                            imagePreview.src = URL.createObjectURL(Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob);
+                            imagePreview.classList.remove('hidden');
+                        }
+                        if(nonImagePreview) nonImagePreview.classList.add('hidden');
                     }
                 }
             } catch (err) {
                 console.error("Preview Error:", err);
-                imagePreview.classList.add('hidden'); batchPreviewGrid.classList.add('hidden'); nonImagePreview.classList.remove('hidden');
-                document.getElementById('fileName').textContent = `${selectedFiles.length} files loaded`;
+                if(imagePreview) imagePreview.classList.add('hidden'); 
+                if(batchPreviewGrid) batchPreviewGrid.classList.add('hidden'); 
+                if(nonImagePreview) nonImagePreview.classList.remove('hidden');
+                const fileNameEl = document.getElementById('fileName');
+                if(fileNameEl) fileNameEl.textContent = `${selectedFiles.length} files loaded`;
             } finally { if (currentTool !== 'ocr-reader' && currentTool !== 'color-palette') hideProgress(); }
         }
 
         // EDITING TOOLS
-        document.getElementById('rotateRightBtn').addEventListener('click', () => {
-            currentRotation = (currentRotation + 90) % 360;
-            imagePreview.style.transform = `rotate(${currentRotation}deg)`;
-            if (cropper) cropper.rotateTo(currentRotation);
-        });
+        const rotateRightBtn = document.getElementById('rotateRightBtn');
+        if(rotateRightBtn) {
+            rotateRightBtn.addEventListener('click', () => {
+                currentRotation = (currentRotation + 90) % 360;
+                if(imagePreview) imagePreview.style.transform = `rotate(${currentRotation}deg)`;
+                if (cropper) cropper.rotateTo(currentRotation);
+            });
+        }
 
-        document.getElementById('toggleCropBtn').addEventListener('click', function() {
-            if (!cropper) {
-                cropper = new Cropper(imagePreview, { viewMode: 1, autoCropArea: 0.8, background: false });
-                this.innerHTML = "✅ Apply Crop";
-            } else {
-                cropper.destroy(); cropper = null;
-                this.innerHTML = "✂️ Crop Area";
-            }
-        });
+        const toggleCropBtn = document.getElementById('toggleCropBtn');
+        if(toggleCropBtn) {
+            toggleCropBtn.addEventListener('click', function() {
+                if (!cropper && typeof Cropper !== 'undefined' && imagePreview) {
+                    cropper = new Cropper(imagePreview, { viewMode: 1, autoCropArea: 0.8, background: false });
+                    this.innerHTML = "✅ Apply Crop";
+                } else if(cropper) {
+                    cropper.destroy(); cropper = null;
+                    this.innerHTML = "✂️ Crop Area";
+                }
+            });
+        }
 
-        document.getElementById('toggleGrayscaleBtn').addEventListener('click', function() {
-            isGrayscale = !isGrayscale;
-            if (isGrayscale) {
-                this.classList.add('bg-slate-200', 'dark:bg-slate-600', 'border-slate-400');
-                imagePreview.style.filter = 'grayscale(100%)';
-            } else {
-                this.classList.remove('bg-slate-200', 'dark:bg-slate-600', 'border-slate-400');
-                imagePreview.style.filter = 'none';
-            }
-        });
+        const toggleGrayscaleBtn = document.getElementById('toggleGrayscaleBtn');
+        if(toggleGrayscaleBtn) {
+            toggleGrayscaleBtn.addEventListener('click', function() {
+                isGrayscale = !isGrayscale;
+                if (isGrayscale) {
+                    this.classList.add('bg-slate-200', 'dark:bg-slate-600', 'border-slate-400');
+                    if(imagePreview) imagePreview.style.filter = 'grayscale(100%)';
+                } else {
+                    this.classList.remove('bg-slate-200', 'dark:bg-slate-600', 'border-slate-400');
+                    if(imagePreview) imagePreview.style.filter = 'none';
+                }
+            });
+        }
 
-        document.getElementById('logoInput').addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const url = URL.createObjectURL(file);
-                customLogo = new Image(); customLogo.src = url;
-            } else { customLogo = null; }
-        });
+        const logoInput = document.getElementById('logoInput');
+        if(logoInput) {
+            logoInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const url = URL.createObjectURL(file);
+                    customLogo = new Image(); customLogo.src = url;
+                } else { customLogo = null; }
+            });
+        }
 
         function parsePageRange(rangeStr, totalPages) {
             if (!rangeStr || rangeStr.trim() === '' || rangeStr.trim().toLowerCase() === 'all') return Array.from({ length: totalPages }, (_, i) => i + 1);
@@ -852,9 +1003,12 @@
                 workingCanvas = bwCanvas;
             }
             const ctx = workingCanvas.getContext('2d');
-            const wm = document.getElementById('watermarkText').value.trim();
-            const opacity = parseFloat(document.getElementById('watermarkOpacity').value) || 0.7;
-            const position = document.getElementById('watermarkPosition').value;
+            const wmEl = document.getElementById('watermarkText');
+            const wm = wmEl ? wmEl.value.trim() : "";
+            const opacityEl = document.getElementById('watermarkOpacity');
+            const opacity = opacityEl ? parseFloat(opacityEl.value) || 0.7 : 0.7;
+            const posEl = document.getElementById('watermarkPosition');
+            const position = posEl ? posEl.value : "bottom";
 
             if (wm) {
                 const fontSize = Math.max(24, Math.floor(workingCanvas.width / 20));
@@ -907,242 +1061,261 @@
         }
 
         // MAIN EXECUTION
-        convertBtn.addEventListener('click', async () => {
-            if (!selectedFiles.length) return;
+        if(convertBtn) {
+            convertBtn.addEventListener('click', async () => {
+                if (!selectedFiles.length) return;
 
-            if (currentTool === 'ocr-reader') {
-                const text = document.getElementById('ocrTextArea').value;
-                const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-                triggerDownloadWithShare(blob, `extracted_text_${Date.now()}.txt`);
-                showToast(translations[currentLang].successOcr);
-                return;
-            }
-
-            if (currentTool === 'qr-tool') {
-                const canvas = document.querySelector('#qrcodeDisplay canvas');
-                if (canvas) {
-                    canvas.toBlob(blob => {
-                        triggerDownloadWithShare(blob, `qrcode_${Date.now()}.png`);
-                        showToast("QR Code downloaded successfully!");
-                    });
+                if (currentTool === 'ocr-reader') {
+                    const ocrTextArea = document.getElementById('ocrTextArea');
+                    const text = ocrTextArea ? ocrTextArea.value : "";
+                    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+                    triggerDownloadWithShare(blob, `extracted_text_${Date.now()}.txt`);
+                    showToast(translations[currentLang].successOcr);
+                    return;
                 }
-                return;
-            }
 
-            if (currentTool === 'color-palette') {
-                const colors = Array.from(document.querySelectorAll('#paletteContainerGrid div')).map(d => d.textContent);
-                const blob = new Blob([JSON.stringify(colors, null, 2)], { type: 'application/json' });
-                triggerDownloadWithShare(blob, `color_palette_${Date.now()}.json`);
-                showToast(translations[currentLang].successPalette);
-                return;
-            }
-
-            if (currentTool === 'redact-tool') {
-                if (cropper) {
-                    const mainImg = new Image();
-                    mainImg.src = imagePreview.src;
-                    await new Promise(r => mainImg.onload = r);
-                    const canvas = document.createElement('canvas');
-                    canvas.width = mainImg.naturalWidth; canvas.height = mainImg.naturalHeight;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(mainImg, 0, 0);
-                    const cropData = cropper.getData(true);
-                    ctx.fillStyle = '#000000';
-                    ctx.fillRect(cropData.x, cropData.y, cropData.width, cropData.height);
-                    canvas.toBlob(blob => {
-                        triggerDownloadWithShare(blob, `redacted_${Date.now()}.png`);
-                        showToast(translations[currentLang].successRedact);
-                    });
-                } else {
-                    showToast("Please use 'Crop Area' box to select the area to redact first!", 'error');
+                if (currentTool === 'qr-tool') {
+                    const canvas = document.querySelector('#qrcodeDisplay canvas');
+                    if (canvas) {
+                        canvas.toBlob(blob => {
+                            triggerDownloadWithShare(blob, `qrcode_${Date.now()}.png`);
+                            showToast("QR Code downloaded successfully!");
+                        });
+                    }
+                    return;
                 }
-                return;
-            }
 
-            if (currentTool === 'sign-tool') {
-                const mainImg = new Image();
-                mainImg.src = imagePreview.src;
-                await new Promise(r => mainImg.onload = r);
-                const canvas = document.createElement('canvas');
-                canvas.width = mainImg.naturalWidth; canvas.height = mainImg.naturalHeight;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(mainImg, 0, 0);
-                const sigWidth = canvas.width * 0.25;
-                const sigHeight = (sigCanvas.height / sigCanvas.width) * sigWidth;
-                ctx.drawImage(sigCanvas, canvas.width - sigWidth - 30, canvas.height - sigHeight - 30, sigWidth, sigHeight);
-                canvas.toBlob(blob => {
-                    triggerDownloadWithShare(blob, `signed_${Date.now()}.png`);
-                    showToast(translations[currentLang].successSign);
-                });
-                return;
-            }
+                if (currentTool === 'color-palette') {
+                    const colors = Array.from(document.querySelectorAll('#paletteContainerGrid div')).map(d => d.textContent);
+                    const blob = new Blob([JSON.stringify(colors, null, 2)], { type: 'application/json' });
+                    triggerDownloadWithShare(blob, `color_palette_${Date.now()}.json`);
+                    showToast(translations[currentLang].successPalette);
+                    return;
+                }
 
-            showProgress("Processing...", "Starting engine"); await yieldToMain();
-
-            try {
-                const zip = new JSZip();
-
-                if (currentTool === 'merge-pdf') {
-                    showProgress("Merging PDFs", "Combining documents..."); await yieldToMain();
-                    let orderedFiles = [];
-                    Array.from(batchPreviewGrid.children).forEach(node => { orderedFiles.push(selectedFiles[parseInt(node.dataset.index)]); });
-
-                    const mergedPdf = await PDFLib.PDFDocument.create();
-                    for (let file of orderedFiles) {
-                        const arrayBuffer = await file.arrayBuffer();
-                        const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
-                        const pages = await mergedPdf.copyPages(pdfDoc, pdfDoc.getPageIndices());
-                        pages.forEach(page => mergedPdf.addPage(page));
-                    }
-                    const pdfBytes = await mergedPdf.save();
-                    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-                    triggerDownloadWithShare(blob, `merged_${Date.now()}.pdf`);
-                    showToast(translations[currentLang].successMerge);
-
-                } else if (currentTool === 'split-pdf') {
-                    showProgress("Splitting PDF", "Extracting pages..."); await yieldToMain();
-                    const file = selectedFiles[0];
-                    const arrayBuffer = await file.arrayBuffer();
-                    const srcPdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
-                    const targetPages = parsePageRange(document.getElementById('pdfPageRange').value, srcPdfDoc.getPageCount());
-
-                    const newPdfDoc = await PDFLib.PDFDocument.create();
-                    const copiedPages = await newPdfDoc.copyPages(srcPdfDoc, targetPages.map(p => p - 1));
-                    copiedPages.forEach(page => newPdfDoc.addPage(page));
-
-                    const pdfBytes = await newPdfDoc.save();
-                    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-                    triggerDownloadWithShare(blob, `split_${file.name}`);
-                    showToast(translations[currentLang].successSplit);
-
-                } else if (currentTool === 'compress-image') {
-                    const maxSizeMB = parseFloat(document.getElementById('compressionLevel').value) || 1;
-                    const options = { maxSizeMB: maxSizeMB, maxWidthOrHeight: 2500, useWebWorker: true };
-                    let orderedFiles = [];
-                    Array.from(batchPreviewGrid.children).forEach(node => { orderedFiles.push(selectedFiles[parseInt(node.dataset.index)]); });
-
-                    let totalOriginalSize = orderedFiles.reduce((acc, f) => acc + f.size, 0);
-                    let totalNewSize = 0;
-
-                    for (let i = 0; i < orderedFiles.length; i++) {
-                        const file = orderedFiles[i];
-                        showProgress("Compressing", `File ${i+1} of ${orderedFiles.length}...`); await yieldToMain();
-                        const compressedFile = await imageCompression(file, options);
-                        totalNewSize += compressedFile.size;
-                        
-                        if (orderedFiles.length === 1) {
-                            triggerDownloadWithShare(compressedFile, `compressed_${file.name}`); 
-                            const savedMB = ((file.size - compressedFile.size) / 1024 / 1024).toFixed(2);
-                            showToast(translations[currentLang].successComp + `${Math.max(0, savedMB)} MB`);
-                            hideProgress(); return;
-                        } else zip.file(`compressed_${file.name}`, compressedFile);
-                    }
-                    if (orderedFiles.length > 1) {
-                        showProgress("Zipping", "Creating archive..."); await yieldToMain();
-                        const zipBlob = await zip.generateAsync({ type: 'blob' });
-                        triggerDownloadWithShare(zipBlob, `compress_archive_${Date.now()}.zip`);
-                        const savedMB = ((totalOriginalSize - totalNewSize) / 1024 / 1024).toFixed(2);
-                        showToast(translations[currentLang].successComp + `${Math.max(0, savedMB)} MB`);
-                    }
-
-                } else if (currentTool === 'jpg-to-pdf') {
-                    showProgress("Building PDF", "Merging images..."); await yieldToMain();
-                    let orderedFiles = [];
-                    Array.from(batchPreviewGrid.children).forEach(node => { orderedFiles.push(selectedFiles[parseInt(node.dataset.index)]); });
-
-                    const pdfDoc = await PDFLib.PDFDocument.create();
-                    for (let i = 0; i < orderedFiles.length; i++) {
-                        showProgress("Building PDF", `Adding image ${i+1}...`); await yieldToMain();
-                        const file = orderedFiles[i];
-                        let embeddedImage = file.type === 'image/png' ? await pdfDoc.embedPng(await file.arrayBuffer()) : await pdfDoc.embedJpg(await file.arrayBuffer());
-                        const page = pdfDoc.addPage([embeddedImage.width, embeddedImage.height]);
-                        page.drawImage(embeddedImage, { x: 0, y: 0, width: embeddedImage.width, height: embeddedImage.height });
-                    }
-                    const pdfBlob = new Blob([await pdfDoc.save()], { type: 'application/pdf' });
-                    triggerDownloadWithShare(pdfBlob, `combined_${Date.now()}.pdf`);
-                    showToast(translations[currentLang].successJpgPdf);
-
-                } else if (currentTool === 'pdf-to-png' || currentTool === 'pdf-to-jpg') {
-                    const scale = parseFloat(document.getElementById('renderScale').value) || 2.0;
-                    const format = currentTool === 'pdf-to-png' ? 'image/png' : 'image/jpeg';
-                    const ext = currentTool === 'pdf-to-png' ? 'png' : 'jpg';
-                    const maxWidth = parseInt(document.getElementById('resizeWidth').value);
-                    let totalRendered = 0;
-
-                    for (let fIdx = 0; fIdx < selectedFiles.length; fIdx++) {
-                        const file = selectedFiles[fIdx];
-                        const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
-                        const targetPages = parsePageRange(document.getElementById('pdfPageRange').value, pdf.numPages);
-                        const baseName = file.name.replace(/\.[^/.]+$/, "");
-
-                        for (let pageNum of targetPages) {
-                            showProgress("Rendering", `PDF ${fIdx+1} - Page ${pageNum}/${pdf.numPages}`); await yieldToMain();
-                            const page = await pdf.getPage(pageNum);
-                            const viewport = page.getViewport({ scale });
-                            let canvas = document.createElement('canvas');
-                            canvas.width = viewport.width; canvas.height = viewport.height;
-                            await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
-
-                            canvas = getProcessedCanvas(canvas);
-                            
-                            if (maxWidth && maxWidth < canvas.width) {
-                                const resScale = maxWidth / canvas.width;
-                                const rCanvas = document.createElement('canvas');
-                                rCanvas.width = maxWidth; rCanvas.height = canvas.height * resScale;
-                                rCanvas.getContext('2d').drawImage(canvas, 0, 0, rCanvas.width, rCanvas.height);
-                                canvas = rCanvas;
-                            }
-                            canvas = applyAdvancedEffects(canvas);
-                            const blob = await new Promise(res => canvas.toBlob(res, format, 0.9));
-                            totalRendered++;
-
-                            if (selectedFiles.length === 1 && targetPages.length === 1) {
-                                triggerDownloadWithShare(blob, `${baseName}_p${pageNum}.${ext}`); 
-                                showToast(translations[currentLang].successConv);
-                                hideProgress(); return;
-                            } else zip.file(`${baseName}_p${pageNum}.${ext}`, blob);
-                        }
-                    }
-                    if (totalRendered > 1) {
-                        showProgress("Zipping", "Creating archive..."); await yieldToMain();
-                        triggerDownloadWithShare(await zip.generateAsync({ type: 'blob' }), `converted_${Date.now()}.zip`);
-                        showToast(translations[currentLang].successConv);
-                    }
-
-                } else if (currentTool === 'heic-to-jpg') {
-                    for (let i = 0; i < selectedFiles.length; i++) {
-                        showProgress("Converting HEIC", `File ${i+1} of ${selectedFiles.length}`); await yieldToMain();
-                        const file = selectedFiles[i];
-                        const outBlob = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.9 });
-                        const finalBlob = Array.isArray(outBlob) ? outBlob[0] : outBlob;
-                        
-                        if (cropper || currentRotation !== 0 || isGrayscale || customLogo || document.getElementById('watermarkText').value.trim()) {
-                            const img = new Image(); img.src = URL.createObjectURL(finalBlob);
-                            await new Promise(r => img.onload = r);
-                            let canvas = document.createElement('canvas');
-                            canvas.width = img.width; canvas.height = img.height;
-                            canvas.getContext('2d').drawImage(img, 0, 0);
-                            canvas = getProcessedCanvas(canvas);
-                            canvas = applyAdvancedEffects(canvas);
-                            zip.file(`${file.name.replace(/\.[^/.]+$/, "")}.jpg`, await new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.9)));
-                        } else {
-                            zip.file(`${file.name.replace(/\.[^/.]+$/, "")}.jpg`, finalBlob);
-                        }
-                    }
-                    if (selectedFiles.length === 1 && !cropper && currentRotation === 0 && !isGrayscale && !customLogo && !document.getElementById('watermarkText').value.trim()) {
-                        triggerDownloadWithShare(await zip.file(Object.keys(zip.files)[0]).async("blob"), Object.keys(zip.files)[0]);
-                        showToast(translations[currentLang].successConv);
+                if (currentTool === 'redact-tool') {
+                    if (cropper && imagePreview) {
+                        const mainImg = new Image();
+                        mainImg.src = imagePreview.src;
+                        await new Promise(r => mainImg.onload = r);
+                        const canvas = document.createElement('canvas');
+                        canvas.width = mainImg.naturalWidth; canvas.height = mainImg.naturalHeight;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(mainImg, 0, 0);
+                        const cropData = cropper.getData(true);
+                        ctx.fillStyle = '#000000';
+                        ctx.fillRect(cropData.x, cropData.y, cropData.width, cropData.height);
+                        canvas.toBlob(blob => {
+                            triggerDownloadWithShare(blob, `redacted_${Date.now()}.png`);
+                            showToast(translations[currentLang].successRedact);
+                        });
                     } else {
-                        showProgress("Zipping", "Creating archive..."); await yieldToMain();
-                        triggerDownloadWithShare(await zip.generateAsync({ type: 'blob' }), `heic_converted_${Date.now()}.zip`);
-                        showToast(translations[currentLang].successConv);
+                        showToast("Please use 'Crop Area' box to select the area to redact first!", 'error');
                     }
+                    return;
                 }
-            } catch (err) { 
-                console.error(err); 
-                showToast("Error: " + err.message, 'error'); 
-            } finally { hideProgress(); }
-        });
+
+                if (currentTool === 'sign-tool') {
+                    if(imagePreview) {
+                        const mainImg = new Image();
+                        mainImg.src = imagePreview.src;
+                        await new Promise(r => mainImg.onload = r);
+                        const canvas = document.createElement('canvas');
+                        canvas.width = mainImg.naturalWidth; canvas.height = mainImg.naturalHeight;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(mainImg, 0, 0);
+                        const sigWidth = canvas.width * 0.25;
+                        const sigHeight = (sigCanvas.height / sigCanvas.width) * sigWidth;
+                        ctx.drawImage(sigCanvas, canvas.width - sigWidth - 30, canvas.height - sigHeight - 30, sigWidth, sigHeight);
+                        canvas.toBlob(blob => {
+                            triggerDownloadWithShare(blob, `signed_${Date.now()}.png`);
+                            showToast(translations[currentLang].successSign);
+                        });
+                    }
+                    return;
+                }
+
+                showProgress("Processing...", "Starting engine"); await yieldToMain();
+
+                try {
+                    const zip = new JSZip();
+
+                    if (currentTool === 'merge-pdf') {
+                        showProgress("Merging PDFs", "Combining documents..."); await yieldToMain();
+                        let orderedFiles = [];
+                        if(batchPreviewGrid) {
+                            Array.from(batchPreviewGrid.children).forEach(node => { orderedFiles.push(selectedFiles[parseInt(node.dataset.index)]); });
+                        }
+
+                        const mergedPdf = await PDFLib.PDFDocument.create();
+                        for (let file of orderedFiles) {
+                            const arrayBuffer = await file.arrayBuffer();
+                            const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
+                            const pages = await mergedPdf.copyPages(pdfDoc, pdfDoc.getPageIndices());
+                            pages.forEach(page => mergedPdf.addPage(page));
+                        }
+                        const pdfBytes = await mergedPdf.save();
+                        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                        triggerDownloadWithShare(blob, `merged_${Date.now()}.pdf`);
+                        showToast(translations[currentLang].successMerge);
+
+                    } else if (currentTool === 'split-pdf') {
+                        showProgress("Splitting PDF", "Extracting pages..."); await yieldToMain();
+                        const file = selectedFiles[0];
+                        const arrayBuffer = await file.arrayBuffer();
+                        const srcPdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
+                        const rangeInput = document.getElementById('pdfPageRange');
+                        const targetPages = parsePageRange(rangeInput ? rangeInput.value : 'all', srcPdfDoc.getPageCount());
+
+                        const newPdfDoc = await PDFLib.PDFDocument.create();
+                        const copiedPages = await newPdfDoc.copyPages(srcPdfDoc, targetPages.map(p => p - 1));
+                        copiedPages.forEach(page => newPdfDoc.addPage(page));
+
+                        const pdfBytes = await newPdfDoc.save();
+                        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                        triggerDownloadWithShare(blob, `split_${file.name}`);
+                        showToast(translations[currentLang].successSplit);
+
+                    } else if (currentTool === 'compress-image') {
+                        const compLevel = document.getElementById('compressionLevel');
+                        const maxSizeMB = compLevel ? parseFloat(compLevel.value) || 1 : 1;
+                        const options = { maxSizeMB: maxSizeMB, maxWidthOrHeight: 2500, useWebWorker: true };
+                        let orderedFiles = [];
+                        if(batchPreviewGrid) {
+                            Array.from(batchPreviewGrid.children).forEach(node => { orderedFiles.push(selectedFiles[parseInt(node.dataset.index)]); });
+                        }
+
+                        let totalOriginalSize = orderedFiles.reduce((acc, f) => acc + f.size, 0);
+                        let totalNewSize = 0;
+
+                        for (let i = 0; i < orderedFiles.length; i++) {
+                            const file = orderedFiles[i];
+                            showProgress("Compressing", `File ${i+1} of ${orderedFiles.length}...`); await yieldToMain();
+                            const compressedFile = await imageCompression(file, options);
+                            totalNewSize += compressedFile.size;
+                            
+                            if (orderedFiles.length === 1) {
+                                triggerDownloadWithShare(compressedFile, `compressed_${file.name}`); 
+                                const savedMB = ((file.size - compressedFile.size) / 1024 / 1024).toFixed(2);
+                                showToast(translations[currentLang].successComp + `${Math.max(0, savedMB)} MB`);
+                                hideProgress(); return;
+                            } else zip.file(`compressed_${file.name}`, compressedFile);
+                        }
+                        if (orderedFiles.length > 1) {
+                            showProgress("Zipping", "Creating archive..."); await yieldToMain();
+                            const zipBlob = await zip.generateAsync({ type: 'blob' });
+                            triggerDownloadWithShare(zipBlob, `compress_archive_${Date.now()}.zip`);
+                            const savedMB = ((totalOriginalSize - totalNewSize) / 1024 / 1024).toFixed(2);
+                            showToast(translations[currentLang].successComp + `${Math.max(0, savedMB)} MB`);
+                        }
+
+                    } else if (currentTool === 'jpg-to-pdf') {
+                        showProgress("Building PDF", "Merging images..."); await yieldToMain();
+                        let orderedFiles = [];
+                        if(batchPreviewGrid) {
+                            Array.from(batchPreviewGrid.children).forEach(node => { orderedFiles.push(selectedFiles[parseInt(node.dataset.index)]); });
+                        }
+
+                        const pdfDoc = await PDFLib.PDFDocument.create();
+                        for (let i = 0; i < orderedFiles.length; i++) {
+                            showProgress("Building PDF", `Adding image ${i+1}...`); await yieldToMain();
+                            const file = orderedFiles[i];
+                            let embeddedImage = file.type === 'image/png' ? await pdfDoc.embedPng(await file.arrayBuffer()) : await pdfDoc.embedJpg(await file.arrayBuffer());
+                            const page = pdfDoc.addPage([embeddedImage.width, embeddedImage.height]);
+                            page.drawImage(embeddedImage, { x: 0, y: 0, width: embeddedImage.width, height: embeddedImage.height });
+                        }
+                        const pdfBlob = new Blob([await pdfDoc.save()], { type: 'application/pdf' });
+                        triggerDownloadWithShare(pdfBlob, `combined_${Date.now()}.pdf`);
+                        showToast(translations[currentLang].successJpgPdf);
+
+                    } else if (currentTool === 'pdf-to-png' || currentTool === 'pdf-to-jpg') {
+                        const scaleEl = document.getElementById('renderScale');
+                        const scale = scaleEl ? parseFloat(scaleEl.value) || 2.0 : 2.0;
+                        const format = currentTool === 'pdf-to-png' ? 'image/png' : 'image/jpeg';
+                        const ext = currentTool === 'pdf-to-png' ? 'png' : 'jpg';
+                        const resizeWEl = document.getElementById('resizeWidth');
+                        const maxWidth = resizeWEl ? parseInt(resizeWEl.value) : NaN;
+                        let totalRendered = 0;
+
+                        for (let fIdx = 0; fIdx < selectedFiles.length; fIdx++) {
+                            const file = selectedFiles[fIdx];
+                            const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
+                            const rangeInput = document.getElementById('pdfPageRange');
+                            const targetPages = parsePageRange(rangeInput ? rangeInput.value : 'all', pdf.numPages);
+                            const baseName = file.name.replace(/\.[^/.]+$/, "");
+
+                            for (let pageNum of targetPages) {
+                                showProgress("Rendering", `PDF ${fIdx+1} - Page ${pageNum}/${pdf.numPages}`); await yieldToMain();
+                                const page = await pdf.getPage(pageNum);
+                                const viewport = page.getViewport({ scale });
+                                let canvas = document.createElement('canvas');
+                                canvas.width = viewport.width; canvas.height = viewport.height;
+                                await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+
+                                canvas = getProcessedCanvas(canvas);
+                                
+                                if (!isNaN(maxWidth) && maxWidth < canvas.width) {
+                                    const resScale = maxWidth / canvas.width;
+                                    const rCanvas = document.createElement('canvas');
+                                    rCanvas.width = maxWidth; rCanvas.height = canvas.height * resScale;
+                                    rCanvas.getContext('2d').drawImage(canvas, 0, 0, rCanvas.width, rCanvas.height);
+                                    canvas = rCanvas;
+                                }
+                                canvas = applyAdvancedEffects(canvas);
+                                const blob = await new Promise(res => canvas.toBlob(res, format, 0.9));
+                                totalRendered++;
+
+                                if (selectedFiles.length === 1 && targetPages.length === 1) {
+                                    triggerDownloadWithShare(blob, `${baseName}_p${pageNum}.${ext}`); 
+                                    showToast(translations[currentLang].successConv);
+                                    hideProgress(); return;
+                                } else zip.file(`${baseName}_p${pageNum}.${ext}`, blob);
+                            }
+                        }
+                        if (totalRendered > 1) {
+                            showProgress("Zipping", "Creating archive..."); await yieldToMain();
+                            triggerDownloadWithShare(await zip.generateAsync({ type: 'blob' }), `converted_${Date.now()}.zip`);
+                            showToast(translations[currentLang].successConv);
+                        }
+
+                    } else if (currentTool === 'heic-to-jpg') {
+                        for (let i = 0; i < selectedFiles.length; i++) {
+                            showProgress("Converting HEIC", `File ${i+1} of ${selectedFiles.length}`); await yieldToMain();
+                            const file = selectedFiles[i];
+                            let finalBlob = file;
+                            if(typeof heic2any !== 'undefined') {
+                                const outBlob = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.9 });
+                                finalBlob = Array.isArray(outBlob) ? outBlob[0] : outBlob;
+                            }
+                            
+                            if (cropper || currentRotation !== 0 || isGrayscale || customLogo || (document.getElementById('watermarkText') && document.getElementById('watermarkText').value.trim())) {
+                                const img = new Image(); img.src = URL.createObjectURL(finalBlob);
+                                await new Promise(r => img.onload = r);
+                                let canvas = document.createElement('canvas');
+                                canvas.width = img.width; canvas.height = img.height;
+                                canvas.getContext('2d').drawImage(img, 0, 0);
+                                canvas = getProcessedCanvas(canvas);
+                                canvas = applyAdvancedEffects(canvas);
+                                zip.file(`${file.name.replace(/\.[^/.]+$/, "")}.jpg`, await new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.9)));
+                            } else {
+                                zip.file(`${file.name.replace(/\.[^/.]+$/, "")}.jpg`, finalBlob);
+                            }
+                        }
+                        if (selectedFiles.length === 1 && !cropper && currentRotation === 0 && !isGrayscale && !customLogo && (!document.getElementById('watermarkText') || !document.getElementById('watermarkText').value.trim())) {
+                            triggerDownloadWithShare(await zip.file(Object.keys(zip.files)[0]).async("blob"), Object.keys(zip.files)[0]);
+                            showToast(translations[currentLang].successConv);
+                        } else {
+                            showProgress("Zipping", "Creating archive..."); await yieldToMain();
+                            triggerDownloadWithShare(await zip.generateAsync({ type: 'blob' }), `heic_converted_${Date.now()}.zip`);
+                            showToast(translations[currentLang].successConv);
+                        }
+                    }
+                } catch (err) { 
+                    console.error(err); 
+                    showToast("Error: " + err.message, 'error'); 
+                } finally { hideProgress(); }
+            });
+        }
     </script>
 </body>
 </html>
