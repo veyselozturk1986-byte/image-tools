@@ -26,6 +26,7 @@
     <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@zip.js/zip.js/dist/zip.min.js"></script>
 </head>
 
 <body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans relative transition-colors duration-200">
@@ -277,7 +278,7 @@
 
                     <!-- Encrypt PDF Options Group -->
                     <div id="encryptOptionsGroup" class="hidden space-y-3">
-                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">Set PDF Password:</label>
+                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">Set PDF Password (AES Secure ZIP):</label>
                         <input type="password" id="pdfUserPassword" placeholder="Enter secure password" class="w-full p-2 text-xs border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 dark:text-white">
                     </div>
 
@@ -435,7 +436,7 @@
                 successMerge: "PDFs successfully merged and downloaded!",
                 successSplit: "PDF successfully split and downloaded!",
                 successExtract: "PDF images extracted successfully!",
-                successEncrypt: "PDF successfully encrypted and downloaded!",
+                successEncrypt: "PDF successfully encrypted and secured in ZIP!",
                 successBates: "Bates numbering applied successfully!",
                 successOcr: "Text successfully extracted!",
                 successRedact: "Redacted image downloaded successfully!",
@@ -949,8 +950,8 @@
                 if(resizeContainer) resizeContainer.style.display = 'none'; 
                 if(pdfGroup) pdfGroup.style.display = 'none';
                 if(encryptOptionsGroup) encryptOptionsGroup.style.display = 'block';
-                if(formatBadge) formatBadge.innerHTML = "🔒 Encrypted PDF";
-                convertBtn.innerHTML = "Encrypt & Download PDF";
+                if(formatBadge) formatBadge.innerHTML = "🔒 Secure AES ZIP Archive";
+                convertBtn.innerHTML = "Encrypt & Download Secure ZIP";
             } else if (tool === 'bates-pdf') {
                 if(title) title.textContent = "Bates Numbering";
                 if(fileInput) { fileInput.accept = ".pdf"; fileInput.multiple = false; }
@@ -1744,16 +1745,31 @@
                         showToast(translations[currentLang].successExtract);
 
                     } else if (currentTool === 'encrypt-pdf') {
-                        showProgress("Encrypting PDF", "Securing document with password..."); await yieldToMain();
+                        showProgress("Encrypting PDF", "Securing document with AES password archive..."); await yieldToMain();
                         const file = selectedFiles[0];
                         const arrayBuffer = await file.arrayBuffer();
                         const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
-                        const passInput = document.getElementById('pdfUserPassword');
-                        const password = passInput ? passInput.value : "secure123";
+                        const pdfBytes = await pdfDoc.save();
+                        const pdfBlob = new Blob([pdfBytes], { type: 'application/pdf' });
 
-                        const pdfBytes = await pdfDoc.save({ userPassword: password, ownerPassword: password });
-                        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-                        triggerDownloadWithShare(blob, `encrypted_${file.name}`);
+                        const passInput = document.getElementById('pdfUserPassword');
+                        const password = passInput ? passInput.value.trim() : "";
+
+                        if (!password) {
+                            showToast("Please enter a secure password for encryption!", "error");
+                            hideProgress();
+                            return;
+                        }
+
+                        // Secure 100% Client-Side AES-256 ZIP Encryption via zip.js
+                        const zipWriter = new zip.ZipWriter(new zip.BlobWriter("application/zip"));
+                        await zipWriter.add(`secure_${file.name.replace(/\.[^/.]+$/, "")}.pdf`, new zip.BlobReader(pdfBlob), {
+                            password: password,
+                            encryptionMethod: zip.encryptionMethodAES256
+                        });
+                        const encryptedZipBlob = await zipWriter.close();
+
+                        triggerDownloadWithShare(encryptedZipBlob, `encrypted_${file.name.replace(/\.[^/.]+$/, "")}.zip`);
                         showToast(translations[currentLang].successEncrypt);
 
                     } else if (currentTool === 'bates-pdf') {
