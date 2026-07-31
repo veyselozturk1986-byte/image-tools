@@ -16,7 +16,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4444769373675024" crossorigin="anonymous"></script>
 
-    <!-- Cropper.js CSS (Kırpma Aracı) -->
+    <!-- Cropper.js CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
 
     <!-- DÖNÜŞTÜRÜCÜ VE EDİTÖR KÜTÜPHANELERİ -->
@@ -25,7 +25,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/heic2any/0.0.4/heic2any.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
     <!-- Schema.org JSON-LD -->
     <script type="application/ld+json">
@@ -269,6 +268,26 @@
 
         qualityRange.addEventListener('input', (e) => qualityVal.textContent = `${e.target.value}%`);
 
+        function showStatus(msg) {
+            statusText.textContent = msg;
+            statusText.classList.remove('hidden');
+        }
+
+        function hideStatus() {
+            statusText.classList.add('hidden');
+        }
+
+        function triggerDownload(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
         // Sürükle-Bırak Etkinlikleri
         dropZone.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
@@ -310,7 +329,7 @@
                 imageQuickButtons.classList.remove('hidden');
                 pdfRangeGroup.classList.add('hidden');
             } 
-            // 2. HEIC İPHONE FOTOĞRAFI (Anında Canvas Önizlemeye Dönüştürülür)
+            // 2. HEIC İPHONE FOTOĞRAFI
             else if (firstFile.name.toLowerCase().endsWith('.heic') || firstFile.name.toLowerCase().endsWith('.heif')) {
                 showStatus("Generating HEIC live preview...");
                 try {
@@ -328,7 +347,7 @@
                     hideStatus();
                 }
             } 
-            // 3. PDF DOSYASI (İlk Sayfa Ekrana Çizdirilir + Sayfa Aralığı Açılır)
+            // 3. PDF DOSYASI
             else if (firstFile.type.includes('pdf') || firstFile.name.toLowerCase().endsWith('.pdf')) {
                 showStatus("Loading PDF preview...");
                 try {
@@ -350,10 +369,9 @@
                     imagePreview.classList.remove('hidden');
                     nonImagePreview.classList.add('hidden');
 
-                    // PDF Seçeneklerini Göster
                     pdfRangeGroup.classList.remove('hidden');
-                    imageQuickButtons.classList.remove('hidden'); // PDF sayfalarını da döndürebilirler
-                    toggleCropBtn.classList.add('hidden'); // PDF için kırpma kapalı
+                    imageQuickButtons.classList.remove('hidden');
+                    toggleCropBtn.classList.add('hidden');
                 } catch (err) {
                     console.error("PDF Preview Error:", err);
                     showNonImagePreview(firstFile);
@@ -402,7 +420,7 @@
             }
         });
 
-        // Sayfa Aralığı Ayrıştırma Fonksiyonu (örn: "1, 3-5" -> [1, 3, 4, 5])
+        // Sayfa Aralığı Ayrıştırma Fonksiyonu
         function parsePageRange(rangeStr, totalPages) {
             if (!rangeStr || rangeStr.trim() === '' || rangeStr.trim().toLowerCase() === 'all') {
                 return Array.from({ length: totalPages }, (_, i) => i + 1);
@@ -440,19 +458,15 @@
             try {
                 const firstFile = selectedFiles[0];
 
-                // SENARYO A: Görselleri PDF'e Dönüştürme
                 if (format === 'pdf' && !firstFile.type.includes('pdf')) {
                     await convertImagesToPdf(selectedFiles);
                 } 
-                // SENARYO B: PDF'i Görsellere / PDF'e İşleme (Sayfa Aralığı + Filigran + Döndürme)
                 else if (firstFile.type.includes('pdf') || firstFile.name.toLowerCase().endsWith('.pdf')) {
                     await convertPdfToImages(firstFile, format, quality);
                 }
-                // SENARYO C: HEIC Fotoğraflarını İşleme
                 else if (firstFile.name.toLowerCase().endsWith('.heic') || firstFile.name.toLowerCase().endsWith('.heif')) {
                     await convertHeicImages(selectedFiles, format, quality);
                 }
-                // SENARYO D: Standart Görseller (JPG, PNG, WEBP)
                 else {
                     await convertStandardImages(selectedFiles, format, quality);
                 }
@@ -484,7 +498,6 @@
                 ctx.drawImage(imgElement, -(imgElement.naturalWidth || imgElement.width) / 2, -(imgElement.naturalHeight || imgElement.height) / 2);
             }
 
-            // Resize Width
             const maxWidth = parseInt(resizeWidthInput.value);
             if (maxWidth && maxWidth < canvas.width) {
                 const scale = maxWidth / canvas.width;
@@ -496,12 +509,10 @@
                 canvas = resizedCanvas;
             }
 
-            // Watermark
             applyWatermarkToCanvas(canvas);
             return canvas;
         }
 
-        // Filigran Uygulama Yardımcı Fonksiyonu
         function applyWatermarkToCanvas(canvas) {
             const watermark = watermarkInput.value.trim();
             if (watermark) {
@@ -583,7 +594,7 @@
                     applyWatermarkToCanvas(canvas);
                 }
 
-                const mimeType = format === 'png' ? 'image/png' : 'image/jpeg';
+                const mimeType = format === 'png' ? 'image/png' : format === 'webp' ? 'image/webp' : 'image/jpeg';
                 const outBlob = await new Promise(res => canvas.toBlob(res, mimeType, quality));
                 const baseName = files[i].name.replace(/\.(heic|heif)$/i, "");
 
@@ -592,82 +603,85 @@
             }
 
             if (!isSingle) {
+                showStatus("Creating ZIP file...");
                 const zipBlob = await zip.generateAsync({ type: 'blob' });
-                triggerDownload(zipBlob, `heic_converted_${Date.now()}.zip`);
+                triggerDownload(zipBlob, `converted_heic_${Date.now()}.zip`);
             }
         }
 
-        // 3. PDF'den Görsellere (Sayfa Aralığı + Filigran + Döndürme Destekli)
+        // 3. PDF'i Görsele veya PDF'e İşleme
         async function convertPdfToImages(file, format, quality) {
             const arrayBuffer = await file.arrayBuffer();
             const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-            const zip = new JSZip();
-            const mimeType = format === 'png' ? 'image/png' : 'image/jpeg';
-
-            // Sayfa Aralığını Çözümle
             const targetPages = parsePageRange(pdfPageRange.value, pdf.numPages);
+            
+            if (format === 'pdf') {
+                const { jsPDF } = window.jspdf;
+                let doc = null;
 
-            if (targetPages.length === 0) {
-                alert("No valid pages selected for the given range!");
-                return;
-            }
+                for (let i = 0; i < targetPages.length; i++) {
+                    const pageNum = targetPages[i];
+                    showStatus(`Processing PDF page ${pageNum}...`);
+                    const page = await pdf.getPage(pageNum);
+                    const viewport = page.getViewport({ scale: 2.0 });
 
-            for (let index = 0; index < targetPages.length; index++) {
-                const pageNum = targetPages[index];
-                showStatus(`Processing PDF page ${pageNum} (${index + 1}/${targetPages.length})...`);
-                
-                const page = await pdf.getPage(pageNum);
-                const viewport = page.getViewport({ scale: 2.0 });
-                
-                let canvas = document.createElement('canvas');
-                let ctx = canvas.getContext('2d');
-                canvas.height = viewport.height; 
-                canvas.width = viewport.width;
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
+                    await page.render({ canvasContext: ctx, viewport }).promise;
 
-                if (format !== 'png') { 
-                    ctx.fillStyle = '#FFFFFF'; 
-                    ctx.fillRect(0, 0, canvas.width, canvas.height); 
-                }
-                await page.render({ canvasContext: ctx, viewport }).promise;
+                    applyWatermarkToCanvas(canvas);
+                    const imgData = canvas.toDataURL('image/jpeg', quality);
 
-                // Döndürme Açısı Varsa Uygula
-                if (currentRotation % 360 !== 0) {
-                    const rotCanvas = document.createElement('canvas');
-                    if (currentRotation % 180 !== 0) {
-                        rotCanvas.width = canvas.height;
-                        rotCanvas.height = canvas.width;
+                    const orientation = canvas.width > canvas.height ? 'l' : 'p';
+                    if (i === 0) {
+                        doc = new jsPDF({ orientation, unit: 'px', format: [canvas.width, canvas.height] });
+                        doc.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height);
                     } else {
-                        rotCanvas.width = canvas.width;
-                        rotCanvas.height = canvas.height;
+                        doc.addPage([canvas.width, canvas.height], orientation);
+                        doc.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height);
                     }
-                    const rCtx = rotCanvas.getContext('2d');
-                    rCtx.translate(rotCanvas.width / 2, rotCanvas.height / 2);
-                    rCtx.rotate((currentRotation * Math.PI) / 180);
-                    rCtx.drawImage(canvas, -canvas.width / 2, -canvas.height / 2);
-                    canvas = rotCanvas;
+                }
+                doc.save(`extracted_${file.name}`);
+            } else {
+                const zip = new JSZip();
+                const isSingle = targetPages.length === 1;
+
+                for (let pageNum of targetPages) {
+                    showStatus(`Extracting page ${pageNum} of ${pdf.numPages}...`);
+                    const page = await pdf.getPage(pageNum);
+                    const viewport = page.getViewport({ scale: 2.0 });
+
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
+
+                    if (format === 'jpg') { ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, canvas.width, canvas.height); }
+                    await page.render({ canvasContext: ctx, viewport }).promise;
+
+                    applyWatermarkToCanvas(canvas);
+
+                    const mimeType = format === 'png' ? 'image/png' : format === 'webp' ? 'image/webp' : 'image/jpeg';
+                    const blob = await new Promise(res => canvas.toBlob(res, mimeType, quality));
+
+                    if (isSingle) {
+                        triggerDownload(blob, `page_${pageNum}.${format}`);
+                    } else {
+                        zip.file(`page_${pageNum}.${format}`, blob);
+                    }
                 }
 
-                // Filigran Uygula
-                applyWatermarkToCanvas(canvas);
-
-                const blob = await new Promise(res => canvas.toBlob(res, mimeType, quality));
-                const ext = format === 'pdf' ? 'jpg' : format;
-
-                if (targetPages.length === 1) {
-                    triggerDownload(blob, `${file.name.replace(/\.pdf$/i, '')}_page_${pageNum}.${ext}`);
-                } else {
-                    zip.file(`page-${pageNum}.${ext}`, blob);
+                if (!isSingle) {
+                    showStatus("Creating ZIP file...");
+                    const zipBlob = await zip.generateAsync({ type: 'blob' });
+                    triggerDownload(zipBlob, `pdf_pages_${Date.now()}.zip`);
                 }
-            }
-
-            if (targetPages.length > 1) {
-                showStatus("Creating ZIP package...");
-                const zipBlob = await zip.generateAsync({ type: 'blob' });
-                triggerDownload(zipBlob, `${file.name.replace(/\.pdf$/i, '')}_selected_pages.zip`);
             }
         }
 
-        // 4. Görsellerden PDF Oluşturma
+        // 4. Görselleri PDF Yapma
         async function convertImagesToPdf(files) {
             const { jsPDF } = window.jspdf;
             let doc = null;
@@ -675,7 +689,7 @@
             for (let i = 0; i < files.length; i++) {
                 showStatus(`Adding image ${i + 1} to PDF...`);
                 let canvas;
-
+                
                 if (i === 0 && imagePreview.src && !imagePreview.classList.contains('hidden')) {
                     canvas = await getProcessedCanvas(imagePreview);
                 } else {
@@ -683,6 +697,7 @@
                     const img = new Image();
                     img.src = URL.createObjectURL(file);
                     await new Promise(res => img.onload = res);
+
                     canvas = document.createElement('canvas');
                     canvas.width = img.width; canvas.height = img.height;
                     const ctx = canvas.getContext('2d');
@@ -690,41 +705,19 @@
                     applyWatermarkToCanvas(canvas);
                 }
 
+                const imgData = canvas.toDataURL('image/jpeg', 0.9);
                 const orientation = canvas.width > canvas.height ? 'l' : 'p';
+
                 if (i === 0) {
                     doc = new jsPDF({ orientation, unit: 'px', format: [canvas.width, canvas.height] });
+                    doc.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height);
                 } else {
                     doc.addPage([canvas.width, canvas.height], orientation);
+                    doc.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height);
                 }
-
-                const imgData = canvas.toDataURL('image/jpeg', 0.9);
-                doc.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height);
             }
 
-            doc.save(`privacyconvert_document_${Date.now()}.pdf`);
-        }
-
-        // Yardımcı Fonksiyonlar
-        function triggerDownload(blob, filename) {
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = filename;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        function showStatus(text) {
-            statusText.textContent = text;
-            statusText.classList.remove('hidden');
-            convertBtn.disabled = true;
-            convertBtn.classList.add('opacity-50', 'cursor-not-allowed');
-        }
-
-        function hideStatus() {
-            statusText.classList.add('hidden');
-            convertBtn.disabled = false;
-            convertBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            doc.save(`converted_document_${Date.now()}.pdf`);
         }
     </script>
 </body>
