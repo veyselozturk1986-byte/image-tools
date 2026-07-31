@@ -48,7 +48,11 @@
                 ⚡ PrivacyConvert
             </a>
             <div class="flex items-center gap-3">
-                <button id="langToggle" class="px-3 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg text-xs font-bold transition">TR / EN</button>
+                <select id="langSelect" class="bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-lg text-xs font-bold px-2.5 py-1.5 transition border-0 focus:outline-none cursor-pointer">
+                    <option value="en">English</option>
+                    <option value="es">Español</option>
+                    <option value="ar">العربية</option>
+                </select>
                 <span class="hidden sm:inline-flex bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300 text-xs px-3 py-1 rounded-full font-medium items-center gap-1">
                     🔒 100% Local
                 </span>
@@ -225,7 +229,7 @@
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-        // Translations Dictionary (i18n)
+        // Translations Dictionary (EN, ES, AR)
         let currentLang = 'en';
         const translations = {
             en: {
@@ -256,43 +260,73 @@
                 successComp: "Image compressed successfully! Saved ",
                 successJpgPdf: "PDF successfully created!"
             },
-            tr: {
-                titlePrefix: "Güvenli", titleSuffix: "Dönüştürücü",
-                descPdfPng: "PDF sayfalarını doğrudan tarayıcınızda yüksek çözünürlüklü PNG görsellere dönüştürün.",
-                descPdfJpg: "PDF sayfalarını doğrudan tarayıcınızda yüksek çözünürlüklü JPG görsellere dönüştürün.",
-                descMergePdf: "Birden fazla PDF belgesini güvenli bir şekilde tek bir dosyada birleştirin.",
-                descSplitPdf: "Bir PDF'ten istediğiniz sayfaları ayırarak yeni bir belge oluşturun.",
-                descOcr: "Görsellerdeki metinleri tarayıcınızda yapay zeka ile anında metne dönüştürün.",
-                descHeic: "Apple HEIC fotoğraflarını anında standart JPG formatına çevirin.",
-                descJpgPdf: "Birden fazla görseli tek bir PDF belgesinde birleştirin.",
-                descCompress: "Görsel kalitesini kaybetmeden dosya boyutlarını ciddi ölçüde küçültün.",
-                dropPdf: "PDF dosyası seçmek için tıklayın veya sürükleyip bırakın",
-                dropSubPdf: "Bir veya birden fazla PDF belgesi seçin (.pdf)",
-                dropMergePdf: "Birleştirilecek PDF'leri seçin veya sürükleyip bırakın",
-                dropSubMerge: "Birleştirmek için 2 veya daha fazla PDF seçin",
-                dropOcr: "OCR için görsel seçin veya sürükleyip bırakın",
-                dropHeic: "HEIC dosyası seçin veya sürükleyip bırakın",
-                dropJpgPdf: "Görsel seçin veya sürükleyip bırakın",
-                dropCompress: "Sıkıştırılacak görselleri seçin veya sürükleyip bırakın",
-                convertBtn: "Dönüştür ve İndir",
-                clear: "🗑️ Temizle",
-                copied: "Metin panoya kopyalandı!",
-                successConv: "Dönüştürme tamamlandı!",
-                successMerge: "PDF'ler başarıyla birleştirildi ve indirildi!",
-                successSplit: "PDF başarıyla bölündü ve indirildi!",
-                successOcr: "Metin başarıyla çıkarıldı!",
-                successComp: "Görsel sıkıştırıldı! Tasarruf edilen alan: ",
-                successJpgPdf: "PDF başarıyla oluşturuldu!"
+            es: {
+                titlePrefix: "Seguro", titleSuffix: "Convertidor",
+                descPdfPng: "Extraiga páginas de PDF en imágenes PNG de alta resolución directamente en su navegador. Rápido, gratuito y 100% privado.",
+                descPdfJpg: "Extraiga páginas de PDF en imágenes JPG de alta resolución directamente en su navegador.",
+                descMergePdf: "Combine múltiples documentos PDF en un solo archivo organizado de forma segura.",
+                descSplitPdf: "Extraiga páginas específicas de un PDF en un nuevo documento separado.",
+                descOcr: "Extraiga texto editable de imágenes instantáneamente dentro de su navegador.",
+                descHeic: "Convierta fotos HEIC de Apple a imágenes JPG estándar al instante.",
+                descJpgPdf: "Combine y convierta múltiples imágenes en un solo documento PDF.",
+                descCompress: "Reduzca significativamente el tamaño de los archivos de imagen sin perder calidad visible.",
+                dropPdf: "Haga clic para seleccionar archivos PDF o arrástrelos y suéltelos",
+                dropSubPdf: "Seleccione uno o varios documentos PDF (.pdf)",
+                dropMergePdf: "Haga clic para seleccionar archivos PDF para fusionar o arrástrelos y suéltelos",
+                dropSubMerge: "Seleccione 2 o más documentos PDF para combinar",
+                dropOcr: "Haga clic para seleccionar una imagen para OCR o arrástrela y suéltela",
+                dropHeic: "Haga clic para seleccionar archivos HEIC o arrástrelos y suéltelos",
+                dropJpgPdf: "Haga clic para seleccionar imágenes o arrástrelos y suéltelos",
+                dropCompress: "Haga clic para seleccionar imágenes para comprimir o arrástrelos y suéltelos",
+                convertBtn: "Convertir y Descargar",
+                clear: "🗑️ Borrar",
+                copied: "¡Texto copiado al portapapeles!",
+                successConv: "¡Conversión completada!",
+                successMerge: "¡PDFs fusionados y descargados con éxito!",
+                successSplit: "¡PDF dividido y descargado con éxito!",
+                successOcr: "¡Texto extraído con éxito!",
+                successComp: "¡Imagen comprimida con éxito! Espacio ahorrado: ",
+                successJpgPdf: "¡PDF creado con éxito!"
+            },
+            ar: {
+                titlePrefix: "آمن", titleSuffix: "محول",
+                descPdfPng: "استخراج صفحات ملفات PDF إلى صور PNG عالية الدقة مباشرة في متصفحك. سريع، مجاني، ومحافظ تماماً على الخصوصية.",
+                descPdfJpg: "استخراج صفحات ملفات PDF إلى صور JPG عالية الدقة مباشرة في متصفحك.",
+                descMergePdf: "دمج مستندات PDF متعددة في ملف واحد منظم بأمان.",
+                descSplitPdf: "استخراج صفحات محددة من ملف PDF إلى مستند جديد منفصل.",
+                descOcr: "استخراج النص القابل للتعديل من الصور فوراً داخل متصفحك.",
+                descHeic: "تحويل صور آبل HEIC إلى صور JPG قياسية فوراً.",
+                descJpgPdf: "دمج وتحويل صور متعددة إلى مستند PDF واحد.",
+                descCompress: "تقليص حجم ملفات الصور بشكل ملحوظ دون فقدان الجودة المرئية.",
+                dropPdf: "انقر لتحديد ملفات PDF أو قم بالسحب والإفلات",
+                dropSubPdf: "حدد مستند PDF واحداً أو عدة مستندات (.pdf)",
+                dropMergePdf: "انقر لتحديد ملفات PDF لدمجها أو قم بالسحب والإفلات",
+                dropSubMerge: "حدد مستندين أو أكثر من مستندات PDF للدمج",
+                dropOcr: "انقر لتحديد صورة للتعرف الضوئي على الحروف (OCR) أو قم بالسحب والإفلات",
+                dropHeic: "انقر لتحديد ملفات HEIC أو قم بالسحب والإفلات",
+                dropJpgPdf: "انقر لتحديد الصور أو قم بالسحب والإفلات",
+                dropCompress: "انقر لتحديد الصور لضغطها أو قم بالسحب والإفلات",
+                convertBtn: "تحويل وتنزيل",
+                clear: "🗑️ مسح",
+                copied: "تم نسخ النص إلى الحافظة!",
+                successConv: "اكتمل التحويل!",
+                successMerge: "تم دمج ملفات PDF وتنزيلها بنجاح!",
+                successSplit: "تم تقسيم ملف PDF وتنزيله بنجاح!",
+                successOcr: "تم استخراج النص بنجاح!",
+                successComp: "تم ضغط الصورة بنجاح! المساحة المُوَفَّرة: ",
+                successJpgPdf: "تم إنشاء ملف PDF بنجاح!"
             }
         };
 
-        function switchLanguage() {
-            currentLang = currentLang === 'en' ? 'tr' : 'en';
-            document.getElementById('langToggle').textContent = currentLang.toUpperCase();
+        document.getElementById('langSelect').addEventListener('change', (e) => {
+            currentLang = e.target.value;
+            if (currentLang === 'ar') {
+                document.documentElement.setAttribute('dir', 'rtl');
+            } else {
+                document.documentElement.removeAttribute('dir');
+            }
             updateUITexts();
-        }
-
-        document.getElementById('langToggle').addEventListener('click', switchLanguage);
+        });
 
         function updateUITexts() {
             const t = translations[currentLang];
@@ -531,7 +565,7 @@
                         showProgress("OCR Reading", "Extracting text from image via AI...");
                         await yieldToMain();
                         try {
-                            const result = await Tesseract.recognize(e.target.result, 'eng+tur', {
+                            const result = await Tesseract.recognize(e.target.result, 'eng+spa+ara', {
                                 logger: m => console.log(m)
                             });
                             document.getElementById('ocrTextArea').value = result.data.text;
