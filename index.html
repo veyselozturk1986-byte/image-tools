@@ -93,7 +93,7 @@
             <input type="text" id="toolSearchInput" placeholder="🔍 Search tools (e.g. PDF, OCR, JSON, Password)..." class="w-full px-4 py-2.5 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm focus:outline-none focus:border-indigo-500 dark:text-white">
         </div>
 
-        <!-- Converter Navigation Tabs (With Favorites & Filter Support) -->
+        <!-- Converter Navigation Tabs -->
         <div id="toolsNavContainer" class="flex flex-wrap justify-center gap-2 mb-8">
             <button onclick="switchTool('pdf-to-png')" id="tab-pdf-to-png" data-name="pdf to png image extractor" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-indigo-600 text-white shadow-sm">PDF to PNG</button>
             <button onclick="switchTool('pdf-to-jpg')" id="tab-pdf-to-jpg" data-name="pdf to jpg image" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">PDF to JPG</button>
@@ -107,17 +107,17 @@
             <button onclick="switchTool('sign-tool')" id="tab-sign-tool" data-name="sign document signature" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">Sign Document</button>
             <button onclick="switchTool('qr-tool')" id="tab-qr-tool" data-name="qr code generator" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">QR Code</button>
             <button onclick="switchTool('password-gen')" id="tab-password-gen" data-name="password generator secure" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">Password Gen</button>
-            <button onclick="switchTool('uuid-gen')" id="tab-uuid-gen" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700" data-name="uuid generator">UUID Gen</button>
-            <button onclick="switchTool('base64-tool')" id="tab-base64-tool" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700" data-name="base64 encoder decoder">Base64 Tool</button>
-            <button onclick="switchTool('url-tool')" id="tab-url-tool" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700" data-name="url encoder decoder">URL Tool</button>
-            <button onclick="switchTool('hash-calc')" id="tab-hash-calc" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700" data-name="file hash checksum sha256">File Hash</button>
-            <button onclick="switchTool('heic-to-jpg')" id="tab-heic-to-jpg" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700" data-name="heic to jpg converter">HEIC to JPG</button>
-            <button onclick="switchTool('webp-converter')" id="tab-webp-converter" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700" data-name="webp avif converter">WebP / AVIF</button>
-            <button onclick="switchTool('jpg-to-pdf')" id="tab-jpg-to-pdf" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700" data-name="jpg to pdf combiner">JPG to PDF</button>
-            <button onclick="switchTool('compress-image')" id="tab-compress-image" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700" data-name="compress image size">Compress</button>
-            <button onclick="switchTool('json-tool')" id="tab-json-tool" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700" data-name="json formatter validator">JSON Tool</button>
-            <button onclick="switchTool('diff-tool')" id="tab-diff-tool" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700" data-name="text diff checker compare">Text Diff</button>
-            <button onclick="switchTool('md-tool')" id="tab-md-tool" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700" data-name="markdown previewer html">Markdown</button>
+            <button onclick="switchTool('uuid-gen')" id="tab-uuid-gen" data-name="uuid generator" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">UUID Gen</button>
+            <button onclick="switchTool('base64-tool')" id="tab-base64-tool" data-name="base64 encoder decoder" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">Base64 Tool</button>
+            <button onclick="switchTool('url-tool')" id="tab-url-tool" data-name="url encoder decoder" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">URL Tool</button>
+            <button onclick="switchTool('hash-calc')" id="tab-hash-calc" data-name="file hash checksum sha256" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">File Hash</button>
+            <button onclick="switchTool('heic-to-jpg')" id="tab-heic-to-jpg" data-name="heic to jpg converter" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">HEIC to JPG</button>
+            <button onclick="switchTool('webp-converter')" id="tab-webp-converter" data-name="webp avif converter" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">WebP / AVIF</button>
+            <button onclick="switchTool('jpg-to-pdf')" id="tab-jpg-to-pdf" data-name="jpg to pdf combiner" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">JPG to PDF</button>
+            <button onclick="switchTool('compress-image')" id="tab-compress-image" data-name="compress image size" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">Compress</button>
+            <button onclick="switchTool('json-tool')" id="tab-json-tool" data-name="json formatter validator" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">JSON Tool</button>
+            <button onclick="switchTool('diff-tool')" id="tab-diff-tool" data-name="text diff checker compare" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">Text Diff</button>
+            <button onclick="switchTool('md-tool')" id="tab-md-tool" data-name="markdown previewer html" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">Markdown</button>
         </div>
 
         <!-- Main Converter Card -->
@@ -280,24 +280,6 @@
                         </div>
                     </div>
 
-                    <!-- Base64 Options Group -->
-                    <div id="base64OptionsGroup" class="hidden space-y-3">
-                        <div class="flex gap-2">
-                            <button type="button" onclick="setBase64Mode('encode')" id="btnBase64Enc" class="flex-1 py-1.5 bg-indigo-600 text-white font-bold rounded-lg text-xs transition">Encode Text</button>
-                            <button type="button" onclick="setBase64Mode('decode')" id="btnBase64Dec" class="flex-1 py-1.5 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold rounded-lg text-xs transition">Decode Base64</button>
-                        </div>
-                        <textarea id="base64InputField" placeholder="Type text here..." class="w-full h-24 p-2 text-xs border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 dark:text-white focus:outline-none resize-none" oninput="processBase64()"></textarea>
-                    </div>
-
-                    <!-- URL Tool Options Group -->
-                    <div id="urlOptionsGroup" class="hidden space-y-3">
-                        <div class="flex gap-2">
-                            <button type="button" onclick="setUrlMode('encode')" id="btnUrlEnc" class="flex-1 py-1.5 bg-indigo-600 text-white font-bold rounded-lg text-xs transition">Encode URL</button>
-                            <button type="button" onclick="setUrlMode('decode')" id="btnUrlDec" class="flex-1 py-1.5 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold rounded-lg text-xs transition">Decode URL</button>
-                        </div>
-                        <textarea id="urlInputField" placeholder="Type URL or query text here..." class="w-full h-24 p-2 text-xs border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 dark:text-white focus:outline-none resize-none" oninput="processUrl()"></textarea>
-                    </div>
-
                     <!-- JSON Tool Options Group -->
                     <div id="jsonOptionsGroup" class="hidden space-y-3">
                         <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">Paste raw JSON string below:</label>
@@ -372,7 +354,7 @@
                     <div id="watermarkContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3 border-t border-slate-200 dark:border-slate-600">
                         <div>
                             <label for="watermarkText" class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Text Watermark:</label>
-                            <input type="text" id="watermarkText" placeholder="e.g. Confidential" class="w-full p-2 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 dark:text-white">
+                            <input type="text" id="watermarkText" placeholder="e.g. Confidential" class="w-full p-2 text-sm border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-slate-800 dark:text-white">
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Logo Watermark (PNG/JPG):</label>
@@ -438,6 +420,29 @@
                 titlePrefix: "Secure", titleSuffix: "Converter",
                 secTitle: "100% Local & Secure Processing Guarantee",
                 secDesc: "All file conversions, OCR readings, hashes, and edits occur entirely inside your web browser using client-side Web APIs and script libraries.",
+                descPdfPng: "Extract PDF pages into high-resolution PNG images directly in your browser. Fast, free, and completely private.",
+                descPdfJpg: "Extract PDF pages into high-resolution JPG images directly in your browser.",
+                descMerge: "Combine multiple PDF documents into a single organized file securely.",
+                descSplit: "Extract specific pages from a PDF into a new separate document.",
+                descExtImg: "Extract all embedded images and rendered visual pages from PDF documents.",
+                descEnc: "Add password encryption to secure your confidential PDF documents locally.",
+                descBates: "Stamp custom bates numbering and page indexes onto PDF documents.",
+                descOcr: "Extract editable text from images instantly inside your browser using AI OCR.",
+                descRedact: "Blackout sensitive information or censor areas securely on images.",
+                descSign: "Draw your digital signature and stamp it onto documents.",
+                descQr: "Generate QR codes locally or read them instantly.",
+                descPass: "Generate robust, secure cryptographic passwords instantly.",
+                descUuid: "Generate standard unique cryptographic UUID identifiers locally.",
+                descBase64: "Encode plain text to Base64 or decode Base64 strings securely.",
+                descUrl: "Encode text/URLs for web safety or decode URL-encoded strings.",
+                descHash: "Calculate local SHA-256 and MD5 cryptographic checksum hashes of any file.",
+                descHeic: "Convert Apple HEIC photos to standard JPG images instantly.",
+                descWebp: "Convert standard images to next-gen WebP or AVIF formats.",
+                descJpgPdf: "Combine and convert multiple images into a single PDF document.",
+                descComp: "Shrink image file sizes significantly without losing visible quality.",
+                descJson: "Format, validate, and beautify raw JSON strings instantly in your browser.",
+                descDiff: "Compare two text blocks side-by-side to highlight differences instantly.",
+                descMd: "Preview and render Markdown documents into rich HTML locally.",
                 convertBtn: "Convert & Download",
                 clear: "🗑️ Clear",
                 copied: "Text copied to clipboard!"
@@ -446,6 +451,29 @@
                 titlePrefix: "Seguro", titleSuffix: "Convertidor",
                 secTitle: "Garantía de Procesamiento 100% Local y Seguro",
                 secDesc: "Todas las conversiones ocurren enteramente dentro de su navegador web.",
+                descPdfPng: "Extraiga páginas de PDF en imágenes PNG de alta resolución directamente en su navegador.",
+                descPdfJpg: "Extraiga páginas de PDF en imágenes JPG de alta resolución directamente en su navegador.",
+                descMerge: "Combine múltiples documentos PDF en un solo archivo organizado.",
+                descSplit: "Extraiga páginas específicas de un PDF en un nuevo documento separado.",
+                descExtImg: "Extraiga todas las imágenes incrustadas de documentos PDF.",
+                descEnc: "Agregue cifrado de contraseña para proteger sus documentos PDF.",
+                descBates: "Estampe numeración Bates en documentos PDF.",
+                descOcr: "Extraiga texto editable de imágenes usando OCR.",
+                descRedact: "Oculte información confidencial o censure áreas en las imágenes.",
+                descSign: "Dibuje su firma digital y estamápela en los documentos.",
+                descQr: "Genere códigos QR localmente.",
+                descPass: "Genere contraseñas criptográficas seguras al instante.",
+                descUuid: "Genere identificadores UUID únicos localmente.",
+                descBase64: "Codifique o decodifique cadenas Base64.",
+                descUrl: "Codifique o decodifique textos/URLs.",
+                descHash: "Calcule hashes SHA-256 de cualquier archivo.",
+                descHeic: "Convierta fotos HEIC a JPG al instante.",
+                descWebp: "Convierta imágenes a WebP o AVIF.",
+                descJpgPdf: "Combine múltiples imágenes en un solo PDF.",
+                descComp: "Reduzca el tamaño de los archivos de imagen.",
+                descJson: "Formatee y valide cadenas JSON al instante en su navegador.",
+                descDiff: "Compare dos bloques de texto para resaltar diferencias.",
+                descMd: "Previsualice y renderice documentos Markdown a HTML.",
                 convertBtn: "Convertir y Descargar",
                 clear: "🗑️ Borrar",
                 copied: "¡Texto copiado al portapapeles!"
@@ -454,6 +482,29 @@
                 titlePrefix: "آمن", titleSuffix: "محول",
                 secTitle: "ضمان المعالجة المحلية الآمنة بنسبة 100%",
                 secDesc: "تتم جميع العمليات بالكامل داخل متصفحك.",
+                descPdfPng: "استخراج صفحات ملفات PDF إلى صور PNG عالية الدقة مباشرة في متصفحك.",
+                descPdfJpg: "استخراج صفحات ملفات PDF إلى صور JPG عالية الدقة.",
+                descMerge: "دمج مستندات PDF متعددة في ملف واحد منظم.",
+                descSplit: "استخراج صفحات محددة من ملف PDF إلى مستند جديد.",
+                descExtImg: "استخراج جميع الصور المضمنة من مستندات PDF.",
+                descEnc: "إضافة تشفير بكلمة مرور لتأمين مستندات PDF.",
+                descBates: "ختم ترقيم Bates على مستندات PDF.",
+                descOcr: "استخراج النص القابل للتعديل من الصور فوراً.",
+                descRedact: "حجب المعلومات الحساسة على الصور.",
+                descSign: "ارسم توقيعك الرقمي وقم بختمه على المستندات.",
+                descQr: "إنشاء رموز QR محلياً.",
+                descPass: "إنشاء كلمات مرور قوية فوراً.",
+                descUuid: "إنشاء معرفات UUID فريدة محلياً.",
+                descBase64: "تشفير أو فك تشفير Base64.",
+                descUrl: "تشفير أو فك تشفير الروابط.",
+                descHash: "حساب قيم التجزئة لأي ملف.",
+                descHeic: "تحويل صور HEIC إلى JPG فوراً.",
+                descWebp: "تحويل الصور إلى WebP أو AVIF.",
+                descJpgPdf: "دمج صور متعددة في مستند PDF واحد.",
+                descComp: "تقليص حجم ملفات الصور بشكل ملحوظ.",
+                descJson: "تنسيق والتحقق من سلاسل JSON مباشرة في متصفحك.",
+                descDiff: "مقارنة كتلتين من النص جنباً إلى جنب لتسليط الضوء على الاختلافات.",
+                descMd: "معاينة وتحويل مستندات Markdown إلى HTML.",
                 convertBtn: "تحويل وتنزيل",
                 clear: "🗑️ مسح",
                 copied: "تم نسخ النص إلى الحافظة!"
@@ -465,10 +516,10 @@
             langSelect.addEventListener('change', (e) => {
                 currentLang = e.target.value;
                 document.documentElement.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
+                updateToolDescription(currentTool);
             });
         }
 
-        // Quick Search Filter for Tabs
         const toolSearchInput = document.getElementById('toolSearchInput');
         if(toolSearchInput) {
             toolSearchInput.addEventListener('input', (e) => {
@@ -480,12 +531,11 @@
             });
         }
 
-        // Keyboard Shortcuts: Ctrl+Enter for Convert, Esc for Reset
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') resetApp();
             if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
                 const btn = document.getElementById('convertBtn');
-                if (btn && !btn.offsetParent === false) btn.click();
+                if (btn && btn.offsetParent !== null) btn.click();
             }
         });
 
@@ -503,41 +553,46 @@
             }, 3500);
         }
 
-        function copyJsonText() {
-            const ta = document.getElementById('jsonTextArea');
-            if(!ta) return; ta.select(); document.execCommand('copy');
-            showToast(translations[currentLang].copied);
+        function updateToolDescription(tool) {
+            const t = translations[currentLang];
+            const mainDesc = document.getElementById('mainDesc');
+            if(!mainDesc || !t) return;
+
+            const map = {
+                'pdf-to-png': t.descPdfPng,
+                'pdf-to-jpg': t.descPdfJpg,
+                'merge-pdf': t.descMerge,
+                'split-pdf': t.descSplit,
+                'extract-pdf-img': t.descExtImg,
+                'encrypt-pdf': t.descEnc,
+                'bates-pdf': t.descBates,
+                'ocr-reader': t.descOcr,
+                'redact-tool': t.descRedact,
+                'sign-tool': t.descSign,
+                'qr-tool': t.descQr,
+                'password-gen': t.descPass,
+                'uuid-gen': t.descUuid,
+                'base64-tool': t.descBase64,
+                'url-tool': t.descUrl,
+                'hash-calc': t.descHash,
+                'heic-to-jpg': t.descHeic,
+                'webp-converter': t.descWebp,
+                'jpg-to-pdf': t.descJpgPdf,
+                'compress-image': t.descComp,
+                'json-tool': t.descJson,
+                'diff-tool': t.descDiff,
+                'md-tool': t.descMd
+            };
+            mainDesc.textContent = map[tool] || t.secDesc;
         }
-        function copyOcrText() {
-            const ta = document.getElementById('ocrTextArea');
-            if(!ta) return; ta.select(); document.execCommand('copy');
-            showToast(translations[currentLang].copied);
-        }
-        function copyPassword() {
-            const pi = document.getElementById('generatedPasswordDisplay');
-            if(!pi) return; pi.select(); document.execCommand('copy');
-            showToast(translations[currentLang].copied);
-        }
-        function copyUuid() {
-            const ui = document.getElementById('generatedUuidDisplay');
-            if(!ui) return; ui.select(); document.execCommand('copy');
-            showToast(translations[currentLang].copied);
-        }
-        function copyBase64Text() {
-            const ta = document.getElementById('base64TextArea');
-            if(!ta) return; ta.select(); document.execCommand('copy');
-            showToast(translations[currentLang].copied);
-        }
-        function copyUrlText() {
-            const ta = document.getElementById('urlTextArea');
-            if(!ta) return; ta.select(); document.execCommand('copy');
-            showToast(translations[currentLang].copied);
-        }
-        function copyHashText() {
-            const ta = document.getElementById('hashTextArea');
-            if(!ta) return; ta.select(); document.execCommand('copy');
-            showToast(translations[currentLang].copied);
-        }
+
+        function copyJsonText() { const ta = document.getElementById('jsonTextArea'); if(!ta) return; ta.select(); document.execCommand('copy'); showToast(translations[currentLang].copied); }
+        function copyOcrText() { const ta = document.getElementById('ocrTextArea'); if(!ta) return; ta.select(); document.execCommand('copy'); showToast(translations[currentLang].copied); }
+        function copyPassword() { const pi = document.getElementById('generatedPasswordDisplay'); if(!pi) return; pi.select(); document.execCommand('copy'); showToast(translations[currentLang].copied); }
+        function copyUuid() { const ui = document.getElementById('generatedUuidDisplay'); if(!ui) return; ui.select(); document.execCommand('copy'); showToast(translations[currentLang].copied); }
+        function copyBase64Text() { const ta = document.getElementById('base64TextArea'); if(!ta) return; ta.select(); document.execCommand('copy'); showToast(translations[currentLang].copied); }
+        function copyUrlText() { const ta = document.getElementById('urlTextArea'); if(!ta) return; ta.select(); document.execCommand('copy'); showToast(translations[currentLang].copied); }
+        function copyHashText() { const ta = document.getElementById('hashTextArea'); if(!ta) return; ta.select(); document.execCommand('copy'); showToast(translations[currentLang].copied); }
 
         const themeToggle = document.getElementById('themeToggle');
         const htmlElement = document.documentElement;
@@ -564,10 +619,6 @@
         let cropper = null;
         let currentRotation = 0;
         let sortableInstance = null;
-        let isGrayscale = false;
-        let customLogo = null;
-        let base64Mode = 'encode';
-        let urlMode = 'encode';
 
         const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('fileInput');
@@ -592,16 +643,8 @@
         const progressTitle = document.getElementById('progressTitle');
         const progressText = document.getElementById('progressText');
 
-        function showProgress(title, text) { 
-            if(progressTitle) progressTitle.textContent = title; 
-            if(progressText) progressText.textContent = text; 
-            if(progressModal) progressModal.classList.remove('hidden'); 
-        }
-        function hideProgress() { if(progressModal) progressModal.classList.add('hidden'); }
-        async function yieldToMain() { return new Promise(resolve => setTimeout(resolve, 10)); }
-
         function resetApp() {
-            selectedFiles = []; currentRotation = 0; isGrayscale = false; customLogo = null;
+            selectedFiles = []; currentRotation = 0;
             if(cropper) { cropper.destroy(); cropper = null; }
             if(actionArea) actionArea.classList.add('hidden'); 
             if(dropZone) dropZone.classList.remove('hidden'); 
@@ -617,6 +660,7 @@
         function switchTool(tool) {
             currentTool = tool;
             resetApp();
+            updateToolDescription(tool);
 
             document.querySelectorAll('.tool-tab').forEach(btn => {
                 if (btn.id === `tab-${tool}`) {
@@ -627,63 +671,49 @@
             });
 
             const title = document.getElementById('mainTitleAccent');
-            const pdfGroup = document.getElementById('pdfRangeGroup');
-            const quality = document.getElementById('qualityContainer');
-            const formatBadge = document.getElementById('outputFormatBadge');
-            
-            ['imageQuickButtons', 'resizeContainer', 'compressOptionsGroup', 'webpOptionsGroup', 'watermarkContainer', 'pdfRangeGroup', 'qrInputGroup', 'passwordOptionsGroup', 'base64OptionsGroup', 'urlOptionsGroup', 'encryptOptionsGroup', 'batesOptionsGroup', 'jsonOptionsGroup', 'diffOptionsGroup', 'mdOptionsGroup'].forEach(id => {
+            if(title) {
+                const activeTabEl = document.getElementById(`tab-${tool}`);
+                title.textContent = activeTabEl ? activeTabEl.textContent : "Tool";
+            }
+
+            ['imageQuickButtons', 'resizeContainer', 'compressOptionsGroup', 'webpOptionsGroup', 'watermarkContainer', 'pdfRangeGroup', 'qrInputGroup', 'passwordOptionsGroup', 'base64OptionsGroup', 'urlOptionsGroup', 'encryptOptionsGroup', 'batesOptionsGroup', 'jsonOptionsGroup', 'diffOptionsGroup', 'mdOptionsGroup', 'qualityContainer'].forEach(id => {
                 const el = document.getElementById(id);
                 if(el) el.style.display = 'none';
             });
             if(dropZone) dropZone.style.display = 'block';
 
             if (tool === 'pdf-to-png' || tool === 'pdf-to-jpg') {
-                if(title) title.textContent = tool === 'pdf-to-png' ? "PDF to PNG" : "PDF to JPG";
                 if(fileInput) { fileInput.accept = ".pdf"; fileInput.multiple = true; }
-                if(quality) quality.style.display = 'block';
-                if(pdfGroup) pdfGroup.style.display = 'block';
-                if(watermarkContainer) watermarkContainer.style.display = 'grid';
-                if(resizeContainer) resizeContainer.style.display = 'block';
-            } else if (tool === 'merge-pdf') {
-                if(title) title.textContent = "Merge PDFs";
-                if(fileInput) { fileInput.accept = ".pdf"; fileInput.multiple = true; }
+                const q = document.getElementById('qualityContainer'); if(q) q.style.display = 'block';
+                const p = document.getElementById('pdfRangeGroup'); if(p) p.style.display = 'block';
+                const w = document.getElementById('watermarkContainer'); if(w) w.style.display = 'grid';
             } else if (tool === 'encrypt-pdf') {
-                if(title) title.textContent = "Encrypt PDF";
                 if(fileInput) { fileInput.accept = ".pdf"; fileInput.multiple = false; }
-                const encOpt = document.getElementById('encryptOptionsGroup');
-                if(encOpt) encOpt.style.display = 'block';
+                const encOpt = document.getElementById('encryptOptionsGroup'); if(encOpt) encOpt.style.display = 'block';
             } else if (tool === 'json-tool') {
-                if(title) title.textContent = "JSON Formatter";
                 if(dropZone) dropZone.style.display = 'none';
-                const jsonOpt = document.getElementById('jsonOptionsGroup');
-                if(jsonOpt) jsonOpt.style.display = 'block';
+                const jsonOpt = document.getElementById('jsonOptionsGroup'); if(jsonOpt) jsonOpt.style.display = 'block';
                 selectedFiles = ['dummy'];
                 if(actionArea) actionArea.classList.remove('hidden');
                 if(jsonResultBox) jsonResultBox.classList.remove('hidden');
                 processJson();
             } else if (tool === 'diff-tool') {
-                if(title) title.textContent = "Text Diff Checker";
                 if(dropZone) dropZone.style.display = 'none';
-                const diffOpt = document.getElementById('diffOptionsGroup');
-                if(diffOpt) diffOpt.style.display = 'block';
+                const diffOpt = document.getElementById('diffOptionsGroup'); if(diffOpt) diffOpt.style.display = 'block';
                 selectedFiles = ['dummy'];
                 if(actionArea) actionArea.classList.remove('hidden');
                 if(diffResultBox) diffResultBox.classList.remove('hidden');
                 processDiff();
             } else if (tool === 'md-tool') {
-                if(title) title.textContent = "Markdown Previewer";
                 if(dropZone) dropZone.style.display = 'none';
-                const mdOpt = document.getElementById('mdOptionsGroup');
-                if(mdOpt) mdOpt.style.display = 'block';
+                const mdOpt = document.getElementById('mdOptionsGroup'); if(mdOpt) mdOpt.style.display = 'block';
                 selectedFiles = ['dummy'];
                 if(actionArea) actionArea.classList.remove('hidden');
                 if(mdResultBox) mdResultBox.classList.remove('hidden');
                 processMarkdown();
             } else if (tool === 'password-gen') {
-                if(title) title.textContent = "Password Generator";
                 if(dropZone) dropZone.style.display = 'none';
-                const passOpt = document.getElementById('passwordOptionsGroup');
-                if(passOpt) passOpt.style.display = 'block';
+                const passOpt = document.getElementById('passwordOptionsGroup'); if(passOpt) passOpt.style.display = 'block';
                 selectedFiles = ['dummy'];
                 if(actionArea) actionArea.classList.remove('hidden');
                 if(passwordResultBox) passwordResultBox.classList.remove('hidden');
@@ -692,9 +722,11 @@
         }
 
         function processJson() {
-            const input = document.getElementById('jsonInputField').value.trim();
+            const inputField = document.getElementById('jsonInputField');
             const output = document.getElementById('jsonTextArea');
             const status = document.getElementById('jsonStatusLabel');
+            if(!inputField || !output) return;
+            const input = inputField.value.trim();
             if(!input) { output.value = ""; status.textContent = "Empty JSON"; status.className = "text-yellow-400 font-bold"; return; }
             try {
                 const parsed = JSON.parse(input);
@@ -707,9 +739,12 @@
         }
 
         function processDiff() {
-            const orig = document.getElementById('diffOriginal').value.split('\n');
-            const mod = document.getElementById('diffModified').value.split('\n');
+            const origEl = document.getElementById('diffOriginal');
+            const modEl = document.getElementById('diffModified');
             const container = document.getElementById('diffOutputContainer');
+            if(!origEl || !modEl || !container) return;
+            const orig = origEl.value.split('\n');
+            const mod = modEl.value.split('\n');
             container.innerHTML = "";
             const maxLines = Math.max(orig.length, mod.length);
             let html = "";
@@ -727,8 +762,10 @@
         }
 
         function processMarkdown() {
-            const text = document.getElementById('mdInputField').value;
+            const mdInput = document.getElementById('mdInputField');
             const preview = document.getElementById('mdPreviewContent');
+            if(!mdInput || !preview) return;
+            const text = mdInput.value;
             if(typeof marked !== 'undefined') {
                 preview.innerHTML = marked.parse(text);
             } else {
@@ -743,11 +780,12 @@
             const array = new Uint32Array(len);
             window.crypto.getRandomValues(array);
             for (let i = 0; i < len; i++) pass += chars[array[i] % chars.length];
-            document.getElementById('generatedPasswordDisplay').value = pass;
+            const disp = document.getElementById('generatedPasswordDisplay');
+            if(disp) disp.value = pass;
         }
 
         if(dropZone && fileInput) {
-            dropZone.addEventListener('click', () => fileInput.click());
+            dropZone.addEventListener('click', () => { if(!['json-tool','diff-tool','md-tool','password-gen'].includes(currentTool)) fileInput.click(); });
             fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
         }
 
