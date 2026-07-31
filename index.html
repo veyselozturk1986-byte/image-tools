@@ -8,15 +8,29 @@
     <title id="pageTitle">PrivacyConvert - 100% Local Secure Tools</title>
     <meta name="description" id="pageMetaDesc" content="Extract PDF pages, generate passwords, format JSON, and process images directly in your browser. 100% private.">
     
+    <!-- PWA Manifest & Theme Color -->
+    <meta name="theme-color" content="#4f46e5">
+    <link rel="manifest" href="data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22PrivacyConvert%22%2C%22short_name%22%3A%22PrivacyConvert%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230f172a%22%2C%22theme_color%22%3A%22%234f46e5%22%2C%22icons%22%3A%5B%5D%7D">
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        if (localStorage.getItem('privacyConvert_theme') === 'dark' || (!('privacyConvert_theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        const savedTheme = localStorage.getItem('privacyConvert_theme') || 'light';
+        const savedAccent = localStorage.getItem('privacyConvert_accent') || 'indigo';
+        if (savedTheme === 'dark' || (savedTheme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
         } else {
             document.documentElement.classList.remove('dark');
         }
-        tailwind.config = { darkMode: 'class' }
+        
+        const accentColors = {
+            indigo: { primary: '#4f46e5', hover: '#4338ca', ring: 'indigo-500' },
+            emerald: { primary: '#059669', hover: '#047857', ring: 'emerald-500' },
+            violet: { primary: '#7c3aed', hover: '#6d28d9', ring: 'violet-500' },
+            rose: { primary: '#e11d48', hover: '#be123c', ring: 'rose-500' },
+            amber: { primary: '#d97706', hover: '#b45309', ring: 'amber-500' }
+        };
+        tailwind.config = { darkMode: 'class' };
     </script>
 
     <!-- Cropper.js CSS -->
@@ -33,6 +47,14 @@
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <style>
+        :root { --accent-color: #4f46e5; --accent-hover: #4338ca; }
+        .dynamic-bg { background-color: var(--accent-color); }
+        .dynamic-bg:hover { background-color: var(--accent-hover); }
+        .dynamic-text { color: var(--accent-color); }
+        .dynamic-border { border-color: var(--accent-color); }
+    </style>
 </head>
 
 <body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-300 relative">
@@ -41,17 +63,17 @@
     <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
     <!-- Global Drag & Drop Overlay -->
-    <div id="globalDropOverlay" class="hidden fixed inset-0 bg-indigo-950/80 backdrop-blur-md z-50 flex flex-col items-center justify-center text-white border-4 border-dashed border-indigo-400 m-4 rounded-3xl pointer-events-none transition-all">
+    <div id="globalDropOverlay" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex flex-col items-center justify-center text-white border-4 border-dashed border-indigo-400 m-4 rounded-3xl pointer-events-none transition-all">
         <svg class="w-20 h-20 text-indigo-400 animate-bounce mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
-        <h2 id="overlayTitle" class="text-3xl font-bold">Drop your files anywhere to process!</h2>
+        <h2 id="overlayTitle" class="text-3xl font-bold">Drop your files anywhere to process locally!</h2>
     </div>
 
     <!-- Progress Overlay Modal -->
     <div id="progressModal" class="hidden fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 z-40 flex items-center justify-center backdrop-blur-sm transition-opacity">
         <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-2xl w-80 text-center flex flex-col items-center border border-slate-200 dark:border-slate-700 animate-pulse">
             <div class="w-14 h-14 border-4 border-indigo-100 dark:border-slate-600 border-t-indigo-600 dark:border-t-indigo-400 rounded-full animate-spin mb-4"></div>
-            <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-2" id="progressTitle">Processing...</h3>
-            <p id="progressText" class="text-sm text-slate-500 dark:text-slate-400 font-medium">Your data never leaves your device.</p>
+            <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-2" id="progressTitle">Processing Locally...</h3>
+            <p id="progressText" class="text-sm text-slate-500 dark:text-slate-400 font-medium">0 KB transferred to servers (100% Secure)</p>
         </div>
     </div>
 
@@ -87,6 +109,14 @@
                 ⚡ PrivacyConvert
             </a>
             <div class="flex items-center gap-3">
+                <!-- Accent Color Picker -->
+                <select id="accentSelect" class="bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold px-2.5 py-2 border-0 focus:outline-none cursor-pointer" title="Select Accent Color">
+                    <option value="indigo">🟣 Indigo</option>
+                    <option value="emerald">🟢 Emerald</option>
+                    <option value="violet">🔮 Violet</option>
+                    <option value="rose">🌹 Rose</option>
+                    <option value="amber">🟠 Amber</option>
+                </select>
                 <select id="langSelect" class="bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold px-3 py-2 border-0 focus:outline-none cursor-pointer">
                     <option value="en">English</option>
                     <option value="es">Español</option>
@@ -107,21 +137,28 @@
         <!-- Title Section -->
         <div class="text-center mb-8">
             <h1 class="text-3xl sm:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-3">
-                <span id="mainTitlePrefix">Secure</span> <span id="mainTitleAccent" class="text-indigo-600 dark:text-indigo-400">PDF to PNG</span>
+                <span id="mainTitlePrefix">Secure</span> <span id="mainTitleAccent" class="dynamic-text">PDF to PNG</span>
             </h1>
             <p id="mainDesc" class="text-slate-500 dark:text-slate-400 text-sm sm:text-base max-w-2xl mx-auto font-medium">
                 Extract PDF pages into high-resolution PNG images directly in your browser. Fast, free, and completely private.
             </p>
         </div>
 
-        <!-- 100% Security & Privacy Explanation Banner -->
-        <div class="max-w-3xl mx-auto mb-10 p-5 bg-emerald-50/80 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/50 rounded-2xl text-slate-800 dark:text-emerald-100 flex flex-col sm:flex-row items-start sm:items-center gap-4 shadow-sm backdrop-blur-sm transition-colors duration-300">
-            <div class="bg-emerald-100 dark:bg-emerald-800/50 p-3 rounded-full shrink-0 shadow-inner">
-                <svg class="w-7 h-7 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.966 11.966 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        <!-- 100% Security & Live Counter Banner -->
+        <div class="max-w-3xl mx-auto mb-10 p-5 bg-emerald-50/80 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/50 rounded-2xl text-slate-800 dark:text-emerald-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm backdrop-blur-sm transition-colors duration-300">
+            <div class="flex items-center gap-4">
+                <div class="bg-emerald-100 dark:bg-emerald-800/50 p-3 rounded-full shrink-0 shadow-inner">
+                    <svg class="w-7 h-7 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.966 11.966 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                </div>
+                <div>
+                    <strong id="secBannerTitle" class="block font-bold text-emerald-900 dark:text-emerald-300 text-base mb-1">100% Local & Secure Processing Guarantee</strong>
+                    <p id="secBannerDesc" class="text-sm opacity-90 dark:opacity-80">All conversions run client-side. Zero bytes uploaded to any remote server.</p>
+                </div>
             </div>
-            <div>
-                <strong id="secBannerTitle" class="block font-bold text-emerald-900 dark:text-emerald-300 text-base mb-1">100% Local & Secure Processing Guarantee</strong>
-                <p id="secBannerDesc" class="text-sm opacity-90 dark:opacity-80">All file conversions, OCR readings, hashes, and edits occur entirely inside your web browser using client-side technologies. Your files never leave your device, are never uploaded to any remote server, and remain completely private.</p>
+            <!-- Live Security Metric Counter -->
+            <div class="bg-white/80 dark:bg-slate-900/80 px-4 py-2.5 rounded-xl border border-emerald-200 dark:border-emerald-800 text-center shrink-0 shadow-inner">
+                <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Blocked Cloud Data</span>
+                <span id="liveCounterStat" class="text-base font-extrabold text-emerald-600 dark:text-emerald-400">0.0 MB Safe</span>
             </div>
         </div>
 
@@ -130,29 +167,29 @@
             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none rtl:left-auto rtl:right-4">
                 <svg class="h-5 w-5 text-slate-400 group-focus-within:text-indigo-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
             </div>
-            <input type="text" id="toolSearchInput" placeholder="Search tools (Ctrl+K)..." class="w-full pl-11 pr-4 rtl:pl-4 rtl:pr-11 py-3.5 text-sm bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm focus:outline-none focus:border-indigo-500 dark:text-white transition-all">
+            <input type="text" id="toolSearchInput" placeholder="Search 22 secure tools (Ctrl+K)..." class="w-full pl-11 pr-4 rtl:pl-4 rtl:pr-11 py-3.5 text-sm bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm focus:outline-none focus:border-indigo-500 dark:text-white transition-all">
         </div>
 
-        <!-- Categorized Converter Navigation -->
+        <!-- Categorized Converter Navigation (22 Tools) -->
         <div id="toolsNavContainer" class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
             
             <!-- Category: PDF -->
             <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3 tool-category" data-cat="pdf">
-                <h3 id="catPdf" class="text-xs font-extrabold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">📄 PDF Tools</h3>
+                <h3 id="catPdf" class="text-xs font-extrabold dynamic-text uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">📄 PDF Tools</h3>
                 <div class="flex flex-col gap-2">
-                    <button onclick="switchTool('pdf-to-png')" id="tab-pdf-to-png" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                    <button onclick="switchTool('pdf-to-png')" id="tab-pdf-to-png" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
                         <span class="text-base shrink-0">🖼️</span> <span class="truncate">PDF to PNG</span>
                     </button>
-                    <button onclick="switchTool('pdf-to-jpg')" id="tab-pdf-to-jpg" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                    <button onclick="switchTool('pdf-to-jpg')" id="tab-pdf-to-jpg" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
                         <span class="text-base shrink-0">🌄</span> <span class="truncate">PDF to JPG</span>
                     </button>
-                    <button onclick="switchTool('merge-pdf')" id="tab-merge-pdf" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                    <button onclick="switchTool('merge-pdf')" id="tab-merge-pdf" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
                         <span class="text-base shrink-0">📑</span> <span class="truncate">Merge PDF</span>
                     </button>
-                    <button onclick="switchTool('split-pdf')" id="tab-split-pdf" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                    <button onclick="switchTool('split-pdf')" id="tab-split-pdf" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
                         <span class="text-base shrink-0">✂️</span> <span class="truncate">Split PDF</span>
                     </button>
-                    <button onclick="switchTool('jpg-to-pdf')" id="tab-jpg-to-pdf" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                    <button onclick="switchTool('jpg-to-pdf')" id="tab-jpg-to-pdf" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
                         <span class="text-base shrink-0">📁</span> <span class="truncate">JPG to PDF</span>
                     </button>
                 </div>
@@ -160,21 +197,24 @@
 
             <!-- Category: Image -->
             <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3 tool-category" data-cat="image">
-                <h3 id="catImage" class="text-xs font-extrabold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">🖼️ Image Tools</h3>
+                <h3 id="catImage" class="text-xs font-extrabold dynamic-text uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">🖼️ Image Tools</h3>
                 <div class="flex flex-col gap-2">
-                    <button onclick="switchTool('compress-image')" id="tab-compress-image" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                    <button onclick="switchTool('compress-image')" id="tab-compress-image" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
                         <span class="text-base shrink-0">🗜️</span> <span class="truncate">Compress Image</span>
                     </button>
-                    <button onclick="switchTool('heic-to-jpg')" id="tab-heic-to-jpg" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                    <button onclick="switchTool('heic-to-jpg')" id="tab-heic-to-jpg" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
                         <span class="text-base shrink-0">🍏</span> <span class="truncate">HEIC to JPG</span>
                     </button>
-                    <button onclick="switchTool('webp-converter')" id="tab-webp-converter" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                    <button onclick="switchTool('webp-converter')" id="tab-webp-converter" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
                         <span class="text-base shrink-0">🌐</span> <span class="truncate">WebP Converter</span>
                     </button>
-                    <button onclick="switchTool('extract-pdf-img')" id="tab-extract-pdf-img" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                    <button onclick="switchTool('exif-remover')" id="tab-exif-remover" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
+                        <span class="text-base shrink-0">🧹</span> <span class="truncate">EXIF Metadata Remover</span>
+                    </button>
+                    <button onclick="switchTool('extract-pdf-img')" id="tab-extract-pdf-img" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
                         <span class="text-base shrink-0">🔍</span> <span class="truncate">Extract PDF Images</span>
                     </button>
-                    <button onclick="switchTool('redact-tool')" id="tab-redact-tool" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                    <button onclick="switchTool('redact-tool')" id="tab-redact-tool" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
                         <span class="text-base shrink-0">🕶️</span> <span class="truncate">Redact / Censor</span>
                     </button>
                 </div>
@@ -182,21 +222,21 @@
 
             <!-- Category: Dev & Text -->
             <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3 tool-category" data-cat="dev">
-                <h3 id="catDev" class="text-xs font-extrabold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">💻 Text & Dev</h3>
+                <h3 id="catDev" class="text-xs font-extrabold dynamic-text uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">💻 Text & Dev</h3>
                 <div class="flex flex-col gap-2">
-                    <button onclick="switchTool('json-tool')" id="tab-json-tool" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                    <button onclick="switchTool('json-tool')" id="tab-json-tool" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
                         <span class="text-base shrink-0">{}</span> <span class="truncate">JSON Formatter</span>
                     </button>
-                    <button onclick="switchTool('base64-tool')" id="tab-base64-tool" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                    <button onclick="switchTool('base64-tool')" id="tab-base64-tool" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
                         <span class="text-base shrink-0">🔤</span> <span class="truncate">Base64 Tool</span>
                     </button>
-                    <button onclick="switchTool('url-tool')" id="tab-url-tool" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                    <button onclick="switchTool('url-tool')" id="tab-url-tool" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
                         <span class="text-base shrink-0">🔗</span> <span class="truncate">URL Tool</span>
                     </button>
-                    <button onclick="switchTool('diff-tool')" id="tab-diff-tool" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                    <button onclick="switchTool('diff-tool')" id="tab-diff-tool" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
                         <span class="text-base shrink-0">⚖️</span> <span class="truncate">Text Diff Checker</span>
                     </button>
-                    <button onclick="switchTool('md-tool')" id="tab-md-tool" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                    <button onclick="switchTool('md-tool')" id="tab-md-tool" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
                         <span class="text-base shrink-0">📝</span> <span class="truncate">Markdown Preview</span>
                     </button>
                 </div>
@@ -204,24 +244,24 @@
 
             <!-- Category: Security & Utils -->
             <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3 tool-category" data-cat="security">
-                <h3 id="catSec" class="text-xs font-extrabold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">🔐 Security & Utils</h3>
+                <h3 id="catSec" class="text-xs font-extrabold dynamic-text uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">🔐 Security & Utils</h3>
                 <div class="flex flex-col gap-2">
-                    <button onclick="switchTool('password-gen')" id="tab-password-gen" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                    <button onclick="switchTool('password-gen')" id="tab-password-gen" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
                         <span class="text-base shrink-0">🔑</span> <span class="truncate">Password Generator</span>
                     </button>
-                    <button onclick="switchTool('encrypt-pdf')" id="tab-encrypt-pdf" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                    <button onclick="switchTool('encrypt-pdf')" id="tab-encrypt-pdf" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
                         <span class="text-base shrink-0">🔒</span> <span class="truncate">Encrypt PDF</span>
                     </button>
-                    <button onclick="switchTool('hash-calc')" id="tab-hash-calc" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                    <button onclick="switchTool('hash-calc')" id="tab-hash-calc" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
                         <span class="text-base shrink-0">🛡️</span> <span class="truncate">File Checksum Hash</span>
                     </button>
-                    <button onclick="switchTool('uuid-gen')" id="tab-uuid-gen" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                    <button onclick="switchTool('uuid-gen')" id="tab-uuid-gen" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
                         <span class="text-base shrink-0">🆔</span> <span class="truncate">UUID Generator</span>
                     </button>
-                    <button onclick="switchTool('qr-tool')" id="tab-qr-tool" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                    <button onclick="switchTool('qr-tool')" id="tab-qr-tool" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
                         <span class="text-base shrink-0">📱</span> <span class="truncate">QR Code Generator</span>
                     </button>
-                    <button onclick="switchTool('ocr-reader')" id="tab-ocr-reader" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                    <button onclick="switchTool('ocr-reader')" id="tab-ocr-reader" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
                         <span class="text-base shrink-0">👁️</span> <span class="truncate">OCR Text Reader</span>
                     </button>
                 </div>
@@ -239,7 +279,7 @@
             <!-- Drag & Drop Area -->
             <div id="dropZone" class="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-2xl p-10 text-center cursor-pointer hover:border-indigo-500 dark:hover:border-indigo-400 hover:bg-indigo-50/50 dark:hover:bg-slate-700/50 transition-all duration-300 mt-2">
                 <div class="bg-indigo-100 dark:bg-slate-700 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
-                    <svg class="w-8 h-8 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                    <svg class="w-8 h-8 dynamic-text" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
                 </div>
                 <p id="dropText" class="text-slate-800 dark:text-slate-200 font-bold text-lg">Click to browse or drag files here</p>
                 <p id="dropSubText" class="text-sm text-slate-500 dark:text-slate-400 mt-2">Support for single or batch processing (Drag to reorder list items below!)</p>
@@ -279,8 +319,8 @@
 
                         <div id="generatorResultBox" class="hidden w-full flex flex-col items-center justify-center py-8 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 gap-4">
                             <div class="w-full max-w-md flex items-center gap-2 px-4">
-                                <input type="text" id="generatedDisplay" readonly class="w-full p-3 bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 font-mono font-bold text-center rounded-xl border border-slate-200 dark:border-slate-700 text-lg">
-                                <button onclick="copyGenerated()" class="px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-sm">Copy</button>
+                                <input type="text" id="generatedDisplay" readonly class="w-full p-3 bg-white dark:bg-slate-800 dynamic-text font-mono font-bold text-center rounded-xl border border-slate-200 dark:border-slate-700 text-lg">
+                                <button onclick="copyGenerated()" class="px-4 py-3 dynamic-bg hover:opacity-90 text-white font-bold rounded-xl shadow-sm">Copy</button>
                             </div>
                             <button id="genAnotherBtn" class="text-sm font-semibold text-slate-500 hover:text-slate-700 dark:text-slate-400">🔄 Generate Another</button>
                         </div>
@@ -292,7 +332,7 @@
                             
                             <div id="passwordOptionsGroup" class="hidden bg-white dark:bg-slate-800 p-4 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm">
                                 <div class="mb-4">
-                                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 flex justify-between">Length: <span id="passLenVal" class="text-indigo-600">16</span></label>
+                                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 flex justify-between">Length: <span id="passLenVal" class="dynamic-text">16</span></label>
                                     <input type="range" id="passLength" min="8" max="64" value="16" class="w-full accent-indigo-600 cursor-pointer" oninput="document.getElementById('passLenVal').textContent=this.value; generateNewPassword();">
                                 </div>
                                 <div class="flex flex-wrap gap-4 text-sm font-semibold text-slate-700 dark:text-slate-300">
@@ -359,7 +399,7 @@
                 </div>
 
                 <!-- Convert Button -->
-                <button id="convertBtn" class="w-full bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white font-bold py-4 px-6 rounded-2xl shadow-lg transition-all active:scale-95 text-lg flex items-center justify-center gap-3">
+                <button id="convertBtn" class="w-full dynamic-bg hover:opacity-90 text-white font-bold py-4 px-6 rounded-2xl shadow-lg transition-all active:scale-95 text-lg flex items-center justify-center gap-3">
                     <svg class="w-6 h-6 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                     <span id="convertBtnText">Convert & Download</span>
                 </button>
@@ -372,7 +412,7 @@
             <div class="space-y-4 text-sm text-slate-600 dark:text-slate-300">
                 <div class="border-b border-slate-100 dark:border-slate-700 pb-4">
                     <h3 id="faq1Title" class="font-bold text-slate-800 dark:text-slate-200 mb-1">How does PrivacyConvert process files without a server?</h3>
-                    <p id="faq1Desc" class="leading-relaxed opacity-90">PrivacyConvert uses advanced client-side browser technologies (such as WebAssembly, PDF.js, and HTML5 Canvas). When you select or drop a file, your browser's own CPU and memory handle the conversion locally.</p>
+                    <p id="faq1Desc" class="leading-relaxed opacity-90">PrivacyConvert uses advanced client-side browser technologies (WebAssembly, PDF.js, Canvas API). When you select or drop a file, your browser's own CPU and memory handle the conversion locally.</p>
                 </div>
                 <div class="border-b border-slate-100 dark:border-slate-700 pb-4">
                     <h3 id="faq2Title" class="font-bold text-slate-800 dark:text-slate-200 mb-1">Do my files ever leave my device?</h3>
@@ -380,11 +420,11 @@
                 </div>
                 <div class="border-b border-slate-100 dark:border-slate-700 pb-4">
                     <h3 id="faq3Title" class="font-bold text-slate-800 dark:text-slate-200 mb-1">Why is this approach safer than traditional online converters?</h3>
-                    <p id="faq3Desc" class="leading-relaxed opacity-90">Traditional online converters require you to upload your sensitive files to their remote servers, posing major data breach and privacy risks. PrivacyConvert eliminates this risk entirely by keeping data handling strictly offline-capable within your secure browser sandbox.</p>
+                    <p id="faq3Desc" class="leading-relaxed opacity-90">Traditional online converters require you to upload your sensitive files to their remote servers, posing major data breach and privacy risks. PrivacyConvert eliminates this risk entirely.</p>
                 </div>
                 <div>
                     <h3 id="faq4Title" class="font-bold text-slate-800 dark:text-slate-200 mb-1">How can you verify this yourself (Zero Network Proof)?</h3>
-                    <p id="faq4Desc" class="leading-relaxed opacity-90 mb-3">You don't just have to take our word for it. You can inspect and prove this right now using two simple built-in methods:</p>
+                    <p id="faq4Desc" class="leading-relaxed opacity-90 mb-3">You don't just have to take our word for it. You can inspect and prove this right now:</p>
                     <ul class="list-disc pl-5 space-y-2 opacity-90">
                         <li id="verifyStep1"><strong>Network Inspector Test:</strong> Press <kbd class="bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded font-mono text-xs">F12</kbd> to open browser Developer Tools, go to the <strong>Network</strong> tab, and convert any file. You will observe zero outbound file upload requests.</li>
                         <li id="verifyStep2"><strong>Offline Mode Test:</strong> Completely disconnect your computer from Wi-Fi or internet. PrivacyConvert will continue to convert and process your files without interruption.</li>
@@ -407,10 +447,31 @@
     <script>
         try { if (typeof pdfjsLib !== 'undefined') pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; } catch(e) {}
 
+        // Theme Accent Engine
+        function setAccentColor(colorKey) {
+            const cfg = accentColors[colorKey] || accentColors.indigo;
+            document.documentElement.style.setProperty('--accent-color', cfg.primary);
+            document.documentElement.style.setProperty('--accent-hover', cfg.hover);
+            localStorage.setItem('privacyConvert_accent', colorKey);
+            document.getElementById('accentSelect').value = colorKey;
+        }
+        setAccentColor(savedAccent);
+        document.getElementById('accentSelect').addEventListener('change', (e) => setAccentColor(e.target.value));
+
+        // Live Safe Data Counter State
+        let totalSafeBytes = parseFloat(localStorage.getItem('privacyConvert_safeBytes')) || 0;
+        function updateLiveCounter(fileSize) {
+            totalSafeBytes += fileSize;
+            localStorage.setItem('privacyConvert_safeBytes', totalSafeBytes);
+            const mb = (totalSafeBytes / (1024 * 1024)).toFixed(2);
+            document.getElementById('liveCounterStat').textContent = `${mb} MB Safe`;
+        }
+        updateLiveCounter(0); // initialize display
+
         const translations = {
             en: {
                 secTitle: "100% Local & Secure Processing Guarantee",
-                secDesc: "All file conversions, OCR readings, hashes, and edits occur entirely inside your web browser using client-side technologies. Your files never leave your device, are never uploaded to any remote server, and remain completely private.",
+                secDesc: "All conversions run client-side. Zero bytes uploaded to any remote server.",
                 dropText: "Click to browse or drag files here",
                 dropSubText: "Support for single or batch processing (Drag to reorder list items below!)",
                 convertBtn: "Convert & Download",
@@ -425,16 +486,6 @@
                 renderQuality: "Render Quality:",
                 outputInfo: "Output Info:",
                 faqMainTitle: "Frequently Asked Questions & Security Architecture",
-                faq1Title: "How does PrivacyConvert process files without a server?",
-                faq1Desc: "PrivacyConvert uses advanced client-side browser technologies (such as WebAssembly, PDF.js, and HTML5 Canvas). When you select or drop a file, your browser's own CPU and memory handle the conversion locally.",
-                faq2Title: "Do my files ever leave my device?",
-                faq2Desc: "Never. Because there is no backend server processing your files, your sensitive documents, PDFs, and images never touch the internet or any remote cloud storage. They remain 100% on your local machine.",
-                faq3Title: "Why is this approach safer than traditional online converters?",
-                faq3Desc: "Traditional online converters require you to upload your sensitive files to their remote servers, posing major data breach and privacy risks. PrivacyConvert eliminates this risk entirely by keeping data handling strictly offline-capable within your secure browser sandbox.",
-                faq4Title: "How can you verify this yourself (Zero Network Proof)?",
-                faq4Desc: "You don't just have to take our word for it. You can inspect and prove this right now using two simple built-in methods:",
-                verifyStep1: "Network Inspector Test: Press F12 to open browser Developer Tools, go to the Network tab, and convert any file. You will observe zero outbound file upload requests.",
-                verifyStep2: "Offline Mode Test: Completely disconnect your computer from Wi-Fi or internet. PrivacyConvert will continue to convert and process your files without interruption.",
                 tools: {
                     'pdf-to-png': { label: 'PDF to PNG', desc: 'Extract PDF pages into PNG images directly in your browser. Fast, free, and completely private.' },
                     'pdf-to-jpg': { label: 'PDF to JPG', desc: 'Extract PDF pages into JPG images directly in your browser. Fast, free, and completely private.' },
@@ -444,6 +495,7 @@
                     'compress-image': { label: 'Compress Image', desc: 'Shrink image file sizes while maintaining quality.' },
                     'heic-to-jpg': { label: 'HEIC to JPG', desc: 'Convert Apple HEIC photos to standard JPG format.' },
                     'webp-converter': { label: 'WebP Converter', desc: 'Convert images to modern WebP or AVIF formats.' },
+                    'exif-remover': { label: 'EXIF Metadata Remover', desc: 'Strip GPS coordinates, camera models, and private metadata instantly.' },
                     'extract-pdf-img': { label: 'Extract PDF Images', desc: 'Extract embedded images from PDF documents.' },
                     'redact-tool': { label: 'Redact Image', desc: 'Blackout sensitive information securely in your images.' },
                     'json-tool': { label: 'JSON Formatter', desc: 'Format, validate, and beautify raw JSON data.' },
@@ -452,8 +504,8 @@
                     'diff-tool': { label: 'Text Diff', desc: 'Compare two text blocks line by line.' },
                     'md-tool': { label: 'Markdown Preview', desc: 'Preview Markdown content rendered as HTML.' },
                     'password-gen': { label: 'Password Generator', desc: 'Generate secure, randomized passwords.' },
-                    'encrypt-pdf': { label: 'Encrypt PDF', desc: 'Add password protection to your PDF files.' },
-                    'hash-calc': { label: 'File Hash', desc: 'Calculate SHA-256 and MD5 checksum hashes.' },
+                    'encrypt-pdf': { label: 'Encrypt PDF', desc: 'Add password protection to your PDF files with AES.' },
+                    'hash-calc': { label: 'File Hash', desc: 'Calculate SHA-256 checksum hashes.' },
                     'uuid-gen': { label: 'UUID Generator', desc: 'Generate unique identifiers (UUID v4).' },
                     'qr-tool': { label: 'QR Code Generator', desc: 'Generate high-resolution QR codes locally.' },
                     'ocr-reader': { label: 'OCR Text Reader', desc: 'Extract text from images using local AI (Tesseract).' }
@@ -461,7 +513,7 @@
             },
             es: {
                 secTitle: "Garantía de procesamiento 100% local y seguro",
-                secDesc: "Todas las conversiones de archivos, lecturas OCR y ediciones ocurren completamente dentro de su navegador web utilizando tecnologías del lado del cliente. Sus archivos nunca abandonan su dispositivo y son completamente privados.",
+                secDesc: "Todas las conversiones se ejecutan localmente. Cero bytes subidos a servidores.",
                 dropText: "Haga clic para buscar o arrastre archivos aquí",
                 dropSubText: "Soporte para procesamiento individual o por lotes",
                 convertBtn: "Convertir y Descargar",
@@ -476,43 +528,34 @@
                 renderQuality: "Calidad de renderizado:",
                 outputInfo: "Información de salida:",
                 faqMainTitle: "Preguntas Frecuentes y Arquitectura de Seguridad",
-                faq1Title: "¿Cómo procesa PrivacyConvert los archivos sin un servidor?",
-                faq1Desc: "PrivacyConvert utiliza tecnologías avanzadas de navegador del lado del cliente (como WebAssembly, PDF.js y HTML5 Canvas). Cuando selecciona o arrastra un archivo, la CPU y la memoria de su propio navegador manejan la conversión localmente.",
-                faq2Title: "¿Mis archivos abandonan mi dispositivo alguna vez?",
-                faq2Desc: "Nunca. Debido a que no hay un servidor backend que procese sus archivos, sus documentos sensibles, PDF e imágenes nunca tocan internet ni ningún almacenamiento en la nube remoto. Permanecen 100% en su máquina local.",
-                faq3Title: "¿Por qué este enfoque es más seguro que los conversores en línea tradicionales?",
-                faq3Desc: "Los conversores tradicionales requieren que suba sus archivos a sus servidores remotos, lo que plantea riesgos de violación de datos. PrivacyConvert elimina este riesgo por completo manteniendo el manejo de datos estrictamente fuera de línea dentro del espacio seguro de su navegador.",
-                faq4Title: "¿Cómo puede verificar esto usted mismo (Prueba de red cero)?",
-                faq4Desc: "No tiene que confiar ciegamente en nuestra palabra. Puede inspeccionar y comprobarlo ahora mismo usando dos métodos sencillos:",
-                verifyStep1: "Prueba de Inspector de Red: Presione F12 para abrir las Herramientas de Desarrollador, vaya a la pestaña Red (Network) y convierta cualquier archivo. Observará cero solicitudes salientes de carga de archivos.",
-                verifyStep2: "Prueba de Modo Sin Conexión: Desconecte completamente su computadora del Wi-Fi o internet. PrivacyConvert continuará convirtiendo y procesando sus archivos sin interrupción.",
                 tools: {
-                    'pdf-to-png': { label: 'PDF a PNG', desc: 'Extraiga páginas de PDF en imágenes PNG directamente en su navegador. Rápido, gratis y privado.' },
-                    'pdf-to-jpg': { label: 'PDF a JPG', desc: 'Extraiga páginas de PDF en imágenes JPG directamente en su navegador. Rápido, gratis y privado.' },
-                    'merge-pdf': { label: 'Unir PDF', desc: 'Combine múltiples documentos PDF de forma segura en su navegador.' },
+                    'pdf-to-png': { label: 'PDF a PNG', desc: 'Extraiga páginas de PDF en imágenes PNG directamente en su navegador.' },
+                    'pdf-to-jpg': { label: 'PDF a JPG', desc: 'Extraiga páginas de PDF en imágenes JPG directamente en su navegador.' },
+                    'merge-pdf': { label: 'Unir PDF', desc: 'Combine múltiples documentos PDF de forma segura.' },
                     'split-pdf': { label: 'Dividir PDF', desc: 'Extraiga páginas específicas de un archivo PDF localmente.' },
-                    'jpg-to-pdf': { label: 'JPG a PDF', desc: 'Convierta imágenes en un solo documento PDF de forma segura.' },
-                    'compress-image': { label: 'Comprimir Imagen', desc: 'Reduzca el tamaño de los archivos de imagen manteniendo la calidad.' },
-                    'heic-to-jpg': { label: 'HEIC a JPG', desc: 'Convierta fotos HEIC de Apple a formato JPG estándar.' },
-                    'webp-converter': { label: 'Convertidor WebP', desc: 'Convierta imágenes a formatos modernos WebP o AVIF.' },
+                    'jpg-to-pdf': { label: 'JPG a PDF', desc: 'Convierta imágenes en un solo documento PDF.' },
+                    'compress-image': { label: 'Comprimir Imagen', desc: 'Reduzca el tamaño de los archivos manteniendo la calidad.' },
+                    'heic-to-jpg': { label: 'HEIC a JPG', desc: 'Convierta fotos HEIC de Apple a formato JPG.' },
+                    'webp-converter': { label: 'Convertidor WebP', desc: 'Convierta imágenes a WebP o AVIF.' },
+                    'exif-remover': { label: 'Limpiador EXIF', desc: 'Elimine coordenadas GPS y metadatos privados al instante.' },
                     'extract-pdf-img': { label: 'Extraer Imágenes PDF', desc: 'Extraiga imágenes incrustadas de documentos PDF.' },
-                    'redact-tool': { label: 'Ocultar Imagen', desc: 'Oculte información confidencial de forma segura en sus imágenes.' },
-                    'json-tool': { label: 'Formateador JSON', desc: 'Formatee, valide y embellezca datos JSON sin procesar.' },
-                    'base64-tool': { label: 'Herramienta Base64', desc: 'Codifique o decodifique cadenas de texto Base64 fácilmente.' },
-                    'url-tool': { label: 'Herramienta URL', desc: 'Codifique o decodifique cadenas de URL de forma segura.' },
-                    'diff-tool': { label: 'Diferencias de Texto', desc: 'Compare two text blocks line by line.' },
-                    'md-tool': { label: 'Vista Previa Markdown', desc: 'Vista previa de contenido Markdown renderizado como HTML.' },
-                    'password-gen': { label: 'Generador de Contraseñas', desc: 'Genere contraseñas seguras y aleatorias.' },
-                    'encrypt-pdf': { label: 'Cifrar PDF', desc: 'Agregue protección con contraseña a sus archivos PDF.' },
-                    'hash-calc': { label: 'Hash de Archivo', desc: 'Calcule hashes de suma de comprobación SHA-256.' },
-                    'uuid-gen': { label: 'Generador UUID', desc: 'Genere identificadores únicos (UUID v4).' },
-                    'qr-tool': { label: 'Generador de Códigos QR', desc: 'Genere códigos QR de alta resolución localmente.' },
-                    'ocr-reader': { label: 'Lector de Texto OCR', desc: 'Extraiga texto de imágenes usando IA local (Tesseract).' }
+                    'redact-tool': { label: 'Ocultar Imagen', desc: 'Oculte información confidencial de forma segura.' },
+                    'json-tool': { label: 'Formateador JSON', desc: 'Formatee y valide datos JSON.' },
+                    'base64-tool': { label: 'Herramienta Base64', desc: 'Codifique o decodifique cadenas Base64.' },
+                    'url-tool': { label: 'Herramienta URL', desc: 'Codifique o decodifique cadenas URL.' },
+                    'diff-tool': { label: 'Diferencias de Texto', desc: 'Compare dos bloques de texto.' },
+                    'md-tool': { label: 'Vista Previa Markdown', desc: 'Vista previa de Markdown.' },
+                    'password-gen': { label: 'Generador de Contraseñas', desc: 'Genere contraseñas seguras.' },
+                    'encrypt-pdf': { label: 'Cifrar PDF', desc: 'Proteja sus archivos PDF con AES.' },
+                    'hash-calc': { label: 'Hash de Archivo', desc: 'Calcule hashes SHA-256.' },
+                    'uuid-gen': { label: 'Generador UUID', desc: 'Genere identificadores únicos.' },
+                    'qr-tool': { label: 'Generador de Códigos QR', desc: 'Genere códigos QR localmente.' },
+                    'ocr-reader': { label: 'Lector de Texto OCR', desc: 'Extraiga texto de imágenes usando IA local.' }
                 }
             },
             ar: {
                 secTitle: "ضمان المعالجة المحلية الآمنة 100%",
-                secDesc: "تتم جميع عمليات تحويل الملفات، وقراءات OCR، والتعديلات بالكامل داخل متصفح الويب الخاص بك باستخدام التقنيات المحلية. لا تغادر ملفاتك جهازك أبداً ولا يتم رفعها إلى أي خادم خارجي وتظل سرية تماماً.",
+                secDesc: "تتم جميع العمليات محلياً. صفر بايت مرفوعة لأي خادم خارجي.",
                 dropText: "انقر للتصفح أو اسحب الملفات هنا",
                 dropSubText: "يدعم المعالجة الفردية أو المجمعة",
                 convertBtn: "تحويل وتنزيل",
@@ -527,38 +570,29 @@
                 renderQuality: "جودة العرض:",
                 outputInfo: "معلومات الإخراج:",
                 faqMainTitle: "الأسئلة الشائعة وهندسة الأمان",
-                faq1Title: "كيف تقوم منصة PrivacyConvert بمعالجة الملفات بدون خادم؟",
-                faq1Desc: "تستخدم PrivacyConvert تقنيات المتصفح المتقدمة من جانب العميل (مثل WebAssembly و PDF.js و HTML5 Canvas). عندما تقوم بتحديد ملف أو سحبه، تتولى وحدة المعالجة المركزية وذاكرة متصفحك عملية التحويل محلياً بالكامل.",
-                faq2Title: "هل تغادر ملفاتي جهازي في أي وقت؟",
-                faq2Desc: "أبداً. نظراً لعدم وجود خادم خلفي (Backend Server) يعالج ملفاتك، فإن مستنداتك الحساسة وملفات PDF والصور لا تلمس الإنترنت أبداً ولا يتم تخزينها في أي سحابة خارجية. تظل 100% على جهازك المحلي.",
-                faq3Title: "لماذا يُعد هذا النهج أكثر أماناً من المحولات التقليدية عبر الإنترنت؟",
-                faq3Desc: "تتطلب المحولات التقليدية رفع ملفاتك الحساسة إلى خوادمهم البعيدة، مما يمثل مخاطر كبيرة على الخصوصية واختراق البيانات. تقضي PrivacyConvert على هذا الخطر تماماً من خلال الحفاظ على التعامل مع البيانات في وضع عدم الاتصال داخل نطاق متصفحك الآمن.",
-                faq4Title: "كيف يمكنك التحقق من ذلك بنفسك (إثبات انعدام حركة مرور الشبكة)؟",
-                faq4Desc: "ليس عليك فقط أن تصدق كلامنا. يمكنك فحص وإثبات ذلك بنفسك الآن باستخدام طريقتين بسيطتين:",
-                verifyStep1: "اختبار فاحص الشبكة (Network): اضغط على F12 لفتح أدوات المطور في المتصفح، وانتقل إلى تبويب Network، وقم بتحويل أي ملف. ستلاحظ تماماً عدم إرسال أي طلبات رفع ملفات خارجية.",
-                verifyStep2: "اختبار وضع عدم الاتصال (Offline): قم بفصل جهاز الكمبيوتر الخاص بك تماماً عن الواي فاي أو الإنترنت. ستستمر PrivacyConvert في تحويل ومعالجة ملفاتك دون أي انقطاع.",
                 tools: {
-                    'pdf-to-png': { label: 'PDF إلى PNG', desc: 'استخراج صفحات PDF إلى صور PNG مباشرة في متصفحك. سريع، مجاني، وآمن تماماً.' },
-                    'pdf-to-jpg': { label: 'PDF إلى JPG', desc: 'استخراج صفحات PDF إلى صور JPG مباشرة في متصفحك. سريع، مجاني، وآمن تماماً.' },
-                    'merge-pdf': { label: 'دمج PDF', desc: 'دمج مستندات PDF متعددة بأمان في متصفحك دون رفعها لأي خادم.' },
+                    'pdf-to-png': { label: 'PDF إلى PNG', desc: 'استخراج صفحات PDF إلى صور PNG مباشرة في متصفحك.' },
+                    'pdf-to-jpg': { label: 'PDF إلى JPG', desc: 'استخراج صفحات PDF إلى صور JPG مباشرة في متصفحك.' },
+                    'merge-pdf': { label: 'دمج PDF', desc: 'دمج مستندات PDF متعددة بأمان في متصفحك.' },
                     'split-pdf': { label: 'تقسيم PDF', desc: 'استخراج صفحات محددة من ملف PDF محلياً.' },
                     'jpg-to-pdf': { label: 'JPG إلى PDF', desc: 'تحويل الصور إلى مستند PDF واحد بأمان.' },
                     'compress-image': { label: 'ضغط الصور', desc: 'تقليل حجم ملفات الصور مع الحفاظ على الجودة.' },
-                    'heic-to-jpg': { label: 'HEIC إلى JPG', desc: 'تحويل صور Apple HEIC إلى تنسيق JPG القياسي.' },
-                    'webp-converter': { label: 'محول WebP', desc: 'تحويل الصور إلى تنسيقات WebP أو AVIF الحديثة.' },
+                    'heic-to-jpg': { label: 'HEIC إلى JPG', desc: 'تحويل صور Apple HEIC إلى تنسيق JPG.' },
+                    'webp-converter': { label: 'محول WebP', desc: 'تحويل الصور إلى تنسيقات WebP أو AVIF.' },
+                    'exif-remover': { label: 'مسح بيانات EXIF', desc: 'إزالة إحداثيات GPS والبيانات الوصفية الخاصة فوراً.' },
                     'extract-pdf-img': { label: 'استخراج صور PDF', desc: 'استخراج الصور المضمنة من مستندات PDF.' },
                     'redact-tool': { label: 'تعتيم الصور', desc: 'إخفاء المعلومات الحساسة بأمان في صورك.' },
-                    'json-tool': { label: 'منسق JSON', desc: 'تنسيق والتحقق من صحة بيانات JSON الخام.' },
-                    'base64-tool': { label: 'أداة Base64', desc: 'تشفير أو فك تشفير سلاسل نصوص Base64 بسهولة.' },
-                    'url-tool': { label: 'أداة URL', desc: 'تشفير أو فك تشفير روابط URL بأمان.' },
+                    'json-tool': { label: 'منسق JSON', desc: 'تنسيق والتحقق من صحة بيانات JSON.' },
+                    'base64-tool': { label: 'أداة Base64', desc: 'تشفير أو فك تشفير سلاسل Base64.' },
+                    'url-tool': { label: 'أداة URL', desc: 'تشفير أو فك تشفير روابط URL.' },
                     'diff-tool': { label: 'مقارنة النصوص', desc: 'مقارنة كتلتين نصيتين سطراً بسطر.' },
-                    'md-tool': { label: 'معاينة Markdown', desc: 'معاينة محتوى Markdown كملف HTML.' },
+                    'md-tool': { label: 'معاينة Markdown', desc: 'معاينة محتوى Markdown.' },
                     'password-gen': { label: 'مولد كلمات المرور', desc: 'إنشاء كلمات مرور آمنة وعشوائية.' },
-                    'encrypt-pdf': { label: 'تشفير PDF', desc: 'إضافة حماية بكلمة مرور لملفات PDF الخاصة بك.' },
-                    'hash-calc': { label: 'تجزئة الملفات', desc: 'حساب قيم SHA-256 للتحقق من سلامة الملفات.' },
-                    'uuid-gen': { label: 'مولد UUID', desc: 'إنشاء معرفات فريدة (UUID v4).' },
-                    'qr-tool': { label: 'مولد رموز QR', desc: 'إنشاء رموز استجابة سريعة QR عالية الدقة محلياً.' },
-                    'ocr-reader': { label: 'قراءة النصوص OCR', desc: 'استخراج النص من الصور باستخدام الذكاء الاصطناعي المحلي (Tesseract).' }
+                    'encrypt-pdf': { label: 'تشفير PDF', desc: 'إضافة حماية AES لملفات PDF.' },
+                    'hash-calc': { label: 'تجزئة الملفات', desc: 'حساب قيم SHA-256.' },
+                    'uuid-gen': { label: 'مولد UUID', desc: 'إنشاء معرفات فريدة.' },
+                    'qr-tool': { label: 'مولد رموز QR', desc: 'إنشاء رموز QR عالية الدقة محلياً.' },
+                    'ocr-reader': { label: 'قراءة النصوص OCR', desc: 'استخراج النص من الصور باستخدام الذكاء الاصطناعي المحلي.' }
                 }
             }
         };
@@ -592,18 +626,7 @@
             document.getElementById('advSettingsTitle').textContent = t.advancedSettings;
             document.getElementById('renderQualityLabel').textContent = t.renderQuality;
             document.getElementById('outputInfoLabel').textContent = t.outputInfo;
-
             document.getElementById('faqMainTitle').textContent = t.faqMainTitle;
-            document.getElementById('faq1Title').textContent = t.faq1Title;
-            document.getElementById('faq1Desc').textContent = t.faq1Desc;
-            document.getElementById('faq2Title').textContent = t.faq2Title;
-            document.getElementById('faq2Desc').textContent = t.faq2Desc;
-            document.getElementById('faq3Title').textContent = t.faq3Title;
-            document.getElementById('faq3Desc').textContent = t.faq3Desc;
-            document.getElementById('faq4Title').textContent = t.faq4Title;
-            document.getElementById('faq4Desc').textContent = t.faq4Desc;
-            document.getElementById('verifyStep1').innerHTML = `<strong>${t.verifyStep1.split(':')[0]}:</strong>${t.verifyStep1.split(':')[1]}`;
-            document.getElementById('verifyStep2').innerHTML = `<strong>${t.verifyStep2.split(':')[0]}:</strong>${t.verifyStep2.split(':')[1]}`;
 
             Object.keys(t.tools).forEach(key => {
                 const btn = document.getElementById(`tab-${key}`);
@@ -777,9 +800,9 @@
 
             document.querySelectorAll('.tool-tab').forEach(btn => {
                 if (btn.id === `tab-${tool}`) {
-                    btn.className = "tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-bold rounded-2xl transition-all shadow-md bg-indigo-600 text-white transform scale-[1.02]";
+                    btn.className = "tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-bold rounded-2xl transition-all shadow-md dynamic-bg text-white transform scale-[1.02]";
                 } else {
-                    btn.className = "tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow";
+                    btn.className = "tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow";
                 }
             });
 
@@ -822,6 +845,11 @@
                     fileInput.accept = "image/*"; fileInput.multiple = true;
                     document.getElementById('webpOptionsGroup').classList.remove('hidden');
                     document.getElementById('outputFormatBadge').innerHTML = "🌐 WebP / AVIF";
+                    break;
+                case 'exif-remover':
+                    fileInput.accept = "image/jpeg,image/png"; fileInput.multiple = true;
+                    document.getElementById('outputFormatBadge').innerHTML = "🧹 Clean Image (No EXIF)";
+                    showAdvanced = false;
                     break;
                 case 'encrypt-pdf':
                     fileInput.accept = ".pdf"; fileInput.multiple = false;
@@ -930,8 +958,11 @@
             clearBtn.classList.remove('hidden');
             
             renderFileList();
-            showToast(`${files.length} file(s) loaded.`);
+            showToast(`${files.length} file(s) loaded securely.`);
             
+            let totalBytes = Array.from(files).reduce((acc, f) => acc + f.size, 0);
+            updateLiveCounter(totalBytes);
+
             if(currentTool === 'hash-calc' || currentTool === 'ocr-reader') {
                 document.getElementById('genericTextBox').classList.remove('hidden');
                 document.getElementById('genericTextArea').value = `Ready to process: ${selectedFiles[0].name}`;
@@ -1075,7 +1106,7 @@
             showToast("History cleared");
         }
 
-        // UNIFIED ROBUST CONVERSION ENGINE FOR ALL 21 TOOLS (WITH REAL AES ENCRYPTION FOR PDF)
+        // UNIFIED CONVERSION ENGINE (WITH 22 TOOLS & EXIF REMOVAL)
         const convertBtn = document.getElementById('convertBtn');
         convertBtn.addEventListener('click', async () => {
             if (currentTool === 'password-gen' || currentTool === 'uuid-gen') { window.copyGenerated(); return; }
@@ -1241,9 +1272,7 @@
                             try {
                                 const res = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.9 });
                                 outBlob = Array.isArray(res) ? res[0] : res;
-                            } catch(err) {
-                                console.warn("HEIC fallback:", err);
-                            }
+                            } catch(err) { console.warn(err); }
                         }
                         if (selectedFiles.length === 1) {
                             downloadBlob(outBlob, `${file.name.replace(/\.[^/.]+$/, "")}.jpg`);
@@ -1280,6 +1309,30 @@
                         downloadBlob(await zip.generateAsync({ type: "blob" }), `converted_${ext}s.zip`);
                     }
                     addHistory(`Converted ${selectedFiles.length} images to ${ext.toUpperCase()}`);
+                }
+                else if (currentTool === 'exif-remover') {
+                    // EXIF Metadata Stripper using Canvas re-draw (100% Client-Side Private)
+                    const zip = new JSZip();
+                    for (let file of selectedFiles) {
+                        const bitmap = await createImageBitmap(file);
+                        const canvas = document.createElement('canvas');
+                        canvas.width = bitmap.width;
+                        canvas.height = bitmap.height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(bitmap, 0, 0);
+                        
+                        const cleanBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.95));
+                        if (selectedFiles.length === 1) {
+                            downloadBlob(cleanBlob, `clean_exif_${file.name}`);
+                        } else {
+                            zip.file(`clean_exif_${file.name}`, cleanBlob);
+                        }
+                    }
+                    if (selectedFiles.length > 1) {
+                        downloadBlob(await zip.generateAsync({ type: "blob" }), "clean_exif_images.zip");
+                    }
+                    addHistory(`Stripped EXIF metadata from ${selectedFiles.length} image(s)`);
+                    showToast("EXIF metadata successfully scrubbed!");
                 }
                 else if (currentTool === 'extract-pdf-img') {
                     const file = selectedFiles[0];
@@ -1325,7 +1378,6 @@
                     addHistory(`Redacted ${selectedFiles.length} image(s)`);
                 }
                 else if (currentTool === 'encrypt-pdf') {
-                    // REAL CLIENT-SIDE AES ENCRYPTION FOR PDF USING WEB CRYPTO API
                     const file = selectedFiles[0];
                     const password = document.getElementById('pdfPassInput')?.value || 'SecurePass123';
                     const fileBytes = await file.arrayBuffer();
@@ -1349,7 +1401,6 @@
                         { name: "AES-GCM", iv: iv }, key, fileBytes
                     );
 
-                    // Package salt + iv + encrypted data into a secure container blob
                     const combined = new Uint8Array(salt.length + iv.length + encryptedContent.byteLength);
                     combined.set(salt, 0);
                     combined.set(iv, salt.length);
@@ -1381,7 +1432,7 @@
                         addHistory(`Extracted OCR text from ${selectedFiles[0].name}`);
                     }
                 }
-                if(currentTool !== 'encrypt-pdf') showToast("Process completed & File downloaded!");
+                if(currentTool !== 'encrypt-pdf' && currentTool !== 'exif-remover') showToast("Process completed & File downloaded!");
             } catch(e) {
                 console.error(e);
                 showToast("Error processing file: " + e.message, "error");
