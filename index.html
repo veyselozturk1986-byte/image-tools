@@ -24,11 +24,11 @@
         }
         
         const accentColors = {
-            indigo: { primary: '#4f46e5', hover: '#4338ca', ring: 'indigo-500' },
-            emerald: { primary: '#059669', hover: '#047857', ring: 'emerald-500' },
-            violet: { primary: '#7c3aed', hover: '#6d28d9', ring: 'violet-500' },
-            rose: { primary: '#e11d48', hover: '#be123c', ring: 'rose-500' },
-            amber: { primary: '#d97706', hover: '#b45309', ring: 'amber-500' }
+            indigo: { primary: '#4f46e5', hover: '#4338ca' },
+            emerald: { primary: '#059669', hover: '#047857' },
+            violet: { primary: '#7c3aed', hover: '#6d28d9' },
+            rose: { primary: '#e11d48', hover: '#be123c' },
+            amber: { primary: '#d97706', hover: '#b45309' }
         };
         tailwind.config = { darkMode: 'class' };
     </script>
@@ -117,8 +117,12 @@
                     <option value="rose">🌹 Rose</option>
                     <option value="amber">🟠 Amber</option>
                 </select>
+                <!-- Expanded Language Selector (6 Languages) -->
                 <select id="langSelect" class="bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold px-3 py-2 border-0 focus:outline-none cursor-pointer">
                     <option value="en">English</option>
+                    <option value="tr">Türkçe</option>
+                    <option value="de">Deutsch</option>
+                    <option value="fr">Français</option>
                     <option value="es">Español</option>
                     <option value="ar">العربية</option>
                 </select>
@@ -411,24 +415,12 @@
             <h2 id="faqMainTitle" class="text-xl font-extrabold text-slate-900 dark:text-white text-center mb-6">Frequently Asked Questions & Security Architecture</h2>
             <div class="space-y-4 text-sm text-slate-600 dark:text-slate-300">
                 <div class="border-b border-slate-100 dark:border-slate-700 pb-4">
-                    <h3 id="faq1Title" class="font-bold text-slate-800 dark:text-slate-200 mb-1">How does PrivacyConvert process files without a server?</h3>
-                    <p id="faq1Desc" class="leading-relaxed opacity-90">PrivacyConvert uses advanced client-side browser technologies (WebAssembly, PDF.js, Canvas API). When you select or drop a file, your browser's own CPU and memory handle the conversion locally.</p>
+                    <h3 class="font-bold text-slate-800 dark:text-slate-200 mb-1">How does PrivacyConvert process files without a server?</h3>
+                    <p class="leading-relaxed opacity-90">PrivacyConvert uses advanced client-side browser technologies (WebAssembly, PDF.js, Canvas API). When you select or drop a file, your browser's own CPU and memory handle the conversion locally.</p>
                 </div>
                 <div class="border-b border-slate-100 dark:border-slate-700 pb-4">
-                    <h3 id="faq2Title" class="font-bold text-slate-800 dark:text-slate-200 mb-1">Do my files ever leave my device?</h3>
-                    <p id="faq2Desc" class="leading-relaxed opacity-90">Never. Because there is no backend server processing your files, your sensitive documents, PDFs, and images never touch the internet or any remote cloud storage. They remain 100% on your local machine.</p>
-                </div>
-                <div class="border-b border-slate-100 dark:border-slate-700 pb-4">
-                    <h3 id="faq3Title" class="font-bold text-slate-800 dark:text-slate-200 mb-1">Why is this approach safer than traditional online converters?</h3>
-                    <p id="faq3Desc" class="leading-relaxed opacity-90">Traditional online converters require you to upload your sensitive files to their remote servers, posing major data breach and privacy risks. PrivacyConvert eliminates this risk entirely.</p>
-                </div>
-                <div>
-                    <h3 id="faq4Title" class="font-bold text-slate-800 dark:text-slate-200 mb-1">How can you verify this yourself (Zero Network Proof)?</h3>
-                    <p id="faq4Desc" class="leading-relaxed opacity-90 mb-3">You don't just have to take our word for it. You can inspect and prove this right now:</p>
-                    <ul class="list-disc pl-5 space-y-2 opacity-90">
-                        <li id="verifyStep1"><strong>Network Inspector Test:</strong> Press <kbd class="bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded font-mono text-xs">F12</kbd> to open browser Developer Tools, go to the <strong>Network</strong> tab, and convert any file. You will observe zero outbound file upload requests.</li>
-                        <li id="verifyStep2"><strong>Offline Mode Test:</strong> Completely disconnect your computer from Wi-Fi or internet. PrivacyConvert will continue to convert and process your files without interruption.</li>
-                    </ul>
+                    <h3 class="font-bold text-slate-800 dark:text-slate-200 mb-1">Do my files ever leave my device?</h3>
+                    <p class="leading-relaxed opacity-90">Never. Because there is no backend server processing your files, your sensitive documents, PDFs, and images never touch the internet or any remote cloud storage. They remain 100% on your local machine.</p>
                 </div>
             </div>
         </div>
@@ -466,8 +458,9 @@
             const mb = (totalSafeBytes / (1024 * 1024)).toFixed(2);
             document.getElementById('liveCounterStat').textContent = `${mb} MB Safe`;
         }
-        updateLiveCounter(0); // initialize display
+        updateLiveCounter(0);
 
+        // 6 Languages Translation Map
         const translations = {
             en: {
                 secTitle: "100% Local & Secure Processing Guarantee",
@@ -476,16 +469,9 @@
                 dropSubText: "Support for single or batch processing (Drag to reorder list items below!)",
                 convertBtn: "Convert & Download",
                 reset: "Reset",
-                catPdf: "📄 PDF Tools",
-                catImage: "🖼️ Image Tools",
-                catDev: "💻 Text & Dev",
-                catSec: "🔐 Security & Utils",
-                recentActivity: "🕒 Recent Local Activity",
-                clear: "Clear",
-                advancedSettings: "⚙️ Advanced Settings",
-                renderQuality: "Render Quality:",
-                outputInfo: "Output Info:",
-                faqMainTitle: "Frequently Asked Questions & Security Architecture",
+                catPdf: "📄 PDF Tools", catImage: "🖼️ Image Tools", catDev: "💻 Text & Dev", catSec: "🔐 Security & Utils",
+                recentActivity: "🕒 Recent Local Activity", clear: "Clear", advancedSettings: "⚙️ Advanced Settings",
+                renderQuality: "Render Quality:", outputInfo: "Output Info:", faqMainTitle: "Frequently Asked Questions & Security Architecture",
                 tools: {
                     'pdf-to-png': { label: 'PDF to PNG', desc: 'Extract PDF pages into PNG images directly in your browser. Fast, free, and completely private.' },
                     'pdf-to-jpg': { label: 'PDF to JPG', desc: 'Extract PDF pages into JPG images directly in your browser. Fast, free, and completely private.' },
@@ -511,6 +497,111 @@
                     'ocr-reader': { label: 'OCR Text Reader', desc: 'Extract text from images using local AI (Tesseract).' }
                 }
             },
+            tr: {
+                secTitle: "%100 Yerel ve Güvenli İşleme Garantisi",
+                secDesc: "Tüm dönüştürmeler tarayıcınızda gerçekleşir. Sunucuya sıfır bayt veri yüklenir.",
+                dropText: "Dosya seçmek için tıklayın veya sürükleyin",
+                dropSubText: "Tekli veya toplu işlem desteği (Sıralamayı değiştirmek için liste öğelerini sürükleyin!)",
+                convertBtn: "Dönüştür ve İndir",
+                reset: "Sıfırla",
+                catPdf: "📄 PDF Araçları", catImage: "🖼️ Resim Araçları", catDev: "💻 Metin & Yazılım", catSec: "🔐 Güvenlik ve Araçlar",
+                recentActivity: "🕒 Son Yerel İşlemler", clear: "Temizle", advancedSettings: "⚙️ Gelişmiş Ayarlar",
+                renderQuality: "Oluşturma Kalitesi:", outputInfo: "Çıktı Bilgisi:", faqMainTitle: "Sık Sorulan Sorular ve Güvenlik Mimarisi",
+                tools: {
+                    'pdf-to-png': { label: "PDF'i PNG'ye Çevir", desc: "PDF sayfalarını doğrudan tarayıcınızda yüksek çözünürlüklü PNG'lere dönüştürün." },
+                    'pdf-to-jpg': { label: "PDF'i JPG'ye Çevir", desc: "PDF sayfalarını tarayıcınızda güvenli bir şekilde JPG resimlerine çıkarın." },
+                    'merge-pdf': { label: "PDF Birleştir", desc: "Birden fazla PDF belgesini sunucuya yüklemeden tarayıcınızda birleştirin." },
+                    'split-pdf': { label: "PDF Böl", desc: "Bir PDF dosyasından belirli sayfaları yerel olarak ayıklayın." },
+                    'jpg-to-pdf': { label: "JPG'yi PDF'e Çevir", desc: "Resimlerinizi tek bir güvenli PDF belgesinde toplayın." },
+                    'compress-image': { label: "Resim Sıkıştır", desc: "Kaliteyi koruyarak resim dosya boyutlarını küçültün." },
+                    'heic-to-jpg': { label: "HEIC'i JPG'ye Çevir", desc: "Apple HEIC fotoğraflarını standart JPG formatına dönüştürün." },
+                    'webp-converter': { label: "WebP Dönüştürücü", desc: "Resimleri modern WebP veya AVIF formatlarına dönüştürün." },
+                    'exif-remover': { label: "EXIF Veri Temizleyici", desc: "Fotoğraflardaki gizli GPS ve kamera verilerini anında temizleyin." },
+                    'extract-pdf-img': { label: "PDF Resimlerini Çıkar", desc: "PDF belgelerinin içindeki gömülü görselleri ayıklayın." },
+                    'redact-tool': { label: "Sansürle / Karart", desc: "Görsellerinizdeki hassas bilgileri güvenle siyah kutuyla kapatın." },
+                    'json-tool': { label: "JSON Biçimlendirici", desc: "Ham JSON verilerini doğrulayın ve güzelleştirin." },
+                    'base64-tool': { label: "Base64 Aracı", desc: "Base64 metin dizelerini kolayca şifreleyin veya çözün." },
+                    'url-tool': { label: "URL Aracı", desc: "URL dize kodlamasını güvenle yapın veya çözün." },
+                    'diff-tool': { label: "Metin Karşılaştırıcı", desc: "İki metin bloğunu satır satır karşılaştırın." },
+                    'md-tool': { label: "Markdown Önizleme", desc: "Markdown içeriklerini HTML olarak önizleyin." },
+                    'password-gen': { label: "Şifre Üretici", desc: "Güvenli ve rastgele güçlü şifreler üretin." },
+                    'encrypt-pdf': { label: "PDF Şifrele", desc: "AES standardıyla PDF dosyalarınıza şifre koruması ekleyin." },
+                    'hash-calc': { label: "Dosya Hash Hesapla", desc: "SHA-256 sağlama toplamı (checksum) değerlerini hesaplayın." },
+                    'uuid-gen': { label: "UUID Üretici", desc: "Benzersiz tanımlayıcılar (UUID v4) oluşturun." },
+                    'qr-tool': { label: "QR Kod Üretici", desc: "Yüksek çözünürlüklü QR kodları yerel olarak oluşturun." },
+                    'ocr-reader': { label: "OCR Metin Okuyucu", desc: "Yerel yapay zeka (Tesseract) ile görsellerden metin okuyun." }
+                }
+            },
+            de: {
+                secTitle: "100% lokale & sichere Verarbeitungsgarantie",
+                secDesc: "Alle Konvertierungen laufen im Browser. Keine Datenübertragung an Server.",
+                dropText: "Klicken oder Dateien hierher ziehen",
+                dropSubText: "Unterstützung für Einzel- und Stapelverarbeitung",
+                convertBtn: "Konvertieren & Herunterladen",
+                reset: "Zurücksetzen",
+                catPdf: "📄 PDF-Werkzeuge", catImage: "🖼️ Bild-Werkzeuge", catDev: "💻 Text & Dev", catSec: "🔐 Sicherheit & Utils",
+                recentActivity: "🕒 Letzte Aktivitäten", clear: "Löschen", advancedSettings: "⚙️ Erweiterte Einstellungen",
+                renderQuality: "Render-Qualität:", outputInfo: "Ausgabe-Info:", faqMainTitle: "Häufig gestellte Fragen",
+                tools: {
+                    'pdf-to-png': { label: 'PDF in PNG', desc: 'PDF-Seiten direkt im Browser in PNG-Bilder extrahieren.' },
+                    'pdf-to-jpg': { label: 'PDF in JPG', desc: 'PDF-Seiten direkt im Browser in JPG-Bilder extrahieren.' },
+                    'merge-pdf': { label: 'PDF zusammenführen', desc: 'Mehrere PDFs sicher im Browser kombinieren.' },
+                    'split-pdf': { label: 'PDF teilen', desc: 'Bestimmte PDF-Seiten lokal extrahieren.' },
+                    'jpg-to-pdf': { label: 'JPG in PDF', desc: 'Bilder sicher in ein einziges PDF konvertieren.' },
+                    'compress-image': { label: 'Bild komprimieren', desc: 'Dateigröße reduzieren unter Beibehaltung der Qualität.' },
+                    'heic-to-jpg': { label: 'HEIC in JPG', desc: 'Apple HEIC-Fotos in Standard-JPG konvertieren.' },
+                    'webp-converter': { label: 'WebP-Konverter', desc: 'Bilder in moderne WebP- oder AVIF-Formate umwandeln.' },
+                    'exif-remover': { label: 'EXIF-Entferner', desc: 'GPS-Koordinaten und private Metadaten sofort löschen.' },
+                    'extract-pdf-img': { label: 'PDF-Bilder extrahieren', desc: 'Eingebettete Bilder aus PDFs extrahieren.' },
+                    'redact-tool': { label: 'Schwärzungstool', desc: 'Sensible Informationen in Bildern sicher schwärzen.' },
+                    'json-tool': { label: 'JSON-Formatter', desc: 'JSON-Daten formatieren und validieren.' },
+                    'base64-tool': { label: 'Base64-Tool', desc: 'Base64-Strings kodieren oder dekodieren.' },
+                    'url-tool': { label: 'URL-Tool', desc: 'URL-Strings sicher kodieren oder dekodieren.' },
+                    'diff-tool': { label: 'Text-Diff', desc: 'Zwei Textblöcke Zeile für Zeile vergleichen.' },
+                    'md-tool': { label: 'Markdown-Vorschau', desc: 'Markdown als HTML gerendert anzeigen.' },
+                    'password-gen': { label: 'Passwort-Generator', desc: 'Sichere, zufällige Passwörter generieren.' },
+                    'encrypt-pdf': { label: 'PDF verschlüsseln', desc: 'Passwortschutz zu PDFs mit AES hinzufügen.' },
+                    'hash-calc': { label: 'Dateihash', desc: 'SHA-256 Prüfsummen berechnen.' },
+                    'uuid-gen': { label: 'UUID-Generator', desc: 'Eindeutige Identifikatoren erstellen.' },
+                    'qr-tool': { label: 'QR-Code-Generator', desc: 'QR-Codes lokal erstellen.' },
+                    'ocr-reader': { label: 'OCR-Textleser', desc: 'Text aus Bildern mit lokaler KI extrahieren.' }
+                }
+            },
+            fr: {
+                secTitle: "Garantie de traitement 100% local et sécurisé",
+                secDesc: "Toutes les conversions s'exécutent côté client. Zéro octet envoyé sur un serveur.",
+                dropText: "Cliquez pour parcourir ou glissez des fichiers ici",
+                dropSubText: "Prise en charge du traitement individuel ou par lots",
+                convertBtn: "Convertir et Télécharger",
+                reset: "Réinitialiser",
+                catPdf: "📄 Outils PDF", catImage: "🖼️ Outils Image", catDev: "💻 Texte & Dev", catSec: "🔐 Sécurité & Utils",
+                recentActivity: "🕒 Activité récente", clear: "Effacer", advancedSettings: "⚙️ Paramètres avancés",
+                renderQuality: "Qualité de rendu:", outputInfo: "Info de sortie:", faqMainTitle: "Questions Fréquentes",
+                tools: {
+                    'pdf-to-png': { label: 'PDF en PNG', desc: 'Extraire des pages PDF en images PNG directement dans votre navigateur.' },
+                    'pdf-to-jpg': { label: 'PDF en JPG', desc: 'Extraire des pages PDF en images JPG directement dans votre navigateur.' },
+                    'merge-pdf': { label: 'Fusionner PDF', desc: 'Combinez plusieurs documents PDF en toute sécurité.' },
+                    'split-pdf': { label: 'Diviser PDF', desc: 'Extrayez des pages spécifiques d’un fichier PDF localement.' },
+                    'jpg-to-pdf': { label: 'JPG en PDF', desc: 'Convertissez des images en un seul document PDF.' },
+                    'compress-image': { label: "Compresser l'image", desc: 'Réduisez la taille des fichiers image tout en conservant la qualité.' },
+                    'heic-to-jpg': { label: 'HEIC en JPG', desc: 'Convertissez des photos HEIC en format JPG standard.' },
+                    'webp-converter': { label: 'Convertisseur WebP', desc: 'Convertissez des images au format WebP ou AVIF.' },
+                    'exif-remover': { label: 'Suppresseur EXIF', desc: 'Supprimez instantanément les coordonnées GPS et métadonnées.' },
+                    'extract-pdf-img': { label: 'Extraire images PDF', desc: 'Extrayez des images intégrées de documents PDF.' },
+                    'redact-tool': { label: 'Censurer', desc: 'Masquez les informations sensibles dans vos images.' },
+                    'json-tool': { label: 'Formateur JSON', desc: 'Formatez et validez des données JSON.' },
+                    'base64-tool': { label: 'Outil Base64', desc: 'Encodez ou décodez des chaînes Base64.' },
+                    'url-tool': { label: 'Outil URL', desc: 'Encodez ou décodez des chaînes URL.' },
+                    'diff-tool': { label: 'Diff de texte', desc: 'Comparez deux blocs de texte ligne par ligne.' },
+                    'md-tool': { label: 'Aperçu Markdown', desc: 'Prévisualisez le contenu Markdown converti en HTML.' },
+                    'password-gen': { label: 'Générateur de mot de passe', desc: 'Générez des mots de passe sécurisés.' },
+                    'encrypt-pdf': { label: 'Chiffrer PDF', desc: 'Ajoutez une protection par mot de passe AES à vos PDF.' },
+                    'hash-calc': { label: 'Hash de fichier', desc: 'Calculez les sommes de contrôle SHA-256.' },
+                    'uuid-gen': { label: 'Générateur UUID', desc: 'Générez des identifiants uniques (UUID v4).' },
+                    'qr-tool': { label: 'Générateur QR', desc: 'Générez des codes QR haute résolution localement.' },
+                    'ocr-reader': { label: 'Lecteur de texte OCR', desc: "Extrayez du texte d'images grâce à l'IA locale." }
+                }
+            },
             es: {
                 secTitle: "Garantía de procesamiento 100% local y seguro",
                 secDesc: "Todas las conversiones se ejecutan localmente. Cero bytes subidos a servidores.",
@@ -518,16 +609,9 @@
                 dropSubText: "Soporte para procesamiento individual o por lotes",
                 convertBtn: "Convertir y Descargar",
                 reset: "Reiniciar",
-                catPdf: "📄 Herramientas PDF",
-                catImage: "🖼️ Herramientas de Imagen",
-                catDev: "💻 Texto y Desarrollo",
-                catSec: "🔐 Seguridad y Utilidades",
-                recentActivity: "🕒 Actividad local reciente",
-                clear: "Limpiar",
-                advancedSettings: "⚙️ Configuración avanzada",
-                renderQuality: "Calidad de renderizado:",
-                outputInfo: "Información de salida:",
-                faqMainTitle: "Preguntas Frecuentes y Arquitectura de Seguridad",
+                catPdf: "📄 Herramientas PDF", catImage: "🖼️ Herramientas de Imagen", catDev: "💻 Texto y Desarrollo", catSec: "🔐 Seguridad y Utilidades",
+                recentActivity: "🕒 Actividad local reciente", clear: "Limpiar", advancedSettings: "⚙️ Configuración avanzada",
+                renderQuality: "Calidad de renderizado:", outputInfo: "Información de salida:", faqMainTitle: "Preguntas Frecuentes",
                 tools: {
                     'pdf-to-png': { label: 'PDF a PNG', desc: 'Extraiga páginas de PDF en imágenes PNG directamente en su navegador.' },
                     'pdf-to-jpg': { label: 'PDF a JPG', desc: 'Extraiga páginas de PDF en imágenes JPG directamente en su navegador.' },
@@ -560,16 +644,9 @@
                 dropSubText: "يدعم المعالجة الفردية أو المجمعة",
                 convertBtn: "تحويل وتنزيل",
                 reset: "إعادة ضبط",
-                catPdf: "📄 أدوات PDF",
-                catImage: "🖼️ أدوات الصور",
-                catDev: "💻 النصوص والمبرمجين",
-                catSec: "🔐 الأمان والأدوات",
-                recentActivity: "🕒 النشاط المحلي الأخير",
-                clear: "مسح",
-                advancedSettings: "⚙️ إعدادات متقدمة",
-                renderQuality: "جودة العرض:",
-                outputInfo: "معلومات الإخراج:",
-                faqMainTitle: "الأسئلة الشائعة وهندسة الأمان",
+                catPdf: "📄 أدوات PDF", catImage: "🖼️ أدوات الصور", catDev: "💻 النصوص والمبرمجين", catSec: "🔐 الأمان والأدوات",
+                recentActivity: "🕒 النشاط المحلي الأخير", clear: "مسح", advancedSettings: "⚙️ إعدادات متقدمة",
+                renderQuality: "جودة العرض:", outputInfo: "معلومات الإخراج:", faqMainTitle: "الأسئلة الشائعة",
                 tools: {
                     'pdf-to-png': { label: 'PDF إلى PNG', desc: 'استخراج صفحات PDF إلى صور PNG مباشرة في متصفحك.' },
                     'pdf-to-jpg': { label: 'PDF إلى JPG', desc: 'استخراج صفحات PDF إلى صور JPG مباشرة في متصفحك.' },
@@ -1106,7 +1183,7 @@
             showToast("History cleared");
         }
 
-        // UNIFIED CONVERSION ENGINE (WITH 22 TOOLS & EXIF REMOVAL)
+        // UNIFIED CONVERSION ENGINE (22 TOOLS)
         const convertBtn = document.getElementById('convertBtn');
         convertBtn.addEventListener('click', async () => {
             if (currentTool === 'password-gen' || currentTool === 'uuid-gen') { window.copyGenerated(); return; }
@@ -1311,13 +1388,11 @@
                     addHistory(`Converted ${selectedFiles.length} images to ${ext.toUpperCase()}`);
                 }
                 else if (currentTool === 'exif-remover') {
-                    // EXIF Metadata Stripper using Canvas re-draw (100% Client-Side Private)
                     const zip = new JSZip();
                     for (let file of selectedFiles) {
                         const bitmap = await createImageBitmap(file);
                         const canvas = document.createElement('canvas');
-                        canvas.width = bitmap.width;
-                        canvas.height = bitmap.height;
+                        canvas.width = bitmap.width; canvas.height = bitmap.height;
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(bitmap, 0, 0);
                         
