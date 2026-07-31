@@ -128,7 +128,7 @@
                     <option value="ar">العربية</option>
                 </select>
                 <span class="hidden sm:inline-flex bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300 text-xs px-3 py-1.5 rounded-full font-bold items-center gap-1.5 shadow-sm border border-emerald-200 dark:border-emerald-800/50">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> %100 Yerel
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="localBadge">%100 Yerel</span>
                 </span>
                 <button onclick="toggleShortcutsModal(true)" class="p-2 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-xs font-bold transition-all" title="Keyboard Shortcuts">⌨️</button>
                 <button id="themeToggle" class="text-xl p-2 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 transition-all shadow-sm" title="Toggle Dark Mode">🌙</button>
@@ -474,7 +474,7 @@
         }
         updateLiveCounter(0);
 
-        // Comprehensive Translation Map (Turkish Default)
+        // Comprehensive Translation Map
         const translations = {
             tr: {
                 overlayTitle: "Dosyalarınızı yerel olarak işlemek için buraya bırakın!",
@@ -483,6 +483,7 @@
                 secDesc: "Tüm dönüşümler tarayıcınızda çalışır. Uzak sunucuya sıfır bayt yüklenir.",
                 blockedCloudData: "Engellenen Bulut Verisi",
                 mbSafe: "MB Güvende",
+                localBadge: "%100 Yerel",
                 dropText: "Göz atmak için tıklayın veya dosyaları buraya sürükleyin",
                 dropSubText: "Tekli veya toplu işleme desteği (Listeyi yeniden sıralamak için sürükleyin!)",
                 convertBtn: "Dönüştür ve İndir",
@@ -531,7 +532,7 @@
                 verifyStep1: "<strong>Ağ Denetçisi Testi:</strong> Tarayıcı Geliştirici Araçlarını açmak için <kbd class='bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded font-mono text-xs'>F12</kbd> tuşuna basın, <strong>Network (Ağ)</strong> sekmesine gidin ve herhangi bir dosyayı dönüştürün. Sıfır giden dosya yükleme isteği göreceksiniz.",
                 verifyStep2: "<strong>Çevrimdışı Mod Testi:</strong> Bilgisayarınızın Wi-Fi veya internet bağlantısını tamamen kesin. PrivacyConvert dosyalarınızı kesintisiz olarak dönüştürmeye ve işlemeye devam edecektir.",
                 tools: {
-                    'pdf-to-png': { label: 'PDF - PNG', desc: 'PDF sayfalarını doğrudan tarayıcınızda PNG görüntülerine dönüştürün. Hızlı, ücretsiz ve tamamen gizli.' },
+                    'pdf-to-png': { label: 'PDF - PNG', desc: 'PDF sayfalarını doğrudan tarayıcınızda yüksek çözünürlüklü PNG görsellerine dönüştürün. Hızlı, ücretsiz ve tamamen gizli.' },
                     'pdf-to-jpg': { label: 'PDF - JPG', desc: 'PDF sayfalarını doğrudan tarayıcınızda JPG görüntülerine dönüştürün. Hızlı, ücretsiz ve tamamen gizli.' },
                     'merge-pdf': { label: 'PDF Birleştir', desc: 'Birden fazla PDF belgesini yüklemeden tarayıcınızda güvenle birleştirin.' },
                     'split-pdf': { label: 'PDF Böl', desc: 'Bir PDF dosyasından belirli sayfaları yerel olarak çıkarın.' },
@@ -562,6 +563,7 @@
                 secDesc: "All conversions run client-side. Zero bytes uploaded to any remote server.",
                 blockedCloudData: "Blocked Cloud Data",
                 mbSafe: "MB Safe",
+                localBadge: "100% Local",
                 dropText: "Click to browse or drag files here",
                 dropSubText: "Support for single or batch processing (Drag to reorder list items below!)",
                 convertBtn: "Convert & Download",
@@ -641,6 +643,7 @@
                 secDesc: "所有转换均在客户端运行。零字节上传至任何远程服务器。",
                 blockedCloudData: "已拦截的云数据",
                 mbSafe: "MB 安全",
+                localBadge: "100% 本地",
                 dropText: "点击浏览或将文件拖放到此处",
                 dropSubText: "支持单文件或批量处理（可拖动下方列表重新排序！）",
                 convertBtn: "转换并下载",
@@ -720,6 +723,7 @@
                 secDesc: "Alle Konvertierungen laufen im Browser. Keine Datenübertragung an Server.",
                 blockedCloudData: "Blockierte Cloud-Daten",
                 mbSafe: "MB Sicher",
+                localBadge: "100% Lokal",
                 dropText: "Klicken oder Dateien hierher ziehen",
                 dropSubText: "Unterstützung für Einzel- und Stapelverarbeitung",
                 convertBtn: "Konvertieren & Herunterladen",
@@ -799,6 +803,7 @@
                 secDesc: "Toutes les conversions s'exécutent côté client. Zéro octet envoyé sur un serveur.",
                 blockedCloudData: "Données cloud bloquées",
                 mbSafe: "MB Sécurisé",
+                localBadge: "100% Local",
                 dropText: "Cliquez pour parcourir ou glissez des fichiers ici",
                 dropSubText: "Prise en charge du traitement individuel ou par lots",
                 convertBtn: "Convertir et Télécharger",
@@ -878,6 +883,7 @@
                 secDesc: "Todas las conversiones se ejecutan localmente. Cero bytes subidos a servidores.",
                 blockedCloudData: "Datos en la nube bloqueados",
                 mbSafe: "MB Seguro",
+                localBadge: "100% Local",
                 dropText: "Haga clic para buscar o arrastre archivos aquí",
                 dropSubText: "Soporte para procesamiento individual o por lotes",
                 convertBtn: "Convertir y Descargar",
@@ -957,6 +963,7 @@
                 secDesc: "تتم جميع العمليات محلياً. صفر بايت مرفوعة لأي خادم خارجي.",
                 blockedCloudData: "بيانات السحابة المحظورة",
                 mbSafe: "ميغابايت آمن",
+                localBadge: "محلي 100%",
                 dropText: "انقر للتصفح أو اسحب الملفات هنا",
                 dropSubText: "يدعم المعالجة الفردية أو المجمعة",
                 convertBtn: "تحويل وتنزيل",
@@ -1031,7 +1038,6 @@
             }
         };
 
-        // Eğer daha önce kaydedilmiş bir dil yoksa veya eski 'en' takılı kaldıysa 'tr' yap
         let currentLang = localStorage.getItem('privacyConvert_lang') || 'tr';
         if (!translations[currentLang]) currentLang = 'tr';
         
@@ -1083,7 +1089,6 @@
             updateUIMeta(currentTool);
         }
 
-        applyLanguage(currentLang);
         langSelect.addEventListener('change', (e) => applyLanguage(e.target.value));
 
         function updateUIMeta(tool) {
@@ -1370,6 +1375,7 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
+            applyLanguage(currentLang);
             renderHistory();
             const hash = window.location.hash.replace('#', '');
             const savedTool = localStorage.getItem('privacyConvert_lastTool');
