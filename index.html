@@ -603,7 +603,6 @@
                 pdfGroup.style.display = 'none'; quality.style.display = 'none'; imageQuickButtons.style.display = 'none'; watermarkContainer.style.display = 'none'; resizeContainer.style.display = 'none';
                 formatBadge.innerHTML = "📱 QR Code Image";
                 convertBtn.innerHTML = "Download QR Code";
-                // Trigger instant default QR
                 selectedFiles = ['dummy'];
                 actionArea.classList.remove('hidden');
                 qrResultBox.classList.remove('hidden');
@@ -723,9 +722,8 @@
                             const imgData = ctx.getImageData(0, 0, 50, 50).data;
                             let colors = [];
                             for(let i=0; i<imgData.length; i+=40) {
-                                colors.(`rgb(${imgData[i]},${imgData[i+1]},${imgData[i+2]})`);
+                                colors.push(`rgb(${imgData[i]},${imgData[i+1]},${imgData[i+2]})`);
                             }
-                            // Take top 5 sample unique colors roughly
                             const uniqueColors = [...new Set(colors)].slice(0, 5);
                             const grid = document.getElementById('paletteContainerGrid');
                             grid.innerHTML = '';
@@ -940,9 +938,7 @@
             }
 
             if (currentTool === 'redact-tool') {
-                // If cropper is active, blackout the cropped area permanently
                 if (cropper) {
-                    const croppedCanvas = cropper.getCroppedCanvas();
                     const mainImg = new Image();
                     mainImg.src = imagePreview.src;
                     await new Promise(r => mainImg.onload = r);
@@ -950,7 +946,6 @@
                     canvas.width = mainImg.naturalWidth; canvas.height = mainImg.naturalHeight;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(mainImg, 0, 0);
-                    // Draw black box over crop data area
                     const cropData = cropper.getData(true);
                     ctx.fillStyle = '#000000';
                     ctx.fillRect(cropData.x, cropData.y, cropData.width, cropData.height);
@@ -972,7 +967,6 @@
                 canvas.width = mainImg.naturalWidth; canvas.height = mainImg.naturalHeight;
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(mainImg, 0, 0);
-                // Stamp signature at bottom right
                 const sigWidth = canvas.width * 0.25;
                 const sigHeight = (sigCanvas.height / sigCanvas.width) * sigWidth;
                 ctx.drawImage(sigCanvas, canvas.width - sigWidth - 30, canvas.height - sigHeight - 30, sigWidth, sigHeight);
