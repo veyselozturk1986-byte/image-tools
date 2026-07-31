@@ -126,83 +126,188 @@
 
     <!-- Core JavaScript Logic -->
     <script>
-        const dropZone = document.getElementById('dropZone');
-        const fileInput = document.getElementById('fileInput');
-        const settingsArea = document.getElementById('settingsArea');
-        const previewImg = document.getElementById('previewImg');
-        const fileName = document.getElementById('fileName');
-        const fileSize = document.getElementById('fileSize');
-        const formatSelect = document.getElementById('formatSelect');
-        const qualityRange = document.getElementById('qualityRange');
-        const qualityVal = document.getElementById('qualityVal');
-        const convertBtn = document.getElementById('convertBtn');
+      // PDF.js Worker Tanımlaması (Şarttır)
+pdfjsLib.GlobalWorkerOptions.workerSrc = 
+  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-        let loadedImage = null;
+// DOM Elemanları
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+const actionArea = document.getElementById('actionArea');
+const fileNameDisplay = document.getElementById('fileName');
+const targetFormat = document.getElementById('targetFormat');
+const convertBtn = document.getElementById('convertBtn');
+const statusText = document.getElementById('statusText');
 
-        dropZone.addEventListener('click', () => fileInput.click());
-        fileInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
-        qualityRange.addEventListener('input', (e) => qualityVal.innerText = e.target.value);
+let selectedFiles = [];
 
-        // Drag and drop handlers
-        dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropZone.classList.add('border-indigo-500', 'bg-indigo-100/50');
-        });
-        dropZone.addEventListener('dragleave', () => {
-            dropZone.classList.remove('border-indigo-500', 'bg-indigo-100/50');
-        });
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('border-indigo-500', 'bg-indigo-100/50');
-            if (e.dataTransfer.files.length > 0) {
-                handleFile(e.dataTransfer.files[0]);
-            }
-        });
+// 1. Tıklama ve Sürükle-Bırak Olayları
+dropZone.addEventListener('click', () => fileInput.click());
 
-        function handleFile(file) {
-            if (!file || !file.type.startsWith('image/')) return;
-            
-            fileName.innerText = file.name;
-            fileSize.innerText = (file.size / 1024).toFixed(1) + ' KB';
+fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
 
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                previewImg.src = e.target.result;
-                loadedImage = new Image();
-                loadedImage.src = e.target.result;
-                loadedImage.onload = () => {
-                    settingsArea.classList.remove('hidden');
-                };
-            };
-            reader.readAsDataURL(file);
-        }
+dropZone.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  dropZone.classList.add('border-indigo-500', 'bg-slate-50');
+});
 
-        convertBtn.addEventListener('click', () => {
-            if (!loadedImage) return;
+dropZone.addEventListener('dragleave', () => {
+  dropZone.classList.remove('border-indigo-500', 'bg-slate-50');
+});
 
-            const canvas = document.createElement('canvas');
-            canvas.width = loadedImage.width;
-            canvas.height = loadedImage.height;
+dropZone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  dropZone.classList.remove('border-indigo-500', 'bg-slate-50');
+  handleFiles(e.dataTransfer.files);
+});
 
-            const ctx = canvas.getContext('2d');
-            
-            if (formatSelect.value === 'image/jpeg') {
-                ctx.fillStyle = '#FFFFFF';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-            }
+function handleFiles(files) {
+  if (!files.length) return;
+  selectedFiles = Array.from(files);
+  
+  if (selectedFiles.length === 1) {
+    fileNameDisplay.textContent = selectedFiles[0].name;
+  } else {
+    fileNameDisplay.textContent = `${selectedFiles.length} files selected`;
+  }
+  
+  actionArea.classList.remove('hidden');
+}
 
-            ctx.drawImage(loadedImage, 0, 0);
+// 2. Dönüştür Butonuna Tıklama (Ana Mantık Akışı)
+convertBtn.addEventListener('click', async () => {
+  if (!selectedFiles.length) return;
 
-            const quality = parseFloat(qualityRange.value) / 100;
-            const dataUrl = canvas.toDataURL(formatSelect.value, quality);
+  const format = targetFormat.value;
+  const firstFile = selectedFiles[0];
 
-            const a = document.createElement('a');
-            a.href = dataUrl;
-            
-            const ext = formatSelect.value.split('/')[1];
-            a.download = `converted-image.${ext}`;
-            a.click();
-        });
+  showStatus("Processing locally... Please wait.");
+
+  try {
+    // SENARYO 1: Yüklenen dosya PDF ise -> JPG/PNG/WEBP'ye çevir
+    if (firstFile.type === "application/pdf") {
+      await processPdfToImage(firstFile, format);
+    } 
+    // SENARYO 2: Çıktı formatı PDF istenmişse -> Resimleri PDF yap
+    else if (format === "pdf") {
+      await processImagesToPdf(selectedFiles);
+    } 
+    // SENARYO 3: Normal Görsel -> Görsel Dönüştürme (Canvas API)
+    else {
+      await processStandardImages(selectedFiles, format);
+    }
+  } catch (err) {
+    console.error(err);
+    alert("An error occurred during conversion.");
+  } finally {
+    hideStatus();
+  }
+});
+
+// --- DÖNÜŞTÜRÜCÜ MOTORLARI ---
+
+// A. PDF -> Görsel Motoru
+async function processPdfToImage(file, outputFormat) {
+  const arrayBuffer = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  const zip = new JSZip();
+  const mimeType = outputFormat === 'png' ? 'image/png' : 'image/jpeg';
+  const ext = outputFormat === 'png' ? 'png' : 'jpg';
+
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const viewport = page.getViewport({ scale: 2.0 }); // 2x Yüksek Kalite
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.height = viewport.height;
+    canvas.width = viewport.width;
+
+    await page.render({ canvasContext: ctx, viewport }).promise;
+
+    const blob = await new Promise(res => canvas.toBlob(res, mimeType, 0.9));
+
+    if (pdf.numPages === 1) {
+      triggerDownload(blob, `${file.name.replace(/\.pdf$/i, '')}.${ext}`);
+    } else {
+      zip.file(`page-${i}.${ext}`, blob);
+    }
+  }
+
+  if (pdf.numPages > 1) {
+    const zipBlob = await zip.generateAsync({ type: 'blob' });
+    triggerDownload(zipBlob, `${file.name.replace(/\.pdf$/i, '')}_images.zip`);
+  }
+}
+
+// B. Görsel -> PDF Motoru
+async function processImagesToPdf(files) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  for (let i = 0; i < files.length; i++) {
+    const imgUrl = URL.createObjectURL(files[i]);
+    const img = new Image();
+    img.src = imgUrl;
+    await new Promise(res => img.onload = res);
+
+    const pdfWidth = doc.internal.pageSize.getWidth();
+    const pdfHeight = (img.height * pdfWidth) / img.width;
+
+    if (i > 0) doc.addPage();
+    doc.addImage(img, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+    URL.revokeObjectURL(imgUrl);
+  }
+
+  doc.save('privacyconvert_document.pdf');
+}
+
+// C. Standart Görsel -> Görsel Motoru
+async function processStandardImages(files, format) {
+  const mimeType = `image/${format}`;
+  
+  for (const file of files) {
+    const imgUrl = URL.createObjectURL(file);
+    const img = new Image();
+    img.src = imgUrl;
+    await new Promise(res => img.onload = res);
+
+    const canvas = document.createElement('canvas');
+    canvas.width = img.width;
+    canvas.height = img.height;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0);
+
+    const blob = await new Promise(res => canvas.toBlob(res, mimeType, 0.9));
+    const nameWithoutExt = file.name.substring(0, file.name.lastIndexOf('.'));
+    triggerDownload(blob, `${nameWithoutExt}.${format}`);
+    URL.revokeObjectURL(imgUrl);
+  }
+}
+
+// İndirme Tetikleyici
+function triggerDownload(blob, filename) {
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+}
+
+// Durum Göstergeleri
+function showStatus(text) {
+  statusText.textContent = text;
+  statusText.classList.remove('hidden');
+  convertBtn.disabled = true;
+  convertBtn.classList.add('opacity-50', 'cursor-not-allowed');
+}
+
+function hideStatus() {
+  statusText.classList.add('hidden');
+  convertBtn.disabled = false;
+  convertBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+}
     </script>
 
     <!-- SEO & AdSense Güvenlik İçerikleri -->
