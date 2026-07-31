@@ -17,7 +17,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            darkMode: 'class', // Karanlık mod için class tabanlı geçiş
+            darkMode: 'class',
         }
     </script>
 
@@ -111,7 +111,7 @@
                 <!-- Live Preview Wrapper -->
                 <div id="previewWrapper" class="p-4 bg-slate-900 rounded-xl border border-slate-800 flex flex-col items-center justify-center min-h-[200px] max-h-[380px] overflow-hidden relative">
                     <!-- Single Image Preview -->
-                    <img id="imagePreview" class="max-w-full max-h-[320px] object-contain rounded hidden" alt="File Preview" />
+                    <img id="imagePreview" class="max-w-full max-h-[320px] object-contain rounded hidden transition-all duration-300" alt="File Preview" />
                     
                     <!-- Batch Image Grid -->
                     <div id="batchPreviewGrid" class="hidden w-full h-full grid grid-cols-3 sm:grid-cols-4 gap-3 overflow-y-auto p-2">
@@ -128,9 +128,9 @@
 
                 <!-- 🛠️ Editor & Options Panel -->
                 <div id="editorTools" class="bg-slate-50 dark:bg-slate-700/50 p-4 rounded-xl border border-slate-200 dark:border-slate-600 space-y-4">
-                    <h3 class="text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">🛠️ Conversion Options</h3>
+                    <h3 class="text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">🛠️ Advanced Editing Options</h3>
                     
-                    <!-- Quick Tools -->
+                    <!-- Quick Tools & Filters (NEW: Grayscale) -->
                     <div id="imageQuickButtons" class="flex flex-wrap items-center gap-2">
                         <button type="button" id="rotateRightBtn" class="px-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 text-xs font-semibold rounded-lg text-slate-700 dark:text-slate-200 transition flex items-center gap-1 shadow-sm">
                             🔄 Rotate 90°
@@ -138,9 +138,13 @@
                         <button type="button" id="toggleCropBtn" class="px-3 py-1.5 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 text-xs font-semibold rounded-lg text-indigo-700 dark:text-indigo-300 transition flex items-center gap-1 shadow-sm">
                             ✂️ Crop Area
                         </button>
+                        <div class="w-px h-6 bg-slate-300 dark:bg-slate-600 mx-1"></div> <!-- Divider -->
+                        <button type="button" id="toggleGrayscaleBtn" class="px-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 text-xs font-semibold rounded-lg text-slate-700 dark:text-slate-200 transition flex items-center gap-1 shadow-sm">
+                            ⚫ B&W Filter (Grayscale)
+                        </button>
                     </div>
 
-                    <!-- Compress Options (NEW) -->
+                    <!-- Compress Options -->
                     <div id="compressOptionsGroup" class="hidden bg-emerald-50 dark:bg-emerald-900/20 p-3 rounded-lg border border-emerald-100 dark:border-emerald-800/50">
                         <label for="compressionLevel" class="block text-xs font-semibold text-emerald-900 dark:text-emerald-300 mb-1">
                             🗜️ Target File Size (Max MB per file):
@@ -161,16 +165,23 @@
                         <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Leave as <strong>'all'</strong> or specify pages like <strong>1, 3-5, 8</strong>.</p>
                     </div>
 
-                    <!-- Width & Watermark Grid -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-200 dark:border-slate-600 text-xs">
-                        <div id="resizeContainer">
-                            <label for="resizeWidth" class="block font-medium text-slate-700 dark:text-slate-300 mb-1">Max Output Width (px):</label>
-                            <input type="number" id="resizeWidth" placeholder="Original Resolution" class="w-full p-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-slate-800 dark:text-white">
+                    <!-- Watermark & Adjustments Grid -->
+                    <div id="watermarkContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3 border-t border-slate-200 dark:border-slate-600">
+                        <div>
+                            <label for="watermarkText" class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Text Watermark:</label>
+                            <input type="text" id="watermarkText" placeholder="e.g. Confidential / Draft" class="w-full p-2 text-sm border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-slate-800 dark:text-white">
                         </div>
-                        <div id="watermarkContainer">
-                            <label for="watermarkText" class="block font-medium text-slate-700 dark:text-slate-300 mb-1">Watermark Text:</label>
-                            <input type="text" id="watermarkText" placeholder="e.g. Confidential" class="w-full p-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-slate-800 dark:text-white">
+                        
+                        <!-- NEW: Image Logo Watermark Input -->
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Logo Watermark (PNG/JPG):</label>
+                            <input type="file" id="logoInput" accept="image/png, image/jpeg" class="block w-full text-xs text-slate-500 dark:text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-900/50 dark:file:text-indigo-300 cursor-pointer border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800">
                         </div>
+                    </div>
+                    
+                    <div id="resizeContainer" class="pt-2">
+                        <label for="resizeWidth" class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Max Output Width (px):</label>
+                        <input type="number" id="resizeWidth" placeholder="Keep Original Resolution" class="w-full p-2 text-sm border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-slate-800 dark:text-white">
                     </div>
                 </div>
 
@@ -178,7 +189,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center pt-2">
                     <div id="qualityContainer">
                         <label for="renderScale" class="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-1">Render Quality / Scale:</label>
-                        <select id="renderScale" class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg p-2.5 font-semibold focus:ring-indigo-500 focus:border-indigo-500 cursor-pointer">
+                        <select id="renderScale" class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg p-2 font-semibold focus:ring-indigo-500 focus:border-indigo-500 cursor-pointer">
                             <option value="1.5">Standard (150 DPI)</option>
                             <option value="2.0" selected>High Quality (200 DPI)</option>
                             <option value="3.0">Ultra HD (300 DPI)</option>
@@ -186,14 +197,15 @@
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-1">Output Format:</label>
-                        <div id="outputFormatBadge" class="p-2.5 bg-slate-100 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-600 text-xs font-bold text-slate-700 dark:text-slate-300">
+                        <div id="outputFormatBadge" class="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-600 text-sm font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
                             🖼️ PNG
                         </div>
                     </div>
                 </div>
 
                 <!-- Convert Button -->
-                <button id="convertBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-4 rounded-xl shadow-md transition-all active:scale-95 text-lg">
+                <button id="convertBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-4 rounded-xl shadow-md transition-all active:scale-95 text-lg flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                     Convert & Download
                 </button>
             </div>
@@ -207,24 +219,23 @@
         // Dark Mode Toggle Logic
         const themeToggle = document.getElementById('themeToggle');
         const htmlElement = document.documentElement;
-        
-        // Cihazın kendi tercihine göre başlangıç (opsiyonel)
         if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
             htmlElement.classList.add('dark');
             themeToggle.textContent = '☀️';
         }
-
         themeToggle.addEventListener('click', () => {
             htmlElement.classList.toggle('dark');
             themeToggle.textContent = htmlElement.classList.contains('dark') ? '☀️' : '🌙';
         });
 
-        // State
+        // State variables
         let currentTool = 'pdf-to-png';
         let selectedFiles = [];
         let cropper = null;
         let currentRotation = 0;
         let sortableInstance = null;
+        let isGrayscale = false;     // Siyah Beyaz durumu
+        let customLogo = null;       // Yüklenen Logo
 
         // Elements
         const dropZone = document.getElementById('dropZone');
@@ -246,23 +257,21 @@
         const compressOptionsGroup = document.getElementById('compressOptionsGroup');
         const watermarkContainer = document.getElementById('watermarkContainer');
 
-        function showProgress(title, text) {
-            progressTitle.textContent = title;
-            progressText.textContent = text;
-            progressModal.classList.remove('hidden');
-        }
+        function showProgress(title, text) { progressTitle.textContent = title; progressText.textContent = text; progressModal.classList.remove('hidden'); }
         function hideProgress() { progressModal.classList.add('hidden'); }
         async function yieldToMain() { return new Promise(resolve => setTimeout(resolve, 10)); }
 
         function resetApp() {
-            selectedFiles = [];
-            currentRotation = 0;
+            selectedFiles = []; currentRotation = 0;
+            isGrayscale = false; customLogo = null;
+            document.getElementById('logoInput').value = '';
+            document.getElementById('watermarkText').value = '';
+            document.getElementById('toggleGrayscaleBtn').classList.remove('bg-slate-200', 'dark:bg-slate-600', 'border-slate-400');
+            imagePreview.style.filter = 'none';
+
             if (cropper) { cropper.destroy(); cropper = null; }
-            actionArea.classList.add('hidden');
-            dropZone.classList.remove('hidden');
-            clearBtn.classList.add('hidden');
-            imagePreview.src = '';
-            batchPreviewGrid.innerHTML = '';
+            actionArea.classList.add('hidden'); dropZone.classList.remove('hidden'); clearBtn.classList.add('hidden');
+            imagePreview.src = ''; batchPreviewGrid.innerHTML = '';
             if (sortableInstance) { sortableInstance.destroy(); sortableInstance = null; }
             document.getElementById('toggleCropBtn').innerHTML = "✂️ Crop Area";
         }
@@ -273,14 +282,11 @@
             currentTool = tool;
             resetApp();
 
-            // Active button styling (Dark mode uyumlu)
+            // Active tab styling
             ['pdf-to-png', 'pdf-to-jpg', 'heic-to-jpg', 'jpg-to-pdf', 'compress-image'].forEach(t => {
                 const btn = document.getElementById(`tab-${t}`);
-                if (t === tool) {
-                    btn.className = "px-4 py-2 text-xs font-bold rounded-xl transition bg-indigo-600 text-white shadow-sm";
-                } else {
-                    btn.className = "px-4 py-2 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700";
-                }
+                if (t === tool) btn.className = "px-4 py-2 text-xs font-bold rounded-xl transition bg-indigo-600 text-white shadow-sm";
+                else btn.className = "px-4 py-2 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700";
             });
 
             // UI Config
@@ -290,12 +296,9 @@
             const quality = document.getElementById('qualityContainer');
             const formatBadge = document.getElementById('outputFormatBadge');
             
-            // Default Resets
-            imageQuickButtons.style.display = 'flex';
-            batchSortHint.style.display = 'none';
-            resizeContainer.style.display = 'block';
-            compressOptionsGroup.style.display = 'none';
-            watermarkContainer.style.display = 'block';
+            imageQuickButtons.style.display = 'flex'; batchSortHint.style.display = 'none';
+            resizeContainer.style.display = 'block'; compressOptionsGroup.style.display = 'none';
+            watermarkContainer.style.display = 'grid';
 
             if (tool === 'pdf-to-png' || tool === 'pdf-to-jpg') {
                 title.textContent = tool === 'pdf-to-png' ? "PDF to PNG" : "PDF to JPG";
@@ -303,37 +306,34 @@
                 fileInput.accept = ".pdf"; fileInput.multiple = true;
                 pdfGroup.style.display = 'block'; quality.style.display = 'block';
                 document.getElementById('dropText').textContent = "Click to select PDF files or drag & drop";
-                formatBadge.textContent = tool === 'pdf-to-png' ? "🖼️ PNG (Lossless)" : "🖼️ JPG (Compressed)";
+                formatBadge.innerHTML = tool === 'pdf-to-png' ? "🖼️ PNG (Lossless)" : "🖼️ JPG (Compressed)";
             } else if (tool === 'heic-to-jpg') {
-                title.textContent = "HEIC to JPG";
-                desc.textContent = "Convert Apple HEIC photos to standard JPG images instantly.";
+                title.textContent = "HEIC to JPG"; desc.textContent = "Convert Apple HEIC photos to standard JPG images instantly.";
                 fileInput.accept = ".heic,.HEIC"; fileInput.multiple = true;
                 pdfGroup.style.display = 'none'; quality.style.display = 'none';
                 document.getElementById('dropText').textContent = "Click to select HEIC files or drag & drop";
-                formatBadge.textContent = "🖼️ JPG";
+                formatBadge.innerHTML = "🖼️ JPG";
             } else if (tool === 'jpg-to-pdf') {
-                title.textContent = "JPG to PDF";
-                desc.textContent = "Combine and convert multiple images into a single PDF document.";
+                title.textContent = "JPG to PDF"; desc.textContent = "Combine and convert multiple images into a single PDF document.";
                 fileInput.accept = "image/jpeg,image/png,image/webp"; fileInput.multiple = true;
                 pdfGroup.style.display = 'none'; quality.style.display = 'none';
                 imageQuickButtons.style.display = 'none'; watermarkContainer.style.display = 'none';
                 batchSortHint.style.display = 'block'; resizeContainer.style.display = 'none';
                 document.getElementById('dropText').textContent = "Click to select Image files or drag & drop";
-                formatBadge.textContent = "📄 PDF Document";
+                formatBadge.innerHTML = "📄 PDF Document";
             } else if (tool === 'compress-image') {
-                title.textContent = "Compress Image";
-                desc.textContent = "Shrink image file sizes significantly without losing visible quality.";
+                title.textContent = "Compress Image"; desc.textContent = "Shrink image file sizes significantly without losing visible quality.";
                 fileInput.accept = "image/jpeg,image/png,image/webp"; fileInput.multiple = true;
                 pdfGroup.style.display = 'none'; quality.style.display = 'none';
                 imageQuickButtons.style.display = 'none'; resizeContainer.style.display = 'none';
                 watermarkContainer.style.display = 'none';
                 compressOptionsGroup.style.display = 'block'; batchSortHint.style.display = 'block';
                 document.getElementById('dropText').textContent = "Click to select Images to compress";
-                formatBadge.textContent = "🗜️ Compressed Image";
+                formatBadge.innerHTML = "🗜️ Compressed Image";
             }
         }
 
-        // Drag & Drop
+        // Drag & Drop Handling
         dropZone.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
         dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('border-indigo-500'); });
@@ -345,11 +345,8 @@
             if (!validFiles.length) return;
             selectedFiles = validFiles;
 
-            dropZone.classList.add('hidden');
-            actionArea.classList.remove('hidden');
-            clearBtn.classList.remove('hidden');
-            clearBtn.style.display = 'inline-flex';
-
+            dropZone.classList.add('hidden'); actionArea.classList.remove('hidden');
+            clearBtn.classList.remove('hidden'); clearBtn.style.display = 'inline-flex';
             showProgress("Loading...", "Preparing preview layout");
 
             try {
@@ -371,7 +368,6 @@
                         reader.readAsDataURL(file);
                     }
                     sortableInstance = new Sortable(batchPreviewGrid, { animation: 150, ghostClass: 'opacity-50' });
-
                 } else {
                     batchPreviewGrid.classList.add('hidden');
                     const firstFile = selectedFiles[0];
@@ -399,13 +395,16 @@
             } finally { hideProgress(); }
         }
 
-        // Editor Controls
+        // EDITING TOOLS & LOGIC
+        
+        // 1. Rotate
         document.getElementById('rotateRightBtn').addEventListener('click', () => {
             currentRotation = (currentRotation + 90) % 360;
             imagePreview.style.transform = `rotate(${currentRotation}deg)`;
             if (cropper) cropper.rotateTo(currentRotation);
         });
 
+        // 2. Crop
         document.getElementById('toggleCropBtn').addEventListener('click', function() {
             if (!cropper) {
                 cropper = new Cropper(imagePreview, { viewMode: 1, autoCropArea: 0.8, background: false });
@@ -416,6 +415,29 @@
             }
         });
 
+        // 3. Grayscale (Siyah Beyaz)
+        document.getElementById('toggleGrayscaleBtn').addEventListener('click', function() {
+            isGrayscale = !isGrayscale;
+            if (isGrayscale) {
+                this.classList.add('bg-slate-200', 'dark:bg-slate-600', 'border-slate-400', 'dark:border-slate-500');
+                imagePreview.style.filter = 'grayscale(100%)';
+            } else {
+                this.classList.remove('bg-slate-200', 'dark:bg-slate-600', 'border-slate-400', 'dark:border-slate-500');
+                imagePreview.style.filter = 'none';
+            }
+        });
+
+        // 4. Logo File Input
+        document.getElementById('logoInput').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const url = URL.createObjectURL(file);
+                customLogo = new Image();
+                customLogo.src = url;
+            } else { customLogo = null; }
+        });
+
+        // Helper Methods
         function parsePageRange(rangeStr, totalPages) {
             if (!rangeStr || rangeStr.trim() === '' || rangeStr.trim().toLowerCase() === 'all') return Array.from({ length: totalPages }, (_, i) => i + 1);
             const pages = new Set();
@@ -432,6 +454,7 @@
             return Array.from(pages).sort((a, b) => a - b);
         }
 
+        // Apply visual transformation (Crop/Rotate)
         function getProcessedCanvas(sourceCanvas) {
             if (cropper) return cropper.getCroppedCanvas({ fillColor: '#fff' }); 
             if (currentRotation !== 0) {
@@ -445,16 +468,55 @@
             return sourceCanvas;
         }
 
-        function applyWatermark(canvas) {
+        // Apply Filters (Grayscale) & Watermarks (Text/Logo)
+        function applyAdvancedEffects(canvas) {
+            let workingCanvas = canvas;
+            
+            // Apply Grayscale
+            if (isGrayscale) {
+                const bwCanvas = document.createElement('canvas');
+                bwCanvas.width = workingCanvas.width; bwCanvas.height = workingCanvas.height;
+                const ctx = bwCanvas.getContext('2d');
+                ctx.filter = 'grayscale(100%)';
+                ctx.drawImage(workingCanvas, 0, 0);
+                workingCanvas = bwCanvas; // Switch working canvas
+            }
+
+            const ctx = workingCanvas.getContext('2d');
+
+            // Apply Text Watermark
             const wm = document.getElementById('watermarkText').value.trim();
             if (wm) {
-                const ctx = canvas.getContext('2d');
-                const fontSize = Math.max(24, Math.floor(canvas.width / 20));
+                const fontSize = Math.max(24, Math.floor(workingCanvas.width / 20));
                 ctx.font = `bold ${fontSize}px sans-serif`;
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-                ctx.shadowColor = 'rgba(0,0,0,0.7)'; ctx.shadowBlur = 8;
-                ctx.textAlign = 'center'; ctx.fillText(wm, canvas.width / 2, canvas.height - 40);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                ctx.shadowColor = 'rgba(0,0,0,0.8)'; ctx.shadowBlur = 10;
+                ctx.textAlign = 'center'; 
+                ctx.fillText(wm, workingCanvas.width / 2, workingCanvas.height - (workingCanvas.height * 0.05));
+                ctx.shadowBlur = 0; // reset
             }
+
+            // Apply Image Logo Watermark
+            if (customLogo) {
+                // Calculate logo size (max 20% of canvas width)
+                const logoTargetWidth = workingCanvas.width * 0.20; 
+                const ratio = logoTargetWidth / customLogo.width;
+                const logoTargetHeight = customLogo.height * ratio;
+                const padding = workingCanvas.width * 0.02; // 2% padding
+                
+                ctx.globalAlpha = 0.8; // Hafif saydam (80%)
+                ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = 15;
+                ctx.drawImage(
+                    customLogo, 
+                    workingCanvas.width - logoTargetWidth - padding, 
+                    workingCanvas.height - logoTargetHeight - padding, 
+                    logoTargetWidth, 
+                    logoTargetHeight
+                );
+                ctx.globalAlpha = 1.0; ctx.shadowBlur = 0; // reset
+            }
+
+            return workingCanvas;
         }
 
         function triggerDownload(blob, filename) {
@@ -463,7 +525,7 @@
             document.body.removeChild(a); URL.revokeObjectURL(url);
         }
 
-        // MAIN EXECUTION
+        // MAIN EXECUTION LOGIC
         convertBtn.addEventListener('click', async () => {
             if (!selectedFiles.length) return;
             showProgress("Processing...", "Starting engine"); await yieldToMain();
@@ -472,50 +534,40 @@
                 const zip = new JSZip();
 
                 if (currentTool === 'compress-image') {
-                    // COMPRESS IMAGE LOGIC
                     const maxSizeMB = parseFloat(document.getElementById('compressionLevel').value) || 1;
                     const options = { maxSizeMB: maxSizeMB, maxWidthOrHeight: 2500, useWebWorker: true };
                     
                     let orderedFiles = [];
-                    const DOMnodes = Array.from(batchPreviewGrid.children);
-                    DOMnodes.forEach(node => { orderedFiles.push(selectedFiles[parseInt(node.dataset.index)]); });
+                    Array.from(batchPreviewGrid.children).forEach(node => { orderedFiles.push(selectedFiles[parseInt(node.dataset.index)]); });
 
                     for (let i = 0; i < orderedFiles.length; i++) {
                         const file = orderedFiles[i];
-                        showProgress("Compressing", `File ${i+1} of ${orderedFiles.length}...`);
-                        await yieldToMain();
+                        showProgress("Compressing", `File ${i+1} of ${orderedFiles.length}...`); await yieldToMain();
                         const compressedFile = await imageCompression(file, options);
                         
                         if (orderedFiles.length === 1) {
-                            triggerDownload(compressedFile, `compressed_${file.name}`);
-                            hideProgress(); return;
-                        } else {
-                            zip.file(`compressed_${file.name}`, compressedFile);
-                        }
+                            triggerDownload(compressedFile, `compressed_${file.name}`); hideProgress(); return;
+                        } else zip.file(`compressed_${file.name}`, compressedFile);
                     }
                     if (orderedFiles.length > 1) {
                         showProgress("Zipping", "Creating archive..."); await yieldToMain();
-                        const zipBlob = await zip.generateAsync({ type: 'blob' });
-                        triggerDownload(zipBlob, `compressed_images_${Date.now()}.zip`);
+                        triggerDownload(await zip.generateAsync({ type: 'blob' }), `compressed_images_${Date.now()}.zip`);
                     }
 
                 } else if (currentTool === 'jpg-to-pdf') {
                     showProgress("Building PDF", "Merging images..."); await yieldToMain();
                     let orderedFiles = [];
-                    const DOMnodes = Array.from(batchPreviewGrid.children);
-                    DOMnodes.forEach(node => { orderedFiles.push(selectedFiles[parseInt(node.dataset.index)]); });
+                    Array.from(batchPreviewGrid.children).forEach(node => { orderedFiles.push(selectedFiles[parseInt(node.dataset.index)]); });
 
                     const pdfDoc = await PDFLib.PDFDocument.create();
                     for (let i = 0; i < orderedFiles.length; i++) {
                         showProgress("Building PDF", `Adding image ${i+1} of ${orderedFiles.length}...`); await yieldToMain();
                         const file = orderedFiles[i];
-                        const arrayBuffer = await file.arrayBuffer();
-                        let embeddedImage = file.type === 'image/png' ? await pdfDoc.embedPng(arrayBuffer) : await pdfDoc.embedJpg(arrayBuffer);
+                        let embeddedImage = file.type === 'image/png' ? await pdfDoc.embedPng(await file.arrayBuffer()) : await pdfDoc.embedJpg(await file.arrayBuffer());
                         const page = pdfDoc.addPage([embeddedImage.width, embeddedImage.height]);
                         page.drawImage(embeddedImage, { x: 0, y: 0, width: embeddedImage.width, height: embeddedImage.height });
                     }
-                    const pdfBytes = await pdfDoc.save();
-                    triggerDownload(new Blob([pdfBytes], { type: 'application/pdf' }), `combined_${Date.now()}.pdf`);
+                    triggerDownload(new Blob([await pdfDoc.save()], { type: 'application/pdf' }), `combined_${Date.now()}.pdf`);
 
                 } else if (currentTool === 'pdf-to-png' || currentTool === 'pdf-to-jpg') {
                     const scale = parseFloat(document.getElementById('renderScale').value) || 2.0;
@@ -538,8 +590,10 @@
                             canvas.width = viewport.width; canvas.height = viewport.height;
                             await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
 
+                            // 1. Kırpma / Döndürme uygula
                             canvas = getProcessedCanvas(canvas);
-
+                            
+                            // 2. Genişlik daraltması
                             if (maxWidth && maxWidth < canvas.width) {
                                 const resScale = maxWidth / canvas.width;
                                 const rCanvas = document.createElement('canvas');
@@ -547,7 +601,10 @@
                                 rCanvas.getContext('2d').drawImage(canvas, 0, 0, rCanvas.width, rCanvas.height);
                                 canvas = rCanvas;
                             }
-                            applyWatermark(canvas);
+                            
+                            // 3. Efektleri ve Filigranları Uygula (Siyah Beyaz & Logo)
+                            canvas = applyAdvancedEffects(canvas);
+
                             const blob = await new Promise(res => canvas.toBlob(res, format, 0.9));
                             totalRendered++;
 
@@ -568,29 +625,29 @@
                         const outBlob = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.9 });
                         const finalBlob = Array.isArray(outBlob) ? outBlob[0] : outBlob;
                         
-                        if (cropper || currentRotation !== 0) {
+                        if (cropper || currentRotation !== 0 || isGrayscale || customLogo || document.getElementById('watermarkText').value.trim()) {
                             const img = new Image(); img.src = URL.createObjectURL(finalBlob);
                             await new Promise(r => img.onload = r);
-                            const canvas = document.createElement('canvas');
+                            let canvas = document.createElement('canvas');
                             canvas.width = img.width; canvas.height = img.height;
                             canvas.getContext('2d').drawImage(img, 0, 0);
-                            const processed = getProcessedCanvas(canvas);
-                            applyWatermark(processed);
-                            zip.file(`${file.name.replace(/\.[^/.]+$/, "")}.jpg`, await new Promise(res => processed.toBlob(res, 'image/jpeg', 0.9)));
+                            
+                            canvas = getProcessedCanvas(canvas);
+                            canvas = applyAdvancedEffects(canvas); // Efektleri bas
+                            
+                            zip.file(`${file.name.replace(/\.[^/.]+$/, "")}.jpg`, await new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.9)));
                         } else {
                             zip.file(`${file.name.replace(/\.[^/.]+$/, "")}.jpg`, finalBlob);
                         }
                     }
-                    if (selectedFiles.length === 1 && !cropper && currentRotation === 0) {
+                    if (selectedFiles.length === 1 && !cropper && currentRotation === 0 && !isGrayscale && !customLogo && !document.getElementById('watermarkText').value.trim()) {
                         triggerDownload(await zip.file(Object.keys(zip.files)[0]).async("blob"), Object.keys(zip.files)[0]);
                     } else {
                         showProgress("Zipping", "Creating archive..."); await yieldToMain();
                         triggerDownload(await zip.generateAsync({ type: 'blob' }), `heic_converted_${Date.now()}.zip`);
                     }
                 }
-            } catch (err) {
-                console.error(err); alert("Error: " + err.message);
-            } finally { hideProgress(); }
+            } catch (err) { console.error(err); alert("Error: " + err.message); } finally { hideProgress(); }
         });
     </script>
 </body>
