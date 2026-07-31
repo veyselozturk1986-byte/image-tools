@@ -1,51 +1,76 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hızlı & %100 Gizli Görsel Dönüştürücü</title>
-    <!-- Modern tasarım için Tailwind CSS kütüphanesi -->
+    
+    <!-- SEO Optimization Meta Tags -->
+    <title>PrivacyConvert - 100% Private & Free Online Image Converter</title>
+    <meta name="description" content="Convert and compress JPG, PNG, WEBP images 100% privately in your browser. No files uploaded to any server. Fast, free, and secure.">
+    <meta name="keywords" content="image converter, privacy first converter, webp to jpg, png to webp, compress image free, offline image converter">
+    <meta name="author" content="PrivacyConvert">
+
+    <!-- Open Graph (Social Media Sharing) -->
+    <meta property="og:title" content="PrivacyConvert - Private Image Converter">
+    <meta property="og:description" content="Convert images right inside your browser. Your files never leave your computer.">
+    <meta property="og:type" content="website">
+
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans">
 
-    <!-- Üst Menü / Header -->
+    <!-- Header / Navbar -->
     <header class="bg-white border-b border-slate-200 py-4 px-6 shadow-sm">
         <div class="max-w-4xl mx-auto flex justify-between items-center">
             <h1 class="text-xl font-bold text-indigo-600 flex items-center gap-2">
                 ⚡ PrivacyConvert
             </h1>
-            <span class="bg-emerald-100 text-emerald-800 text-xs px-3 py-1 rounded-full font-medium flex items-center gap-1">
-                🔒 %100 Tarayıcı İçi (Sunucusuz)
-            </span>
+            <div class="flex items-center gap-3">
+                <span class="hidden sm:inline-flex bg-emerald-100 text-emerald-800 text-xs px-3 py-1 rounded-full font-medium items-center gap-1">
+                    🔒 100% In-Browser
+                </span>
+                <!-- Donation Button (Buy Me a Coffee Link) -->
+                <a href="https://buymeacoffee.com" target="_blank" class="bg-amber-400 hover:bg-amber-500 text-amber-950 text-xs font-bold px-3 py-1.5 rounded-lg transition shadow-sm flex items-center gap-1">
+                    ☕ Buy me a coffee
+                </a>
+            </div>
         </div>
     </header>
 
-    <!-- Ana İçerik -->
+    <!-- Top AdSpace Placeholder (AdSense) -->
+    <div class="max-w-3xl mx-auto w-full px-6 mt-6">
+        <div class="bg-slate-100 border border-dashed border-slate-300 rounded-lg p-3 text-center text-xs text-slate-400">
+            <!-- ADSENSE TOP BANNER CODE GOES HERE LATER -->
+            <span>Advertisement</span>
+        </div>
+    </div>
+
+    <!-- Main Tool Container -->
     <main class="flex-1 max-w-3xl w-full mx-auto p-6 flex flex-col justify-center">
         <div class="bg-white rounded-2xl shadow-xl p-8 border border-slate-100">
             
             <div class="text-center mb-8">
-                <h2 class="text-3xl font-extrabold text-slate-900 mb-2">Görsellerini Anında Dönüştür & Sıkıştır</h2>
-                <p class="text-slate-500 text-sm">Fotoğraflarınız bilgisayarınızdan hiç çıkmaz. Gizliliğiniz %100 güvendedir.</p>
+                <h2 class="text-3xl font-extrabold text-slate-900 mb-2">Convert & Compress Images Privately</h2>
+                <p class="text-slate-500 text-sm">Your photos never leave your device. Zero server uploads, maximum speed.</p>
             </div>
 
-            <!-- Dosya Yükleme Alanı -->
+            <!-- Drag & Drop Zone -->
             <div id="dropZone" class="border-2 border-dashed border-indigo-200 rounded-xl p-8 text-center bg-indigo-50/50 hover:bg-indigo-50 transition cursor-pointer mb-6">
                 <input type="file" id="fileInput" accept="image/*" class="hidden">
                 <div class="flex flex-col items-center">
                     <svg class="w-12 h-12 text-indigo-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                     </svg>
-                    <p class="text-slate-700 font-semibold mb-1">Görselinizi buraya sürükleyin veya tıklayın</p>
-                    <p class="text-slate-400 text-xs">JPG, PNG, WEBP desteklenir</p>
+                    <p class="text-slate-700 font-semibold mb-1">Drag and drop your image here, or click to browse</p>
+                    <p class="text-slate-400 text-xs">Supports JPG, PNG, WEBP</p>
                 </div>
             </div>
 
-            <!-- Ayarlar ve Önizleme (Varsayılan olarak gizli) -->
+            <!-- Controls Area (Hidden initially) -->
             <div id="settingsArea" class="hidden space-y-6">
                 <div class="flex items-center gap-4 bg-slate-50 p-4 rounded-lg">
-                    <img id="previewImg" class="w-20 h-20 object-cover rounded-md border" src="" alt="Önizleme">
+                    <img id="previewImg" class="w-20 h-20 object-cover rounded-md border" src="" alt="Preview">
                     <div class="flex-1 overflow-hidden">
                         <p id="fileName" class="font-medium text-slate-800 truncate"></p>
                         <p id="fileSize" class="text-xs text-slate-500"></p>
@@ -53,9 +78,9 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Format Seçimi -->
+                    <!-- Format Dropdown -->
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-2">HEDEF FORMAT</label>
+                        <label class="block text-xs font-semibold text-slate-600 mb-2">TARGET FORMAT</label>
                         <select id="formatSelect" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none">
                             <option value="image/jpeg">JPG / JPEG</option>
                             <option value="image/png">PNG</option>
@@ -63,28 +88,39 @@
                         </select>
                     </div>
 
-                    <!-- Kalite/Sıkıştırma Ayarı -->
+                    <!-- Quality Slider -->
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-2">KALİTE (%<span id="qualityVal">80</span>)</label>
+                        <label class="block text-xs font-semibold text-slate-600 mb-2">QUALITY (<span id="qualityVal">80</span>%)</label>
                         <input type="range" id="qualityRange" min="10" max="100" value="80" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600 mt-3">
                     </div>
                 </div>
 
-                <!-- Dönüştür Butonu -->
+                <!-- Convert Button -->
                 <button id="convertBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-indigo-200">
-                    Görseli İşle ve İndir
+                    Convert & Download Image
                 </button>
             </div>
 
         </div>
     </main>
 
-    <!-- Alt Bilgi / Footer -->
-    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-400">
-        <p>© 2026 PrivacyConvert — Hiçbir veri sunuculara aktarılmaz.</p>
+    <!-- Bottom AdSpace Placeholder (AdSense) -->
+    <div class="max-w-3xl mx-auto w-full px-6 mb-6">
+        <div class="bg-slate-100 border border-dashed border-slate-300 rounded-lg p-3 text-center text-xs text-slate-400">
+            <!-- ADSENSE BOTTOM BANNER CODE GOES HERE LATER -->
+            <span>Advertisement</span>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500">
+        <div class="max-w-4xl mx-auto px-4 space-y-2">
+            <p>© 2026 PrivacyConvert — 100% Client-Side Processing. No Data Collected.</p>
+            <p class="text-slate-400">Designed for ultimate privacy and lightning-fast performance.</p>
+        </div>
     </footer>
 
-    <!-- JavaScript Mantığı (Tamamen Tarayıcı İçi Çalışır) -->
+    <!-- Core JavaScript Logic -->
     <script>
         const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('fileInput');
@@ -99,10 +135,25 @@
 
         let loadedImage = null;
 
-        // Dosya seçme ve sürükleme olayları
         dropZone.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
         qualityRange.addEventListener('input', (e) => qualityVal.innerText = e.target.value);
+
+        // Drag and drop handlers
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('border-indigo-500', 'bg-indigo-100/50');
+        });
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('border-indigo-500', 'bg-indigo-100/50');
+        });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-indigo-500', 'bg-indigo-100/50');
+            if (e.dataTransfer.files.length > 0) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
 
         function handleFile(file) {
             if (!file || !file.type.startsWith('image/')) return;
@@ -122,7 +173,6 @@
             reader.readAsDataURL(file);
         }
 
-        // Görsel Dönüştürme Mantığı (HTML5 Canvas)
         convertBtn.addEventListener('click', () => {
             if (!loadedImage) return;
 
@@ -132,7 +182,6 @@
 
             const ctx = canvas.getContext('2d');
             
-            // JPG ise arka planı beyaz yap (şeffaflığı önlemek için)
             if (formatSelect.value === 'image/jpeg') {
                 ctx.fillStyle = '#FFFFFF';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -143,11 +192,9 @@
             const quality = parseFloat(qualityRange.value) / 100;
             const dataUrl = canvas.toDataURL(formatSelect.value, quality);
 
-            // İndirme bağlantısı oluştur
             const a = document.createElement('a');
             a.href = dataUrl;
             
-            // Uzantıyı belirle
             const ext = formatSelect.value.split('/')[1];
             a.download = `converted-image.${ext}`;
             a.click();
