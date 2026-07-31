@@ -6,7 +6,7 @@
     
     <!-- SEO & PWA Manifest via Data URI -->
     <title id="pageTitle">PrivacyConvert - All-in-One Free, Fast & 100% Private Converters</title>
-    <meta name="description" content="Convert PDF, HEIC, JPG images, merge, split, encrypt, sign, generate passwords, QR codes, hashes, UUIDs, and extract text online for free. 100% local in-browser conversion.">
+    <meta name="description" content="Convert PDF, HEIC, JPG images, merge, split, sign, generate passwords, QR codes, hashes, UUIDs, and extract text online for free. 100% local in-browser conversion.">
     <link rel="manifest" href="data:application/json;charset=utf-8,%7B%22name%22%3A%22PrivacyConvert%22%2C%22short_name%22%3A%22PrivacyConvert%22%2C%22start_url%22%3A%22%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23f8fafc%22%2C%22theme_color%22%3A%22%234f46e5%22%7D">
 
     <!-- Tailwind CSS -->
@@ -26,7 +26,6 @@
     <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@zip.js/zip.js/dist/zip.min.js"></script>
 </head>
 
 <body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans relative transition-colors duration-200">
@@ -83,7 +82,7 @@
             <span class="text-xl">🛡️</span>
             <div>
                 <strong id="secBannerTitle" class="block font-bold mb-1">100% Local & Secure Processing Guarantee</strong>
-                <p id="secBannerDesc">All file conversions, OCR readings, encryptions, hashes, and edits occur entirely inside your web browser using client-side Web APIs and script libraries. Your files never leave your device, are never uploaded to any remote server, and remain completely private.</p>
+                <p id="secBannerDesc">All file conversions, OCR readings, hashes, and edits occur entirely inside your web browser using client-side Web APIs and script libraries. Your files never leave your device, are never uploaded to any remote server, and remain completely private.</p>
             </div>
         </div>
 
@@ -94,7 +93,6 @@
             <button onclick="switchTool('merge-pdf')" id="tab-merge-pdf" class="px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">Merge PDF</button>
             <button onclick="switchTool('split-pdf')" id="tab-split-pdf" class="px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">Split PDF</button>
             <button onclick="switchTool('extract-pdf-img')" id="tab-extract-pdf-img" class="px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">Extract PDF Images</button>
-            <button onclick="switchTool('encrypt-pdf')" id="tab-encrypt-pdf" class="px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">Encrypt PDF</button>
             <button onclick="switchTool('bates-pdf')" id="tab-bates-pdf" class="px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">Bates Numbering</button>
             <button onclick="switchTool('ocr-reader')" id="tab-ocr-reader" class="px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">OCR Reader</button>
             <button onclick="switchTool('redact-tool')" id="tab-redact-tool" class="px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">Redact / Censor</button>
@@ -105,7 +103,6 @@
             <button onclick="switchTool('base64-tool')" id="tab-base64-tool" class="px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">Base64 Tool</button>
             <button onclick="switchTool('url-tool')" id="tab-url-tool" class="px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">URL Tool</button>
             <button onclick="switchTool('hash-calc')" id="tab-hash-calc" class="px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">File Hash</button>
-            <button onclick="switchTool('color-palette')" id="tab-color-palette" class="px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">Color Palette</button>
             <button onclick="switchTool('heic-to-jpg')" id="tab-heic-to-jpg" class="px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">HEIC to JPG</button>
             <button onclick="switchTool('webp-converter')" id="tab-webp-converter" class="px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">WebP / AVIF</button>
             <button onclick="switchTool('jpg-to-pdf')" id="tab-jpg-to-pdf" class="px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">JPG to PDF</button>
@@ -200,12 +197,6 @@
                         <textarea id="hashTextArea" readonly class="w-full h-48 bg-slate-800 text-emerald-400 font-mono text-xs p-3 rounded-lg border border-slate-700 focus:outline-none resize-none" placeholder="Checksum hashes will appear here..."></textarea>
                     </div>
 
-                    <!-- Color Palette Box -->
-                    <div id="paletteResultBox" class="hidden w-full h-full flex flex-col items-center justify-center space-y-3 p-2">
-                        <p class="text-xs text-slate-300 font-semibold">Extracted Dominant Colors:</p>
-                        <div id="paletteContainerGrid" class="flex flex-wrap gap-4 justify-center"></div>
-                    </div>
-
                     <!-- Signature Pad Box -->
                     <div id="signBox" class="hidden w-full h-full flex flex-col items-center justify-center space-y-2 p-2">
                         <p class="text-xs text-slate-300">Draw your signature below:</p>
@@ -274,12 +265,6 @@
                             <button type="button" onclick="setUrlMode('decode')" id="btnUrlDec" class="flex-1 py-1.5 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold rounded-lg text-xs transition">Decode URL</button>
                         </div>
                         <textarea id="urlInputField" placeholder="Type URL or query text here..." class="w-full h-24 p-2 text-xs border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 dark:text-white focus:outline-none resize-none" oninput="processUrl()"></textarea>
-                    </div>
-
-                    <!-- Encrypt PDF Options Group -->
-                    <div id="encryptOptionsGroup" class="hidden space-y-3">
-                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">Set PDF Password (AES Secure ZIP):</label>
-                        <input type="password" id="pdfUserPassword" placeholder="Enter secure password" class="w-full p-2 text-xs border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 dark:text-white">
                     </div>
 
                     <!-- Bates Stamping Options Group -->
@@ -389,13 +374,12 @@
             en: {
                 titlePrefix: "Secure", titleSuffix: "Converter",
                 secTitle: "100% Local & Secure Processing Guarantee",
-                secDesc: "All file conversions, OCR readings, encryptions, hashes, and edits occur entirely inside your web browser using client-side Web APIs and script libraries. Your files never leave your device, are never uploaded to any remote server, and remain completely private.",
+                secDesc: "All file conversions, OCR readings, hashes, and edits occur entirely inside your web browser using client-side Web APIs and script libraries. Your files never leave your device, are never uploaded to any remote server, and remain completely private.",
                 descPdfPng: "Extract PDF pages into high-resolution PNG images directly in your browser. Fast, free, and completely private.",
                 descPdfJpg: "Extract PDF pages into high-resolution JPG images directly in your browser.",
                 descMergePdf: "Combine multiple PDF documents into a single organized file securely.",
                 descSplitPdf: "Extract specific pages from a PDF into a new separate document.",
                 descExtractImg: "Extract all embedded images and rendered visual pages from PDF documents.",
-                descEncrypt: "Add password encryption to secure your confidential PDF documents locally.",
                 descBates: "Stamp custom bates numbering and page indexes onto PDF documents.",
                 descOcr: "Extract editable text from images instantly inside your browser using AI OCR.",
                 descRedact: "Blackout sensitive information or censor areas securely on images.",
@@ -406,7 +390,6 @@
                 descBase64: "Encode plain text to Base64 or decode Base64 strings securely.",
                 descUrl: "Encode text/URLs for web safety or decode URL-encoded strings.",
                 descHash: "Calculate local SHA-256 and MD5 cryptographic checksum hashes of any file.",
-                descPalette: "Extract dominant color swatches and codes from any image.",
                 descHeic: "Convert Apple HEIC photos to standard JPG images instantly.",
                 descWebp: "Convert standard images to next-gen WebP or AVIF formats.",
                 descJpgPdf: "Combine and convert multiple images into a single PDF document.",
@@ -424,7 +407,6 @@
                 dropBase64: "Click or type text directly below",
                 dropUrl: "Click or type text directly below",
                 dropHash: "Click to select any file for checksum hash calculation",
-                dropPalette: "Click to select image for color palette extraction",
                 dropHeic: "Click to select HEIC files or drag & drop",
                 dropWebp: "Click to select images to convert to WebP/AVIF",
                 dropJpgPdf: "Click to select images or drag & drop",
@@ -436,12 +418,10 @@
                 successMerge: "PDFs successfully merged and downloaded!",
                 successSplit: "PDF successfully split and downloaded!",
                 successExtract: "PDF images extracted successfully!",
-                successEncrypt: "PDF successfully encrypted and secured in ZIP!",
                 successBates: "Bates numbering applied successfully!",
                 successOcr: "Text successfully extracted!",
                 successRedact: "Redacted image downloaded successfully!",
                 successSign: "Signed document downloaded successfully!",
-                successPalette: "Color palette extracted successfully!",
                 successHash: "File hash successfully calculated!",
                 successComp: "Image compressed successfully! Saved ",
                 successJpgPdf: "PDF successfully created!"
@@ -449,13 +429,12 @@
             es: {
                 titlePrefix: "Seguro", titleSuffix: "Convertidor",
                 secTitle: "Garantía de Procesamiento 100% Local y Seguro",
-                secDesc: "Todas las conversiones de archivos, lecturas OCR, cifrados, hashes y ediciones ocurren enteramente dentro de su navegador web utilizando APIs web y librerías del lado del cliente.",
+                secDesc: "Todas las conversiones de archivos, lecturas OCR, hashes y ediciones ocurren enteramente dentro de su navegador web utilizando APIs web y librerías del lado del cliente.",
                 descPdfPng: "Extraiga páginas de PDF en imágenes PNG de alta resolución directamente en su navegador.",
                 descPdfJpg: "Extraiga páginas de PDF en imágenes JPG de alta resolución directamente en su navegador.",
                 descMergePdf: "Combine múltiples documentos PDF en un solo archivo organizado de forma segura.",
                 descSplitPdf: "Extraiga páginas específicas de un PDF en un nuevo documento separado.",
                 descExtractImg: "Extraiga todas las imágenes incrustadas y páginas visuales de documentos PDF.",
-                descEncrypt: "Agregue cifrado de contraseña para proteger sus documentos PDF confidenciales localmente.",
                 descBates: "Estampe numeración Bates e índices de página personalizados en documentos PDF.",
                 descOcr: "Extraiga texto editable de imágenes instantáneamente dentro de su navegador usando OCR.",
                 descRedact: "Oculte información confidencial o censure áreas de forma segura en las imágenes.",
@@ -466,7 +445,6 @@
                 descBase64: "Codifique texto plano a Base64 o decodifique cadenas Base64 de forma segura.",
                 descUrl: "Codifique textos/URLs o decodifique cadenas codificadas para URLs.",
                 descHash: "Calcule hashes de suma de verificación criptográfica SHA-256 de cualquier archivo.",
-                descPalette: "Extraiga muestras y códigos de colores dominantes de cualquier imagen.",
                 descHeic: "Convierta fotos HEIC de Apple a imágenes JPG estándar al instante.",
                 descWebp: "Convierta imágenes estándar a formatos modernos WebP o AVIF.",
                 descJpgPdf: "Combine y convierta múltiples imágenes en un solo documento PDF.",
@@ -484,7 +462,6 @@
                 dropBase64: "Haga clic o escriba texto abajo",
                 dropUrl: "Haga clic o escriba URL abajo",
                 dropHash: "Haga clic para seleccionar archivo para calcular hash",
-                dropPalette: "Haga clic para seleccionar imagen para paleta",
                 dropHeic: "Haga clic para seleccionar archivos HEIC",
                 dropWebp: "Haga clic para seleccionar imágenes para WebP",
                 dropJpgPdf: "Haga clic para seleccionar imágenes",
@@ -496,12 +473,10 @@
                 successMerge: "¡PDFs fusionados con éxito!",
                 successSplit: "¡PDF dividido con éxito!",
                 successExtract: "¡Imágenes extraídas con éxito!",
-                successEncrypt: "¡PDF cifrado con éxito!",
                 successBates: "¡Numeración Bates aplicada!",
                 successOcr: "¡Texto extraído con éxito!",
                 successRedact: "¡Imagen censurada descargada!",
                 successSign: "¡Documento firmado descargado!",
-                successPalette: "¡Paleta de colores extraída!",
                 successHash: "¡Hash calculado con éxito!",
                 successComp: "¡Imagen comprimida con éxito!",
                 successJpgPdf: "¡PDF creado con éxito!"
@@ -509,13 +484,12 @@
             ar: {
                 titlePrefix: "آمن", titleSuffix: "محول",
                 secTitle: "ضمان المعالجة المحلية الآمنة بنسبة 100%",
-                secDesc: "تتم جميع عمليات تحويل الملفات، وقراءات OCR، والتشفير، وقيم التجزئة (Hashes) بالكامل داخل متصفحك باستخدام تقنيات المتصفح المحلية.",
+                secDesc: "تتم جميع عمليات تحويل الملفات، وقراءات OCR، وقيم التجزئة (Hashes) بالكامل داخل متصفحك باستخدام تقنيات المتصفح المحلية.",
                 descPdfPng: "استخراج صفحات ملفات PDF إلى صور PNG عالية الدقة مباشرة في متصفحك.",
                 descPdfJpg: "استخراج صفحات ملفات PDF إلى صور JPG عالية الدقة مباشرة في متصفحك.",
                 descMergePdf: "دمج مستندات PDF متعددة في ملف واحد منظم بأمان.",
                 descSplitPdf: "استخراج صفحات محددة من ملف PDF إلى مستند جديد منفصل.",
                 descExtractImg: "استخراج جميع الصور المضمنة وصفحات PDF البصرية.",
-                descEncrypt: "إضافة تشفير بكلمة مرور لتأمين مستندات PDF السرية محلياً.",
                 descBates: "ختم ترقيم Bates وفهارس الصفحات المخصصة على مستندات PDF.",
                 descOcr: "استخراج النص القابل للتعديل من الصور فوراً داخل متصفحك.",
                 descRedact: "حجب المعلومات الحساسة أو رقابة المناطق بأمان على الصور.",
@@ -526,7 +500,6 @@
                 descBase64: "تشفير النص العادي إلى Base64 أو فك تشفير سلاسل Base64.",
                 descUrl: "تشفير أو فك تشفير الروابط والنصوص لسلامة الويب.",
                 descHash: "حساب قيم التجزئة SHA-256 لأي ملف محلياً.",
-                descPalette: "استخراج عينات الألوان المهيمنة والرموز من أي صورة.",
                 descHeic: "تحويل صور آبل HEIC إلى صور JPG قياسية فوراً.",
                 descWebp: "تحويل الصور إلى صيغ WebP أو AVIF الحديثة.",
                 descJpgPdf: "دمج وتحويل صور متعددة إلى مستند PDF واحد.",
@@ -544,7 +517,6 @@
                 dropBase64: "انقر أو اكتب النص أدناه",
                 dropUrl: "انقر أو اكتب الابط أدناه",
                 dropHash: "انقر لتحديد ملف لحساب التجزئة",
-                dropPalette: "انقر لتحديد صورة لاستخراج الألوان",
                 dropHeic: "انقر لتحديد ملفات HEIC",
                 dropWebp: "انقر لتحديد صور لتحويلها إلى WebP",
                 dropJpgPdf: "انقر لتحديد الصور",
@@ -556,12 +528,10 @@
                 successMerge: "تم دمج ملفات PDF بنجاح!",
                 successSplit: "تم تقسيم ملف PDF بنجاح!",
                 successExtract: "تم استخراج الصور بنجاح!",
-                successEncrypt: "تم تشفير ملف PDF بنجاح!",
                 successBates: "تم تطبيق ترقيم Bates بنجاح!",
                 successOcr: "تم استخراج النص بنجاح!",
                 successRedact: "تم تنزيل الصورة المحجوبة بنجاح!",
                 successSign: "تم تنزيل المستند الموقّع بنجاح!",
-                successPalette: "تم استخراج لوحة الألوان بنجاح!",
                 successHash: "تم حساب التجزئة بنجاح!",
                 successComp: "تم ضغط الصورة بنجاح!",
                 successJpgPdf: "تم إنشاء ملف PDF بنجاح!"
@@ -622,10 +592,6 @@
                 if(mainDesc) mainDesc.textContent = t.descExtractImg;
                 if(dropText) dropText.textContent = t.dropPdf;
                 if(dropSubText) dropSubText.textContent = t.dropSubPdf;
-            } else if (currentTool === 'encrypt-pdf') {
-                if(mainDesc) mainDesc.textContent = t.descEncrypt;
-                if(dropText) dropText.textContent = t.dropPdf;
-                if(dropSubText) dropSubText.textContent = t.dropSubPdf;
             } else if (currentTool === 'bates-pdf') {
                 if(mainDesc) mainDesc.textContent = t.descBates;
                 if(dropText) dropText.textContent = t.dropPdf;
@@ -665,10 +631,6 @@
             } else if (currentTool === 'hash-calc') {
                 if(mainDesc) mainDesc.textContent = t.descHash;
                 if(dropText) dropText.textContent = t.dropHash;
-                if(dropSubText) dropSubText.textContent = "";
-            } else if (currentTool === 'color-palette') {
-                if(mainDesc) mainDesc.textContent = t.descPalette;
-                if(dropText) dropText.textContent = t.dropPalette;
                 if(dropSubText) dropSubText.textContent = "";
             } else if (currentTool === 'heic-to-jpg') {
                 if(mainDesc) mainDesc.textContent = t.descHeic;
@@ -821,7 +783,6 @@
         const base64ResultBox = document.getElementById('base64ResultBox');
         const urlResultBox = document.getElementById('urlResultBox');
         const hashResultBox = document.getElementById('hashResultBox');
-        const paletteResultBox = document.getElementById('paletteResultBox');
         const signBox = document.getElementById('signBox');
         const nonImagePreview = document.getElementById('nonImagePreview');
         const clearBtn = document.getElementById('clearBtn');
@@ -841,7 +802,6 @@
         const passwordOptionsGroup = document.getElementById('passwordOptionsGroup');
         const base64OptionsGroup = document.getElementById('base64OptionsGroup');
         const urlOptionsGroup = document.getElementById('urlOptionsGroup');
-        const encryptOptionsGroup = document.getElementById('encryptOptionsGroup');
         const batesOptionsGroup = document.getElementById('batesOptionsGroup');
 
         function showProgress(title, text) { 
@@ -859,7 +819,6 @@
             if(document.getElementById('watermarkText')) document.getElementById('watermarkText').value = '';
             if(document.getElementById('ocrTextArea')) document.getElementById('ocrTextArea').value = '';
             if(document.getElementById('qrInputField')) document.getElementById('qrInputField').value = '';
-            if(document.getElementById('pdfUserPassword')) document.getElementById('pdfUserPassword').value = '';
             if(document.getElementById('toggleGrayscaleBtn')) document.getElementById('toggleGrayscaleBtn').classList.remove('bg-slate-200', 'dark:bg-slate-600', 'border-slate-400');
             if(imagePreview) imagePreview.style.filter = 'none';
 
@@ -876,7 +835,6 @@
             if(base64ResultBox) base64ResultBox.classList.add('hidden');
             if(urlResultBox) urlResultBox.classList.add('hidden');
             if(hashResultBox) hashResultBox.classList.add('hidden');
-            if(paletteResultBox) paletteResultBox.classList.add('hidden'); 
             if(signBox) signBox.classList.add('hidden');
             if (sortableInstance) { sortableInstance.destroy(); sortableInstance = null; }
             const toggleCropBtn = document.getElementById('toggleCropBtn');
@@ -889,7 +847,7 @@
             currentTool = tool;
             resetApp();
 
-            ['pdf-to-png', 'pdf-to-jpg', 'merge-pdf', 'split-pdf', 'extract-pdf-img', 'encrypt-pdf', 'bates-pdf', 'ocr-reader', 'redact-tool', 'sign-tool', 'qr-tool', 'password-gen', 'uuid-gen', 'base64-tool', 'url-tool', 'hash-calc', 'color-palette', 'heic-to-jpg', 'webp-converter', 'jpg-to-pdf', 'compress-image'].forEach(t => {
+            ['pdf-to-png', 'pdf-to-jpg', 'merge-pdf', 'split-pdf', 'extract-pdf-img', 'bates-pdf', 'ocr-reader', 'redact-tool', 'sign-tool', 'qr-tool', 'password-gen', 'uuid-gen', 'base64-tool', 'url-tool', 'hash-calc', 'heic-to-jpg', 'webp-converter', 'jpg-to-pdf', 'compress-image'].forEach(t => {
                 const btn = document.getElementById(`tab-${t}`);
                 if (btn) {
                     if (t === tool) btn.className = "px-3 py-1.5 text-xs font-bold rounded-xl transition bg-indigo-600 text-white shadow-sm";
@@ -913,7 +871,6 @@
             if(passwordOptionsGroup) passwordOptionsGroup.style.display = 'none';
             if(base64OptionsGroup) base64OptionsGroup.style.display = 'none';
             if(urlOptionsGroup) urlOptionsGroup.style.display = 'none';
-            if(encryptOptionsGroup) encryptOptionsGroup.style.display = 'none';
             if(batesOptionsGroup) batesOptionsGroup.style.display = 'none';
             if(dropZone) dropZone.style.display = 'block';
 
@@ -941,17 +898,6 @@
                 if(resizeContainer) resizeContainer.style.display = 'none';
                 if(formatBadge) formatBadge.innerHTML = "🖼️ Extracted Images (.zip)";
                 convertBtn.innerHTML = "Extract & Download ZIP";
-            } else if (tool === 'encrypt-pdf') {
-                if(title) title.textContent = "Encrypt PDF";
-                if(fileInput) { fileInput.accept = ".pdf"; fileInput.multiple = false; }
-                if(quality) quality.style.display = 'none'; 
-                if(imageQuickButtons) imageQuickButtons.style.display = 'none'; 
-                if(watermarkContainer) watermarkContainer.style.display = 'none'; 
-                if(resizeContainer) resizeContainer.style.display = 'none'; 
-                if(pdfGroup) pdfGroup.style.display = 'none';
-                if(encryptOptionsGroup) encryptOptionsGroup.style.display = 'block';
-                if(formatBadge) formatBadge.innerHTML = "🔒 Secure AES ZIP Archive";
-                convertBtn.innerHTML = "Encrypt & Download Secure ZIP";
             } else if (tool === 'bates-pdf') {
                 if(title) title.textContent = "Bates Numbering";
                 if(fileInput) { fileInput.accept = ".pdf"; fileInput.multiple = false; }
@@ -1084,16 +1030,6 @@
                 if(resizeContainer) resizeContainer.style.display = 'none';
                 if(formatBadge) formatBadge.innerHTML = "🔒 SHA-256 Checksum";
                 if(convertBtn) convertBtn.innerHTML = "Download Checksum .txt";
-            } else if (tool === 'color-palette') {
-                if(title) title.textContent = "Color Palette Extractor";
-                if(fileInput) { fileInput.accept = "image/jpeg,image/png,image/webp"; fileInput.multiple = false; }
-                if(pdfGroup) pdfGroup.style.display = 'none'; 
-                if(quality) quality.style.display = 'none'; 
-                if(imageQuickButtons) imageQuickButtons.style.display = 'none'; 
-                if(watermarkContainer) watermarkContainer.style.display = 'none'; 
-                if(resizeContainer) resizeContainer.style.display = 'none';
-                if(formatBadge) formatBadge.innerHTML = "🎨 Color Swatches";
-                if(convertBtn) convertBtn.innerHTML = "Download Palette JSON";
             } else if (tool === 'heic-to-jpg') {
                 if(title) title.textContent = "HEIC to JPG";
                 if(fileInput) { fileInput.accept = ".heic,.HEIC"; fileInput.multiple = true; }
@@ -1278,7 +1214,7 @@
                             div.dataset.index = i;
                             const sizeText = (file.size / 1024 / 1024).toFixed(2) + " MB";
                             
-                            if (currentTool === 'merge-pdf' || currentTool === 'encrypt-pdf' || currentTool === 'bates-pdf') {
+                            if (currentTool === 'merge-pdf' || currentTool === 'bates-pdf') {
                                 div.innerHTML = `<span class="text-3xl mb-1">📄</span><span class="text-[11px] font-bold truncate w-full">${file.name}</span><span class="absolute bottom-1 right-1 bg-black/70 text-[9px] px-1.5 rounded">${sizeText}</span><span class="absolute top-1 left-1 bg-indigo-600 text-[10px] px-1.5 rounded">${i+1}</span>`;
                             } else {
                                 const reader = new FileReader();
@@ -1293,7 +1229,7 @@
                             sortableInstance = new Sortable(batchPreviewGrid, { animation: 150, ghostClass: 'opacity-50' });
                         }
                     }
-                } else if (currentTool === 'encrypt-pdf' || currentTool === 'bates-pdf' || currentTool === 'extract-pdf-img') {
+                } else if (currentTool === 'bates-pdf' || currentTool === 'extract-pdf-img') {
                     if(imagePreview) imagePreview.classList.add('hidden'); 
                     if(batchPreviewGrid) batchPreviewGrid.classList.add('hidden'); 
                     if(nonImagePreview) nonImagePreview.classList.remove('hidden');
@@ -1341,55 +1277,9 @@
                         }
                     };
                     reader.readAsDataURL(selectedFiles[0]);
-                } else if (currentTool === 'color-palette') {
-                    if(imagePreview) imagePreview.classList.add('hidden'); 
-                    if(batchPreviewGrid) batchPreviewGrid.classList.add('hidden'); 
-                    if(nonImagePreview) nonImagePreview.classList.add('hidden');
-                    if(paletteResultBox) paletteResultBox.classList.remove('hidden');
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        const img = new Image();
-                        img.src = e.target.result;
-                        img.onload = () => {
-                            const canvas = document.createElement('canvas');
-                            const ctx = canvas.getContext('2d');
-                            canvas.width = 50; canvas.height = 50;
-                            ctx.drawImage(img, 0, 0, 50, 50);
-                            const imgData = ctx.getImageData(0, 0, 50, 50).data;
-                            let colors = [];
-                            for(let i=0; i<imgData.length; i+=40) {
-                                colors.push(`rgb(${imgData[i]},${imgData[i+1]},${imgData[i+2]})`);
-                            }
-                            const uniqueColors = [...new Set(colors)].slice(0, 5);
-                            const grid = document.getElementById('paletteContainerGrid');
-                            if(grid) {
-                                grid.innerHTML = '';
-                                uniqueColors.forEach(col => {
-                                    const wrapper = document.createElement('div');
-                                    wrapper.className = 'flex flex-col items-center gap-1';
-
-                                    const box = document.createElement('div');
-                                    box.className = 'w-12 h-14 rounded-lg shadow border border-slate-700/25';
-                                    box.style.backgroundColor = col;
-
-                                    const label = document.createElement('span');
-                                    label.className = 'text-[9px] font-mono text-slate-600 dark:text-slate-300';
-                                    label.textContent = col;
-
-                                    wrapper.appendChild(box);
-                                    wrapper.appendChild(label);
-                                    grid.appendChild(wrapper);
-                                });
-                            }
-                            showToast(translations[currentLang].successPalette);
-                            hideProgress();
-                        };
-                    };
-                    reader.readAsDataURL(selectedFiles[0]);
                 } else if (currentTool === 'sign-tool') {
                     if(batchPreviewGrid) batchPreviewGrid.classList.add('hidden'); 
                     if(ocrResultBox) ocrResultBox.classList.add('hidden'); 
-                    if(paletteResultBox) paletteResultBox.classList.add('hidden');
                     if(signBox) signBox.classList.remove('hidden');
                     const reader = new FileReader();
                     reader.onload = (e) => {
@@ -1402,7 +1292,6 @@
                 } else {
                     if(batchPreviewGrid) batchPreviewGrid.classList.add('hidden'); 
                     if(ocrResultBox) ocrResultBox.classList.add('hidden'); 
-                    if(paletteResultBox) paletteResultBox.classList.add('hidden');
                     const firstFile = selectedFiles[0];
 
                     if (currentTool === 'pdf-to-png' || currentTool === 'pdf-to-jpg' || currentTool === 'split-pdf') {
@@ -1440,7 +1329,7 @@
                 if(nonImagePreview) nonImagePreview.classList.remove('hidden');
                 const fileNameEl = document.getElementById('fileName');
                 if(fileNameEl) fileNameEl.textContent = `${selectedFiles.length} files loaded`;
-            } finally { if (currentTool !== 'ocr-reader' && currentTool !== 'color-palette' && currentTool !== 'hash-calc') hideProgress(); }
+            } finally { if (currentTool !== 'ocr-reader' && currentTool !== 'hash-calc') hideProgress(); }
         }
 
         // EDITING TOOLS
@@ -1650,14 +1539,6 @@
                     return;
                 }
 
-                if (currentTool === 'color-palette') {
-                    const colors = Array.from(document.querySelectorAll('#paletteContainerGrid span')).map(d => d.textContent);
-                    const blob = new Blob([JSON.stringify(colors, null, 2)], { type: 'application/json' });
-                    triggerDownloadWithShare(blob, `color_palette_${Date.now()}.json`);
-                    showToast(translations[currentLang].successPalette);
-                    return;
-                }
-
                 if (currentTool === 'redact-tool') {
                     if (cropper && imagePreview) {
                         const mainImg = new Image();
@@ -1743,34 +1624,6 @@
                         const zipBlob = await zip.generateAsync({ type: 'blob' });
                         triggerDownloadWithShare(zipBlob, `pdf_images_${Date.now()}.zip`);
                         showToast(translations[currentLang].successExtract);
-
-                    } else if (currentTool === 'encrypt-pdf') {
-                        showProgress("Encrypting PDF", "Securing document with AES password archive..."); await yieldToMain();
-                        const file = selectedFiles[0];
-                        const arrayBuffer = await file.arrayBuffer();
-                        const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
-                        const pdfBytes = await pdfDoc.save();
-                        const pdfBlob = new Blob([pdfBytes], { type: 'application/pdf' });
-
-                        const passInput = document.getElementById('pdfUserPassword');
-                        const password = passInput ? passInput.value.trim() : "";
-
-                        if (!password) {
-                            showToast("Please enter a secure password for encryption!", "error");
-                            hideProgress();
-                            return;
-                        }
-
-                        // Secure 100% Client-Side AES-256 ZIP Encryption via zip.js
-                        const zipWriter = new zip.ZipWriter(new zip.BlobWriter("application/zip"));
-                        await zipWriter.add(`secure_${file.name.replace(/\.[^/.]+$/, "")}.pdf`, new zip.BlobReader(pdfBlob), {
-                            password: password,
-                            encryptionMethod: zip.encryptionMethodAES256
-                        });
-                        const encryptedZipBlob = await zipWriter.close();
-
-                        triggerDownloadWithShare(encryptedZipBlob, `encrypted_${file.name.replace(/\.[^/.]+$/, "")}.zip`);
-                        showToast(translations[currentLang].successEncrypt);
 
                     } else if (currentTool === 'bates-pdf') {
                         showProgress("Applying Bates Numbering", "Stamping page numbers..."); await yieldToMain();
