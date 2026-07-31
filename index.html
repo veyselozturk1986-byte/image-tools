@@ -323,7 +323,7 @@
         </div>
     </main>
 
-    <!-- JAVASCRIPT LOGIC (Multi-Language & Exact Tool Descriptions) -->
+    <!-- JAVASCRIPT LOGIC -->
     <script>
         try {
             if (typeof pdfjsLib !== 'undefined') {
@@ -835,7 +835,7 @@
                 if(fileInput) { fileInput.accept = "image/jpeg,image/png,image/webp"; fileInput.multiple = false; }
                 if(pdfGroup) pdfGroup.style.display = 'none'; 
                 if(quality) quality.style.display = 'none'; 
-                if(imageQuickButtons) imageQuickButtons.style.display = 'none'; 
+                if(imageQuickButtons) imageQuickButtons.style.display = 'flex'; // Alan seçimi (Crop) için açık olmalı
                 if(watermarkContainer) watermarkContainer.style.display = 'none'; 
                 if(resizeContainer) resizeContainer.style.display = 'none';
                 if(formatBadge) formatBadge.innerHTML = "🔒 Redacted Image";
