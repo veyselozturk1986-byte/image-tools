@@ -450,7 +450,11 @@
 
     <!-- UI & LOGIC SCRIPT -->
     <script>
-        try { if (typeof pdfjsLib !== 'undefined') pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; } catch(e) {}
+        try { 
+            if (typeof pdfjsLib !== 'undefined') {
+                pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; 
+            }
+        } catch(e) { console.error("PDF.js worker init error:", e); }
 
         // Theme Accent Engine
         function setAccentColor(colorKey) {
@@ -1968,6 +1972,9 @@
                     addHistory("Redact Tool");
                 }
                 else if (currentTool === 'encrypt-pdf') {
+                    if (!window.crypto || !window.crypto.subtle) {
+                        throw new Error("Kriptografi API'si bu protokolde (file://) kısıtlanmıştır. Lütfen uygulamayı yerel sunucuda (localhost) çalıştırın.");
+                    }
                     const file = selectedFiles[0];
                     const password = document.getElementById('pdfPassInput')?.value || 'SecurePass123';
                     const fileBytes = await file.arrayBuffer();
@@ -2002,6 +2009,9 @@
                     showToast(t.toasts.pdfEncrypted);
                 }
                 else if (currentTool === 'hash-calc') {
+                    if (!window.crypto || !window.crypto.subtle) {
+                        throw new Error("Kriptografi API'si bu protokolde (file://) kısıtlanmıştır. Lütfen uygulamayı yerel sunucuda (localhost) çalıştırın.");
+                    }
                     const buffer = await selectedFiles[0].arrayBuffer();
                     const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
                     const hashHex = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
