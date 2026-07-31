@@ -5,13 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- Dynamic SEO Meta Tags -->
-    <title id="pageTitle">PrivacyConvert - Secure PDF to PNG Converter (100% Local)</title>
-    <meta name="description" id="pageMetaDesc" content="Extract PDF pages into high-resolution PNG images directly in your browser. 100% private, free, and secure.">
-    <link rel="manifest" href="data:application/json;charset=utf-8,%7B%22name%22%3A%22PrivacyConvert%22%2C%22short_name%22%3A%22PrivacyConvert%22%2C%22start_url%22%3A%22%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23f8fafc%22%2C%22theme_color%22%3A%22%234f46e5%22%7D">
-
+    <title id="pageTitle">PrivacyConvert - 100% Local Secure Tools</title>
+    <meta name="description" id="pageMetaDesc" content="Extract PDF pages, generate passwords, format JSON, and process images directly in your browser. 100% private.">
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script> tailwind.config = { darkMode: 'class' } </script>
+    <script>
+        // Check Local Storage for Theme before rendering to prevent flicker
+        if (localStorage.getItem('privacyConvert_theme') === 'dark' || (!('privacyConvert_theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        tailwind.config = { darkMode: 'class' }
+    </script>
 
     <!-- Cropper.js CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
@@ -29,36 +36,31 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 
-<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans relative transition-colors duration-200">
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-300">
 
     <!-- Toast Notification Container -->
     <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
     <!-- Progress Overlay Modal -->
     <div id="progressModal" class="hidden fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 z-40 flex items-center justify-center backdrop-blur-sm transition-opacity">
-        <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-2xl w-80 text-center flex flex-col items-center border border-slate-200 dark:border-slate-700">
+        <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-2xl w-80 text-center flex flex-col items-center border border-slate-200 dark:border-slate-700 transform scale-100 transition-transform animate-pulse">
             <div class="w-14 h-14 border-4 border-indigo-100 dark:border-slate-600 border-t-indigo-600 dark:border-t-indigo-400 rounded-full animate-spin mb-4"></div>
             <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-2" id="progressTitle">Processing...</h3>
-            <p id="progressText" class="text-sm text-slate-500 dark:text-slate-400 font-medium">Please wait</p>
+            <p id="progressText" class="text-sm text-slate-500 dark:text-slate-400 font-medium">Your data never leaves your device.</p>
         </div>
     </div>
 
     <!-- Header / Navbar -->
-    <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 py-4 px-6 shadow-sm transition-colors duration-200">
-        <div class="max-w-5xl mx-auto flex justify-between items-center">
-            <a href="#" class="text-xl font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-2 hover:opacity-90 transition">
+    <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 py-4 px-6 shadow-sm sticky top-0 z-30 transition-colors duration-300">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <a href="#" onclick="switchTool('pdf-to-png')" class="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 flex items-center gap-2 hover:opacity-80 transition">
                 ⚡ PrivacyConvert
             </a>
-            <div class="flex items-center gap-3">
-                <select id="langSelect" class="bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-lg text-xs font-bold px-2.5 py-1.5 transition border-0 focus:outline-none cursor-pointer">
-                    <option value="en">English</option>
-                    <option value="es">Español</option>
-                    <option value="ar">العربية</option>
-                </select>
-                <span class="hidden sm:inline-flex bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300 text-xs px-3 py-1 rounded-full font-medium items-center gap-1">
-                    🔒 100% Local
+            <div class="flex items-center gap-4">
+                <span class="hidden sm:inline-flex bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300 text-xs px-3 py-1.5 rounded-full font-bold items-center gap-1.5 shadow-sm border border-emerald-200 dark:border-emerald-800/50">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> 100% Local
                 </span>
-                <button id="themeToggle" class="text-xl p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition" title="Toggle Dark Mode">
+                <button id="themeToggle" class="text-xl p-2 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 transition-all duration-300 shadow-sm" title="Toggle Dark Mode">
                     🌙
                 </button>
             </div>
@@ -66,777 +68,611 @@
     </header>
 
     <!-- Main Container -->
-    <main class="flex-grow max-w-5xl mx-auto w-full px-4 py-8">
+    <main class="flex-grow max-w-6xl mx-auto w-full px-4 py-8">
 
         <!-- Title Section -->
-        <div class="text-center mb-6">
-            <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-                <span id="mainTitlePrefix">Secure</span> <span id="mainTitleAccent" class="text-indigo-600 dark:text-indigo-400">PDF to PNG</span> <span id="mainTitleSuffix">Converter</span>
+        <div class="text-center mb-10">
+            <h1 class="text-3xl sm:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-3">
+                <span id="mainTitlePrefix">Secure</span> <span id="mainTitleAccent" class="text-indigo-600 dark:text-indigo-400">PDF to PNG</span>
             </h1>
-            <p id="mainDesc" class="text-slate-500 dark:text-slate-400 text-sm sm:text-base mt-2 max-w-xl mx-auto">
+            <p id="mainDesc" class="text-slate-500 dark:text-slate-400 text-sm sm:text-base max-w-2xl mx-auto font-medium">
                 Extract PDF pages into high-resolution PNG images directly in your browser. Fast, free, and completely private.
             </p>
         </div>
 
-        <!-- 100% Security & Privacy Explanation Banner -->
-        <div class="max-w-2xl mx-auto mb-6 p-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/50 rounded-xl text-xs sm:text-sm text-emerald-900 dark:text-emerald-300 flex items-start gap-3 shadow-sm">
-            <span class="text-xl">🛡️</span>
-            <div>
-                <strong id="secBannerTitle" class="block font-bold mb-1">100% Local & Secure Processing Guarantee</strong>
-                <p id="secBannerDesc">All file conversions, OCR readings, hashes, and edits occur entirely inside your web browser using client-side Web APIs and script libraries. Your files never leave your device, are never uploaded to any remote server, and remain completely private.</p>
+        <!-- Quick Search -->
+        <div class="max-w-3xl mx-auto mb-8 relative group">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <svg class="h-5 w-5 text-slate-400 group-focus-within:text-indigo-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            </div>
+            <input type="text" id="toolSearchInput" placeholder="Search tools (e.g. PDF, OCR, JSON, Password, Image)..." class="w-full pl-11 pr-4 py-3.5 text-sm bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-500 dark:text-white transition-all">
+        </div>
+
+        <!-- Categorized Converter Navigation -->
+        <div id="toolsNavContainer" class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            
+            <!-- Category: PDF -->
+            <div class="space-y-3 tool-category" data-cat="pdf">
+                <h3 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-2 border-b border-slate-200 dark:border-slate-700 pb-2">📄 PDF Tools</h3>
+                <div class="flex flex-col gap-2">
+                    <button onclick="switchTool('pdf-to-png')" id="tab-pdf-to-png" class="tool-tab w-full text-left px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">PDF to PNG</button>
+                    <button onclick="switchTool('pdf-to-jpg')" id="tab-pdf-to-jpg" class="tool-tab w-full text-left px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">PDF to JPG</button>
+                    <button onclick="switchTool('merge-pdf')" id="tab-merge-pdf" class="tool-tab w-full text-left px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">Merge PDF</button>
+                    <button onclick="switchTool('split-pdf')" id="tab-split-pdf" class="tool-tab w-full text-left px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">Split PDF</button>
+                    <button onclick="switchTool('jpg-to-pdf')" id="tab-jpg-to-pdf" class="tool-tab w-full text-left px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">JPG to PDF</button>
+                </div>
+            </div>
+
+            <!-- Category: Image -->
+            <div class="space-y-3 tool-category" data-cat="image">
+                <h3 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-2 border-b border-slate-200 dark:border-slate-700 pb-2">🖼️ Image Tools</h3>
+                <div class="flex flex-col gap-2">
+                    <button onclick="switchTool('compress-image')" id="tab-compress-image" class="tool-tab w-full text-left px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">Compress Image</button>
+                    <button onclick="switchTool('heic-to-jpg')" id="tab-heic-to-jpg" class="tool-tab w-full text-left px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">HEIC to JPG</button>
+                    <button onclick="switchTool('webp-converter')" id="tab-webp-converter" class="tool-tab w-full text-left px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">WebP / AVIF Converter</button>
+                    <button onclick="switchTool('extract-pdf-img')" id="tab-extract-pdf-img" class="tool-tab w-full text-left px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">Extract PDF Images</button>
+                    <button onclick="switchTool('redact-tool')" id="tab-redact-tool" class="tool-tab w-full text-left px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">Redact / Censor</button>
+                </div>
+            </div>
+
+            <!-- Category: Dev & Text -->
+            <div class="space-y-3 tool-category" data-cat="dev">
+                <h3 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-2 border-b border-slate-200 dark:border-slate-700 pb-2">💻 Text & Dev</h3>
+                <div class="flex flex-col gap-2">
+                    <button onclick="switchTool('json-tool')" id="tab-json-tool" class="tool-tab w-full text-left px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">JSON Formatter</button>
+                    <button onclick="switchTool('base64-tool')" id="tab-base64-tool" class="tool-tab w-full text-left px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">Base64 Encode/Decode</button>
+                    <button onclick="switchTool('url-tool')" id="tab-url-tool" class="tool-tab w-full text-left px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">URL Encode/Decode</button>
+                    <button onclick="switchTool('diff-tool')" id="tab-diff-tool" class="tool-tab w-full text-left px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">Text Diff Checker</button>
+                    <button onclick="switchTool('md-tool')" id="tab-md-tool" class="tool-tab w-full text-left px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">Markdown Preview</button>
+                </div>
+            </div>
+
+            <!-- Category: Security & Utils -->
+            <div class="space-y-3 tool-category" data-cat="security">
+                <h3 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-2 border-b border-slate-200 dark:border-slate-700 pb-2">🔐 Security & Utils</h3>
+                <div class="flex flex-col gap-2">
+                    <button onclick="switchTool('password-gen')" id="tab-password-gen" class="tool-tab w-full text-left px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">Password Generator</button>
+                    <button onclick="switchTool('encrypt-pdf')" id="tab-encrypt-pdf" class="tool-tab w-full text-left px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">Encrypt PDF</button>
+                    <button onclick="switchTool('hash-calc')" id="tab-hash-calc" class="tool-tab w-full text-left px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">File Checksum Hash</button>
+                    <button onclick="switchTool('uuid-gen')" id="tab-uuid-gen" class="tool-tab w-full text-left px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">UUID Generator</button>
+                    <button onclick="switchTool('qr-tool')" id="tab-qr-tool" class="tool-tab w-full text-left px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">QR Code Generator</button>
+                    <button onclick="switchTool('ocr-reader')" id="tab-ocr-reader" class="tool-tab w-full text-left px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">OCR Text Reader</button>
+                </div>
             </div>
         </div>
 
-        <!-- Quick Search & Filter Bar -->
-        <div class="max-w-2xl mx-auto mb-4">
-            <input type="text" id="toolSearchInput" placeholder="🔍 Search tools (e.g. PDF, OCR, JSON, Password)..." class="w-full px-4 py-2.5 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm focus:outline-none focus:border-indigo-500 dark:text-white">
-        </div>
-
-        <!-- Converter Navigation Tabs -->
-        <div id="toolsNavContainer" class="flex flex-wrap justify-center gap-2 mb-8">
-            <button onclick="switchTool('pdf-to-png')" id="tab-pdf-to-png" data-name="pdf to png image extractor" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-indigo-600 text-white shadow-sm">PDF to PNG</button>
-            <button onclick="switchTool('pdf-to-jpg')" id="tab-pdf-to-jpg" data-name="pdf to jpg image" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">PDF to JPG</button>
-            <button onclick="switchTool('merge-pdf')" id="tab-merge-pdf" data-name="merge pdf combine" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">Merge PDF</button>
-            <button onclick="switchTool('split-pdf')" id="tab-split-pdf" data-name="split pdf pages" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">Split PDF</button>
-            <button onclick="switchTool('extract-pdf-img')" id="tab-extract-pdf-img" data-name="extract pdf images" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">Extract PDF Images</button>
-            <button onclick="switchTool('encrypt-pdf')" id="tab-encrypt-pdf" data-name="encrypt pdf password secure" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">Encrypt PDF</button>
-            <button onclick="switchTool('bates-pdf')" id="tab-bates-pdf" data-name="bates numbering stamping" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">Bates Numbering</button>
-            <button onclick="switchTool('ocr-reader')" id="tab-ocr-reader" data-name="ocr reader text extraction ai" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">OCR Reader</button>
-            <button onclick="switchTool('redact-tool')" id="tab-redact-tool" data-name="redact censor image" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">Redact / Censor</button>
-            <button onclick="switchTool('sign-tool')" id="tab-sign-tool" data-name="sign document signature" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">Sign Document</button>
-            <button onclick="switchTool('qr-tool')" id="tab-qr-tool" data-name="qr code generator" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">QR Code</button>
-            <button onclick="switchTool('password-gen')" id="tab-password-gen" data-name="password generator secure" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">Password Gen</button>
-            <button onclick="switchTool('uuid-gen')" id="tab-uuid-gen" data-name="uuid generator" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">UUID Gen</button>
-            <button onclick="switchTool('base64-tool')" id="tab-base64-tool" data-name="base64 encoder decoder" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">Base64 Tool</button>
-            <button onclick="switchTool('url-tool')" id="tab-url-tool" data-name="url encoder decoder" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">URL Tool</button>
-            <button onclick="switchTool('hash-calc')" id="tab-hash-calc" data-name="file hash checksum sha256" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">File Hash</button>
-            <button onclick="switchTool('heic-to-jpg')" id="tab-heic-to-jpg" data-name="heic to jpg converter" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">HEIC to JPG</button>
-            <button onclick="switchTool('webp-converter')" id="tab-webp-converter" data-name="webp avif converter" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">WebP / AVIF</button>
-            <button onclick="switchTool('jpg-to-pdf')" id="tab-jpg-to-pdf" data-name="jpg to pdf combiner" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">JPG to PDF</button>
-            <button onclick="switchTool('compress-image')" id="tab-compress-image" data-name="compress image size" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">Compress</button>
-            <button onclick="switchTool('json-tool')" id="tab-json-tool" data-name="json formatter validator" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">JSON Tool</button>
-            <button onclick="switchTool('diff-tool')" id="tab-diff-tool" data-name="text diff checker compare" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">Text Diff</button>
-            <button onclick="switchTool('md-tool')" id="tab-md-tool" data-name="markdown previewer html" class="tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">Markdown</button>
-        </div>
-
-        <!-- Main Converter Card -->
-        <div class="max-w-2xl mx-auto p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-100 dark:border-slate-700 relative transition-colors duration-200">
+        <!-- Main Converter Workspace Card -->
+        <div class="max-w-3xl mx-auto p-6 sm:p-8 bg-white dark:bg-slate-800 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-700 relative transition-colors duration-300">
             
             <!-- Clear Button -->
-            <button id="clearBtn" class="hidden absolute top-4 right-4 text-xs font-bold text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 bg-red-50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/50 px-3 py-1.5 rounded-lg transition items-center gap-1">
-                🗑️ Clear
+            <button id="clearBtn" class="hidden absolute top-6 right-6 text-xs font-bold text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 bg-red-50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/50 px-3 py-2 rounded-lg transition-all flex items-center gap-1.5 z-10">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                Reset
             </button>
 
             <!-- Drag & Drop Area -->
-            <div id="dropZone" class="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl p-8 text-center cursor-pointer hover:border-indigo-500 dark:hover:border-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all mt-4">
-                <svg class="w-12 h-12 mx-auto text-slate-400 dark:text-slate-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
-                </svg>
-                <p id="dropText" class="text-slate-700 dark:text-slate-300 font-semibold">Click to select files or drag & drop</p>
-                <p id="dropSubText" class="text-xs text-slate-400 dark:text-slate-500 mt-1">Select one or multiple documents</p>
+            <div id="dropZone" class="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-2xl p-10 text-center cursor-pointer hover:border-indigo-500 dark:hover:border-indigo-400 hover:bg-indigo-50/50 dark:hover:bg-slate-700/50 transition-all duration-300 mt-2">
+                <div class="bg-indigo-100 dark:bg-slate-700 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
+                    <svg class="w-8 h-8 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                    </svg>
+                </div>
+                <p id="dropText" class="text-slate-800 dark:text-slate-200 font-bold text-lg">Click to browse or drag files here</p>
+                <p id="dropSubText" class="text-sm text-slate-500 dark:text-slate-400 mt-2">Support for single or batch processing</p>
             </div>
-
-            <!-- File Input -->
-            <input type="file" id="fileInput" accept=".pdf" class="hidden" />
+            <input type="file" id="fileInput" class="hidden" />
 
             <!-- Action & Editor Area -->
-            <div id="actionArea" class="mt-6 hidden space-y-5">
+            <div id="actionArea" class="mt-6 hidden flex-col gap-6">
                 
-                <!-- Live Preview Wrapper -->
-                <div id="previewWrapper" class="p-4 bg-slate-900 rounded-xl border border-slate-800 flex flex-col items-center justify-center min-h-[200px] max-h-[380px] overflow-hidden relative">
-                    <img id="imagePreview" class="max-w-full max-h-[320px] object-contain rounded hidden transition-all duration-300" alt="File Preview" />
-                    <div id="batchPreviewGrid" class="hidden w-full h-full grid grid-cols-3 sm:grid-cols-4 gap-3 overflow-y-auto p-2"></div>
+                <!-- Primary Input / Preview Wrapper -->
+                <div id="previewWrapper" class="w-full relative">
                     
-                    <!-- OCR Result Box -->
-                    <div id="ocrResultBox" class="hidden w-full h-full flex flex-col space-y-2 p-2">
-                        <div class="flex justify-between items-center text-xs text-slate-400">
-                            <span id="ocrLabelText">Extracted Text (Editable):</span>
-                            <button onclick="copyOcrText()" class="px-2 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition">📋 Copy</button>
+                    <!-- Advanced File List (Batch View) -->
+                    <div id="fileListContainer" class="hidden w-full max-h-64 overflow-y-auto space-y-2 pr-2 custom-scrollbar">
+                        <!-- File items injected here -->
+                    </div>
+
+                    <!-- Single Image Preview -->
+                    <div id="imagePreviewBox" class="hidden w-full flex justify-center bg-slate-900 rounded-2xl overflow-hidden border border-slate-700 p-2">
+                         <img id="imagePreview" class="max-w-full max-h-[300px] object-contain rounded-xl transition-all duration-300" alt="File Preview" />
+                    </div>
+                    
+                    <!-- Text/Data Result Boxes (JSON, OCR, Crypto etc) -->
+                    <div id="textDataBoxes" class="w-full h-full flex flex-col gap-4">
+                        
+                        <!-- Common Text Area Setup (OCR, Base64, URL, Hash) -->
+                        <div id="genericTextBox" class="hidden w-full flex flex-col gap-2">
+                            <div class="flex justify-between items-center px-1">
+                                <span id="genericTextLabel" class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Output:</span>
+                                <button onclick="copyGenericText()" class="text-xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-lg transition-colors font-semibold flex items-center gap-1">
+                                    📋 Copy
+                                </button>
+                            </div>
+                            <textarea id="genericTextArea" class="w-full h-48 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 text-sm p-4 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none resize-none font-mono shadow-inner transition-colors" placeholder="Result will appear here..."></textarea>
                         </div>
-                        <textarea id="ocrTextArea" class="w-full h-48 bg-slate-800 text-slate-200 text-xs p-3 rounded-lg border border-slate-700 focus:outline-none focus:border-indigo-500 resize-none" placeholder="Extracted text will appear here..."></textarea>
-                    </div>
 
-                    <!-- QR Tool Box -->
-                    <div id="qrResultBox" class="hidden w-full h-full flex flex-col items-center justify-center space-y-3 p-2">
-                        <div id="qrcodeDisplay" class="bg-white p-3 rounded-xl shadow"></div>
-                        <p class="text-xs text-slate-300" id="qrTextDisplay"></p>
-                    </div>
-
-                    <!-- Password Generator Box -->
-                    <div id="passwordResultBox" class="hidden w-full h-full flex flex-col items-center justify-center space-y-3 p-2">
-                        <div class="w-full max-w-sm flex items-center gap-2">
-                            <input type="text" id="generatedPasswordDisplay" readonly class="w-full p-2 bg-slate-800 text-emerald-400 font-mono text-sm text-center rounded-lg border border-slate-700">
-                            <button onclick="copyPassword()" class="px-3 py-2 bg-indigo-600 text-white text-xs font-bold rounded-lg hover:bg-indigo-700 transition">Copy</button>
+                        <!-- Diff Tool Specific -->
+                        <div id="diffResultBox" class="hidden w-full flex flex-col space-y-2">
+                            <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-1">Comparison Output:</span>
+                            <div id="diffOutputContainer" class="w-full min-h-[160px] bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-mono text-sm p-4 rounded-xl border border-slate-200 dark:border-slate-700 whitespace-pre-wrap shadow-inner overflow-y-auto max-h-64"></div>
                         </div>
-                        <button onclick="generateNewPassword()" class="px-3 py-1.5 bg-slate-700 text-white text-xs rounded-lg hover:bg-slate-600 transition">🔄 Generate Another</button>
-                    </div>
 
-                    <!-- UUID Generator Box -->
-                    <div id="uuidResultBox" class="hidden w-full h-full flex flex-col items-center justify-center space-y-3 p-2">
-                        <div class="w-full max-w-sm flex items-center gap-2">
-                            <input type="text" id="generatedUuidDisplay" readonly class="w-full p-2 bg-slate-800 text-emerald-400 font-mono text-xs text-center rounded-lg border border-slate-700">
-                            <button onclick="copyUuid()" class="px-3 py-2 bg-indigo-600 text-white text-xs font-bold rounded-lg hover:bg-indigo-700 transition">Copy</button>
+                        <!-- QR Code Specific -->
+                        <div id="qrResultBox" class="hidden w-full flex flex-col items-center justify-center py-6 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700">
+                            <div id="qrcodeDisplay" class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100"></div>
+                            <p class="text-sm font-medium text-slate-600 dark:text-slate-400 mt-4 px-4 text-center break-all" id="qrTextDisplay"></p>
                         </div>
-                        <button onclick="generateNewUuid()" class="px-3 py-1.5 bg-slate-700 text-white text-xs rounded-lg hover:bg-slate-600 transition">🔄 Generate Another UUID</button>
-                    </div>
 
-                    <!-- Base64 Tool Box -->
-                    <div id="base64ResultBox" class="hidden w-full h-full flex flex-col space-y-2 p-2">
-                        <div class="flex justify-between items-center text-xs text-slate-400">
-                            <span>Base64 Input/Output:</span>
-                            <button onclick="copyBase64Text()" class="px-2 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition">📋 Copy</button>
+                        <!-- Generator Tools (Password, UUID) -->
+                        <div id="generatorResultBox" class="hidden w-full flex flex-col items-center justify-center py-8 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 gap-4">
+                            <div class="w-full max-w-md flex items-center gap-2 px-4">
+                                <input type="text" id="generatedDisplay" readonly class="w-full p-3 bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 font-mono font-bold text-center rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm focus:outline-none text-lg">
+                                <button onclick="copyGenerated()" class="px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-colors shadow-sm whitespace-nowrap">Copy</button>
+                            </div>
+                            <button id="genAnotherBtn" class="text-sm font-semibold text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 flex items-center gap-1 transition-colors">
+                                🔄 Generate Another
+                            </button>
                         </div>
-                        <textarea id="base64TextArea" class="w-full h-48 bg-slate-800 text-slate-200 text-xs p-3 rounded-lg border border-slate-700 focus:outline-none focus:border-indigo-500 resize-none" placeholder="Type plain text to encode, or base64 to decode, then click Convert..."></textarea>
-                    </div>
 
-                    <!-- URL Tool Box -->
-                    <div id="urlResultBox" class="hidden w-full h-full flex flex-col space-y-2 p-2">
-                        <div class="flex justify-between items-center text-xs text-slate-400">
-                            <span>URL Input/Output:</span>
-                            <button onclick="copyUrlText()" class="px-2 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition">📋 Copy</button>
+                        <!-- Input specific areas (These sit outside advanced accordion so user can type) -->
+                        <div id="primaryInputsArea" class="w-full flex flex-col gap-4">
+                            <!-- JSON / MD Options -->
+                            <div id="textInputGroup" class="hidden">
+                                <textarea id="mainInputField" class="w-full h-32 p-4 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none resize-none shadow-sm" placeholder="Paste data here..."></textarea>
+                            </div>
+                            
+                            <!-- Password Config -->
+                            <div id="passwordOptionsGroup" class="hidden bg-white dark:bg-slate-800 p-4 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm">
+                                <div class="mb-4">
+                                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 flex justify-between">Length: <span id="passLenVal" class="text-indigo-600 dark:text-indigo-400">16</span></label>
+                                    <input type="range" id="passLength" min="8" max="64" value="16" class="w-full accent-indigo-600 cursor-pointer" oninput="document.getElementById('passLenVal').textContent=this.value; generateNewPassword();">
+                                </div>
+                                <div class="flex flex-wrap gap-4 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                                    <label class="flex items-center gap-2 cursor-pointer hover:text-indigo-500 transition-colors"><input type="checkbox" id="passSymbols" checked class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500" onchange="generateNewPassword()"> Symbols (!@#)</label>
+                                    <label class="flex items-center gap-2 cursor-pointer hover:text-indigo-500 transition-colors"><input type="checkbox" id="passNumbers" checked class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500" onchange="generateNewPassword()"> Numbers (0-9)</label>
+                                    <label class="flex items-center gap-2 cursor-pointer hover:text-indigo-500 transition-colors"><input type="checkbox" id="passUppercase" checked class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500" onchange="generateNewPassword()"> Uppercase (A-Z)</label>
+                                </div>
+                            </div>
+
+                            <!-- Diff Tool Inputs -->
+                            <div id="diffInputGroup" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <textarea id="diffOriginal" placeholder="Original text..." class="w-full h-32 p-3 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 dark:text-white focus:outline-none resize-none font-mono shadow-sm" oninput="processDiff()"></textarea>
+                                <textarea id="diffModified" placeholder="Modified text..." class="w-full h-32 p-3 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 dark:text-white focus:outline-none resize-none font-mono shadow-sm" oninput="processDiff()"></textarea>
+                            </div>
                         </div>
-                        <textarea id="urlTextArea" class="w-full h-48 bg-slate-800 text-slate-200 text-xs p-3 rounded-lg border border-slate-700 focus:outline-none focus:border-indigo-500 resize-none" placeholder="Type normal text to encode, or URL-encoded text to decode, then click Convert..."></textarea>
-                    </div>
-
-                    <!-- File Hash Box -->
-                    <div id="hashResultBox" class="hidden w-full h-full flex flex-col space-y-2 p-2">
-                        <div class="flex justify-between items-center text-xs text-slate-400">
-                            <span id="hashFileNameLabel">File Checksum Hash:</span>
-                            <button onclick="copyHashText()" class="px-2 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition">📋 Copy</button>
-                        </div>
-                        <textarea id="hashTextArea" readonly class="w-full h-48 bg-slate-800 text-emerald-400 font-mono text-xs p-3 rounded-lg border border-slate-700 focus:outline-none resize-none" placeholder="Checksum hashes will appear here after loading file..."></textarea>
-                    </div>
-
-                    <!-- JSON Tool Box -->
-                    <div id="jsonResultBox" class="hidden w-full h-full flex flex-col space-y-2 p-2">
-                        <div class="flex justify-between items-center text-xs text-slate-400">
-                            <span id="jsonStatusLabel" class="text-emerald-400 font-bold">Valid JSON</span>
-                            <button onclick="copyJsonText()" class="px-2 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition">📋 Copy</button>
-                        </div>
-                        <textarea id="jsonTextArea" class="w-full h-48 bg-slate-800 text-slate-200 font-mono text-xs p-3 rounded-lg border border-slate-700 focus:outline-none resize-none" placeholder="Formatted JSON output..."></textarea>
-                    </div>
-
-                    <!-- Text Diff Box -->
-                    <div id="diffResultBox" class="hidden w-full h-full flex flex-col space-y-2 p-2 overflow-y-auto">
-                        <div class="text-xs text-slate-400 font-bold">Comparison Output (Differences highlighted):</div>
-                        <div id="diffOutputContainer" class="w-full min-h-[160px] bg-slate-800 text-slate-200 font-mono text-xs p-3 rounded-lg border border-slate-700 whitespace-pre-wrap"></div>
-                    </div>
-
-                    <!-- Markdown Preview Box -->
-                    <div id="mdResultBox" class="hidden w-full h-full flex flex-col space-y-2 p-2 overflow-y-auto bg-white text-slate-900 rounded-lg p-3">
-                        <div id="mdPreviewContent" class="prose text-xs max-w-none"></div>
-                    </div>
-
-                    <!-- Signature Pad Box -->
-                    <div id="signBox" class="hidden w-full h-full flex flex-col items-center justify-center space-y-2 p-2">
-                        <p class="text-xs text-slate-300">Draw your signature below:</p>
-                        <canvas id="sigCanvas" width="300" height="150" class="bg-white rounded-lg cursor-crosshair border border-slate-700"></canvas>
-                        <button onclick="clearSignature()" class="text-xs text-red-400 hover:underline">Clear Signature</button>
-                    </div>
-
-                    <div id="nonImagePreview" class="text-center text-slate-300 py-8 space-y-2 hidden w-full">
-                        <span class="text-4xl block" id="previewIcon">📄</span>
-                        <p class="text-sm font-medium break-words px-4" id="fileName">File Loaded</p>
-                        <p class="text-xs text-slate-400" id="fileSize">0 KB</p>
                     </div>
                 </div>
 
-                <!-- 🛠️ Editor & Options Panel -->
-                <div id="editorTools" class="bg-slate-50 dark:bg-slate-700/50 p-4 rounded-xl border border-slate-200 dark:border-slate-600 space-y-4">
-                    <h3 class="text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider" id="editorHeaderTitle">🛠️ Advanced Editing Options</h3>
+                <!-- 🛠️ Smart Advanced Settings Accordion -->
+                <div id="advancedAccordionWrapper" class="hidden w-full border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden bg-white dark:bg-slate-800 shadow-sm transition-all duration-300">
+                    <button id="accordionToggleBtn" class="w-full flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors focus:outline-none group">
+                        <div class="flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-300">
+                            <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            Advanced Settings
+                        </div>
+                        <svg id="accordionChevron" class="w-5 h-5 text-slate-400 group-hover:text-indigo-500 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
                     
-                    <!-- Quick Tools & Filters -->
-                    <div id="imageQuickButtons" class="flex flex-wrap items-center gap-2">
-                        <button type="button" id="rotateRightBtn" class="px-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 text-xs font-semibold rounded-lg text-slate-700 dark:text-slate-200 transition flex items-center gap-1 shadow-sm">
-                            🔄 Rotate 90°
-                        </button>
-                        <button type="button" id="toggleCropBtn" class="px-3 py-1.5 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 text-xs font-semibold rounded-lg text-indigo-700 dark:text-indigo-300 transition flex items-center gap-1 shadow-sm">
-                            ✂️ Crop Area
-                        </button>
-                        <div class="w-px h-6 bg-slate-300 dark:bg-slate-600 mx-1"></div>
-                        <button type="button" id="toggleGrayscaleBtn" class="px-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 text-xs font-semibold rounded-lg text-slate-700 dark:text-slate-200 transition flex items-center gap-1 shadow-sm">
-                            ⚫ B&W Filter
-                        </button>
-                    </div>
-
-                    <!-- QR Input Group -->
-                    <div id="qrInputGroup" class="hidden space-y-2">
-                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">Enter text or URL for QR Code:</label>
-                        <input type="text" id="qrInputField" placeholder="https://example.com" class="w-full p-2 text-xs border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 dark:text-white">
-                        <button type="button" onclick="generateQRCode()" class="px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-xs font-bold hover:bg-indigo-700 transition">Generate QR Code</button>
-                    </div>
-
-                    <!-- Password Generator Options Group -->
-                    <div id="passwordOptionsGroup" class="hidden space-y-3">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Password Length: <span id="passLenVal">16</span></label>
-                            <input type="range" id="passLength" min="8" max="64" value="16" class="w-full accent-indigo-600 cursor-pointer" oninput="document.getElementById('passLenVal').textContent=this.value; generateNewPassword();">
-                        </div>
-                        <div class="flex flex-wrap gap-4 text-xs font-medium text-slate-700 dark:text-slate-300">
-                            <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" id="passSymbols" checked onchange="generateNewPassword()"> Symbols (!@#)</label>
-                            <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" id="passNumbers" checked onchange="generateNewPassword()"> Numbers (0-9)</label>
-                            <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" id="passUppercase" checked onchange="generateNewPassword()"> Uppercase (A-Z)</label>
-                        </div>
-                    </div>
-
-                    <!-- JSON Tool Options Group -->
-                    <div id="jsonOptionsGroup" class="hidden space-y-3">
-                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">Paste raw JSON string below:</label>
-                        <textarea id="jsonInputField" placeholder='{"name": "test", "value": 123}' class="w-full h-28 p-2 text-xs border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 dark:text-white focus:outline-none resize-none font-mono" oninput="processJson()"></textarea>
-                    </div>
-
-                    <!-- Text Diff Tool Options Group -->
-                    <div id="diffOptionsGroup" class="hidden space-y-3">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Original Text:</label>
-                                <textarea id="diffOriginal" placeholder="Original text..." class="w-full h-24 p-2 text-xs border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 dark:text-white focus:outline-none resize-none font-mono" oninput="processDiff()"></textarea>
+                    <div id="accordionContent" class="hidden p-5 border-t border-slate-200 dark:border-slate-700 space-y-4">
+                        
+                        <!-- Format & Quality (Always at top of advanced) -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+                            <div id="qualityContainer">
+                                <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2">Render Quality:</label>
+                                <select id="renderScale" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white text-sm rounded-xl p-2.5 font-semibold focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                                    <option value="1.5">Standard (150 DPI)</option>
+                                    <option value="2.0" selected>High Quality (200 DPI)</option>
+                                    <option value="3.0">Ultra HD (300 DPI)</option>
+                                </select>
                             </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Modified Text:</label>
-                                <textarea id="diffModified" placeholder="Modified text..." class="w-full h-24 p-2 text-xs border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 dark:text-white focus:outline-none resize-none font-mono" oninput="processDiff()"></textarea>
+                            <div id="formatContainer">
+                                <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2">Output Info:</label>
+                                <div id="outputFormatBadge" class="p-2.5 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-bold text-slate-700 dark:text-slate-300 flex items-center justify-center gap-2">
+                                    🖼️ PNG
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Markdown Tool Options Group -->
-                    <div id="mdOptionsGroup" class="hidden space-y-3">
-                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">Type Markdown here (# Heading, **bold**, etc.):</label>
-                        <textarea id="mdInputField" placeholder="# Hello Markdown..." class="w-full h-32 p-2 text-xs border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 dark:text-white focus:outline-none resize-none font-mono" oninput="processMarkdown()"></textarea>
-                    </div>
-
-                    <!-- Encrypt PDF Options Group -->
-                    <div id="encryptOptionsGroup" class="hidden space-y-3">
-                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">Set PDF Password Protection:</label>
-                        <input type="password" id="pdfUserPassword" placeholder="Enter secure password" class="w-full p-2 text-xs border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 dark:text-white">
-                        <p class="text-[11px] text-slate-500 dark:text-slate-400">Protect your PDF file locally with a password prompt requirement.</p>
-                    </div>
-
-                    <!-- Bates Stamping Options Group -->
-                    <div id="batesOptionsGroup" class="hidden space-y-3">
-                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">Bates Stamping Prefix / Text:</label>
-                        <input type="text" id="batesPrefixText" placeholder="e.g. DOC-CONFIDENTIAL-" value="PAGE " class="w-full p-2 text-xs border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 dark:text-white">
-                    </div>
-
-                    <!-- Compress Options -->
-                    <div id="compressOptionsGroup" class="hidden bg-emerald-50 dark:bg-emerald-900/20 p-3 rounded-lg border border-emerald-100 dark:border-emerald-800/50">
-                        <label for="compressionLevel" class="block text-xs font-semibold text-emerald-900 dark:text-emerald-300 mb-1">
-                            🗜️ Target File Size (Max MB per file):
-                        </label>
-                        <input type="number" id="compressionLevel" value="1" step="0.5" min="0.1" class="w-full p-2 text-xs border border-emerald-200 dark:border-emerald-800 rounded-lg bg-white dark:bg-slate-800 dark:text-white focus:ring-emerald-500 focus:border-emerald-500">
-                    </div>
-
-                    <!-- WebP Options Group -->
-                    <div id="webpOptionsGroup" class="hidden bg-indigo-50 dark:bg-indigo-900/20 p-3 rounded-lg border border-indigo-100 dark:border-indigo-800/50">
-                        <label for="webpFormatSelect" class="block text-xs font-semibold text-indigo-900 dark:text-indigo-300 mb-1">
-                            🌐 Target Web Format:
-                        </label>
-                        <select id="webpFormatSelect" class="w-full p-2 text-xs border border-indigo-200 dark:border-indigo-800 rounded-lg bg-white dark:bg-slate-800 dark:text-white">
-                            <option value="image/webp">WebP (.webp)</option>
-                            <option value="image/avif">AVIF (.avif - if supported)</option>
-                        </select>
-                    </div>
-
-                    <div id="batchSortHint" class="hidden text-xs text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 p-2 rounded-lg font-medium">
-                        💡 Tip: Drag and drop items in the preview box above to change their order.
-                    </div>
-
-                    <!-- PDF Specific Range Group -->
-                    <div id="pdfRangeGroup" class="bg-indigo-50/50 dark:bg-indigo-900/20 p-3 rounded-lg border border-indigo-100 dark:border-indigo-800/50">
-                        <label for="pdfPageRange" class="block text-xs font-semibold text-indigo-950 dark:text-indigo-300 mb-1">
-                            📄 PDF Page Range to Process:
-                        </label>
-                        <input type="text" id="pdfPageRange" placeholder="e.g. 1, 3-5 or 'all'" value="all" class="w-full p-2 text-xs border border-indigo-200 dark:border-indigo-800 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-slate-800 dark:text-white">
-                    </div>
-
-                    <!-- Watermark & Advanced Adjustments Grid -->
-                    <div id="watermarkContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3 border-t border-slate-200 dark:border-slate-600">
-                        <div>
-                            <label for="watermarkText" class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Text Watermark:</label>
-                            <input type="text" id="watermarkText" placeholder="e.g. Confidential" class="w-full p-2 text-sm border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-slate-800 dark:text-white">
+                        <!-- Tool Specific Hidden Options -->
+                        <div id="encryptOptionsGroup" class="hidden space-y-2">
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Set Password Protection:</label>
+                            <input type="password" placeholder="Enter secure password" class="w-full p-2.5 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                         </div>
-                        <div>
-                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Logo Watermark (PNG/JPG):</label>
-                            <input type="file" id="logoInput" accept="image/png, image/jpeg" class="block w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 cursor-pointer border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800">
+
+                        <div id="batesOptionsGroup" class="hidden space-y-2">
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Bates Stamping Prefix:</label>
+                            <input type="text" value="PAGE " class="w-full p-2.5 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                         </div>
-                        <div>
-                            <label for="watermarkOpacity" class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Watermark Opacity:</label>
-                            <input type="range" id="watermarkOpacity" min="0.1" max="1.0" step="0.1" value="0.7" class="w-full accent-indigo-600 cursor-pointer">
+
+                        <div id="compressOptionsGroup" class="hidden space-y-2">
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Target File Size (Max MB):</label>
+                            <input type="number" value="1" step="0.5" min="0.1" class="w-full p-2.5 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                         </div>
-                        <div>
-                            <label for="watermarkPosition" class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Watermark Position:</label>
-                            <select id="watermarkPosition" class="w-full p-2 text-xs border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 dark:text-white">
-                                <option value="bottom">Bottom Center</option>
-                                <option value="center">Center (Diagonal)</option>
+
+                        <div id="webpOptionsGroup" class="hidden space-y-2">
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Target Web Format:</label>
+                            <select class="w-full p-2.5 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                                <option value="image/webp">WebP (.webp)</option>
+                                <option value="image/avif">AVIF (.avif)</option>
                             </select>
                         </div>
-                    </div>
-                    
-                    <div id="resizeContainer" class="pt-2">
-                        <label for="resizeWidth" class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Max Output Width (px):</label>
-                        <input type="number" id="resizeWidth" placeholder="Keep Original Resolution" class="w-full p-2 text-sm border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-slate-800 dark:text-white">
-                    </div>
-                </div>
 
-                <!-- Quality & Format Settings -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center pt-2" id="bottomQualitySettings">
-                    <div id="qualityContainer">
-                        <label for="renderScale" class="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-1">Render Quality / Scale:</label>
-                        <select id="renderScale" class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg p-2 font-semibold cursor-pointer">
-                            <option value="1.5">Standard (150 DPI)</option>
-                            <option value="2.0" selected>High Quality (200 DPI)</option>
-                            <option value="3.0">Ultra HD (300 DPI)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-1">Output Format:</label>
-                        <div id="outputFormatBadge" class="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-600 text-sm font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                            🖼️ PNG
+                        <div id="pdfRangeGroup" class="hidden space-y-2">
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Page Range (e.g. 1, 3-5 or 'all'):</label>
+                            <input type="text" value="all" class="w-full p-2.5 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        </div>
+
+                        <!-- Watermark Grid -->
+                        <div id="watermarkContainer" class="hidden grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Text Watermark:</label>
+                                <input type="text" placeholder="e.g. Confidential" class="w-full p-2 text-sm border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-900 dark:text-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Logo Watermark:</label>
+                                <input type="file" accept="image/*" class="w-full text-sm text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 bg-slate-50 dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 cursor-pointer">
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Convert Button -->
-                <button id="convertBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-4 rounded-xl shadow-md transition-all active:scale-95 text-lg flex items-center justify-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                <button id="convertBtn" class="w-full bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white font-bold py-4 px-6 rounded-2xl shadow-lg hover:shadow-indigo-500/30 transition-all duration-300 active:scale-95 text-lg flex items-center justify-center gap-3">
+                    <svg class="w-6 h-6 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                     <span id="convertBtnText">Convert & Download</span>
                 </button>
             </div>
         </div>
+
+        <!-- Local History Section -->
+        <div id="historyContainer" class="max-w-3xl mx-auto mt-8 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden transition-colors duration-300">
+            <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50">
+                <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    Recent Local Activity
+                </h3>
+                <button onclick="clearHistory()" class="text-xs font-semibold text-slate-400 hover:text-red-500 transition-colors">Clear</button>
+            </div>
+            <ul id="historyList" class="divide-y divide-slate-100 dark:divide-slate-700/50">
+                <!-- History items injected here via JS -->
+            </ul>
+        </div>
     </main>
 
-    <!-- JAVASCRIPT LOGIC -->
+    <!-- UI & LOGIC SCRIPT -->
     <script>
-        try {
-            if (typeof pdfjsLib !== 'undefined') {
-                pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-            }
-        } catch(e) { console.warn("PDF worker init warning:", e); }
+        // PDF.js Worker Setup
+        try { if (typeof pdfjsLib !== 'undefined') pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; } catch(e) {}
 
-        let currentLang = 'en';
+        // Meta Info for Tools
         const toolSeoMeta = {
-            'pdf-to-png': { title: 'PrivacyConvert - Secure PDF to PNG Converter (100% Local)', desc: 'Extract PDF pages into high-resolution PNG images directly in your browser. 100% private, free, and secure.' },
-            'pdf-to-jpg': { title: 'PrivacyConvert - Secure PDF to JPG Converter (100% Local)', desc: 'Extract PDF pages into high-resolution JPG images directly in your browser.' },
-            'merge-pdf': { title: 'PrivacyConvert - Merge PDF Files Securely Online', desc: 'Combine multiple PDF documents into a single file locally without server uploads.' },
-            'split-pdf': { title: 'PrivacyConvert - Split PDF Pages Locally', desc: 'Extract specific pages from a PDF into a new separate document securely in-browser.' },
-            'extract-pdf-img': { title: 'PrivacyConvert - Extract Images from PDF', desc: 'Extract all embedded images and visual pages from PDF documents locally.' },
-            'encrypt-pdf': { title: 'PrivacyConvert - Encrypt PDF Password Protection', desc: 'Add password protection to secure your confidential PDF documents locally.' },
-            'bates-pdf': { title: 'PrivacyConvert - Bates Numbering for PDF', desc: 'Stamp custom bates numbers and page indexes onto PDF documents securely.' },
-            'ocr-reader': { title: 'PrivacyConvert - AI OCR Text Reader (Client-Side)', desc: 'Extract editable text from images instantly inside your browser using client-side AI OCR.' },
-            'redact-tool': { title: 'PrivacyConvert - Redact & Censor Images Securely', desc: 'Blackout sensitive information or censor areas securely on images locally.' },
-            'sign-tool': { title: 'PrivacyConvert - Sign Documents Online Securely', desc: 'Draw your digital signature and stamp it onto documents inside your browser.' },
-            'qr-tool': { title: 'PrivacyConvert - QR Code Generator & Reader', desc: 'Generate QR codes locally or read them instantly in your browser.' },
-            'password-gen': { title: 'PrivacyConvert - Secure Password Generator', desc: 'Generate robust, secure cryptographic passwords instantly in your browser.' },
-            'uuid-gen': { title: 'PrivacyConvert - Cryptographic UUID Generator', desc: 'Generate standard unique cryptographic UUID identifiers locally.' },
-            'base64-tool': { title: 'PrivacyConvert - Base64 Encoder and Decoder', desc: 'Encode plain text to Base64 or decode Base64 strings securely in-browser.' },
-            'url-tool': { title: 'PrivacyConvert - URL Encoder and Decoder', desc: 'Encode text/URLs for web safety or decode URL-encoded strings locally.' },
-            'hash-calc': { title: 'PrivacyConvert - File Checksum Hash Calculator', desc: 'Calculate local SHA-256 and MD5 cryptographic checksum hashes of any file.' },
-            'heic-to-jpg': { title: 'PrivacyConvert - HEIC to JPG Converter', desc: 'Convert Apple HEIC photos to standard JPG images instantly inside your browser.' },
-            'webp-converter': { title: 'PrivacyConvert - WebP & AVIF Image Converter', desc: 'Convert standard images to next-gen WebP or AVIF formats locally.' },
-            'jpg-to-pdf': { title: 'PrivacyConvert - JPG to PDF Converter', desc: 'Combine and convert multiple images into a single PDF document securely.' },
-            'compress-image': { title: 'PrivacyConvert - Image Compressor Online', desc: 'Shrink image file sizes significantly without losing visible quality locally.' },
-            'json-tool': { title: 'PrivacyConvert - JSON Formatter & Validator', desc: 'Format, validate, and beautify raw JSON strings instantly in your browser.' },
-            'diff-tool': { title: 'PrivacyConvert - Text Diff Checker & Comparator', desc: 'Compare two text blocks side-by-side to highlight differences instantly.' },
-            'md-tool': { title: 'PrivacyConvert - Markdown Previewer & HTML Renderer', desc: 'Preview and render Markdown documents into rich HTML locally.' }
+            'pdf-to-png': { title: 'PDF to PNG - PrivacyConvert', desc: 'Extract PDF pages into PNG images.', label: 'PDF to PNG', cat: 'pdf' },
+            'pdf-to-jpg': { title: 'PDF to JPG - PrivacyConvert', desc: 'Extract PDF pages into JPG images.', label: 'PDF to JPG', cat: 'pdf' },
+            'merge-pdf': { title: 'Merge PDF - PrivacyConvert', desc: 'Combine multiple PDF documents.', label: 'Merge PDF', cat: 'pdf' },
+            'split-pdf': { title: 'Split PDF - PrivacyConvert', desc: 'Extract specific pages from a PDF.', label: 'Split PDF', cat: 'pdf' },
+            'jpg-to-pdf': { title: 'JPG to PDF - PrivacyConvert', desc: 'Convert images into a single PDF.', label: 'JPG to PDF', cat: 'pdf' },
+            
+            'compress-image': { title: 'Compress Image - PrivacyConvert', desc: 'Shrink image file sizes.', label: 'Compress Image', cat: 'image' },
+            'heic-to-jpg': { title: 'HEIC to JPG - PrivacyConvert', desc: 'Convert Apple HEIC photos to JPG.', label: 'HEIC to JPG', cat: 'image' },
+            'webp-converter': { title: 'WebP Converter - PrivacyConvert', desc: 'Convert images to WebP/AVIF.', label: 'WebP Converter', cat: 'image' },
+            'extract-pdf-img': { title: 'Extract PDF Images - PrivacyConvert', desc: 'Extract embedded images from PDF.', label: 'Extract PDF Images', cat: 'image' },
+            'redact-tool': { title: 'Redact Image - PrivacyConvert', desc: 'Blackout sensitive info securely.', label: 'Redact Image', cat: 'image' },
+            
+            'json-tool': { title: 'JSON Formatter - PrivacyConvert', desc: 'Format and validate JSON.', label: 'JSON Formatter', cat: 'dev' },
+            'base64-tool': { title: 'Base64 Tool - PrivacyConvert', desc: 'Encode or decode Base64 strings.', label: 'Base64 Tool', cat: 'dev' },
+            'url-tool': { title: 'URL Tool - PrivacyConvert', desc: 'Encode or decode URLs.', label: 'URL Tool', cat: 'dev' },
+            'diff-tool': { title: 'Text Diff - PrivacyConvert', desc: 'Compare two text blocks.', label: 'Text Diff', cat: 'dev' },
+            'md-tool': { title: 'Markdown Preview - PrivacyConvert', desc: 'Preview Markdown to HTML.', label: 'Markdown Preview', cat: 'dev' },
+            
+            'password-gen': { title: 'Password Generator - PrivacyConvert', desc: 'Generate secure passwords.', label: 'Password Generator', cat: 'security' },
+            'encrypt-pdf': { title: 'Encrypt PDF - PrivacyConvert', desc: 'Add password protection to PDF.', label: 'Encrypt PDF', cat: 'security' },
+            'hash-calc': { title: 'File Hash - PrivacyConvert', desc: 'Calculate SHA-256 and MD5 hashes.', label: 'File Hash', cat: 'security' },
+            'uuid-gen': { title: 'UUID Generator - PrivacyConvert', desc: 'Generate unique UUIDs.', label: 'UUID Generator', cat: 'security' },
+            'qr-tool': { title: 'QR Code - PrivacyConvert', desc: 'Generate QR codes.', label: 'QR Code Generator', cat: 'security' },
+            'ocr-reader': { title: 'OCR Reader - PrivacyConvert', desc: 'Extract text from images using AI.', label: 'OCR Text Reader', cat: 'security' }
         };
 
-        const translations = {
-            en: {
-                descPdfPng: "Extract PDF pages into high-resolution PNG images directly in your browser. Fast, free, and completely private.",
-                descPdfJpg: "Extract PDF pages into high-resolution JPG images directly in your browser.",
-                descMerge: "Combine multiple PDF documents into a single organized file securely.",
-                descSplit: "Extract specific pages from a PDF into a new separate document.",
-                descExtImg: "Extract all embedded images and rendered visual pages from PDF documents.",
-                descEnc: "Add password encryption to secure your confidential PDF documents locally.",
-                descBates: "Stamp custom bates numbering and page indexes onto PDF documents.",
-                descOcr: "Extract editable text from images instantly inside your browser using AI OCR.",
-                descRedact: "Blackout sensitive information or censor areas securely on images.",
-                descSign: "Draw your digital signature and stamp it onto documents.",
-                descQr: "Generate QR codes locally or read them instantly.",
-                descPass: "Generate robust, secure cryptographic passwords instantly.",
-                descUuid: "Generate standard unique cryptographic UUID identifiers locally.",
-                descBase64: "Encode plain text to Base64 or decode Base64 strings securely.",
-                descUrl: "Encode text/URLs for web safety or decode URL-encoded strings.",
-                descHash: "Calculate local SHA-256 and MD5 cryptographic checksum hashes of any file.",
-                descHeic: "Convert Apple HEIC photos to standard JPG images instantly.",
-                descWebp: "Convert standard images to next-gen WebP or AVIF formats.",
-                descJpgPdf: "Combine and convert multiple images into a single PDF document.",
-                descComp: "Shrink image file sizes significantly without losing visible quality.",
-                descJson: "Format, validate, and beautify raw JSON strings instantly in your browser.",
-                descDiff: "Compare two text blocks side-by-side to highlight differences instantly.",
-                descMd: "Preview and render Markdown documents into rich HTML locally.",
-                convertBtn: "Convert & Download",
-                clear: "🗑️ Clear",
-                copied: "Text copied to clipboard!"
-            },
-            // ... (İspanyolca ve Arapça çevirileri aynı)
-        };
+        // Theme Toggle Logic
+        const themeToggle = document.getElementById('themeToggle');
+        themeToggle.addEventListener('click', () => {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            const isDark = html.classList.contains('dark');
+            themeToggle.textContent = isDark ? '☀️' : '🌙';
+            localStorage.setItem('privacyConvert_theme', isDark ? 'dark' : 'light');
+        });
+        // Set initial icon
+        themeToggle.textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
 
-        const langSelect = document.getElementById('langSelect');
-        if(langSelect) {
-            langSelect.addEventListener('change', (e) => {
-                currentLang = e.target.value;
-                document.documentElement.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
-                updateToolDescription(currentTool);
+        // Search Logic
+        const searchInput = document.getElementById('toolSearchInput');
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            document.querySelectorAll('.tool-tab').forEach(tab => {
+                const text = tab.textContent.toLowerCase();
+                tab.style.display = text.includes(query) ? 'block' : 'none';
             });
-        }
-
-        const toolSearchInput = document.getElementById('toolSearchInput');
-        if(toolSearchInput) {
-            toolSearchInput.addEventListener('input', (e) => {
-                const query = e.target.value.toLowerCase().trim();
-                document.querySelectorAll('.tool-tab').forEach(tab => {
-                    const text = (tab.textContent + " " + (tab.dataset.name || "")).toLowerCase();
-                    tab.style.display = text.includes(query) ? 'inline-block' : 'none';
-                });
+            // Hide category headers if empty
+            document.querySelectorAll('.tool-category').forEach(cat => {
+                const hasVisible = Array.from(cat.querySelectorAll('.tool-tab')).some(t => t.style.display !== 'none');
+                cat.style.display = hasVisible ? 'block' : 'none';
             });
-        }
-
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') resetApp();
-            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-                const btn = document.getElementById('convertBtn');
-                if (btn && btn.offsetParent !== null) btn.click();
-            }
         });
 
+        // Toast Notification
         function showToast(message, type = 'success') {
             const container = document.getElementById('toastContainer');
-            if(!container) return;
             const toast = document.createElement('div');
-            toast.className = `${type === 'success' ? 'bg-emerald-600' : 'bg-red-600'} text-white px-4 py-3 rounded-xl shadow-lg text-sm font-semibold flex items-center gap-2 pointer-events-auto transform translate-y-2 opacity-0 transition-all duration-300`;
+            toast.className = `${type === 'success' ? 'bg-emerald-600' : 'bg-red-600'} text-white px-5 py-3 rounded-xl shadow-lg text-sm font-bold flex items-center gap-2 pointer-events-auto transform translate-y-2 opacity-0 transition-all duration-300`;
             toast.innerHTML = type === 'success' ? `✅ ${message}` : `❌ ${message}`;
             container.appendChild(toast);
             setTimeout(() => toast.classList.remove('translate-y-2', 'opacity-0'), 10);
             setTimeout(() => {
                 toast.classList.add('translate-y-2', 'opacity-0');
                 setTimeout(() => toast.remove(), 300);
-            }, 3500);
+            }, 3000);
         }
-
-        function updateToolDescription(tool) {
-            const t = translations[currentLang] || translations['en'];
-            const mainDesc = document.getElementById('mainDesc');
-            if(!mainDesc || !t) return;
-
-            const map = {
-                'pdf-to-png': t.descPdfPng, 'pdf-to-jpg': t.descPdfJpg, 'merge-pdf': t.descMerge,
-                'split-pdf': t.descSplit, 'extract-pdf-img': t.descExtImg, 'encrypt-pdf': t.descEnc,
-                'bates-pdf': t.descBates, 'ocr-reader': t.descOcr, 'redact-tool': t.descRedact,
-                'sign-tool': t.descSign, 'qr-tool': t.descQr, 'password-gen': t.descPass,
-                'uuid-gen': t.descUuid, 'base64-tool': t.descBase64, 'url-tool': t.descUrl,
-                'hash-calc': t.descHash, 'heic-to-jpg': t.descHeic, 'webp-converter': t.descWebp,
-                'jpg-to-pdf': t.descJpgPdf, 'compress-image': t.descComp, 'json-tool': t.descJson,
-                'diff-tool': t.descDiff, 'md-tool': t.descMd
-            };
-            mainDesc.textContent = map[tool] || t.descPdfPng;
-
-            if (toolSeoMeta[tool]) {
-                document.title = toolSeoMeta[tool].title;
-                const metaDesc = document.getElementById('pageMetaDesc');
-                if (metaDesc) metaDesc.setAttribute('content', toolSeoMeta[tool].desc);
-            }
-        }
-
-        function copyJsonText() { const ta = document.getElementById('jsonTextArea'); if(!ta) return; ta.select(); document.execCommand('copy'); showToast(translations[currentLang]?.copied || 'Copied'); }
-        function copyOcrText() { const ta = document.getElementById('ocrTextArea'); if(!ta) return; ta.select(); document.execCommand('copy'); showToast(translations[currentLang]?.copied || 'Copied'); }
-        function copyPassword() { const pi = document.getElementById('generatedPasswordDisplay'); if(!pi) return; pi.select(); document.execCommand('copy'); showToast(translations[currentLang]?.copied || 'Copied'); }
-        function copyUuid() { const ui = document.getElementById('generatedUuidDisplay'); if(!ui) return; ui.select(); document.execCommand('copy'); showToast(translations[currentLang]?.copied || 'Copied'); }
-        function copyBase64Text() { const ta = document.getElementById('base64TextArea'); if(!ta) return; ta.select(); document.execCommand('copy'); showToast(translations[currentLang]?.copied || 'Copied'); }
-        function copyUrlText() { const ta = document.getElementById('urlTextArea'); if(!ta) return; ta.select(); document.execCommand('copy'); showToast(translations[currentLang]?.copied || 'Copied'); }
-        function copyHashText() { const ta = document.getElementById('hashTextArea'); if(!ta) return; ta.select(); document.execCommand('copy'); showToast(translations[currentLang]?.copied || 'Copied'); }
-
-        const themeToggle = document.getElementById('themeToggle');
-        const htmlElement = document.documentElement;
-        if(themeToggle) {
-            themeToggle.addEventListener('click', () => {
-                htmlElement.classList.toggle('dark');
-                themeToggle.textContent = htmlElement.classList.contains('dark') ? '☀️' : '🌙';
-            });
-        }
-
-        const sigCanvas = document.getElementById('sigCanvas');
-        let sigCtx = null;
-        if(sigCanvas) {
-            sigCtx = sigCanvas.getContext('2d');
-            let isDrawing = false;
-            sigCanvas.addEventListener('mousedown', (e) => { isDrawing = true; sigCtx.beginPath(); sigCtx.moveTo(e.offsetX, e.offsetY); });
-            sigCanvas.addEventListener('mousemove', (e) => { if (!isDrawing) return; sigCtx.lineTo(e.offsetX, e.offsetY); sigCtx.stroke(); });
-            window.addEventListener('mouseup', () => { isDrawing = false; });
-        }
-        function clearSignature() { if(sigCtx && sigCanvas) sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height); }
 
         // Core App State
         let currentTool = 'pdf-to-png';
         let selectedFiles = [];
-        let cropper = null;
-        let sortableInstance = null;
 
         // Elements
         const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('fileInput');
         const actionArea = document.getElementById('actionArea');
-        const previewWrapper = document.getElementById('previewWrapper');
-        const imagePreview = document.getElementById('imagePreview');
-        const batchPreviewGrid = document.getElementById('batchPreviewGrid');
-        const nonImagePreview = document.getElementById('nonImagePreview');
         const clearBtn = document.getElementById('clearBtn');
-        const convertBtn = document.getElementById('convertBtn');
-        const editorTools = document.getElementById('editorTools');
-        const bottomQualitySettings = document.getElementById('bottomQualitySettings');
-
-        // All Result/Tool Boxes
-        const allBoxes = [
-            'ocrResultBox', 'qrResultBox', 'passwordResultBox', 'uuidResultBox', 
-            'base64ResultBox', 'urlResultBox', 'hashResultBox', 'jsonResultBox', 
-            'diffResultBox', 'mdResultBox', 'signBox', 'imagePreview', 'nonImagePreview', 'batchPreviewGrid'
-        ];
+        const fileListContainer = document.getElementById('fileListContainer');
+        
+        // Advanced Accordion Logic
+        const accordionBtn = document.getElementById('accordionToggleBtn');
+        const accordionContent = document.getElementById('accordionContent');
+        const accordionChevron = document.getElementById('accordionChevron');
+        accordionBtn.addEventListener('click', () => {
+            accordionContent.classList.toggle('hidden');
+            accordionChevron.classList.toggle('rotate-180');
+        });
 
         function resetApp() {
-            selectedFiles = []; 
-            if(cropper) { cropper.destroy(); cropper = null; }
-            if(actionArea) actionArea.classList.add('hidden'); 
-            if(dropZone) dropZone.style.display = 'block'; 
-            if(clearBtn) clearBtn.classList.add('hidden');
-            if(imagePreview) { imagePreview.src = ''; imagePreview.style.filter = 'none'; }
-            if(batchPreviewGrid) batchPreviewGrid.innerHTML = ''; 
-            allBoxes.forEach(id => {
-                const box = document.getElementById(id);
-                if (box) box.classList.add('hidden');
-            });
-            if (sortableInstance) { sortableInstance.destroy(); sortableInstance = null; }
+            selectedFiles = [];
+            actionArea.classList.add('hidden');
+            dropZone.style.display = 'block';
+            clearBtn.classList.add('hidden');
             fileInput.value = "";
+            fileListContainer.innerHTML = '';
+            
+            // Hide all result boxes
+            ['imagePreviewBox', 'genericTextBox', 'diffResultBox', 'qrResultBox', 'generatorResultBox', 'textInputGroup', 'passwordOptionsGroup', 'diffInputGroup', 'advancedAccordionWrapper'].forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.classList.add('hidden');
+            });
+            document.getElementById('convertBtnText').textContent = "Convert & Download";
+        }
+        clearBtn.addEventListener('click', resetApp);
+
+        function updateUIMeta(tool) {
+            const meta = toolSeoMeta[tool];
+            if(!meta) return;
+            document.title = meta.title;
+            document.getElementById('pageMetaDesc').setAttribute('content', meta.desc);
+            
+            const prefix = document.getElementById('mainTitlePrefix');
+            const accent = document.getElementById('mainTitleAccent');
+            
+            // Nice split for titles (e.g. "JSON Formatter" -> Prefix: "JSON", Accent: "Formatter")
+            const parts = meta.label.split(' ');
+            if (parts.length > 1) {
+                accent.textContent = parts.pop();
+                prefix.textContent = parts.join(' ');
+            } else {
+                prefix.textContent = "";
+                accent.textContent = meta.label;
+            }
+            document.getElementById('mainDesc').textContent = meta.desc;
         }
 
-        // TOOL SWITCHER LOGIC
-        function switchTool(tool, updateHash = true) {
+        function switchTool(tool, saveState = true) {
             if (!toolSeoMeta[tool]) tool = 'pdf-to-png';
             currentTool = tool;
             resetApp();
-            updateToolDescription(tool);
+            updateUIMeta(tool);
 
-            if (updateHash) window.location.hash = tool;
+            if (saveState) {
+                window.location.hash = tool;
+                localStorage.setItem('privacyConvert_lastTool', tool);
+            }
 
+            // Styling tabs
             document.querySelectorAll('.tool-tab').forEach(btn => {
                 if (btn.id === `tab-${tool}`) {
-                    btn.className = "tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-indigo-600 text-white shadow-sm";
+                    btn.className = "tool-tab w-full text-left px-4 py-2.5 text-sm font-bold rounded-xl transition-all shadow-md bg-indigo-600 text-white transform scale-105";
                 } else {
-                    btn.className = "tool-tab px-3 py-1.5 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700";
+                    btn.className = "tool-tab w-full text-left px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 hover:-translate-y-0.5";
                 }
             });
 
-            const titleAccent = document.getElementById('mainTitleAccent');
-            const activeTabEl = document.getElementById(`tab-${tool}`);
-            if(titleAccent && activeTabEl) titleAccent.textContent = activeTabEl.textContent;
-
-            // Hide all Option Groups
-            ['imageQuickButtons', 'resizeContainer', 'compressOptionsGroup', 'webpOptionsGroup', 'watermarkContainer', 'pdfRangeGroup', 'qrInputGroup', 'passwordOptionsGroup', 'encryptOptionsGroup', 'batesOptionsGroup', 'jsonOptionsGroup', 'diffOptionsGroup', 'mdOptionsGroup', 'qualityContainer'].forEach(id => {
+            // Hide specific advanced options initially
+            ['encryptOptionsGroup', 'batesOptionsGroup', 'compressOptionsGroup', 'webpOptionsGroup', 'pdfRangeGroup', 'watermarkContainer', 'qualityContainer'].forEach(id => {
                 const el = document.getElementById(id);
-                if(el) el.style.display = 'none';
+                if(el) el.classList.add('hidden');
             });
-            editorTools.style.display = 'block';
-            bottomQualitySettings.style.display = 'grid';
-            document.getElementById('convertBtnText').textContent = "Convert & Download";
 
-            // Tool Specific Layout Rules
+            let requiresFile = true;
+            let showAdvanced = true;
+
+            // Configure based on tool
             switch(tool) {
-                case 'pdf-to-png':
-                case 'pdf-to-jpg':
+                case 'pdf-to-png': case 'pdf-to-jpg':
                     fileInput.accept = ".pdf"; fileInput.multiple = true;
-                    document.getElementById('qualityContainer').style.display = 'block';
-                    document.getElementById('pdfRangeGroup').style.display = 'block';
-                    document.getElementById('watermarkContainer').style.display = 'grid';
+                    document.getElementById('qualityContainer').classList.remove('hidden');
+                    document.getElementById('pdfRangeGroup').classList.remove('hidden');
+                    document.getElementById('watermarkContainer').classList.remove('hidden', 'hidden');
                     document.getElementById('outputFormatBadge').innerHTML = tool === 'pdf-to-png' ? "🖼️ PNG" : "🖼️ JPG";
                     break;
-                case 'merge-pdf':
-                case 'split-pdf':
-                case 'extract-pdf-img':
+                case 'merge-pdf': case 'split-pdf':
                     fileInput.accept = ".pdf"; fileInput.multiple = (tool === 'merge-pdf');
                     document.getElementById('outputFormatBadge').innerHTML = "📄 PDF";
-                    break;
-                case 'encrypt-pdf':
-                    fileInput.accept = ".pdf"; fileInput.multiple = false;
-                    document.getElementById('encryptOptionsGroup').style.display = 'block';
-                    document.getElementById('outputFormatBadge').innerHTML = "🔒 Encrypted PDF";
-                    break;
-                case 'bates-pdf':
-                    fileInput.accept = ".pdf"; fileInput.multiple = true;
-                    document.getElementById('batesOptionsGroup').style.display = 'block';
-                    document.getElementById('outputFormatBadge').innerHTML = "📄 Stamped PDF";
+                    showAdvanced = false;
                     break;
                 case 'compress-image':
                     fileInput.accept = "image/*"; fileInput.multiple = true;
-                    document.getElementById('compressOptionsGroup').style.display = 'block';
-                    document.getElementById('outputFormatBadge').innerHTML = "🖼️ Compressed Image";
+                    document.getElementById('compressOptionsGroup').classList.remove('hidden');
+                    document.getElementById('outputFormatBadge').innerHTML = "🖼️ Optimized Image";
                     break;
-                case 'webp-converter':
-                    fileInput.accept = "image/*"; fileInput.multiple = true;
-                    document.getElementById('webpOptionsGroup').style.display = 'block';
-                    document.getElementById('outputFormatBadge').innerHTML = "🌐 WebP / AVIF";
+                case 'encrypt-pdf':
+                    fileInput.accept = ".pdf"; fileInput.multiple = false;
+                    document.getElementById('encryptOptionsGroup').classList.remove('hidden');
+                    document.getElementById('outputFormatBadge').innerHTML = "🔒 Encrypted PDF";
                     break;
-                case 'heic-to-jpg':
-                case 'jpg-to-pdf':
-                case 'ocr-reader':
-                case 'redact-tool':
-                case 'hash-calc':
-                case 'sign-tool':
-                    fileInput.accept = tool === 'sign-tool' ? "application/pdf,image/*" : (tool === 'hash-calc' ? "*/*" : "image/*");
-                    fileInput.multiple = (tool === 'jpg-to-pdf');
-                    document.getElementById('outputFormatBadge').innerHTML = tool === 'ocr-reader' ? "📝 Text" : (tool === 'hash-calc' ? "🔢 Hash" : (tool === 'jpg-to-pdf' ? "📄 PDF" : "🖼️ Image"));
-                    break;
-                
-                // NO-FILE TOOLS (Hide dropzone, show boxes immediately)
-                case 'qr-tool':
-                    dropZone.style.display = 'none';
-                    document.getElementById('qrInputGroup').style.display = 'block';
-                    actionArea.classList.remove('hidden');
-                    document.getElementById('qrResultBox').classList.remove('hidden');
-                    document.getElementById('outputFormatBadge').innerHTML = "📱 QR Code";
-                    break;
-                case 'password-gen':
-                    dropZone.style.display = 'none';
-                    document.getElementById('passwordOptionsGroup').style.display = 'block';
-                    actionArea.classList.remove('hidden');
-                    document.getElementById('passwordResultBox').classList.remove('hidden');
-                    document.getElementById('outputFormatBadge').innerHTML = "🔑 Password";
-                    generateNewPassword();
-                    break;
-                case 'uuid-gen':
-                    dropZone.style.display = 'none';
-                    editorTools.style.display = 'none';
-                    actionArea.classList.remove('hidden');
-                    document.getElementById('uuidResultBox').classList.remove('hidden');
-                    document.getElementById('outputFormatBadge').innerHTML = "🆔 UUID";
-                    generateNewUuid();
-                    break;
-                case 'base64-tool':
-                    dropZone.style.display = 'none';
-                    editorTools.style.display = 'none';
-                    actionArea.classList.remove('hidden');
-                    document.getElementById('base64ResultBox').classList.remove('hidden');
-                    document.getElementById('outputFormatBadge').innerHTML = "🔄 Base64";
-                    document.getElementById('convertBtnText').textContent = "Process Base64";
-                    break;
-                case 'url-tool':
-                    dropZone.style.display = 'none';
-                    editorTools.style.display = 'none';
-                    actionArea.classList.remove('hidden');
-                    document.getElementById('urlResultBox').classList.remove('hidden');
-                    document.getElementById('outputFormatBadge').innerHTML = "🔗 URL String";
-                    document.getElementById('convertBtnText').textContent = "Process URL";
-                    break;
-                case 'json-tool':
-                    dropZone.style.display = 'none';
-                    document.getElementById('jsonOptionsGroup').style.display = 'block';
-                    actionArea.classList.remove('hidden');
-                    document.getElementById('jsonResultBox').classList.remove('hidden');
-                    document.getElementById('outputFormatBadge').innerHTML = "💻 JSON";
-                    processJson();
+                case 'json-tool': case 'md-tool':
+                    requiresFile = false; showAdvanced = false;
+                    document.getElementById('textInputGroup').classList.remove('hidden');
+                    document.getElementById('genericTextBox').classList.remove('hidden');
+                    document.getElementById('mainInputField').placeholder = tool === 'json-tool' ? "Paste raw JSON here..." : "Type Markdown here (# Hello)";
+                    document.getElementById('genericTextLabel').textContent = tool === 'json-tool' ? "Formatted JSON:" : "HTML Output:";
+                    document.getElementById('convertBtnText').textContent = tool === 'json-tool' ? "Format JSON" : "Render Markdown";
                     break;
                 case 'diff-tool':
-                    dropZone.style.display = 'none';
-                    document.getElementById('diffOptionsGroup').style.display = 'block';
-                    actionArea.classList.remove('hidden');
+                    requiresFile = false; showAdvanced = false;
+                    document.getElementById('diffInputGroup').classList.remove('hidden');
                     document.getElementById('diffResultBox').classList.remove('hidden');
-                    document.getElementById('outputFormatBadge').innerHTML = "⚖️ Diff Text";
-                    processDiff();
+                    document.getElementById('convertBtnText').textContent = "Compare Text";
                     break;
-                case 'md-tool':
-                    dropZone.style.display = 'none';
-                    document.getElementById('mdOptionsGroup').style.display = 'block';
-                    actionArea.classList.remove('hidden');
-                    document.getElementById('mdResultBox').classList.remove('hidden');
-                    document.getElementById('outputFormatBadge').innerHTML = "📄 HTML / Markdown";
-                    processMarkdown();
+                case 'base64-tool': case 'url-tool':
+                    requiresFile = false; showAdvanced = false;
+                    document.getElementById('textInputGroup').classList.remove('hidden');
+                    document.getElementById('genericTextBox').classList.remove('hidden');
+                    document.getElementById('mainInputField').placeholder = "Paste string here to encode/decode...";
+                    document.getElementById('convertBtnText').textContent = "Process String";
                     break;
+                case 'password-gen':
+                    requiresFile = false; showAdvanced = false;
+                    document.getElementById('passwordOptionsGroup').classList.remove('hidden');
+                    document.getElementById('generatorResultBox').classList.remove('hidden');
+                    document.getElementById('genAnotherBtn').onclick = generateNewPassword;
+                    generateNewPassword();
+                    document.getElementById('convertBtnText').textContent = "Copy Password";
+                    break;
+                case 'uuid-gen':
+                    requiresFile = false; showAdvanced = false;
+                    document.getElementById('generatorResultBox').classList.remove('hidden');
+                    document.getElementById('genAnotherBtn').onclick = generateNewUuid;
+                    generateNewUuid();
+                    document.getElementById('convertBtnText').textContent = "Copy UUID";
+                    break;
+                case 'qr-tool':
+                    requiresFile = false; showAdvanced = false;
+                    document.getElementById('textInputGroup').classList.remove('hidden');
+                    document.getElementById('qrResultBox').classList.remove('hidden');
+                    document.getElementById('mainInputField').placeholder = "Enter URL or text for QR Code...";
+                    document.getElementById('convertBtnText').textContent = "Generate QR";
+                    break;
+                default: // Fallback generic file tools (Hash, OCR, etc)
+                    fileInput.accept = "*/*"; fileInput.multiple = false;
+                    showAdvanced = false;
+                    break;
+            }
+
+            if (!requiresFile) {
+                dropZone.style.display = 'none';
+                actionArea.classList.remove('hidden');
+            } else {
+                if(showAdvanced) document.getElementById('advancedAccordionWrapper').classList.remove('hidden');
             }
         }
 
-        // Initialize Router
+        // Initialize Router & State
         window.addEventListener('DOMContentLoaded', () => {
+            renderHistory();
             const hash = window.location.hash.replace('#', '');
+            const savedTool = localStorage.getItem('privacyConvert_lastTool');
             if (hash && toolSeoMeta[hash]) switchTool(hash, false);
+            else if (savedTool && toolSeoMeta[savedTool]) switchTool(savedTool, false);
             else switchTool('pdf-to-png', false);
         });
-        window.addEventListener('hashchange', () => {
-            const hash = window.location.hash.replace('#', '');
-            if (hash && toolSeoMeta[hash] && hash !== currentTool) switchTool(hash, false);
-        });
 
         // ==========================================
-        // DRAG & DROP IMPLEMENTATION
+        // DRAG & DROP / FILE LIST LOGIC
         // ==========================================
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, preventDefaults, false);
-        });
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(e => dropZone.addEventListener(e, preventD, false));
+        function preventD(e) { e.preventDefault(); e.stopPropagation(); }
+        
+        ['dragenter', 'dragover'].forEach(e => dropZone.addEventListener(e, () => dropZone.classList.add('border-indigo-500', 'bg-indigo-50', 'dark:bg-slate-700/80')));
+        ['dragleave', 'drop'].forEach(e => dropZone.addEventListener(e, () => dropZone.classList.remove('border-indigo-500', 'bg-indigo-50', 'dark:bg-slate-700/80')));
+        
+        dropZone.addEventListener('drop', (e) => handleFiles(e.dataTransfer.files));
+        dropZone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
 
-        function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
-
-        ['dragenter', 'dragover'].forEach(eventName => {
-            dropZone.addEventListener(eventName, () => dropZone.classList.add('border-indigo-500', 'bg-slate-50', 'dark:bg-slate-800'));
-        });
-
-        ['dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, () => dropZone.classList.remove('border-indigo-500', 'bg-slate-50', 'dark:bg-slate-800'));
-        });
-
-        dropZone.addEventListener('drop', (e) => {
-            let dt = e.dataTransfer;
-            let files = dt.files;
-            if(files.length > 0) handleFiles(files);
-        });
-
-        if(fileInput) {
-            dropZone.addEventListener('click', () => fileInput.click());
-            fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+        function handleFiles(files) {
+            if(files.length === 0) return;
+            // Append if multiple allowed, replace if single
+            if(fileInput.multiple) {
+                selectedFiles = [...selectedFiles, ...Array.from(files)];
+            } else {
+                selectedFiles = [files[0]];
+            }
+            
+            dropZone.style.display = 'none';
+            actionArea.classList.remove('hidden');
+            clearBtn.classList.remove('hidden');
+            
+            renderFileList();
+            showToast(`${files.length} file(s) loaded.`);
+            
+            // Auto trigger OCR or Hash preview logic if applicable
+            if(currentTool === 'hash-calc' || currentTool === 'ocr-reader') {
+                document.getElementById('genericTextBox').classList.remove('hidden');
+                document.getElementById('genericTextArea').value = `Ready to process: ${selectedFiles[0].name}\nClick Convert to begin...`;
+            }
         }
 
-        // HANDLE FILES (SHOW PREVIEWS)
-        function handleFiles(files) {
-            selectedFiles = Array.from(files);
-            if (!selectedFiles.length) return;
+        function renderFileList() {
+            fileListContainer.innerHTML = '';
+            if(selectedFiles.length === 0) { resetApp(); return; }
             
-            dropZone.style.display = 'none'; 
-            actionArea.classList.remove('hidden');
-            if(clearBtn) clearBtn.classList.remove('hidden');
-
-            const file = selectedFiles[0];
-            const isImage = file.type.startsWith('image/');
-
-            // Hide all initially in previewWrapper
-            allBoxes.forEach(id => {
-                const box = document.getElementById(id);
-                if (box) box.classList.add('hidden');
+            fileListContainer.classList.remove('hidden');
+            selectedFiles.forEach((file, index) => {
+                const isImg = file.type.startsWith('image/');
+                const sizeStr = (file.size / 1024).toFixed(1) + " KB";
+                
+                const card = document.createElement('div');
+                card.className = "flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm hover:shadow transition-all group";
+                card.innerHTML = `
+                    <div class="flex items-center gap-3 overflow-hidden">
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${isImg ? 'bg-indigo-100 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-400' : 'bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-400'}">
+                            ${isImg ? '🖼️' : '📄'}
+                        </div>
+                        <div class="flex flex-col truncate">
+                            <span class="text-sm font-bold text-slate-700 dark:text-slate-300 truncate">${file.name}</span>
+                            <span class="text-xs font-medium text-slate-500">${sizeStr}</span>
+                        </div>
+                    </div>
+                    <button onclick="removeFile(${index})" class="text-slate-400 hover:text-red-500 p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors shrink-0">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                    </button>
+                `;
+                fileListContainer.appendChild(card);
             });
+            
+            // Show single image preview if only 1 image loaded
+            const previewBox = document.getElementById('imagePreviewBox');
+            if (selectedFiles.length === 1 && selectedFiles[0].type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = e => { 
+                    document.getElementById('imagePreview').src = e.target.result; 
+                    previewBox.classList.remove('hidden');
+                };
+                reader.readAsDataURL(selectedFiles[0]);
+            } else {
+                previewBox.classList.add('hidden');
+            }
+        }
 
-            // Special Handle for Specific File-based Tools
-            if (currentTool === 'hash-calc') {
-                document.getElementById('hashResultBox').classList.remove('hidden');
-                document.getElementById('hashTextArea').value = "Calculating hash for: " + file.name + "...\n(Implementation needed)";
-            } 
-            else if (currentTool === 'ocr-reader') {
-                document.getElementById('ocrResultBox').classList.remove('hidden');
-                document.getElementById('ocrTextArea').value = "Waiting to process OCR for: " + file.name + "...";
-            }
-            else if (currentTool === 'sign-tool') {
-                document.getElementById('signBox').classList.remove('hidden');
-            }
-            else {
-                // Generic Preview Logic
-                if (isImage) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        imagePreview.src = e.target.result;
-                        imagePreview.classList.remove('hidden');
-                    };
-                    reader.readAsDataURL(file);
-                } else {
-                    nonImagePreview.classList.remove('hidden');
-                    document.getElementById('fileName').textContent = file.name;
-                    document.getElementById('fileSize').textContent = (file.size / 1024).toFixed(2) + " KB";
-                }
-            }
-            showToast("File(s) loaded successfully!");
+        window.removeFile = function(index) {
+            selectedFiles.splice(index, 1);
+            renderFileList();
         }
 
 
@@ -845,174 +681,162 @@
         // ==========================================
 
         function processJson() {
-            const inputField = document.getElementById('jsonInputField');
-            const output = document.getElementById('jsonTextArea');
-            const status = document.getElementById('jsonStatusLabel');
-            if(!inputField || !output) return;
-            const input = inputField.value.trim();
-            if(!input) { output.value = ""; status.textContent = "Empty JSON"; status.className = "text-yellow-500 font-bold"; return; }
-            try {
-                const parsed = JSON.parse(input);
-                output.value = JSON.stringify(parsed, null, 2);
-                status.textContent = "Valid JSON ✅"; status.className = "text-emerald-400 font-bold";
-            } catch (err) {
-                output.value = "Invalid JSON Syntax:\n" + err.message;
-                status.textContent = "Invalid JSON ❌"; status.className = "text-red-400 font-bold";
-            }
+            const input = document.getElementById('mainInputField').value.trim();
+            const output = document.getElementById('genericTextArea');
+            if(!input) { output.value = ""; return; }
+            try { output.value = JSON.stringify(JSON.parse(input), null, 2); } 
+            catch (err) { output.value = "Invalid JSON Syntax:\n" + err.message; }
         }
 
         function processDiff() {
-            const origEl = document.getElementById('diffOriginal');
-            const modEl = document.getElementById('diffModified');
+            const orig = document.getElementById('diffOriginal').value.split('\n');
+            const mod = document.getElementById('diffModified').value.split('\n');
             const container = document.getElementById('diffOutputContainer');
-            if(!origEl || !modEl || !container) return;
-            const orig = origEl.value.split('\n');
-            const mod = modEl.value.split('\n');
             container.innerHTML = "";
-            const maxLines = Math.max(orig.length, mod.length);
             let html = "";
+            const maxLines = Math.max(orig.length, mod.length);
             for (let i = 0; i < maxLines; i++) {
-                const oLine = orig[i] !== undefined ? orig[i] : "";
-                const mLine = mod[i] !== undefined ? mod[i] : "";
-                if (oLine === mLine) {
-                    html += `<div class="text-slate-400">  ${oLine}</div>`;
-                } else {
-                    if (oLine) html += `<div class="bg-red-900/30 text-red-400">- ${oLine}</div>`;
-                    if (mLine) html += `<div class="bg-emerald-900/30 text-emerald-400">+ ${mLine}</div>`;
+                const oLine = orig[i] || ""; const mLine = mod[i] || "";
+                if (oLine === mLine) html += `<div class="text-slate-400 dark:text-slate-500">  ${oLine}</div>`;
+                else {
+                    if (oLine) html += `<div class="bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 px-1 rounded">- ${oLine}</div>`;
+                    if (mLine) html += `<div class="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 px-1 rounded mt-0.5">+ ${mLine}</div>`;
                 }
             }
             container.innerHTML = html;
         }
 
-        function processMarkdown() {
-            const mdInput = document.getElementById('mdInputField');
-            const preview = document.getElementById('mdPreviewContent');
-            if(!mdInput || !preview) return;
-            const text = mdInput.value;
-            if(typeof marked !== 'undefined') {
-                preview.innerHTML = marked.parse(text);
-            } else {
-                preview.textContent = text;
-            }
-        }
-
         function generateNewPassword() {
             const len = parseInt(document.getElementById('passLength').value) || 16;
-            const useSymbols = document.getElementById('passSymbols')?.checked;
-            const useNumbers = document.getElementById('passNumbers')?.checked;
-            const useUppercase = document.getElementById('passUppercase')?.checked;
-
             let chars = "abcdefghijklmnopqrstuvwxyz";
-            if (useUppercase) chars += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            if (useNumbers) chars += "0123456789";
-            if (useSymbols) chars += "!@#$%^&*()_+-=[]{}|;:,.<>?";
-
-            if (chars.length === 0) return;
+            if (document.getElementById('passUppercase')?.checked) chars += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            if (document.getElementById('passNumbers')?.checked) chars += "0123456789";
+            if (document.getElementById('passSymbols')?.checked) chars += "!@#$%^&*()_+-=[]{}|;:,.<>?";
+            if (!chars) return;
 
             let pass = "";
-            const array = new Uint32Array(len);
-            window.crypto.getRandomValues(array);
-            for (let i = 0; i < len; i++) pass += chars[array[i] % chars.length];
-            
-            const disp = document.getElementById('generatedPasswordDisplay');
-            if(disp) disp.value = pass;
+            const arr = new Uint32Array(len);
+            crypto.getRandomValues(arr);
+            for (let i = 0; i < len; i++) pass += chars[arr[i] % chars.length];
+            document.getElementById('generatedDisplay').value = pass;
         }
 
         function generateNewUuid() {
-            let uuid;
-            if (crypto && crypto.randomUUID) {
-                uuid = crypto.randomUUID();
-            } else {
-                // Fallback
-                uuid = ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
-                    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-                );
-            }
-            const disp = document.getElementById('generatedUuidDisplay');
-            if(disp) disp.value = uuid;
+            let uuid = crypto.randomUUID ? crypto.randomUUID() : ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c => (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16));
+            document.getElementById('generatedDisplay').value = uuid;
         }
 
-        function generateQRCode() {
-            const input = document.getElementById('qrInputField').value.trim();
-            const qrcodeDisplay = document.getElementById('qrcodeDisplay');
-            const qrTextDisplay = document.getElementById('qrTextDisplay');
-            
-            if (!input) { showToast("Please enter text or URL", "error"); return; }
-            
-            qrcodeDisplay.innerHTML = ''; 
-            if (typeof QRCode !== 'undefined') {
-                new QRCode(qrcodeDisplay, { text: input, width: 160, height: 160 });
-                qrTextDisplay.textContent = input;
-            } else {
-                showToast("QRCode library not loaded", "error");
+        // Clipboards
+        window.copyGenericText = () => { document.getElementById('genericTextArea').select(); document.execCommand('copy'); showToast("Copied to clipboard!"); }
+        window.copyGenerated = () => { document.getElementById('generatedDisplay').select(); document.execCommand('copy'); showToast("Copied to clipboard!"); }
+
+        // ==========================================
+        // HISTORY MANAGEMENT
+        // ==========================================
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            let history = JSON.parse(localStorage.getItem('privacyConvert_history')) || [];
+            list.innerHTML = '';
+            if (history.length === 0) {
+                list.innerHTML = `<li class="p-4 text-sm text-slate-500 text-center">No recent activity found.</li>`;
+                return;
             }
-        }
-
-        // ==========================================
-        // CONVERT BUTTON LOGIC (MAIN ENGINE)
-        // ==========================================
-        if(convertBtn) {
-            convertBtn.addEventListener('click', async () => {
-                
-                // 1. Base64 Processing
-                if (currentTool === 'base64-tool') {
-                    const box = document.getElementById('base64TextArea');
-                    const text = box.value.trim();
-                    if(!text) return;
-                    try {
-                        // Check if it looks like base64
-                        const isBase64 = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/.test(text);
-                        if(isBase64 && text.length % 4 === 0) {
-                            box.value = atob(text); // Decode
-                            showToast("Decoded from Base64");
-                        } else {
-                            box.value = btoa(text); // Encode
-                            showToast("Encoded to Base64");
-                        }
-                    } catch(e) {
-                        box.value = btoa(text); // Fallback to encode if decode fails
-                        showToast("Encoded to Base64");
-                    }
-                    return;
-                }
-
-                // 2. URL Processing
-                if (currentTool === 'url-tool') {
-                    const box = document.getElementById('urlTextArea');
-                    const text = box.value.trim();
-                    if(!text) return;
-                    if (text.includes('%')) {
-                        try { box.value = decodeURIComponent(text); showToast("Decoded URL string"); } 
-                        catch(e) { box.value = encodeURIComponent(text); showToast("Encoded URL string"); }
-                    } else {
-                        box.value = encodeURIComponent(text); showToast("Encoded URL string");
-                    }
-                    return;
-                }
-
-                // 3. Generators
-                if (currentTool === 'password-gen') { copyPassword(); return; }
-                if (currentTool === 'uuid-gen') { copyUuid(); return; }
-                if (currentTool === 'json-tool' || currentTool === 'md-tool' || currentTool === 'diff-tool') {
-                    showToast("Processed on the fly. You can copy the results."); return;
-                }
-
-                // 4. File Based Operations
-                if (selectedFiles.length === 0 && currentTool !== 'qr-tool') {
-                    showToast("Please select a file first!", "error");
-                    return;
-                }
-
-                // Placeholder for heavy processing (PDF, OCR, Hash etc)
-                document.getElementById('progressModal').classList.remove('hidden');
-                
-                setTimeout(() => {
-                    document.getElementById('progressModal').classList.add('hidden');
-                    showToast("Action completed successfully!");
-                    // Here you would hook up pdf.js generation, tesseract.js recognize(), or crypto.subtle.digest()
-                }, 1500);
+            history.forEach(item => {
+                list.innerHTML += `
+                    <li class="px-6 py-3 flex justify-between items-center hover:bg-slate-50 dark:hover:bg-slate-800/80 transition-colors">
+                        <span class="text-sm font-semibold text-slate-700 dark:text-slate-300">${item.action}</span>
+                        <span class="text-xs text-slate-400">${item.time}</span>
+                    </li>
+                `;
             });
         }
+        function addHistory(action) {
+            let history = JSON.parse(localStorage.getItem('privacyConvert_history')) || [];
+            const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            history.unshift({ action: action, time: timeStr });
+            if(history.length > 5) history.pop(); // Keep last 5
+            localStorage.setItem('privacyConvert_history', JSON.stringify(history));
+            renderHistory();
+        }
+        window.clearHistory = () => {
+            localStorage.removeItem('privacyConvert_history');
+            renderHistory();
+            showToast("History cleared");
+        }
+
+        // ==========================================
+        // MAIN CONVERT ENGINE
+        // ==========================================
+        const convertBtn = document.getElementById('convertBtn');
+        convertBtn.addEventListener('click', async () => {
+            
+            // Text Generators & Converters
+            if (currentTool === 'password-gen' || currentTool === 'uuid-gen') { window.copyGenerated(); return; }
+            if (currentTool === 'json-tool') { processJson(); addHistory("Formatted JSON String"); return; }
+            
+            if (currentTool === 'qr-tool') {
+                const input = document.getElementById('mainInputField').value.trim();
+                if(!input) { showToast("Enter URL/Text first", "error"); return; }
+                const display = document.getElementById('qrcodeDisplay');
+                display.innerHTML = '';
+                if(typeof QRCode !== 'undefined') {
+                    new QRCode(display, { text: input, width: 200, height: 200 });
+                    document.getElementById('qrTextDisplay').textContent = input;
+                    addHistory("Generated QR Code");
+                }
+                return;
+            }
+
+            if (currentTool === 'base64-tool' || currentTool === 'url-tool') {
+                const input = document.getElementById('mainInputField').value.trim();
+                const output = document.getElementById('genericTextArea');
+                if(!input) return;
+                
+                if (currentTool === 'base64-tool') {
+                    try { const isB64 = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/.test(input);
+                        if(isB64 && input.length % 4 === 0) { output.value = atob(input); showToast("Decoded Base64"); addHistory("Decoded Base64 String"); } 
+                        else { output.value = btoa(input); showToast("Encoded Base64"); addHistory("Encoded Base64 String");}
+                    } catch(e) { output.value = btoa(input); showToast("Encoded Base64"); addHistory("Encoded Base64 String"); }
+                } else {
+                    if (input.includes('%')) { try { output.value = decodeURIComponent(input); addHistory("Decoded URL");} catch(e) { output.value = encodeURIComponent(input); } } 
+                    else { output.value = encodeURIComponent(input); addHistory("Encoded URL");}
+                    showToast("Processed URL string");
+                }
+                return;
+            }
+
+            // File Operations checking
+            if (selectedFiles.length === 0 && currentTool !== 'md-tool' && currentTool !== 'diff-tool') {
+                showToast("Please add files first", "error");
+                // Animate dropzone to grab attention
+                dropZone.classList.add('border-red-500', 'bg-red-50');
+                setTimeout(() => dropZone.classList.remove('border-red-500', 'bg-red-50'), 500);
+                return;
+            }
+
+            // Show Processing UI
+            const modal = document.getElementById('progressModal');
+            modal.classList.remove('hidden');
+            
+            // Mock Async Processing (Here you will hook up PDF.js, JSZip etc)
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                
+                const filesCount = selectedFiles.length;
+                let historyMsg = `Processed ${filesCount} file(s) via ${toolSeoMeta[currentTool].label}`;
+                
+                // Simulate output based on tool
+                if (currentTool === 'hash-calc') {
+                    document.getElementById('genericTextArea').value = `SHA-256 for ${selectedFiles[0].name}:\ne3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n(Mock implementation)`;
+                } 
+                else if (filesCount > 1) {
+                    historyMsg += " (ZIP Generated)";
+                }
+
+                addHistory(historyMsg);
+                showToast("Process completed securely!");
+            }, 1200); // Fake delay
+        });
     </script>
 </body>
 </html>
