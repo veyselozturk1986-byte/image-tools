@@ -3,77 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <title>JPG to PDF Converter - 100% Private & Free</title>
-    <meta name="description" content="Combine JPG, PNG, or WEBP images into a single PDF document in your browser. Fast, private, and 100% free.">
-    
-    <!-- Tailwind CSS -->
+    <title>Convert JPG to PDF Online - 100% Free & Private | PrivacyConvert</title>
+    <meta name="description" content="Combine JPG, PNG, and WebP images into a single PDF document inside your browser. Safe, instant, and private.">
+    <meta name="keywords" content="jpg to pdf, image to pdf, combine photos to pdf, merge images to pdf online, secure jpg to pdf">
+
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- jsPDF Kütüphanesi -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4444769373675024" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "PrivacyConvert - JPG to PDF Converter",
+      "operatingSystem": "All",
+      "applicationCategory": "UtilitiesApplication",
+      "offers": { "@type": "Offer", "price": "0.00", "priceCurrency": "USD" }
+    }
+    </script>
 </head>
-
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans">
-
-    <!-- Header / Navbar -->
     <header class="bg-white border-b border-slate-200 py-4 px-6 shadow-sm">
         <div class="max-w-4xl mx-auto flex justify-between items-center">
-            <a href="../index.html" class="text-xl font-bold text-indigo-600 flex items-center gap-2">
-                ⚡ PrivacyConvert
-            </a>
-            <a href="../index.html" class="text-sm font-medium text-indigo-600 hover:underline">
-                ← Back to All Tools
-            </a>
+            <a href="../index.html" class="text-xl font-bold text-indigo-600 flex items-center gap-2">⚡ PrivacyConvert</a>
+            <nav class="hidden md:flex text-sm text-slate-600 gap-4 font-medium">
+                <a href="../pdf-to-jpg/index.html" class="hover:text-indigo-600">PDF to JPG</a>
+                <a href="../heic-to-jpg/index.html" class="hover:text-indigo-600">HEIC to JPG</a>
+                <a href="../jpg-to-pdf/index.html" class="text-indigo-600 font-semibold">JPG to PDF</a>
+            </nav>
         </div>
     </header>
 
-    <!-- Main Content -->
     <main class="flex-grow max-w-4xl mx-auto w-full px-4 py-8">
-        
         <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-slate-900">JPG to PDF Converter</h1>
-            <p class="text-sm text-slate-500 mt-2">Merge multiple images into a clean PDF document without uploading to any server.</p>
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900">Convert <span class="text-indigo-600">JPG to PDF</span> Online</h1>
+            <p class="text-slate-500 text-sm mt-2">Combine multiple JPG photos into a single PDF document in seconds.</p>
         </div>
 
-        <!-- Conversion Card -->
         <div class="max-w-xl mx-auto p-6 bg-white rounded-2xl shadow-lg border border-slate-100">
-            
-            <!-- Drag & Drop Zone -->
             <div id="dropZone" class="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center cursor-pointer hover:border-indigo-500 hover:bg-slate-50 transition-all">
-                <div class="text-4xl mb-2">🖼️</div>
-                <p class="text-slate-700 font-medium">Click to upload or drag & drop images</p>
-                <p class="text-xs text-slate-400 mt-1">Select JPG, PNG, or WEBP photos (Multiple allowed)</p>
+                <p class="text-slate-600 font-medium">Click to select photos or drag & drop</p>
+                <p class="text-xs text-slate-400 mt-1">Supports JPG, PNG, WEBP</p>
             </div>
+            <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" multiple class="hidden" />
 
-            <!-- CRITICAL: Hidden File Input -->
-            <input type="file" id="fileInput" accept="image/jpeg, image/png, image/webp" multiple class="hidden" />
-
-            <!-- Action Area -->
-            <div id="actionArea" class="mt-6 hidden space-y-4">
-                <div class="p-3 bg-slate-100 rounded-lg text-sm font-semibold text-slate-700 truncate" id="fileName">
-                    No files selected
+            <div id="actionArea" class="mt-6 hidden space-y-5">
+                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center gap-4">
+                    <div class="w-16 h-16 bg-slate-200 rounded-lg flex items-center justify-center text-2xl flex-shrink-0">🖼️</div>
+                    <div>
+                        <p class="text-sm font-semibold text-slate-800" id="fileName">0 files</p>
+                        <p class="text-xs text-slate-400">Images will be combined into 1 PDF</p>
+                    </div>
                 </div>
 
-                <button id="convertBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl transition-all shadow-md active:scale-95">
-                    Create PDF Document
-                </button>
+                <button id="convertBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3.5 px-4 rounded-xl shadow-md transition-all">Generate PDF Document</button>
             </div>
-
-            <!-- Status Text -->
-            <div id="statusText" class="mt-4 text-center text-sm font-medium text-indigo-600 hidden">
-                Generating PDF document...
-            </div>
+            <div id="statusText" class="mt-4 text-center text-sm font-medium text-indigo-600 hidden">Building PDF...</div>
         </div>
-
     </main>
 
-    <!-- Footer -->
     <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500">
         <p>© 2026 PrivacyConvert — 100% Client-Side Processing.</p>
     </footer>
 
-    <!-- JS Logic -->
     <script>
         const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('fileInput');
@@ -81,91 +73,51 @@
         const fileNameDisplay = document.getElementById('fileName');
         const convertBtn = document.getElementById('convertBtn');
         const statusText = document.getElementById('statusText');
-
         let selectedFiles = [];
 
-        // Tıklama Olayı
-        dropZone.addEventListener('click', () => {
-            fileInput.click();
-        });
-
-        fileInput.addEventListener('change', (e) => handleSelection(e.target.files));
-
-        // Drag & Drop
-        dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropZone.classList.add('border-indigo-500', 'bg-slate-50');
-        });
-
-        dropZone.addEventListener('dragleave', () => {
-            dropZone.classList.remove('border-indigo-500', 'bg-slate-50');
-        });
-
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('border-indigo-500', 'bg-slate-50');
-            handleSelection(e.dataTransfer.files);
-        });
-
-        function handleSelection(files) {
-            if (!files.length) return;
-            selectedFiles = Array.from(files);
-            
-            if (selectedFiles.length === 1) {
-                fileNameDisplay.textContent = selectedFiles[0].name;
-            } else {
-                fileNameDisplay.textContent = `${selectedFiles.length} images selected`;
-            }
+        dropZone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => {
+            if (!e.target.files.length) return;
+            selectedFiles = Array.from(e.target.files);
+            fileNameDisplay.textContent = `${selectedFiles.length} image(s) selected`;
             actionArea.classList.remove('hidden');
-        }
+        });
 
-        // PDF Oluşturma
         convertBtn.addEventListener('click', async () => {
-            if (!selectedFiles.length) return;
-
-            showStatus("Generating PDF locally...");
+            statusText.classList.remove('hidden');
+            convertBtn.disabled = true;
 
             try {
                 const { jsPDF } = window.jspdf;
-                const doc = new jsPDF();
+                let doc = null;
 
                 for (let i = 0; i < selectedFiles.length; i++) {
+                    statusText.textContent = `Adding image ${i + 1} of ${selectedFiles.length}...`;
                     const file = selectedFiles[i];
                     const imgUrl = URL.createObjectURL(file);
-                    
                     const img = new Image();
                     img.src = imgUrl;
-                    await new Promise(res => img.onload = res);
+                    await new Promise((res) => img.onload = res);
 
-                    const pdfWidth = doc.internal.pageSize.getWidth();
-                    const pdfHeight = (img.height * pdfWidth) / img.width;
+                    const orientation = img.width > img.height ? 'l' : 'p';
+                    if (i === 0) {
+                        doc = new jsPDF({ orientation, unit: 'px', format: [img.width, img.height] });
+                    } else {
+                        doc.addPage([img.width, img.height], orientation);
+                    }
 
-                    if (i > 0) doc.addPage();
-                    doc.addImage(img, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+                    doc.addImage(img, 'JPEG', 0, 0, img.width, img.height);
                     URL.revokeObjectURL(imgUrl);
                 }
 
-                doc.save('converted_document.pdf');
+                doc.save('privacyconvert_images.pdf');
             } catch (err) {
-                console.error(err);
-                alert("An error occurred while creating the PDF.");
+                alert('PDF Creation failed: ' + err.message);
             } finally {
-                hideStatus();
+                statusText.classList.add('hidden');
+                convertBtn.disabled = false;
             }
         });
-
-        function showStatus(text) {
-            statusText.textContent = text;
-            statusText.classList.remove('hidden');
-            convertBtn.disabled = true;
-            convertBtn.classList.add('opacity-50', 'cursor-not-allowed');
-        }
-
-        function hideStatus() {
-            statusText.classList.add('hidden');
-            convertBtn.disabled = false;
-            convertBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-        }
     </script>
 </body>
 </html>
