@@ -4,25 +4,64 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Privacy Policy - PrivacyConvert</title>
-    <style>
-        body { font-family: sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; line-height: 1.6; color: #333; }
-        a { color: #0066cc; text-decoration: none; }
-        a:hover { text-decoration: underline; }
-    </style>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>Privacy Policy for PrivacyConvert</h1>
-    <p>At <strong>PrivacyConvert</strong>, accessible from privacyconvert.vercel.app, one of our main priorities is the privacy of our visitors.</p>
-    
-    <h2>Information We Do Not Collect</h2>
-    <p>We do not collect, store, or transmit any images or personal data you process through our website. All image processing (conversion and compression) is performed client-side within your browser using modern Web APIs.</p>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans">
 
-    <h2>Third-Party Advertising & Cookies</h2>
-    <p>We may use third-party advertising partners, such as Google AdSense, to serve ads when you visit our website. These companies may use cookies or device identifiers to serve ads based on your prior visits to our website or other websites on the Internet.</p>
+    <!-- Header / Navbar -->
+    <header class="bg-white border-b border-slate-200 py-4 px-6 shadow-sm">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="text-xl font-bold text-indigo-600 flex items-center gap-2">
+                ⚡ PrivacyConvert
+            </a>
+            <a href="index.html" class="text-sm font-medium text-indigo-600 hover:underline flex items-center gap-1">
+                ← Back to PrivacyConvert
+            </a>
+        </div>
+    </header>
 
-    <h2>Contact Us</h2>
-    <p>If you have any questions or suggestions about our Privacy Policy, feel free to contact us.</p>
+    <!-- Ana İçerik -->
+    <main class="flex-grow max-w-3xl mx-auto w-full px-6 py-12">
+        <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+            <h1 class="text-3xl font-bold text-slate-900">Privacy Policy for PrivacyConvert</h1>
+            <p class="text-xs text-slate-400">At PrivacyConvert, accessible from privacyconvert.vercel.app, one of our main priorities is the privacy of our visitors.</p>
 
-    <p><a href="/">&larr; Back to PrivacyConvert</a></p>
+            <hr class="border-slate-100">
+
+            <section class="space-y-2">
+                <h2 class="text-xl font-bold text-slate-800">Information We Do Not Collect</h2>
+                <p class="text-slate-600 leading-relaxed text-sm">
+                    We do not collect, store, or transmit any images or personal data you process through our website. All image processing (conversion and compression) is performed client-side within your browser using modern Web APIs.
+                </p>
+            </section>
+
+            <section class="space-y-2">
+                <h2 class="text-xl font-bold text-slate-800">Third-Party Advertising & Cookies</h2>
+                <p class="text-slate-600 leading-relaxed text-sm">
+                    We may use third-party advertising partners, such as Google AdSense, to serve ads when you visit our website. These companies may use cookies or device identifiers to serve ads based on your prior visits to our website or other websites on the Internet.
+                </p>
+            </section>
+
+            <section class="space-y-2">
+                <h2 class="text-xl font-bold text-slate-800">Contact Us</h2>
+                <p class="text-slate-600 leading-relaxed text-sm">
+                    If you have any questions or suggestions about our Privacy Policy, feel free to contact us.
+                </p>
+            </section>
+
+            <div class="pt-4 border-t border-slate-100">
+                <a href="index.html" class="inline-flex items-center text-sm font-semibold text-indigo-600 hover:text-indigo-800 transition">
+                    ← Back to PrivacyConvert
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500">
+        <p>© 2026 PrivacyConvert — All Rights Reserved.</p>
+    </footer>
+
 </body>
 </html>
