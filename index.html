@@ -60,7 +60,7 @@
         <div class="bg-white dark:bg-slate-800 w-full max-w-lg rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col">
             <div class="p-4 border-b border-slate-100 dark:border-slate-700 flex items-center gap-3">
                 <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                <input type="text" id="cmdInput" placeholder="Type a tool name (e.g. PDF, JSON, Password)..." class="w-full bg-transparent text-sm focus:outline-none dark:text-white">
+                <input type="text" id="cmdInput" placeholder="Type a tool name..." class="w-full bg-transparent text-sm focus:outline-none dark:text-white">
                 <span class="text-[10px] bg-slate-100 dark:bg-slate-700 text-slate-500 px-2 py-1 rounded font-mono">ESC</span>
             </div>
             <div id="cmdResultsList" class="max-h-72 overflow-y-auto p-2 space-y-1"></div>
@@ -70,13 +70,12 @@
     <!-- Keyboard Shortcuts Help Modal -->
     <div id="shortcutsModal" class="hidden fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 z-50 flex items-center justify-center backdrop-blur-sm">
         <div class="bg-white dark:bg-slate-800 w-full max-w-md rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-700 relative">
-            <button onclick="toggleShortcutsModal(false)" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">✕</button>
+            <button onclick="toggleShortcutsModal(false)" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600">✕</button>
             <h3 class="text-lg font-bold mb-4 text-slate-800 dark:text-white">Keyboard Shortcuts</h3>
             <ul class="space-y-3 text-sm text-slate-600 dark:text-slate-300">
-                <li class="flex justify-between items-center bg-slate-50 dark:bg-slate-900 p-2.5 rounded-xl"><span class="font-medium">Open Command Palette</span><kbd class="bg-slate-200 dark:bg-slate-700 px-2 py-1 rounded font-mono text-xs">Ctrl + K</kbd></li>
-                <li class="flex justify-between items-center bg-slate-50 dark:bg-slate-900 p-2.5 rounded-xl"><span class="font-medium">Reset / Clear Workspace</span><kbd class="bg-slate-200 dark:bg-slate-700 px-2 py-1 rounded font-mono text-xs">Esc</kbd></li>
+                <li class="flex justify-between items-center bg-slate-50 dark:bg-slate-900 p-2.5 rounded-xl"><span class="font-medium">Command Palette</span><kbd class="bg-slate-200 dark:bg-slate-700 px-2 py-1 rounded font-mono text-xs">Ctrl + K</kbd></li>
+                <li class="flex justify-between items-center bg-slate-50 dark:bg-slate-900 p-2.5 rounded-xl"><span class="font-medium">Reset Workspace</span><kbd class="bg-slate-200 dark:bg-slate-700 px-2 py-1 rounded font-mono text-xs">Esc</kbd></li>
                 <li class="flex justify-between items-center bg-slate-50 dark:bg-slate-900 p-2.5 rounded-xl"><span class="font-medium">Convert & Download</span><kbd class="bg-slate-200 dark:bg-slate-700 px-2 py-1 rounded font-mono text-xs">Ctrl + Enter</kbd></li>
-                <li class="flex justify-between items-center bg-slate-50 dark:bg-slate-900 p-2.5 rounded-xl"><span class="font-medium">Show Shortcuts Help</span><kbd class="bg-slate-200 dark:bg-slate-700 px-2 py-1 rounded font-mono text-xs">?</kbd></li>
             </ul>
         </div>
     </div>
@@ -88,7 +87,6 @@
                 ⚡ PrivacyConvert
             </a>
             <div class="flex items-center gap-3">
-                <!-- Language Selector -->
                 <select id="langSelect" class="bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold px-3 py-2 border-0 focus:outline-none cursor-pointer">
                     <option value="en">English</option>
                     <option value="es">Español</option>
@@ -116,7 +114,7 @@
             </p>
         </div>
 
-        <!-- 100% Security & Privacy Explanation Banner (Localized) -->
+        <!-- 100% Security & Privacy Explanation Banner -->
         <div class="max-w-3xl mx-auto mb-10 p-5 bg-emerald-50/80 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/50 rounded-2xl text-slate-800 dark:text-emerald-100 flex flex-col sm:flex-row items-start sm:items-center gap-4 shadow-sm backdrop-blur-sm transition-colors duration-300">
             <div class="bg-emerald-100 dark:bg-emerald-800/50 p-3 rounded-full shrink-0 shadow-inner">
                 <svg class="w-7 h-7 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.966 11.966 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
@@ -140,7 +138,7 @@
             
             <!-- Category: PDF -->
             <div class="space-y-3 tool-category" data-cat="pdf">
-                <h3 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-2 border-b border-slate-200 dark:border-slate-700 pb-2">📄 PDF Tools</h3>
+                <h3 id="catPdf" class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-2 border-b border-slate-200 dark:border-slate-700 pb-2">📄 PDF Tools</h3>
                 <div class="flex flex-col gap-2">
                     <button onclick="switchTool('pdf-to-png')" id="tab-pdf-to-png" class="tool-tab w-full text-left rtl:text-right px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">PDF to PNG</button>
                     <button onclick="switchTool('pdf-to-jpg')" id="tab-pdf-to-jpg" class="tool-tab w-full text-left rtl:text-right px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">PDF to JPG</button>
@@ -152,7 +150,7 @@
 
             <!-- Category: Image -->
             <div class="space-y-3 tool-category" data-cat="image">
-                <h3 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-2 border-b border-slate-200 dark:border-slate-700 pb-2">🖼️ Image Tools</h3>
+                <h3 id="catImage" class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-2 border-b border-slate-200 dark:border-slate-700 pb-2">🖼️ Image Tools</h3>
                 <div class="flex flex-col gap-2">
                     <button onclick="switchTool('compress-image')" id="tab-compress-image" class="tool-tab w-full text-left rtl:text-right px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">Compress Image</button>
                     <button onclick="switchTool('heic-to-jpg')" id="tab-heic-to-jpg" class="tool-tab w-full text-left rtl:text-right px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">HEIC to JPG</button>
@@ -164,7 +162,7 @@
 
             <!-- Category: Dev & Text -->
             <div class="space-y-3 tool-category" data-cat="dev">
-                <h3 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-2 border-b border-slate-200 dark:border-slate-700 pb-2">💻 Text & Dev</h3>
+                <h3 id="catDev" class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-2 border-b border-slate-200 dark:border-slate-700 pb-2">💻 Text & Dev</h3>
                 <div class="flex flex-col gap-2">
                     <button onclick="switchTool('json-tool')" id="tab-json-tool" class="tool-tab w-full text-left rtl:text-right px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">JSON Formatter</button>
                     <button onclick="switchTool('base64-tool')" id="tab-base64-tool" class="tool-tab w-full text-left rtl:text-right px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">Base64 Tool</button>
@@ -176,7 +174,7 @@
 
             <!-- Category: Security & Utils -->
             <div class="space-y-3 tool-category" data-cat="security">
-                <h3 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-2 border-b border-slate-200 dark:border-slate-700 pb-2">🔐 Security & Utils</h3>
+                <h3 id="catSec" class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-2 border-b border-slate-200 dark:border-slate-700 pb-2">🔐 Security & Utils</h3>
                 <div class="flex flex-col gap-2">
                     <button onclick="switchTool('password-gen')" id="tab-password-gen" class="tool-tab w-full text-left rtl:text-right px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">Password Generator</button>
                     <button onclick="switchTool('encrypt-pdf')" id="tab-encrypt-pdf" class="tool-tab w-full text-left rtl:text-right px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">Encrypt PDF</button>
@@ -273,14 +271,14 @@
                 <!-- Advanced Settings Accordion -->
                 <div id="advancedAccordionWrapper" class="hidden w-full border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden bg-white dark:bg-slate-800 shadow-sm">
                     <button id="accordionToggleBtn" class="w-full flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors focus:outline-none">
-                        <div class="flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-300">⚙️ Advanced Settings</div>
+                        <div id="advSettingsTitle" class="flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-300">⚙️ Advanced Settings</div>
                         <svg id="accordionChevron" class="w-5 h-5 text-slate-400 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                     </button>
                     
                     <div id="accordionContent" class="hidden p-5 border-t border-slate-200 dark:border-slate-700 space-y-4">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
                             <div id="qualityContainer">
-                                <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Render Quality:</label>
+                                <label id="renderQualityLabel" class="block text-xs font-bold text-slate-500 uppercase mb-2">Render Quality:</label>
                                 <select id="renderScale" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-sm rounded-xl p-2.5 font-semibold">
                                     <option value="1.5">Standard (150 DPI)</option>
                                     <option value="2.0" selected>High Quality (200 DPI)</option>
@@ -288,7 +286,7 @@
                                 </select>
                             </div>
                             <div id="formatContainer">
-                                <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Output Info:</label>
+                                <label id="outputInfoLabel" class="block text-xs font-bold text-slate-500 uppercase mb-2">Output Info:</label>
                                 <div id="outputFormatBadge" class="p-2.5 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-bold flex items-center justify-center gap-2">🖼️ PNG</div>
                             </div>
                         </div>
@@ -326,11 +324,30 @@
             </div>
         </div>
 
+        <!-- FAQ & Security Architecture Trust Section -->
+        <div class="max-w-3xl mx-auto mt-12 bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 space-y-6 transition-colors duration-300">
+            <h2 id="faqMainTitle" class="text-xl font-extrabold text-slate-900 dark:text-white text-center mb-6">Frequently Asked Questions & Security Architecture</h2>
+            <div class="space-y-4 text-sm text-slate-600 dark:text-slate-300">
+                <div class="border-b border-slate-100 dark:border-slate-700 pb-4">
+                    <h3 id="faq1Title" class="font-bold text-slate-800 dark:text-slate-200 mb-1">How does PrivacyConvert process files without a server?</h3>
+                    <p id="faq1Desc" class="leading-relaxed opacity-90">PrivacyConvert uses advanced client-side browser technologies (such as WebAssembly, PDF.js, and HTML5 Canvas). When you select or drop a file, your browser's own CPU and memory handle the conversion locally.</p>
+                </div>
+                <div class="border-b border-slate-100 dark:border-slate-700 pb-4">
+                    <h3 id="faq2Title" class="font-bold text-slate-800 dark:text-slate-200 mb-1">Do my files ever leave my device?</h3>
+                    <p id="faq2Desc" class="leading-relaxed opacity-90">Never. Because there is no backend server processing your files, your sensitive documents, PDFs, and images never touch the internet or any remote cloud storage. They remain 100% on your local machine.</p>
+                </div>
+                <div>
+                    <h3 id="faq3Title" class="font-bold text-slate-800 dark:text-slate-200 mb-1">Why is this approach safer than traditional online converters?</h3>
+                    <p id="faq3Desc" class="leading-relaxed opacity-90">Traditional online converters require you to upload your sensitive files to their remote servers, posing major data breach and privacy risks. PrivacyConvert eliminates this risk entirely by keeping data handling strictly offline-capable within your secure browser sandbox.</p>
+                </div>
+            </div>
+        </div>
+
         <!-- Local History Section -->
         <div id="historyContainer" class="max-w-3xl mx-auto mt-8 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50">
-                <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300">🕒 Recent Local Activity</h3>
-                <button onclick="clearHistory()" class="text-xs font-semibold text-slate-400 hover:text-red-500">Clear</button>
+                <h3 id="recentActivityTitle" class="text-sm font-bold text-slate-700 dark:text-slate-300">🕒 Recent Local Activity</h3>
+                <button onclick="clearHistory()" id="clearHistoryBtn" class="text-xs font-semibold text-slate-400 hover:text-red-500">Clear</button>
             </div>
             <ul id="historyList" class="divide-y divide-slate-100 dark:divide-slate-700/50"></ul>
         </div>
@@ -340,31 +357,7 @@
     <script>
         try { if (typeof pdfjsLib !== 'undefined') pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; } catch(e) {}
 
-        const toolSeoMeta = {
-            'pdf-to-png': { title: 'PDF to PNG - PrivacyConvert', desc: 'Extract PDF pages into PNG images.', label: 'PDF to PNG' },
-            'pdf-to-jpg': { title: 'PDF to JPG - PrivacyConvert', desc: 'Extract PDF pages into JPG images.', label: 'PDF to JPG' },
-            'merge-pdf': { title: 'Merge PDF - PrivacyConvert', desc: 'Combine multiple PDF documents.', label: 'Merge PDF' },
-            'split-pdf': { title: 'Split PDF - PrivacyConvert', desc: 'Extract specific pages from a PDF.', label: 'Split PDF' },
-            'jpg-to-pdf': { title: 'JPG to PDF - PrivacyConvert', desc: 'Convert images into a single PDF.', label: 'JPG to PDF' },
-            'compress-image': { title: 'Compress Image - PrivacyConvert', desc: 'Shrink image file sizes.', label: 'Compress Image' },
-            'heic-to-jpg': { title: 'HEIC to JPG - PrivacyConvert', desc: 'Convert Apple HEIC photos to JPG.', label: 'HEIC to JPG' },
-            'webp-converter': { title: 'WebP Converter - PrivacyConvert', desc: 'Convert images to WebP/AVIF.', label: 'WebP Converter' },
-            'extract-pdf-img': { title: 'Extract PDF Images - PrivacyConvert', desc: 'Extract embedded images from PDF.', label: 'Extract PDF Images' },
-            'redact-tool': { title: 'Redact Image - PrivacyConvert', desc: 'Blackout sensitive info securely.', label: 'Redact Image' },
-            'json-tool': { title: 'JSON Formatter - PrivacyConvert', desc: 'Format and validate JSON.', label: 'JSON Formatter' },
-            'base64-tool': { title: 'Base64 Tool - PrivacyConvert', desc: 'Encode or decode Base64 strings.', label: 'Base64 Tool' },
-            'url-tool': { title: 'URL Tool - PrivacyConvert', desc: 'Encode or decode URLs.', label: 'URL Tool' },
-            'diff-tool': { title: 'Text Diff - PrivacyConvert', desc: 'Compare two text blocks.', label: 'Text Diff' },
-            'md-tool': { title: 'Markdown Preview - PrivacyConvert', desc: 'Preview Markdown to HTML.', label: 'Markdown Preview' },
-            'password-gen': { title: 'Password Generator - PrivacyConvert', desc: 'Generate secure passwords.', label: 'Password Generator' },
-            'encrypt-pdf': { title: 'Encrypt PDF - PrivacyConvert', desc: 'Add password protection to PDF.', label: 'Encrypt PDF' },
-            'hash-calc': { title: 'File Hash - PrivacyConvert', desc: 'Calculate SHA-256 checksum hashes.', label: 'File Hash' },
-            'uuid-gen': { title: 'UUID Generator - PrivacyConvert', desc: 'Generate unique UUIDs.', label: 'UUID Generator' },
-            'qr-tool': { title: 'QR Code - PrivacyConvert', desc: 'Generate QR codes.', label: 'QR Code Generator' },
-            'ocr-reader': { title: 'OCR Reader - PrivacyConvert', desc: 'Extract text from images using AI.', label: 'OCR Text Reader' }
-        };
-
-        // Translations Dictionary (EN, ES, AR with localized security banner)
+        // Complete Localized Translations Dictionary (EN, ES, AR) including FAQ & Trust info
         const translations = {
             en: {
                 secTitle: "100% Local & Secure Processing Guarantee",
@@ -372,7 +365,46 @@
                 dropText: "Click to browse or drag files here",
                 dropSubText: "Support for single or batch processing (Drag to reorder list items below!)",
                 convertBtn: "Convert & Download",
-                reset: "Reset"
+                reset: "Reset",
+                catPdf: "📄 PDF Tools",
+                catImage: "🖼️ Image Tools",
+                catDev: "💻 Text & Dev",
+                catSec: "🔐 Security & Utils",
+                recentActivity: "🕒 Recent Local Activity",
+                clear: "Clear",
+                advancedSettings: "⚙️ Advanced Settings",
+                renderQuality: "Render Quality:",
+                outputInfo: "Output Info:",
+                faqMainTitle: "Frequently Asked Questions & Security Architecture",
+                faq1Title: "How does PrivacyConvert process files without a server?",
+                faq1Desc: "PrivacyConvert uses advanced client-side browser technologies (such as WebAssembly, PDF.js, and HTML5 Canvas). When you select or drop a file, your browser's own CPU and memory handle the conversion locally.",
+                faq2Title: "Do my files ever leave my device?",
+                faq2Desc: "Never. Because there is no backend server processing your files, your sensitive documents, PDFs, and images never touch the internet or any remote cloud storage. They remain 100% on your local machine.",
+                faq3Title: "Why is this approach safer than traditional online converters?",
+                faq3Desc: "Traditional online converters require you to upload your sensitive files to their remote servers, posing major data breach and privacy risks. PrivacyConvert eliminates this risk entirely by keeping data handling strictly offline-capable within your secure browser sandbox.",
+                tools: {
+                    'pdf-to-png': { label: 'PDF to PNG', desc: 'Extract PDF pages into PNG images directly in your browser. Fast, free, and completely private.' },
+                    'pdf-to-jpg': { label: 'PDF to JPG', desc: 'Extract PDF pages into JPG images directly in your browser. Fast, free, and completely private.' },
+                    'merge-pdf': { label: 'Merge PDF', desc: 'Combine multiple PDF documents securely in your browser without uploading.' },
+                    'split-pdf': { label: 'Split PDF', desc: 'Extract specific pages from a PDF file locally.' },
+                    'jpg-to-pdf': { label: 'JPG to PDF', desc: 'Convert images into a single PDF document securely.' },
+                    'compress-image': { label: 'Compress Image', desc: 'Shrink image file sizes while maintaining quality.' },
+                    'heic-to-jpg': { label: 'HEIC to JPG', desc: 'Convert Apple HEIC photos to standard JPG format.' },
+                    'webp-converter': { label: 'WebP Converter', desc: 'Convert images to modern WebP or AVIF formats.' },
+                    'extract-pdf-img': { label: 'Extract PDF Images', desc: 'Extract embedded images from PDF documents.' },
+                    'redact-tool': { label: 'Redact Image', desc: 'Blackout sensitive information securely in your images.' },
+                    'json-tool': { label: 'JSON Formatter', desc: 'Format, validate, and beautify raw JSON data.' },
+                    'base64-tool': { label: 'Base64 Tool', desc: 'Encode or decode Base64 text strings easily.' },
+                    'url-tool': { label: 'URL Tool', desc: 'Encode or decode URL strings securely.' },
+                    'diff-tool': { label: 'Text Diff', desc: 'Compare two text blocks line by line.' },
+                    'md-tool': { label: 'Markdown Preview', desc: 'Preview Markdown content rendered as HTML.' },
+                    'password-gen': { label: 'Password Generator', desc: 'Generate secure, randomized passwords.' },
+                    'encrypt-pdf': { label: 'Encrypt PDF', desc: 'Add password protection to your PDF files.' },
+                    'hash-calc': { label: 'File Hash', desc: 'Calculate SHA-256 and MD5 checksum hashes.' },
+                    'uuid-gen': { label: 'UUID Generator', desc: 'Generate unique identifiers (UUID v4).' },
+                    'qr-tool': { label: 'QR Code Generator', desc: 'Generate high-resolution QR codes locally.' },
+                    'ocr-reader': { label: 'OCR Text Reader', desc: 'Extract text from images using local AI (Tesseract).' }
+                }
             },
             es: {
                 secTitle: "Garantía de procesamiento 100% local y seguro",
@@ -380,7 +412,46 @@
                 dropText: "Haga clic para buscar o arrastre archivos aquí",
                 dropSubText: "Soporte para procesamiento individual o por lotes",
                 convertBtn: "Convertir y Descargar",
-                reset: "Reiniciar"
+                reset: "Reiniciar",
+                catPdf: "📄 Herramientas PDF",
+                catImage: "🖼️ Herramientas de Imagen",
+                catDev: "💻 Texto y Desarrollo",
+                catSec: "🔐 Seguridad y Utilidades",
+                recentActivity: "🕒 Actividad local reciente",
+                clear: "Limpiar",
+                advancedSettings: "⚙️ Configuración avanzada",
+                renderQuality: "Calidad de renderizado:",
+                outputInfo: "Información de salida:",
+                faqMainTitle: "Preguntas Frecuentes y Arquitectura de Seguridad",
+                faq1Title: "¿Cómo procesa PrivacyConvert los archivos sin un servidor?",
+                faq1Desc: "PrivacyConvert utiliza tecnologías avanzadas de navegador del lado del cliente (como WebAssembly, PDF.js y HTML5 Canvas). Cuando selecciona o arrastra un archivo, la CPU y la memoria de su propio navegador manejan la conversión localmente.",
+                faq2Title: "¿Mis archivos abandonan mi dispositivo alguna vez?",
+                faq2Desc: "Nunca. Debido a que no hay un servidor backend que procese sus archivos, sus documentos sensibles, PDF e imágenes nunca tocan internet ni ningún almacenamiento en la nube remoto. Permanecen 100% en su máquina local.",
+                faq3Title: "¿Por qué este enfoque es más seguro que los conversores en línea tradicionales?",
+                faq3Desc: "Los conversores tradicionales requieren que suba sus archivos a sus servidores remotos, lo que plantea riesgos de violación de datos. PrivacyConvert elimina este riesgo por completo manteniendo el manejo de datos estrictamente fuera de línea dentro del espacio seguro de su navegador.",
+                tools: {
+                    'pdf-to-png': { label: 'PDF a PNG', desc: 'Extraiga páginas de PDF en imágenes PNG directamente en su navegador. Rápido, gratis y privado.' },
+                    'pdf-to-jpg': { label: 'PDF a JPG', desc: 'Extraiga páginas de PDF en imágenes JPG directamente en su navegador. Rápido, gratis y privado.' },
+                    'merge-pdf': { label: 'Unir PDF', desc: 'Combine múltiples documentos PDF de forma segura en su navegador.' },
+                    'split-pdf': { label: 'Dividir PDF', desc: 'Extraiga páginas específicas de un archivo PDF localmente.' },
+                    'jpg-to-pdf': { label: 'JPG a PDF', desc: 'Convierta imágenes en un solo documento PDF de forma segura.' },
+                    'compress-image': { label: 'Comprimir Imagen', desc: 'Reduzca el tamaño de los archivos de imagen manteniendo la calidad.' },
+                    'heic-to-jpg': { label: 'HEIC a JPG', desc: 'Convierta fotos HEIC de Apple a formato JPG estándar.' },
+                    'webp-converter': { label: 'Convertidor WebP', desc: 'Convierta imágenes a formatos modernos WebP o AVIF.' },
+                    'extract-pdf-img': { label: 'Extraer Imágenes PDF', desc: 'Extraiga imágenes incrustadas de documentos PDF.' },
+                    'redact-tool': { label: 'Ocultar Imagen', desc: 'Oculte información confidencial de forma segura en sus imágenes.' },
+                    'json-tool': { label: 'Formateador JSON', desc: 'Formatee, valide y embellezca datos JSON sin procesar.' },
+                    'base64-tool': { label: 'Herramienta Base64', desc: 'Codifique o decodifique cadenas de texto Base64 fácilmente.' },
+                    'url-tool': { label: 'Herramienta URL', desc: 'Codifique o decodifique cadenas de URL de forma segura.' },
+                    'diff-tool': { label: 'Diferencias de Texto', desc: 'Compare dos bloques de texto línea por línea.' },
+                    'md-tool': { label: 'Vista Previa Markdown', desc: 'Vista previa de contenido Markdown renderizado como HTML.' },
+                    'password-gen': { label: 'Generador de Contraseñas', desc: 'Genere contraseñas seguras y aleatorias.' },
+                    'encrypt-pdf': { label: 'Cifrar PDF', desc: 'Agregue protección con contraseña a sus archivos PDF.' },
+                    'hash-calc': { label: 'Hash de Archivo', desc: 'Calcule hashes de suma de comprobación SHA-256.' },
+                    'uuid-gen': { label: 'Generador UUID', desc: 'Genere identificadores únicos (UUID v4).' },
+                    'qr-tool': { label: 'Generador de Códigos QR', desc: 'Genere códigos QR de alta resolución localmente.' },
+                    'ocr-reader': { label: 'Lector de Texto OCR', desc: 'Extraiga texto de imágenes usando IA local (Tesseract).' }
+                }
             },
             ar: {
                 secTitle: "ضمان المعالجة المحلية الآمنة 100%",
@@ -388,13 +459,55 @@
                 dropText: "انقر للتصفح أو اسحب الملفات هنا",
                 dropSubText: "يدعم المعالجة الفردية أو المجمعة",
                 convertBtn: "تحويل وتنزيل",
-                reset: "إعادة ضبط"
+                reset: "إعادة ضبط",
+                catPdf: "📄 أدوات PDF",
+                catImage: "🖼️ أدوات الصور",
+                catDev: "💻 النصوص والمبرمجين",
+                catSec: "🔐 الأمان والأدوات",
+                recentActivity: "🕒 النشاط المحلي الأخير",
+                clear: "مسح",
+                advancedSettings: "⚙️ إعدادات متقدمة",
+                renderQuality: "جودة العرض:",
+                outputInfo: "معلومات الإخراج:",
+                faqMainTitle: "الأسئلة الشائعة وهندسة الأمان",
+                faq1Title: "كيف تقوم منصة PrivacyConvert بمعالجة الملفات بدون خادم؟",
+                faq1Desc: "تستخدم PrivacyConvert تقنيات المتصفح المتقدمة من جانب العميل (مثل WebAssembly و PDF.js و HTML5 Canvas). عندما تقوم بتحديد ملف أو سحبه، تتولى وحدة المعالجة المركزية وذاكرة متصفحك عملية التحويل محلياً بالكامل.",
+                faq2Title: "هل تغادر ملفاتي جهازي في أي وقت؟",
+                faq2Desc: "أبداً. نظراً لعدم وجود خادم خلفي (Backend Server) يعالج ملفاتك، فإن مستنداتك الحساسة وملفات PDF والصور لا تلمس الإنترنت أبداً ولا يتم تخزينها في أي سحابة خارجية. تظل 100% على جهازك المحلي.",
+                faq3Title: "لماذا يُعد هذا النهج أكثر أماناً من المحولات التقليدية عبر الإنترنت؟",
+                faq3Desc: "تتطلب المحولات التقليدية رفع ملفاتك الحساسة إلى خوادمهم البعيدة، مما يمثل مخاطر كبيرة على الخصوصية واختراق البيانات. تقضي PrivacyConvert على هذا الخطر تماماً من خلال الحفاظ على التعامل مع البيانات في وضع عدم الاتصال داخل نطاق متصفحك الآمن.",
+                tools: {
+                    'pdf-to-png': { label: 'PDF إلى PNG', desc: 'استخراج صفحات PDF إلى صور PNG مباشرة في متصفحك. سريع، مجاني، وآمن تماماً.' },
+                    'pdf-to-jpg': { label: 'PDF إلى JPG', desc: 'استخراج صفحات PDF إلى صور JPG مباشرة في متصفحك. سريع، مجاني، وآمن تماماً.' },
+                    'merge-pdf': { label: 'دمج PDF', desc: 'دمج مستندات PDF متعددة بأمان في متصفحك دون رفعها لأي خادم.' },
+                    'split-pdf': { label: 'تقسيم PDF', desc: 'استخراج صفحات محددة من ملف PDF محلياً.' },
+                    'jpg-to-pdf': { label: 'JPG إلى PDF', desc: 'تحويل الصور إلى مستند PDF واحد بأمان.' },
+                    'compress-image': { label: 'ضغط الصور', desc: 'تقليل حجم ملفات الصور مع الحفاظ على الجودة.' },
+                    'heic-to-jpg': { label: 'HEIC إلى JPG', desc: 'تحويل صور Apple HEIC إلى تنسيق JPG القياسي.' },
+                    'webp-converter': { label: 'محول WebP', desc: 'تحويل الصور إلى تنسيقات WebP أو AVIF الحديثة.' },
+                    'extract-pdf-img': { label: 'استخراج صور PDF', desc: 'استخراج الصور المضمنة من مستندات PDF.' },
+                    'redact-tool': { label: 'تعتيم الصور', desc: 'إخفاء المعلومات الحساسة بأمان في صورك.' },
+                    'json-tool': { label: 'منسق JSON', desc: 'تنسيق والتحقق من صحة بيانات JSON الخام.' },
+                    'base64-tool': { label: 'أداة Base64', desc: 'تشفير أو فك تشفير سلاسل نصوص Base64 بسهولة.' },
+                    'url-tool': { label: 'أداة URL', desc: 'تشفير أو فك تشفير روابط URL بأمان.' },
+                    'diff-tool': { label: 'مقارنة النصوص', desc: 'مقارنة كتلتين نصيتين سطراً بسطر.' },
+                    'md-tool': { label: 'معاينة Markdown', desc: 'معاينة محتوى Markdown كملف HTML.' },
+                    'password-gen': { label: 'مولد كلمات المرور', desc: 'إنشاء كلمات مرور آمنة وعشوائية.' },
+                    'encrypt-pdf': { label: 'تشفير PDF', desc: 'إضافة حماية بكلمة مرور لملفات PDF الخاصة بك.' },
+                    'hash-calc': { label: 'تجزئة الملفات', desc: 'حساب قيم SHA-256 للتحقق من سلامة الملفات.' },
+                    'uuid-gen': { label: 'مولد UUID', desc: 'إنشاء معرفات فريدة (UUID v4).' },
+                    'qr-tool': { label: 'مولد رموز QR', desc: 'إنشاء رموز استجابة سريعة QR عالية الدقة محلياً.' },
+                    'ocr-reader': { label: 'قراءة النصوص OCR', desc: 'استخراج النص من الصور باستخدام الذكاء الاصطناعي المحلي (Tesseract).' }
+                }
             }
         };
 
         let currentLang = localStorage.getItem('privacyConvert_lang') || 'en';
         const langSelect = document.getElementById('langSelect');
         langSelect.value = currentLang;
+        let currentTool = 'pdf-to-png';
+        let selectedFiles = [];
+        let sortableInstance = null;
 
         function applyLanguage(lang) {
             currentLang = lang;
@@ -408,10 +521,59 @@
             document.getElementById('dropSubText').textContent = t.dropSubText;
             document.getElementById('convertBtnText').textContent = t.convertBtn;
             document.getElementById('clearBtn').textContent = t.reset;
-        }
-        applyLanguage(currentLang);
+            
+            document.getElementById('catPdf').textContent = t.catPdf;
+            document.getElementById('catImage').textContent = t.catImage;
+            document.getElementById('catDev').textContent = t.catDev;
+            document.getElementById('catSec').textContent = t.catSec;
+            document.getElementById('recentActivityTitle').textContent = t.recentActivity;
+            document.getElementById('clearHistoryBtn').textContent = t.clear;
+            document.getElementById('advSettingsTitle').textContent = t.advancedSettings;
+            document.getElementById('renderQualityLabel').textContent = t.renderQuality;
+            document.getElementById('outputInfoLabel').textContent = t.outputInfo;
 
+            // FAQ Texts
+            document.getElementById('faqMainTitle').textContent = t.faqMainTitle;
+            document.getElementById('faq1Title').textContent = t.faq1Title;
+            document.getElementById('faq1Desc').textContent = t.faq1Desc;
+            document.getElementById('faq2Title').textContent = t.faq2Title;
+            document.getElementById('faq2Desc').textContent = t.faq2Desc;
+            document.getElementById('faq3Title').textContent = t.faq3Title;
+            document.getElementById('faq3Desc').textContent = t.faq3Desc;
+
+            // Update all tool tab buttons labels
+            Object.keys(t.tools).forEach(key => {
+                const btn = document.getElementById(`tab-${key}`);
+                if (btn) btn.textContent = t.tools[key].label;
+            });
+
+            updateUIMeta(currentTool);
+        }
+
+        applyLanguage(currentLang);
         langSelect.addEventListener('change', (e) => applyLanguage(e.target.value));
+
+        function updateUIMeta(tool) {
+            const t = translations[currentLang] || translations['en'];
+            const meta = t.tools[tool];
+            if(!meta) return;
+            
+            document.title = `${meta.label} - PrivacyConvert`;
+            document.getElementById('pageMetaDesc').setAttribute('content', meta.desc);
+            
+            const prefix = document.getElementById('mainTitlePrefix');
+            const accent = document.getElementById('mainTitleAccent');
+            
+            const parts = meta.label.split(' ');
+            if (parts.length > 1) {
+                accent.textContent = parts.pop();
+                prefix.textContent = parts.join(' ');
+            } else {
+                prefix.textContent = "";
+                accent.textContent = meta.label;
+            }
+            document.getElementById('mainDesc').textContent = meta.desc;
+        }
 
         // Helper Download
         function downloadBlob(blob, filename) {
@@ -432,7 +594,6 @@
         });
         themeToggle.textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
 
-        // Search & Filter Tools
         const searchInput = document.getElementById('toolSearchInput');
         searchInput.addEventListener('input', (e) => {
             const query = e.target.value.toLowerCase().trim();
@@ -467,9 +628,6 @@
             if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
                 document.getElementById('convertBtn').click();
             }
-            if (e.key === '?' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
-                toggleShortcutsModal(true);
-            }
         });
 
         cmdInput.addEventListener('input', (e) => renderCmdList(e.target.value.toLowerCase()));
@@ -477,8 +635,9 @@
 
         function renderCmdList(query) {
             cmdResultsList.innerHTML = '';
-            Object.keys(toolSeoMeta).forEach(key => {
-                const item = toolSeoMeta[key];
+            const t = translations[currentLang] || translations['en'];
+            Object.keys(t.tools).forEach(key => {
+                const item = t.tools[key];
                 if(item.label.toLowerCase().includes(query) || item.desc.toLowerCase().includes(query)) {
                     const div = document.createElement('div');
                     div.className = "p-3 hover:bg-indigo-50 dark:hover:bg-slate-700/50 rounded-xl cursor-pointer flex justify-between items-center transition-colors";
@@ -506,10 +665,6 @@
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
         }
-
-        let currentTool = 'pdf-to-png';
-        let selectedFiles = [];
-        let sortableInstance = null;
 
         const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('fileInput');
@@ -543,28 +698,9 @@
         }
         clearBtn.addEventListener('click', resetApp);
 
-        function updateUIMeta(tool) {
-            const meta = toolSeoMeta[tool];
-            if(!meta) return;
-            document.title = meta.title;
-            document.getElementById('pageMetaDesc').setAttribute('content', meta.desc);
-            
-            const prefix = document.getElementById('mainTitlePrefix');
-            const accent = document.getElementById('mainTitleAccent');
-            
-            const parts = meta.label.split(' ');
-            if (parts.length > 1) {
-                accent.textContent = parts.pop();
-                prefix.textContent = parts.join(' ');
-            } else {
-                prefix.textContent = "";
-                accent.textContent = meta.label;
-            }
-            document.getElementById('mainDesc').textContent = meta.desc;
-        }
-
         function switchTool(tool, saveState = true) {
-            if (!toolSeoMeta[tool]) tool = 'pdf-to-png';
+            const t = translations[currentLang] || translations['en'];
+            if (!t.tools[tool]) tool = 'pdf-to-png';
             currentTool = tool;
             resetApp();
             updateUIMeta(tool);
@@ -629,8 +765,6 @@
                     requiresFile = false; showAdvanced = false;
                     document.getElementById('textInputGroup').classList.remove('hidden');
                     document.getElementById('genericTextBox').classList.remove('hidden');
-                    document.getElementById('mainInputField').placeholder = tool === 'json-tool' ? "Paste raw JSON here..." : "Type Markdown here (# Hello)";
-                    document.getElementById('genericTextLabel').textContent = tool === 'json-tool' ? "Formatted JSON:" : "HTML Output:";
                     break;
                 case 'diff-tool':
                     requiresFile = false; showAdvanced = false;
@@ -641,7 +775,6 @@
                     requiresFile = false; showAdvanced = false;
                     document.getElementById('textInputGroup').classList.remove('hidden');
                     document.getElementById('genericTextBox').classList.remove('hidden');
-                    document.getElementById('mainInputField').placeholder = "Paste string here to encode/decode...";
                     break;
                 case 'password-gen':
                     requiresFile = false; showAdvanced = false;
@@ -660,7 +793,6 @@
                     requiresFile = false; showAdvanced = false;
                     document.getElementById('textInputGroup').classList.remove('hidden');
                     document.getElementById('qrResultBox').classList.remove('hidden');
-                    document.getElementById('mainInputField').placeholder = "Enter URL or text for QR Code...";
                     break;
             }
 
@@ -676,8 +808,8 @@
             renderHistory();
             const hash = window.location.hash.replace('#', '');
             const savedTool = localStorage.getItem('privacyConvert_lastTool');
-            if (hash && toolSeoMeta[hash]) switchTool(hash, false);
-            else if (savedTool && toolSeoMeta[savedTool]) switchTool(savedTool, false);
+            if (hash && translations[currentLang].tools[hash]) switchTool(hash, false);
+            else if (savedTool && translations[currentLang].tools[savedTool]) switchTool(savedTool, false);
             else switchTool('pdf-to-png', false);
         });
 
@@ -711,7 +843,7 @@
             
             if(currentTool === 'hash-calc' || currentTool === 'ocr-reader') {
                 document.getElementById('genericTextBox').classList.remove('hidden');
-                document.getElementById('genericTextArea').value = `Ready to process: ${selectedFiles[0].name}\nClick Convert & Download to start...`;
+                document.getElementById('genericTextArea').value = `Ready to process: ${selectedFiles[0].name}`;
             }
         }
 
@@ -742,7 +874,6 @@
                 fileListContainer.appendChild(card);
             });
 
-            // Initialize SortableJS for reordering files
             if (typeof Sortable !== 'undefined') {
                 if (sortableInstance) sortableInstance.destroy();
                 sortableInstance = Sortable.create(fileListContainer, {
