@@ -25,4 +25,16 @@
     <lastmod>2026-07-31</lastmod>
     <priority>0.3</priority>
   </url>
+  <url>
+    <loc>https://image-tools-blush.vercel.app/png-to-jpg/index.html</loc>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://image-tools-blush.vercel.app/webp-to-jpg/index.html</loc>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://image-tools-blush.vercel.app/compress-image/index.html</loc>
+    <priority>0.80</priority>
+  </url>
 </urlset>
