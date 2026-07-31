@@ -474,7 +474,7 @@
         }
         updateLiveCounter(0);
 
-        // Comprehensive Translation Maps (Fully Synchronized)
+        // Comprehensive Translation Maps
         const translations = {
             tr: {
                 overlayTitle: "Dosyalarınızı yerel olarak işlemek için buraya bırakın!",
@@ -1065,10 +1065,12 @@
             });
 
             const mainInput = document.getElementById('mainInputField');
-            if (currentTool === 'json-tool') mainInput.placeholder = t.jsonPlaceholder;
-            else if (currentTool === 'md-tool') mainInput.placeholder = t.mdPlaceholder;
-            else if (currentTool === 'base64-tool' || currentTool === 'url-tool') mainInput.placeholder = t.urlPlaceholder;
-            else if (currentTool === 'qr-tool') mainInput.placeholder = t.qrPlaceholder;
+            if (mainInput) {
+                if (currentTool === 'json-tool') mainInput.placeholder = t.jsonPlaceholder;
+                else if (currentTool === 'md-tool') mainInput.placeholder = t.mdPlaceholder;
+                else if (currentTool === 'base64-tool' || currentTool === 'url-tool') mainInput.placeholder = t.urlPlaceholder;
+                else if (currentTool === 'qr-tool') mainInput.placeholder = t.qrPlaceholder;
+            }
 
             const passLenLabel = document.getElementById('passLengthLabel');
             if (passLenLabel) {
@@ -1097,7 +1099,8 @@
             if(!meta) return;
             
             document.title = `${meta.label} - PrivacyConvert`;
-            document.getElementById('pageMetaDesc').setAttribute('content', meta.desc);
+            const metaDesc = document.getElementById('pageMetaDesc');
+            if(metaDesc) metaDesc.setAttribute('content', meta.desc);
             
             const prefix = document.getElementById('mainTitlePrefix');
             const accent = document.getElementById('mainTitleAccent');
@@ -1110,7 +1113,8 @@
                 prefix.textContent = "";
                 accent.textContent = meta.label;
             }
-            document.getElementById('mainDesc').textContent = meta.desc;
+            const mainDesc = document.getElementById('mainDesc');
+            if(mainDesc) mainDesc.textContent = meta.desc;
         }
 
         function downloadBlob(blob, filename) {
