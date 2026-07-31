@@ -474,7 +474,7 @@
         }
         updateLiveCounter(0);
 
-        // Comprehensive Translation Maps
+        // Comprehensive Translation Maps (Fully Synchronized)
         const translations = {
             tr: {
                 overlayTitle: "Dosyalarınızı yerel olarak işlemek için buraya bırakın!",
@@ -531,6 +531,25 @@
                 faq4Desc: "Sadece sözümüze güvenmek zorunda değilsiniz. Bunu hemen inceleyebilir ve kanıtlayabilirsiniz:",
                 verifyStep1: "<strong>Ağ Denetçisi Testi:</strong> Tarayıcı Geliştirici Araçlarını açmak için <kbd class='bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded font-mono text-xs'>F12</kbd> tuşuna basın, <strong>Network (Ağ)</strong> sekmesine gidin ve herhangi bir dosyayı dönüştürün. Sıfır giden dosya yükleme isteği göreceksiniz.",
                 verifyStep2: "<strong>Çevrimdışı Mod Testi:</strong> Bilgisayarınızın Wi-Fi veya internet bağlantısını tamamen kesin. PrivacyConvert dosyalarınızı kesintisiz olarak dönüştürmeye ve işlemeye devam edecektir.",
+                toasts: {
+                    filesLoaded: "dosya güvenle yüklendi.",
+                    copied: "Panoya kopyalandı!",
+                    jsonFormatted: "JSON Biçimlendirildi!",
+                    mdConverted: "Markdown HTML'e dönüştürüldü!",
+                    enterUrlText: "Önce URL/Metin girin",
+                    qrCreated: "QR Kod Oluşturuldu!",
+                    base64Decoded: "Base64 Çözüldü",
+                    base64Encoded: "Base64 Kodlandı",
+                    urlProcessed: "URL işlendi",
+                    diffDownloaded: "Fark sonucu indirildi!",
+                    pleaseAddFile: "Lütfen önce dosya ekleyin",
+                    exifCleaned: "EXIF meta verileri başarıyla temizlendi!",
+                    pdfEncrypted: "PDF güvenle şifrelendi ve indirildi!",
+                    processCompleted: "İşlem tamamlandı ve dosya indirildi!",
+                    errorOccurred: "Dosya işlenirken hata oluştu: ",
+                    historyCleared: "Geçmiş temizlendi",
+                    noActivity: "Yakın zamanda etkinlik bulunamadı."
+                },
                 tools: {
                     'pdf-to-png': { label: 'PDF - PNG', desc: 'PDF sayfalarını doğrudan tarayıcınızda yüksek çözünürlüklü PNG görsellerine dönüştürün. Hızlı, ücretsiz ve tamamen gizli.' },
                     'pdf-to-jpg': { label: 'PDF - JPG', desc: 'PDF sayfalarını doğrudan tarayıcınızda JPG görüntülerine dönüştürün. Hızlı, ücretsiz ve tamamen gizli.' },
@@ -611,6 +630,25 @@
                 faq4Desc: "You don't just have to take our word for it. You can inspect and prove this right now:",
                 verifyStep1: "<strong>Network Inspector Test:</strong> Press <kbd class='bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded font-mono text-xs'>F12</kbd> to open browser Developer Tools, go to the <strong>Network</strong> tab, and convert any file. You will observe zero outbound file upload requests.",
                 verifyStep2: "<strong>Offline Mode Test:</strong> Completely disconnect your computer from Wi-Fi or internet. PrivacyConvert will continue to convert and process your files without interruption.",
+                toasts: {
+                    filesLoaded: "files loaded safely.",
+                    copied: "Copied to clipboard!",
+                    jsonFormatted: "JSON Formatted!",
+                    mdConverted: "Markdown converted to HTML!",
+                    enterUrlText: "Enter URL/Text first",
+                    qrCreated: "QR Code Created!",
+                    base64Decoded: "Base64 Decoded",
+                    base64Encoded: "Base64 Encoded",
+                    urlProcessed: "URL processed",
+                    diffDownloaded: "Diff result downloaded!",
+                    pleaseAddFile: "Please add a file first",
+                    exifCleaned: "EXIF metadata successfully cleaned!",
+                    pdfEncrypted: "PDF securely encrypted and downloaded!",
+                    processCompleted: "Process completed and file downloaded!",
+                    errorOccurred: "Error processing file: ",
+                    historyCleared: "History cleared",
+                    noActivity: "No recent activity found."
+                },
                 tools: {
                     'pdf-to-png': { label: 'PDF to PNG', desc: 'Extract PDF pages into PNG images directly in your browser. Fast, free, and completely private.' },
                     'pdf-to-jpg': { label: 'PDF to JPG', desc: 'Extract PDF pages into JPG images directly in your browser. Fast, free, and completely private.' },
@@ -691,6 +729,25 @@
                 faq4Desc: "您不必只听信我们的话。您可以立即通过以下两项简单检查来证明：",
                 verifyStep1: "<strong>网络检查器测试：</strong> 按 F12 打开浏览器开发者工具，转到“网络 (Network)”选项卡并转换任何文件。您将观察到零出站文件上传请求。",
                 verifyStep2: "<strong>离线模式测试：</strong> 完全断开计算机的 Wi-Fi 或互联网连接。PrivacyConvert 将继续无中断地转换和处理您的文件。",
+                toasts: {
+                    filesLoaded: "文件已安全加载。",
+                    copied: "已复制到剪贴板！",
+                    jsonFormatted: "JSON 格式化成功！",
+                    mdConverted: "Markdown 已转换为 HTML！",
+                    enterUrlText: "请先输入网址或文本",
+                    qrCreated: "二维码已生成！",
+                    base64Decoded: "Base64 解码成功",
+                    base64Encoded: "Base64 编码成功",
+                    urlProcessed: "URL 处理完成",
+                    diffDownloaded: "对比结果已下载！",
+                    pleaseAddFile: "请先添加文件",
+                    exifCleaned: "EXIF 元数据已成功清除！",
+                    pdfEncrypted: "PDF 已加密并下载！",
+                    processCompleted: "处理完成，文件已下载！",
+                    errorOccurred: "处理文件时出错：",
+                    historyCleared: "历史记录已清除",
+                    noActivity: "近期无活动记录。"
+                },
                 tools: {
                     'pdf-to-png': { label: 'PDF 转 PNG', desc: '直接在浏览器中将 PDF 页面提取为 PNG 图像。快速、免费且完全隐私。' },
                     'pdf-to-jpg': { label: 'PDF 转 JPG', desc: '直接在浏览器中将 PDF 页面提取为 JPG 图像。快速、免费且完全隐私。' },
@@ -771,6 +828,25 @@
                 faq4Desc: "Sie müssen sich nicht nur auf unser Wort verlassen. Sie können es jetzt selbst überprüfen:",
                 verifyStep1: "<strong>Netzwerk-Inspector-Test:</strong> Drücken Sie F12, öffnen Sie die Entwicklertools, gehen Sie zum Reiter Netzwerk und konvertieren Sie eine Datei. Sie werden null ausgehende Datei-Upload-Anfragen sehen.",
                 verifyStep2: "<strong>Offline-Modus-Test:</strong> Trennen Sie Ihren Computer komplett von WLAN oder Internet. PrivacyConvert funktioniert ohne Unterbrechung weiter.",
+                toasts: {
+                    filesLoaded: "Dateien sicher geladen.",
+                    copied: "In die Zwischenablage kopiert!",
+                    jsonFormatted: "JSON formatiert!",
+                    mdConverted: "Markdown in HTML konvertiert!",
+                    enterUrlText: "Bitte zuerst URL/Text eingeben",
+                    qrCreated: "QR-Code erstellt!",
+                    base64Decoded: "Base64 dekodiert",
+                    base64Encoded: "Base64 kodiert",
+                    urlProcessed: "URL verarbeitet",
+                    diffDownloaded: "Vergleichsergebnis heruntergeladen!",
+                    pleaseAddFile: "Bitte zuerst eine Datei hinzufügen",
+                    exifCleaned: "EXIF-Metadaten erfolgreich bereinigt!",
+                    pdfEncrypted: "PDF sicher verschlüsselt und heruntergeladen!",
+                    processCompleted: "Vorgang abgeschlossen und Datei heruntergeladen!",
+                    errorOccurred: "Fehler beim Verarbeiten der Datei: ",
+                    historyCleared: "Verlauf gelöscht",
+                    noActivity: "Keine kürzlichen Aktivitäten."
+                },
                 tools: {
                     'pdf-to-png': { label: 'PDF in PNG', desc: 'PDF-Seiten direkt im Browser in PNG-Bilder extrahieren.' },
                     'pdf-to-jpg': { label: 'PDF in JPG', desc: 'PDF-Seiten direkt im Browser in JPG-Bilder extrahieren.' },
@@ -851,6 +927,25 @@
                 faq4Desc: "Vous n'avez pas à nous croire sur parole. Vous pouvez l'inspecter et le prouver dès maintenant :",
                 verifyStep1: "<strong>Test de l'inspecteur réseau :</strong> Appuyez sur F12 pour ouvrir les outils de développement, allez dans l'onglet Réseau et convertissez n'importe quel fichier. Vous observerez zéro requête de téléchargement sortante.",
                 verifyStep2: "<strong>Test du mode hors ligne :</strong> Déconnectez complètement votre ordinateur du Wi-Fi ou d'Internet. PrivacyConvert continuera à convertir et traiter vos fichiers sans interruption.",
+                toasts: {
+                    filesLoaded: "fichiers chargés en toute sécurité.",
+                    copied: "Copié dans le presse-papiers !",
+                    jsonFormatted: "JSON formaté !",
+                    mdConverted: "Markdown converti en HTML !",
+                    enterUrlText: "Entrez d'abord une URL ou un texte",
+                    qrCreated: "Code QR créé !",
+                    base64Decoded: "Base64 décodé",
+                    base64Encoded: "Base64 encodé",
+                    urlProcessed: "URL traitée",
+                    diffDownloaded: "Résultat de la différence téléchargé !",
+                    pleaseAddFile: "Veuillez d'abord ajouter un fichier",
+                    exifCleaned: "Métadonnées EXIF nettoyées avec succès !",
+                    pdfEncrypted: "PDF chiffré et téléchargé en toute sécurité !",
+                    processCompleted: "Traitement terminé et fichier téléchargé !",
+                    errorOccurred: "Erreur lors du traitement du fichier : ",
+                    historyCleared: "Historique effacé",
+                    noActivity: "Aucune activité récente."
+                },
                 tools: {
                     'pdf-to-png': { label: 'PDF en PNG', desc: 'Extraire des pages PDF en images PNG directement dans votre navigateur.' },
                     'pdf-to-jpg': { label: 'PDF en JPG', desc: 'Extraire des pages PDF en images JPG directement dans votre navigateur.' },
@@ -931,6 +1026,25 @@
                 faq4Desc: "No tiene que confiar ciegamente en nuestra palabra. Puede inspeccionar y comprobarlo ahora mismo:",
                 verifyStep1: "<strong>Prueba de Inspector de Red:</strong> Presione F12 para abrir las Herramientas de Desarrollador, vaya a la pestaña Red y convierta cualquier archivo. Observará cero solicitudes salientes de carga de archivos.",
                 verifyStep2: "<strong>Prueba de Modo Sin Conexión:</strong> Desconecte completamente su computadora del Wi-Fi o internet. PrivacyConvert continuará convirtiendo y procesando sus archivos sin interrupción.",
+                toasts: {
+                    filesLoaded: "archivos cargados de forma segura.",
+                    copied: "¡Copiado al portapapeles!",
+                    jsonFormatted: "¡JSON formateado!",
+                    mdConverted: "¡Markdown convertido a HTML!",
+                    enterUrlText: "Introduce primero URL/Texto",
+                    qrCreated: "¡Código QR creado!",
+                    base64Decoded: "Base64 decodificado",
+                    base64Encoded: "Base64 codificado",
+                    urlProcessed: "URL procesada",
+                    diffDownloaded: "¡Resultado de diferencia descargado!",
+                    pleaseAddFile: "Por favor, añade un archivo primero",
+                    exifCleaned: "¡Metadatos EXIF limpiados con éxito!",
+                    pdfEncrypted: "¡PDF cifrado y descargado de forma segura!",
+                    processCompleted: "¡Proceso completado y archivo descargado!",
+                    errorOccurred: "Error al procesar el archivo: ",
+                    historyCleared: "Historial borrado",
+                    noActivity: "No hay actividad reciente."
+                },
                 tools: {
                     'pdf-to-png': { label: 'PDF a PNG', desc: 'Extraiga páginas de PDF en imágenes PNG directamente en su navegador.' },
                     'pdf-to-jpg': { label: 'PDF a JPG', desc: 'Extraiga páginas de PDF en imágenes JPG directamente en su navegador.' },
@@ -1011,6 +1125,25 @@
                 faq4Desc: "ليس عليك فقط أن تصدق كلامنا. يمكنك فحص وإثبات ذلك بنفسك الآن:",
                 verifyStep1: "<strong>اختبار فاحص الشبكة:</strong> اضغط على F12 لفتح أدوات المطور، وانتقل إلى تبويب Network، وقم بتحويل أي ملف. ستلاحظ تماماً عدم إرسال أي طلبات رفع ملفات خارجية.",
                 verifyStep2: "<strong>اختبار وضع عدم الاتصال:</strong> قم بفصل جهاز الكمبيوتر الخاص بك تماماً عن الواي فاي أو الإنترنت. ستستمر PrivacyConvert في تحويل ومعالجة ملفاتك دون أي انقطاع.",
+                toasts: {
+                    filesLoaded: "تم تحميل الملفات بأمان.",
+                    copied: "تم النسخ إلى الحافظة!",
+                    jsonFormatted: "تم تنسيق JSON!",
+                    mdConverted: "تم تحويل Markdown إلى HTML!",
+                    enterUrlText: "أدخل الرابط أو النص أولاً",
+                    qrCreated: "تم إنشاء رمز الاستجابة السريعة!",
+                    base64Decoded: "تم فك تشفير Base64",
+                    base64Encoded: "تم تشفير Base64",
+                    urlProcessed: "تم معالجة الرابط",
+                    diffDownloaded: "تم تنزيل نتيجة المقارنة!",
+                    pleaseAddFile: "يرجى إضافة ملف أولاً",
+                    exifCleaned: "تم مسح بيانات EXIF بنجاح!",
+                    pdfEncrypted: "تم تشفير ملف PDF وتنزيله بأمان!",
+                    processCompleted: "اكتملت العملية وتم تنزيل الملف!",
+                    errorOccurred: "حدث خطأ أثناء معالجة الملف: ",
+                    historyCleared: "تم مسح السجل",
+                    noActivity: "لا يوجد نشاط حديث."
+                },
                 tools: {
                     'pdf-to-png': { label: 'PDF إلى PNG', desc: 'استخراج صفحات PDF إلى صور PNG مباشرة في متصفحك.' },
                     'pdf-to-jpg': { label: 'PDF إلى JPG', desc: 'استخراج صفحات PDF إلى صور JPG مباشرة في متصفحك.' },
@@ -1078,6 +1211,7 @@
             }
 
             updateLiveCounter(0);
+            renderHistory();
 
             Object.keys(t.tools).forEach(key => {
                 const btn = document.getElementById(`tab-${key}`);
@@ -1234,7 +1368,8 @@
                 const el = document.getElementById(id);
                 if(el) el.classList.add('hidden');
             });
-            document.getElementById('convertBtnText').textContent = translations[currentLang]?.convertBtn || "Dönüştür ve İndir";
+            const t = translations[currentLang] || translations['tr'];
+            document.getElementById('convertBtnText').textContent = t.convertBtn || "Dönüştür ve İndir";
         }
         clearBtn.addEventListener('click', resetApp);
 
@@ -1380,7 +1515,6 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             applyLanguage(currentLang);
-            renderHistory();
             const hash = window.location.hash.replace('#', '');
             const savedTool = localStorage.getItem('privacyConvert_lastTool');
             if (hash && translations[currentLang].tools[hash]) switchTool(hash, false);
@@ -1413,14 +1547,15 @@
             clearBtn.classList.remove('hidden');
             
             renderFileList();
-            showToast(`${files.length} dosya güvenle yüklendi.`);
+            const t = translations[currentLang] || translations['tr'];
+            showToast(`${files.length} ${t.toasts.filesLoaded}`);
             
             let totalBytes = Array.from(files).reduce((acc, f) => acc + f.size, 0);
             updateLiveCounter(totalBytes);
 
             if(currentTool === 'hash-calc' || currentTool === 'ocr-reader') {
                 document.getElementById('genericTextBox').classList.remove('hidden');
-                document.getElementById('genericTextArea').value = `İşleme hazır: ${selectedFiles[0].name}`;
+                document.getElementById('genericTextArea').value = `${selectedFiles[0].name}`;
             }
         }
 
@@ -1486,7 +1621,7 @@
             const output = document.getElementById('genericTextArea');
             if(!input) { output.value = ""; return; }
             try { output.value = JSON.stringify(JSON.parse(input), null, 2); } 
-            catch (err) { output.value = "Geçersiz JSON Sözdizimi:\n" + err.message; }
+            catch (err) { output.value = err.message; }
         }
 
         function processDiff() {
@@ -1527,15 +1662,16 @@
             document.getElementById('generatedDisplay').value = uuid;
         }
 
-        window.copyGenericText = () => { document.getElementById('genericTextArea').select(); document.execCommand('copy'); showToast("Panoya kopyalandı!"); }
-        window.copyGenerated = () => { document.getElementById('generatedDisplay').select(); document.execCommand('copy'); showToast("Panoya kopyalandı!"); }
+        window.copyGenericText = () => { document.getElementById('genericTextArea').select(); document.execCommand('copy'); const t = translations[currentLang] || translations['tr']; showToast(t.toasts.copied); }
+        window.copyGenerated = () => { document.getElementById('generatedDisplay').select(); document.execCommand('copy'); const t = translations[currentLang] || translations['tr']; showToast(t.toasts.copied); }
 
         function renderHistory() {
             const list = document.getElementById('historyList');
             let history = JSON.parse(localStorage.getItem('privacyConvert_history')) || [];
+            const t = translations[currentLang] || translations['tr'];
             list.innerHTML = '';
             if (history.length === 0) {
-                list.innerHTML = `<li class="p-4 text-sm text-slate-500 text-center">Yakın zamanda etkinlik bulunamadı.</li>`;
+                list.innerHTML = `<li class="p-4 text-sm text-slate-500 text-center">${t.toasts.noActivity}</li>`;
                 return;
             }
             history.forEach(item => {
@@ -1558,50 +1694,52 @@
         window.clearHistory = () => {
             localStorage.removeItem('privacyConvert_history');
             renderHistory();
-            showToast("Geçmiş temizlendi");
+            const t = translations[currentLang] || translations['tr'];
+            showToast(t.toasts.historyCleared);
         }
 
         const convertBtn = document.getElementById('convertBtn');
         convertBtn.addEventListener('click', async () => {
+            const t = translations[currentLang] || translations['tr'];
             if (currentTool === 'password-gen' || currentTool === 'uuid-gen') { window.copyGenerated(); return; }
-            if (currentTool === 'json-tool') { processJson(); addHistory("JSON Biçimlendirildi"); showToast("JSON Biçimlendirildi!"); return; }
+            if (currentTool === 'json-tool') { processJson(); addHistory("JSON"); showToast(t.toasts.jsonFormatted); return; }
             if (currentTool === 'md-tool') {
                 const input = document.getElementById('mainInputField').value.trim();
                 const output = document.getElementById('genericTextArea');
                 output.value = typeof marked !== 'undefined' ? marked.parse(input) : input;
                 document.getElementById('genericTextBox').classList.remove('hidden');
-                addHistory("Markdown HTML'e Çevrildi");
-                showToast("Markdown HTML'e dönüştürüldü!");
+                addHistory("Markdown");
+                showToast(t.toasts.mdConverted);
                 return;
             }
             if (currentTool === 'qr-tool') {
                 const input = document.getElementById('mainInputField').value.trim();
-                if(!input) { showToast("Önce URL/Metin girin", "error"); return; }
+                if(!input) { showToast(t.toasts.enterUrlText, "error"); return; }
                 const display = document.getElementById('qrcodeDisplay');
                 display.innerHTML = '';
                 if(typeof QRCode !== 'undefined') {
                     new QRCode(display, { text: input, width: 200, height: 200 });
                     document.getElementById('qrTextDisplay').textContent = input;
-                    addHistory("QR Kod Oluşturuldu");
-                    showToast("QR Kod Oluşturuldu!");
+                    addHistory("QR");
+                    showToast(t.toasts.qrCreated);
                 }
                 return;
             }
             if (currentTool === 'base64-tool' || currentTool === 'url-tool') {
                 const input = document.getElementById('mainInputField').value.trim();
                 const output = document.getElementById('genericTextArea');
-                if(!input) { showToast("Önce metin girin", "error"); return; }
+                if(!input) { showToast(t.toasts.enterUrlText, "error"); return; }
                 
                 if (currentTool === 'base64-tool') {
                     try { 
                         const isB64 = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/.test(input);
-                        if(isB64 && input.length % 4 === 0) { output.value = atob(input); showToast("Base64 Çözüldü"); addHistory("Base64 Çözüldü"); } 
-                        else { output.value = btoa(input); showToast("Base64 Kodlandı"); addHistory("Base64 Kodlandı");}
-                    } catch(e) { output.value = btoa(input); showToast("Base64 Kodlandı"); addHistory("Base64 Kodlandı"); }
+                        if(isB64 && input.length % 4 === 0) { output.value = atob(input); showToast(t.toasts.base64Decoded); addHistory("Base64"); } 
+                        else { output.value = btoa(input); showToast(t.toasts.base64Encoded); addHistory("Base64");}
+                    } catch(e) { output.value = btoa(input); showToast(t.toasts.base64Encoded); addHistory("Base64"); }
                 } else {
-                    if (input.includes('%')) { try { output.value = decodeURIComponent(input); addHistory("URL Çözüldü");} catch(e) { output.value = encodeURIComponent(input); } } 
-                    else { output.value = encodeURIComponent(input); addHistory("URL Kodlandı");}
-                    showToast("URL işlendi");
+                    if (input.includes('%')) { try { output.value = decodeURIComponent(input); addHistory("URL");} catch(e) { output.value = encodeURIComponent(input); } } 
+                    else { output.value = encodeURIComponent(input); addHistory("URL");}
+                    showToast(t.toasts.urlProcessed);
                 }
                 document.getElementById('genericTextBox').classList.remove('hidden');
                 return;
@@ -1609,15 +1747,15 @@
             if (currentTool === 'diff-tool') {
                 processDiff();
                 const diffTxt = document.getElementById('diffOutputContainer').innerText;
-                downloadBlob(new Blob([diffTxt], { type: 'text/plain;charset=utf-8' }), 'metin_farki_sonucu.txt');
-                addHistory("Metin Farkı karşılaştırması dışa aktarıldı");
-                showToast("Fark sonucu indirildi!");
+                downloadBlob(new Blob([diffTxt], { type: 'text/plain;charset=utf-8' }), 'diff_result.txt');
+                addHistory("Diff");
+                showToast(t.toasts.diffDownloaded);
                 return;
             }
 
             const nonFileTools = ['json-tool', 'base64-tool', 'url-tool', 'diff-tool', 'md-tool', 'password-gen', 'uuid-gen', 'qr-tool'];
             if (selectedFiles.length === 0 && !nonFileTools.includes(currentTool)) {
-                showToast("Lütfen önce dosya ekleyin", "error");
+                showToast(t.toasts.pleaseAddFile, "error");
                 dropZone.classList.add('border-red-500', 'bg-red-50');
                 setTimeout(() => dropZone.classList.remove('border-red-500', 'bg-red-50'), 500);
                 return;
@@ -1647,17 +1785,17 @@
                         const blob = await new Promise(resolve => canvas.toBlob(resolve, mime, 0.92));
 
                         if (pdf.numPages === 1) {
-                            downloadBlob(blob, `${file.name.replace(/\.[^/.]+$/, "")}_sayfa1.${ext}`);
+                            downloadBlob(blob, `${file.name.replace(/\.[^/.]+$/, "")}_page1.${ext}`);
                         } else {
-                            zip.file(`sayfa_${i}.${ext}`, blob);
+                            zip.file(`page_${i}.${ext}`, blob);
                         }
                     }
 
                     if (pdf.numPages > 1) {
                         const zipBlob = await zip.generateAsync({ type: "blob" });
-                        downloadBlob(zipBlob, `${file.name.replace(/\.[^/.]+$/, "")}_sayfalar.zip`);
+                        downloadBlob(zipBlob, `${file.name.replace(/\.[^/.]+$/, "")}_pages.zip`);
                     }
-                    addHistory(`PDF (${pdf.numPages} sayfa) ${ext.toUpperCase()}'ye dönüştürüldü`);
+                    addHistory("PDF");
                 }
                 else if (currentTool === 'jpg-to-pdf') {
                     const pdfDoc = await PDFLib.PDFDocument.create();
@@ -1668,8 +1806,8 @@
                         page.drawImage(img, { x: 0, y: 0, width: img.width, height: img.height });
                     }
                     const pdfBytes = await pdfDoc.save();
-                    downloadBlob(new Blob([pdfBytes], { type: 'application/pdf' }), 'donusturulen_gorseller.pdf');
-                    addHistory(`${selectedFiles.length} görsel PDF'e birleştirildi`);
+                    downloadBlob(new Blob([pdfBytes], { type: 'application/pdf' }), 'converted_images.pdf');
+                    addHistory("JPG to PDF");
                 }
                 else if (currentTool === 'merge-pdf') {
                     const mergedPdf = await PDFLib.PDFDocument.create();
@@ -1680,8 +1818,8 @@
                         copiedPages.forEach((page) => mergedPdf.addPage(page));
                     }
                     const pdfBytes = await mergedPdf.save();
-                    downloadBlob(new Blob([pdfBytes], { type: 'application/pdf' }), 'birlesmis_belge.pdf');
-                    addHistory(`${selectedFiles.length} PDF dosyası birleştirildi`);
+                    downloadBlob(new Blob([pdfBytes], { type: 'application/pdf' }), 'merged_document.pdf');
+                    addHistory("Merge PDF");
                 }
                 else if (currentTool === 'split-pdf') {
                     const file = selectedFiles[0];
@@ -1694,10 +1832,10 @@
                         const [copiedPage] = await newDoc.copyPages(pdf, [i]);
                         newDoc.addPage(copiedPage);
                         const newBytes = await newDoc.save();
-                        zip.file(`sayfa_${i + 1}.pdf`, new Blob([newBytes], { type: 'application/pdf' }));
+                        zip.file(`page_${i + 1}.pdf`, new Blob([newBytes], { type: 'application/pdf' }));
                     }
-                    downloadBlob(await zip.generateAsync({ type: "blob" }), `${file.name.replace(/\.[^/.]+$/, "")}_bolunmus.zip`);
-                    addHistory(`PDF ${pdf.getPageCount()} sayfaya bölündü`);
+                    downloadBlob(await zip.generateAsync({ type: "blob" }), `${file.name.replace(/\.[^/.]+$/, "")}_split.zip`);
+                    addHistory("Split PDF");
                 }
                 else if (currentTool === 'compress-image') {
                     const targetMB = parseFloat(document.getElementById('compressionLevel')?.value) || 1.0;
@@ -1708,15 +1846,15 @@
                             compressed = await imageCompression(file, { maxSizeMB: targetMB, maxWidthOrHeight: 1920, useWebWorker: true });
                         }
                         if (selectedFiles.length === 1) {
-                            downloadBlob(compressed, `sikistirilmis_${file.name}`);
+                            downloadBlob(compressed, `compressed_${file.name}`);
                         } else {
-                            zip.file(`sikistirilmis_${file.name}`, compressed);
+                            zip.file(`compressed_${file.name}`, compressed);
                         }
                     }
                     if (selectedFiles.length > 1) {
-                        downloadBlob(await zip.generateAsync({ type: "blob" }), "sikistirilmis_gorseller.zip");
+                        downloadBlob(await zip.generateAsync({ type: "blob" }), "compressed_images.zip");
                     }
-                    addHistory(`${selectedFiles.length} görsel sıkıştırıldı`);
+                    addHistory("Compress Image");
                 }
                 else if (currentTool === 'heic-to-jpg') {
                     const zip = new JSZip();
@@ -1735,9 +1873,9 @@
                         }
                     }
                     if (selectedFiles.length > 1) {
-                        downloadBlob(await zip.generateAsync({ type: "blob" }), "donusturulen_jpgler.zip");
+                        downloadBlob(await zip.generateAsync({ type: "blob" }), "converted_jpgs.zip");
                     }
-                    addHistory(`${selectedFiles.length} HEIC dosyası JPG'ye dönüştürüldü`);
+                    addHistory("HEIC to JPG");
                 }
                 else if (currentTool === 'webp-converter') {
                     const format = document.getElementById('webpFormatSelect')?.value || 'image/webp';
@@ -1760,9 +1898,9 @@
                         }
                     }
                     if (selectedFiles.length > 1) {
-                        downloadBlob(await zip.generateAsync({ type: "blob" }), `donusturulen_${ext}ler.zip`);
+                        downloadBlob(await zip.generateAsync({ type: "blob" }), `converted_${ext}s.zip`);
                     }
-                    addHistory(`${selectedFiles.length} görsel ${ext.toUpperCase()}'ye dönüştürüldü`);
+                    addHistory("WebP Converter");
                 }
                 else if (currentTool === 'exif-remover') {
                     const zip = new JSZip();
@@ -1775,16 +1913,16 @@
                         
                         const cleanBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.95));
                         if (selectedFiles.length === 1) {
-                            downloadBlob(cleanBlob, `temiz_exif_${file.name}`);
+                            downloadBlob(cleanBlob, `clean_${file.name}`);
                         } else {
-                            zip.file(`temiz_exif_${file.name}`, cleanBlob);
+                            zip.file(`clean_${file.name}`, cleanBlob);
                         }
                     }
                     if (selectedFiles.length > 1) {
-                        downloadBlob(await zip.generateAsync({ type: "blob" }), "temiz_exif_gorseller.zip");
+                        downloadBlob(await zip.generateAsync({ type: "blob" }), "clean_exif_images.zip");
                     }
-                    addHistory(`${selectedFiles.length} görselden EXIF verileri silindi`);
-                    showToast("EXIF meta verileri başarıyla temizlendi!");
+                    addHistory("EXIF Remover");
+                    showToast(t.toasts.exifCleaned);
                 }
                 else if (currentTool === 'extract-pdf-img') {
                     const file = selectedFiles[0];
@@ -1799,10 +1937,10 @@
                         canvas.height = viewport.height; canvas.width = viewport.width;
                         await page.render({ canvasContext: ctx, viewport: viewport }).promise;
                         const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png', 0.9));
-                        zip.file(`sayfa_${i}_goruntu.png`, blob);
+                        zip.file(`page_${i}_image.png`, blob);
                     }
-                    downloadBlob(await zip.generateAsync({ type: "blob" }), `${file.name.replace(/\.[^/.]+$/, "")}_cikarilan_gorseller.zip`);
-                    addHistory("PDF'ten görseller çıkarıldı");
+                    downloadBlob(await zip.generateAsync({ type: "blob" }), `${file.name.replace(/\.[^/.]+$/, "")}_extracted_images.zip`);
+                    addHistory("Extract PDF Images");
                 }
                 else if (currentTool === 'redact-tool') {
                     const zip = new JSZip();
@@ -1816,22 +1954,22 @@
                         ctx.fillRect(40, canvas.height / 2 - 40, canvas.width - 80, 80);
                         ctx.fillStyle = 'white';
                         ctx.font = 'bold 24px sans-serif';
-                        ctx.fillText('[GİZLENDİ]', 60, canvas.height / 2 + 8);
+                        ctx.fillText('[REDACTED]', 60, canvas.height / 2 + 8);
                         const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png', 0.95));
                         if (selectedFiles.length === 1) {
-                            downloadBlob(blob, `sansurlu_${file.name}`);
+                            downloadBlob(blob, `redacted_${file.name}`);
                         } else {
-                            zip.file(`sansurlu_${file.name}`, blob);
+                            zip.file(`redacted_${file.name}`, blob);
                         }
                     }
                     if (selectedFiles.length > 1) {
-                        downloadBlob(await zip.generateAsync({ type: "blob" }), "sansurlu_gorseller.zip");
+                        downloadBlob(await zip.generateAsync({ type: "blob" }), "redacted_images.zip");
                     }
-                    addHistory(`${selectedFiles.length} görsel sansürlendi`);
+                    addHistory("Redact Tool");
                 }
                 else if (currentTool === 'encrypt-pdf') {
                     const file = selectedFiles[0];
-                    const password = document.getElementById('pdfPassInput')?.value || 'GuvenliSifre123';
+                    const password = document.getElementById('pdfPassInput')?.value || 'SecurePass123';
                     const fileBytes = await file.arrayBuffer();
 
                     const enc = new TextEncoder();
@@ -1859,35 +1997,35 @@
                     combined.set(new Uint8Array(encryptedContent), salt.length + iv.length);
 
                     const encryptedBlob = new Blob([combined], { type: 'application/octet-stream' });
-                    downloadBlob(encryptedBlob, `sifrelenmis_${file.name}.enc`);
-                    addHistory(`PDF AES-GCM ile şifrelendi: ${file.name}`);
-                    showToast("PDF güvenle şifrelendi ve indirildi!");
+                    downloadBlob(encryptedBlob, `encrypted_${file.name}.enc`);
+                    addHistory("Encrypt PDF");
+                    showToast(t.toasts.pdfEncrypted);
                 }
                 else if (currentTool === 'hash-calc') {
                     const buffer = await selectedFiles[0].arrayBuffer();
                     const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
                     const hashHex = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
                     
-                    const outputText = `Dosya: ${selectedFiles[0].name}\nBoyut: ${selectedFiles[0].size} bayt\nSHA-256 Sağlama Toplamı:\n${hashHex}`;
+                    const outputText = `File: ${selectedFiles[0].name}\nSize: ${selectedFiles[0].size} bytes\nSHA-256 Checksum:\n${hashHex}`;
                     document.getElementById('genericTextBox').classList.remove('hidden');
                     document.getElementById('genericTextArea').value = outputText;
                     downloadBlob(new Blob([outputText], { type: 'text/plain;charset=utf-8' }), `${selectedFiles[0].name}_hash.txt`);
-                    addHistory(`${selectedFiles[0].name} için SHA-256 hesaplandı`);
+                    addHistory("Hash Calc");
                 }
                 else if (currentTool === 'ocr-reader') {
                     if (typeof Tesseract !== 'undefined') {
-                        const result = await Tesseract.recognize(selectedFiles[0], 'tur');
+                        const result = await Tesseract.recognize(selectedFiles[0], 'eng');
                         const text = result.data.text;
                         document.getElementById('genericTextBox').classList.remove('hidden');
                         document.getElementById('genericTextArea').value = text;
                         downloadBlob(new Blob([text], { type: 'text/plain;charset=utf-8' }), `${selectedFiles[0].name}_ocr.txt`);
-                        addHistory(`${selectedFiles[0].name} üzerinden OCR metni çıkarıldı`);
+                        addHistory("OCR Reader");
                     }
                 }
-                if(currentTool !== 'encrypt-pdf' && currentTool !== 'exif-remover') showToast("İşlem tamamlandı ve dosya indirildi!");
+                if(currentTool !== 'encrypt-pdf' && currentTool !== 'exif-remover') showToast(t.toasts.processCompleted);
             } catch(e) {
                 console.error(e);
-                showToast("Dosya işlenirken hata oluştu: " + e.message, "error");
+                showToast(t.toasts.errorOccurred + e.message, "error");
             } finally {
                 modal.classList.add('hidden');
             }
