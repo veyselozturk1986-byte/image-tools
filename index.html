@@ -323,7 +323,7 @@
         </div>
     </main>
 
-    <!-- JAVASCRIPT LOGIC (Multi-Language & Security Explained) -->
+    <!-- JAVASCRIPT LOGIC (Multi-Language & Exact Tool Descriptions) -->
     <script>
         try {
             if (typeof pdfjsLib !== 'undefined') {
@@ -516,27 +516,70 @@
             const dropText = document.getElementById('dropText');
             const dropSubText = document.getElementById('dropSubText');
 
-            if (currentTool === 'pdf-to-png' || currentTool === 'pdf-to-jpg') {
-                if(mainDesc) mainDesc.textContent = currentTool === 'pdf-to-png' ? t.descPdfPng : t.descPdfJpg;
+            if (currentTool === 'pdf-to-png') {
+                if(mainDesc) mainDesc.textContent = t.descPdfPng;
+                if(dropText) dropText.textContent = t.dropPdf;
+                if(dropSubText) dropSubText.textContent = t.dropSubPdf;
+            } else if (currentTool === 'pdf-to-jpg') {
+                if(mainDesc) mainDesc.textContent = t.descPdfJpg;
                 if(dropText) dropText.textContent = t.dropPdf;
                 if(dropSubText) dropSubText.textContent = t.dropSubPdf;
             } else if (currentTool === 'merge-pdf') {
                 if(mainDesc) mainDesc.textContent = t.descMergePdf;
                 if(dropText) dropText.textContent = t.dropMergePdf;
                 if(dropSubText) dropSubText.textContent = t.dropSubMerge;
+            } else if (currentTool === 'split-pdf') {
+                if(mainDesc) mainDesc.textContent = t.descSplitPdf;
+                if(dropText) dropText.textContent = t.dropPdf;
+                if(dropSubText) dropSubText.textContent = t.dropSubPdf;
             } else if (currentTool === 'encrypt-pdf') {
                 if(mainDesc) mainDesc.textContent = t.descEncrypt;
+                if(dropText) dropText.textContent = t.dropPdf;
+                if(dropSubText) dropSubText.textContent = t.dropSubPdf;
             } else if (currentTool === 'bates-pdf') {
                 if(mainDesc) mainDesc.textContent = t.descBates;
-            } else if (currentTool === 'password-gen') {
-                if(mainDesc) mainDesc.textContent = t.descPass;
-                if(dropText) dropText.textContent = t.dropPass;
-            } else if (currentTool === 'base64-tool') {
-                if(mainDesc) mainDesc.textContent = t.descBase64;
-                if(dropText) dropText.textContent = t.dropBase64;
+                if(dropText) dropText.textContent = t.dropPdf;
+                if(dropSubText) dropSubText.textContent = t.dropSubPdf;
+            } else if (currentTool === 'ocr-reader') {
+                if(mainDesc) mainDesc.textContent = t.descOcr;
+                if(dropText) dropText.textContent = t.dropOcr;
+                if(dropSubText) dropSubText.textContent = "";
+            } else if (currentTool === 'redact-tool') {
+                if(mainDesc) mainDesc.textContent = t.descRedact;
+                if(dropText) dropText.textContent = t.dropRedact;
+                if(dropSubText) dropSubText.textContent = "";
+            } else if (currentTool === 'sign-tool') {
+                if(mainDesc) mainDesc.textContent = t.descSign;
+                if(dropText) dropText.textContent = t.dropSign;
+                if(dropSubText) dropSubText.textContent = "";
             } else if (currentTool === 'qr-tool') {
                 if(mainDesc) mainDesc.textContent = t.descQr;
                 if(dropText) dropText.textContent = t.dropQr;
+                if(dropSubText) dropSubText.textContent = "";
+            } else if (currentTool === 'password-gen') {
+                if(mainDesc) mainDesc.textContent = t.descPass;
+                if(dropText) dropText.textContent = t.dropPass;
+                if(dropSubText) dropSubText.textContent = "";
+            } else if (currentTool === 'base64-tool') {
+                if(mainDesc) mainDesc.textContent = t.descBase64;
+                if(dropText) dropText.textContent = t.dropBase64;
+                if(dropSubText) dropSubText.textContent = "";
+            } else if (currentTool === 'color-palette') {
+                if(mainDesc) mainDesc.textContent = t.descPalette;
+                if(dropText) dropText.textContent = t.dropPalette;
+                if(dropSubText) dropSubText.textContent = "";
+            } else if (currentTool === 'heic-to-jpg') {
+                if(mainDesc) mainDesc.textContent = t.descHeic;
+                if(dropText) dropText.textContent = t.dropHeic;
+                if(dropSubText) dropSubText.textContent = "";
+            } else if (currentTool === 'jpg-to-pdf') {
+                if(mainDesc) mainDesc.textContent = t.descJpgPdf;
+                if(dropText) dropText.textContent = t.dropJpgPdf;
+                if(dropSubText) dropSubText.textContent = "";
+            } else if (currentTool === 'compress-image') {
+                if(mainDesc) mainDesc.textContent = t.descCompress;
+                if(dropText) dropText.textContent = t.dropCompress;
+                if(dropSubText) dropSubText.textContent = "";
             }
         }
 
