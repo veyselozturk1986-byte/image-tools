@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- SEO Optimization Meta Tags (PDF Terimleri Eklendi) -->
+    <!-- SEO Optimization Meta Tags -->
     <title>PrivacyConvert - 100% Private Image & PDF Converter</title>
-    <meta name="description" content="Convert and compress JPG, PNG, WEBP, and PDF files 100% privately in your browser. No files uploaded to any server. Fast, free, and secure.">
+    <meta name="description" content="Convert and compress JPG, PNG, WEBP, HEIC, and PDF files 100% privately in your browser. No files uploaded to any server. Fast, free, and secure.">
     <meta name="keywords" content="image converter, pdf to jpg, jpg to pdf, privacy first converter, webp to jpg, png to webp, compress image free, offline image converter">
     <meta name="author" content="PrivacyConvert">
 
@@ -18,20 +18,13 @@
 
     <!-- Tailwind CSS & Google AdSense -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4444769373675024"
-     crossorigin="anonymous"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4444769373675024" crossorigin="anonymous"></script>
 
-    <!-- ======================================================== -->
-    <!-- PDF & DÖNÜŞTÜRÜCÜ KÜTÜPHANELERİ (BURAYA EKLENDİ) -->
-    <!-- ======================================================== -->
-    <!-- PDF.js (PDF -> JPG için) -->
+    <!-- PDF & DÖNÜŞTÜRÜCÜ KÜTÜPHANELERİ -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <!-- JSZip (Çok sayfalı PDF'leri ZIP indirmek için) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <!-- jsPDF (JPG -> PDF için) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <!-- HEIC to JPG Dönüştürücü Kütüphanesi -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/heic2any/0.0.4/heic2any.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/heic2any/0.0.4/heic2any.min.js"></script>
 </head>
 
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans">
@@ -56,342 +49,314 @@
             </div>
         </div>
     </header>
-    <!-- Top AdSpace Placeholder (AdSense) -->
-    <div class="max-w-3xl mx-auto w-full px-6 mt-6">
-        <div class="bg-slate-100 border border-dashed border-slate-300 rounded-lg p-3 text-center text-xs text-slate-400">
-            <!-- ADSENSE TOP BANNER CODE GOES HERE LATER -->
-            <span>Advertisement</span>
+
+    <!-- Ana İçerik Konteyneri -->
+    <main class="flex-grow max-w-4xl mx-auto w-full px-4 py-8">
+
+        <!-- Top AdSpace Placeholder (AdSense) -->
+        <div class="w-full mb-8">
+            <div class="bg-slate-100 border border-dashed border-slate-300 rounded-lg p-3 text-center text-xs text-slate-400">
+                <span>Advertisement</span>
+            </div>
         </div>
-    </div>
 
-    
-<!-- PrivacyConvert Ana Dönüştürücü Kartı (Senin Kodun) -->
-<div class="max-w-xl mx-auto my-8 p-6 bg-white rounded-2xl shadow-lg border border-slate-100">
-  
-  <!-- Dosya Yükleme Sürükle-Bırak Alanı -->
-  <div id="dropZone" ...>
-    ...
-  </div>
+        <!-- PrivacyConvert Ana Dönüştürücü Kartı -->
+        <div class="max-w-xl mx-auto p-6 bg-white rounded-2xl shadow-lg border border-slate-100">
+            
+            <!-- Sürükle-Bırak Yükleme Alanı -->
+            <div id="dropZone" class="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center cursor-pointer hover:border-indigo-500 hover:bg-slate-50 transition-all">
+                <svg class="w-12 h-12 mx-auto text-slate-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                </svg>
+                <p class="text-slate-600 font-medium">Click to upload or drag & drop</p>
+                <p class="text-xs text-slate-400 mt-1">PNG, JPG, WEBP, HEIC, or PDF (100% Client-Side)</p>
+            </div>
 
-  <!-- Format Seçimi ve Butonların Bulunduğu Alt Kısım -->
-  ... 
+            <!-- Gizli Dosya Seçici Input -->
+            <input type="file" id="fileInput" accept="image/png, image/jpeg, image/webp, .pdf, .heic, .heif" multiple class="hidden" />
 
-</div> <!-- 👈 ANA KART BURADA BİTİYOR. TAM BURADAN SONRA EKLİYORUZ: -->
+            <!-- Dosya Bilgisi ve Format Seçimi (Varsayılan olarak gizli) -->
+            <div id="actionArea" class="mt-6 hidden space-y-4">
+                <div class="p-3 bg-slate-100 rounded-lg text-sm font-semibold text-slate-700 truncate" id="fileName">
+                    No file selected
+                </div>
 
-<!-- 🔥 Popüler Araç Kartları (Internal Linking) -->
-<section class="mt-16">
-  <h2 class="text-2xl font-bold text-slate-900 mb-6 text-center">Popular Dedicated Converters</h2>
-  <div class="grid sm:grid-cols-3 gap-6">
-    
-    <a href="pdf-to-jpg/index.html" class="block bg-white p-6 rounded-xl border border-slate-200 hover:border-indigo-500 hover:shadow-md transition">
-      <div class="text-indigo-600 text-2xl mb-2">📄➔🖼️</div>
-      <h3 class="font-bold text-slate-900 mb-1">PDF to JPG</h3>
-      <p class="text-xs text-slate-500">Extract PDF pages into clear JPG images without server uploads.</p>
-    </a>
+                <div class="flex items-center justify-between gap-4">
+                    <label for="targetFormat" class="text-sm font-medium text-slate-600">Convert to:</label>
+                    <select id="targetFormat" class="bg-white border border-slate-300 text-slate-800 text-sm rounded-lg p-2.5 focus:ring-indigo-500 focus:border-indigo-500 font-medium cursor-pointer">
+                        <option value="jpg">JPG (Image)</option>
+                        <option value="png">PNG (Image)</option>
+                        <option value="webp">WEBP (Image)</option>
+                        <option value="pdf">PDF (Document)</option>
+                    </select>
+                </div>
 
-    <a href="heic-to-jpg/index.html" class="block bg-white p-6 rounded-xl border border-slate-200 hover:border-indigo-500 hover:shadow-md transition">
-      <div class="text-indigo-600 text-2xl mb-2">📱➔🖼️</div>
-      <h3 class="font-bold text-slate-900 mb-1">HEIC to JPG</h3>
-      <p class="text-xs text-slate-500">Convert iPhone HEIC photos to standard JPG format on any device.</p>
-    </a>
+                <!-- Dönüştür Butonu -->
+                <button id="convertBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl transition-all shadow-md active:scale-95">
+                    Convert Now
+                </button>
+            </div>
 
-    <a href="jpg-to-pdf/index.html" class="block bg-white p-6 rounded-xl border border-slate-200 hover:border-indigo-500 hover:shadow-md transition">
-      <div class="text-indigo-600 text-2xl mb-2">🖼️➔📄</div>
-      <h3 class="font-bold text-slate-900 mb-1">JPG to PDF</h3>
-      <p class="text-xs text-slate-500">Combine photos, scans, or receipts into a single PDF file securely.</p>
-    </a>
+            <!-- Durum Bildirimi -->
+            <div id="statusText" class="mt-4 text-center text-sm font-medium text-indigo-600 hidden">
+                Processing file locally...
+            </div>
+        </div>
 
-  </div>
-</section>
+        <!-- 🔥 Popüler Araç Kartları (Internal Linking) -->
+        <section class="mt-16">
+            <h2 class="text-2xl font-bold text-slate-900 mb-6 text-center">Popular Dedicated Converters</h2>
+            <div class="grid sm:grid-cols-3 gap-6">
+                <a href="pdf-to-jpg/index.html" class="block bg-white p-6 rounded-xl border border-slate-200 hover:border-indigo-500 hover:shadow-md transition">
+                    <div class="text-indigo-600 text-2xl mb-2">📄➔🖼️</div>
+                    <h3 class="font-bold text-slate-900 mb-1">PDF to JPG</h3>
+                    <p class="text-xs text-slate-500">Extract PDF pages into clear JPG images without server uploads.</p>
+                </a>
 
-<!-- Footer (Alt Bilgi) Buradan Sonra Başlayacak -->
-    
-   
-<!-- PDF ve HEIC kabul eden yeni input etiketiniz -->
-<input 
-  type="file" 
-  id="fileInput" 
-  accept="image/png, image/jpeg, image/webp, .pdf, .heic, .heif" 
-  multiple 
-  class="hidden" 
-/>
-  </div>
+                <a href="heic-to-jpg/index.html" class="block bg-white p-6 rounded-xl border border-slate-200 hover:border-indigo-500 hover:shadow-md transition">
+                    <div class="text-indigo-600 text-2xl mb-2">📱➔🖼️</div>
+                    <h3 class="font-bold text-slate-900 mb-1">HEIC to JPG</h3>
+                    <p class="text-xs text-slate-500">Convert iPhone HEIC photos to standard JPG format on any device.</p>
+                </a>
 
-  <!-- Dosya Bilgisi ve Format Seçimi (Varsayılan olarak gizli) -->
-  <div id="actionArea" class="mt-6 hidden space-y-4">
-    <div class="p-3 bg-slate-100 rounded-lg text-sm font-semibold text-slate-700 truncate" id="fileName">
-      No file selected
-    </div>
+                <a href="jpg-to-pdf/index.html" class="block bg-white p-6 rounded-xl border border-slate-200 hover:border-indigo-500 hover:shadow-md transition">
+                    <div class="text-indigo-600 text-2xl mb-2">🖼️➔📄</div>
+                    <h3 class="font-bold text-slate-900 mb-1">JPG to PDF</h3>
+                    <p class="text-xs text-slate-500">Combine photos, scans, or receipts into a single PDF file securely.</p>
+                </a>
+            </div>
+        </section>
 
-    <div class="flex items-center justify-between gap-4">
-      <label for="targetFormat" class="text-sm font-medium text-slate-600">Convert to:</label>
-      <select id="targetFormat" class="bg-white border border-slate-300 text-slate-800 text-sm rounded-lg p-2.5 focus:ring-indigo-500 focus:border-indigo-500 font-medium cursor-pointer">
-        <option value="jpg">JPG (Image)</option>
-        <option value="png">PNG (Image)</option>
-        <option value="webp">WEBP (Image)</option>
-        <option value="pdf">PDF (Document)</option>
-      </select>
-    </div>
+        <!-- SEO & AdSense Metin İçerikleri -->
+        <section class="mt-16 bg-white p-8 rounded-2xl border border-slate-200 space-y-6 text-slate-700 leading-relaxed text-sm">
+            <h2 class="text-xl font-bold text-slate-900">Frequently Asked Questions (FAQ)</h2>
+            
+            <div>
+                <h3 class="font-semibold text-slate-800">Is PrivacyConvert completely safe and private?</h3>
+                <p class="text-slate-600 mt-1">Yes, 100%! Unlike traditional online converters, PrivacyConvert runs entirely inside your web browser using modern Web APIs. Your files are converted locally and are never uploaded to any external server.</p>
+            </div>
 
-    <!-- Tetikleyici Buton -->
-    <button id="convertBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl transition-all shadow-md active:scale-95">
-      Convert Now
-    </button>
-  </div>
+            <div>
+                <h3 class="font-semibold text-slate-800">Which file formats are supported?</h3>
+                <p class="text-slate-600 mt-1">PrivacyConvert allows you to convert and compress popular image formats including JPG, PNG, WEBP, HEIC, and multi-page PDF documents seamlessly.</p>
+            </div>
 
-  <!-- İlerleme / Durum Mesajı -->
-  <div id="statusText" class="mt-4 text-center text-sm font-medium text-indigo-600 hidden">
-    Processing file locally...
-  </div>
-</div>
+            <div>
+                <h3 class="font-semibold text-slate-800">Is this service free to use?</h3>
+                <p class="text-slate-600 mt-1">Yes, PrivacyConvert is 100% free with no hidden fees, subscriptions, or file size limits.</p>
+            </div>
+
+            <hr class="border-slate-200 my-6">
+
+            <h2 class="text-xl font-bold text-slate-900">Privacy Policy Summary</h2>
+            <p>At <strong>PrivacyConvert</strong>, user privacy is our top priority. We do not collect, store, or transmit any images or personal data you process through our website. All conversion tasks take place client-side.</p>
+        </section>
+
+        <!-- Bottom AdSpace Placeholder (AdSense) -->
+        <div class="w-full mt-8">
+            <div class="bg-slate-100 border border-dashed border-slate-300 rounded-lg p-3 text-center text-xs text-slate-400">
+                <span>Advertisement</span>
+            </div>
+        </div>
+
     </main>
 
-    <!-- Bottom AdSpace Placeholder (AdSense) -->
-    <div class="max-w-3xl mx-auto w-full px-6 mb-6">
-        <div class="bg-slate-100 border border-dashed border-slate-300 rounded-lg p-3 text-center text-xs text-slate-400">
-            <!-- ADSENSE BOTTOM BANNER CODE GOES HERE LATER -->
-            <span>Advertisement</span>
-        </div>
-    </div>
-
     <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500">
-        <div class="max-w-4xl mx-auto px-4 space-y-2">
+    <footer class="bg-white border-t border-slate-200 py-8 text-center text-xs text-slate-500">
+        <div class="max-w-4xl mx-auto px-4 space-y-3">
+            <div class="flex justify-center gap-6 font-medium text-slate-600">
+                <a href="pdf-to-jpg/index.html" class="hover:text-indigo-600">PDF to JPG</a>
+                <a href="heic-to-jpg/index.html" class="hover:text-indigo-600">HEIC to JPG</a>
+                <a href="jpg-to-pdf/index.html" class="hover:text-indigo-600">JPG to PDF</a>
+                <a href="privacy.html" class="hover:text-indigo-600 underline">Privacy Policy</a>
+            </div>
             <p>© 2026 PrivacyConvert — 100% Client-Side Processing. No Data Collected.</p>
-            <p class="text-slate-400">Designed for ultimate privacy and lightning-fast performance.</p>
         </div>
     </footer>
 
-    <!-- Core JavaScript Logic -->
+    <!-- JavaScript Mantık Kodu -->
     <script>
-      // PDF.js Worker Tanımlaması (Şarttır)
-pdfjsLib.GlobalWorkerOptions.workerSrc = 
-  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        // PDF.js Worker Tanımlaması
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-// DOM Elemanları
-const dropZone = document.getElementById('dropZone');
-const fileInput = document.getElementById('fileInput');
-const actionArea = document.getElementById('actionArea');
-const fileNameDisplay = document.getElementById('fileName');
-const targetFormat = document.getElementById('targetFormat');
-const convertBtn = document.getElementById('convertBtn');
-const statusText = document.getElementById('statusText');
+        // DOM Elemanları
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const actionArea = document.getElementById('actionArea');
+        const fileNameDisplay = document.getElementById('fileName');
+        const targetFormat = document.getElementById('targetFormat');
+        const convertBtn = document.getElementById('convertBtn');
+        const statusText = document.getElementById('statusText');
 
-let selectedFiles = [];
+        let selectedFiles = [];
 
-// 1. Tıklama ve Sürükle-Bırak Olayları
-dropZone.addEventListener('click', () => fileInput.click());
+        // 1. Tıklama ve Sürükle-Bırak Olayları
+        dropZone.addEventListener('click', () => fileInput.click());
 
-fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+        fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
 
-dropZone.addEventListener('dragover', (e) => {
-  e.preventDefault();
-  dropZone.classList.add('border-indigo-500', 'bg-slate-50');
-});
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('border-indigo-500', 'bg-slate-50');
+        });
 
-dropZone.addEventListener('dragleave', () => {
-  dropZone.classList.remove('border-indigo-500', 'bg-slate-50');
-});
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('border-indigo-500', 'bg-slate-50');
+        });
 
-dropZone.addEventListener('drop', (e) => {
-  e.preventDefault();
-  dropZone.classList.remove('border-indigo-500', 'bg-slate-50');
-  handleFiles(e.dataTransfer.files);
-});
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-indigo-500', 'bg-slate-50');
+            handleFiles(e.dataTransfer.files);
+        });
 
-function handleFiles(files) {
-  if (!files.length) return;
-  selectedFiles = Array.from(files);
-  
-  if (selectedFiles.length === 1) {
-    fileNameDisplay.textContent = selectedFiles[0].name;
-  } else {
-    fileNameDisplay.textContent = `${selectedFiles.length} files selected`;
-  }
-  
-  actionArea.classList.remove('hidden');
-}
+        function handleFiles(files) {
+            if (!files.length) return;
+            selectedFiles = Array.from(files);
+            
+            if (selectedFiles.length === 1) {
+                fileNameDisplay.textContent = selectedFiles[0].name;
+            } else {
+                fileNameDisplay.textContent = `${selectedFiles.length} files selected`;
+            }
+            
+            actionArea.classList.remove('hidden');
+        }
 
-// 2. Dönüştür Butonuna Tıklama (Ana Mantık Akışı)
-convertBtn.addEventListener('click', async () => {
-  if (!selectedFiles.length) return;
+        // 2. Dönüştür Butonuna Tıklama Mantığı
+        convertBtn.addEventListener('click', async () => {
+            if (!selectedFiles.length) return;
 
-  const format = targetFormat.value;
-  const firstFile = selectedFiles[0];
+            const format = targetFormat.value;
+            const firstFile = selectedFiles[0];
 
-  showStatus("Processing locally... Please wait.");
+            showStatus("Processing locally... Please wait.");
 
-  try {
-    // SENARYO 1: Yüklenen dosya PDF ise -> JPG/PNG/WEBP'ye çevir
-    if (firstFile.type === "application/pdf") {
-      await processPdfToImage(firstFile, format);
-    } 
-    // SENARYO 2: Çıktı formatı PDF istenmişse -> Resimleri PDF yap
-    else if (format === "pdf") {
-      await processImagesToPdf(selectedFiles);
-    } 
-    // SENARYO 3: Normal Görsel -> Görsel Dönüştürme (Canvas API)
-    else {
-      await processStandardImages(selectedFiles, format);
-    }
-  } catch (err) {
-    console.error(err);
-    alert("An error occurred during conversion.");
-  } finally {
-    hideStatus();
-  }
-});
+            try {
+                // SENARYO 1: Yüklenen dosya PDF ise -> Görsele dönüştür
+                if (firstFile.type === "application/pdf") {
+                    await processPdfToImage(firstFile, format);
+                } 
+                // SENARYO 2: Çıktı formatı PDF istenmişse -> Resimleri PDF yap
+                else if (format === "pdf") {
+                    await processImagesToPdf(selectedFiles);
+                } 
+                // SENARYO 3: Normal Görsel Dönüştürme
+                else {
+                    await processStandardImages(selectedFiles, format);
+                }
+            } catch (err) {
+                console.error(err);
+                alert("An error occurred during conversion.");
+            } finally {
+                hideStatus();
+            }
+        });
 
-// --- DÖNÜŞTÜRÜCÜ MOTORLARI ---
+        // --- DÖNÜŞTÜRÜCÜ MOTORLARI ---
 
-// A. PDF -> Görsel Motoru
-async function processPdfToImage(file, outputFormat) {
-  const arrayBuffer = await file.arrayBuffer();
-  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-  const zip = new JSZip();
-  const mimeType = outputFormat === 'png' ? 'image/png' : 'image/jpeg';
-  const ext = outputFormat === 'png' ? 'png' : 'jpg';
+        // A. PDF -> Görsel Motoru
+        async function processPdfToImage(file, outputFormat) {
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+            const zip = new JSZip();
+            const mimeType = outputFormat === 'png' ? 'image/png' : 'image/jpeg';
+            const ext = outputFormat === 'png' ? 'png' : 'jpg';
 
-  for (let i = 1; i <= pdf.numPages; i++) {
-    const page = await pdf.getPage(i);
-    const viewport = page.getViewport({ scale: 2.0 }); // 2x Yüksek Kalite
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    canvas.height = viewport.height;
-    canvas.width = viewport.width;
+            for (let i = 1; i <= pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const viewport = page.getViewport({ scale: 2.0 });
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
 
-    await page.render({ canvasContext: ctx, viewport }).promise;
+                await page.render({ canvasContext: ctx, viewport }).promise;
 
-    const blob = await new Promise(res => canvas.toBlob(res, mimeType, 0.9));
+                const blob = await new Promise(res => canvas.toBlob(res, mimeType, 0.9));
 
-    if (pdf.numPages === 1) {
-      triggerDownload(blob, `${file.name.replace(/\.pdf$/i, '')}.${ext}`);
-    } else {
-      zip.file(`page-${i}.${ext}`, blob);
-    }
-  }
+                if (pdf.numPages === 1) {
+                    triggerDownload(blob, `${file.name.replace(/\.pdf$/i, '')}.${ext}`);
+                } else {
+                    zip.file(`page-${i}.${ext}`, blob);
+                }
+            }
 
-  if (pdf.numPages > 1) {
-    const zipBlob = await zip.generateAsync({ type: 'blob' });
-    triggerDownload(zipBlob, `${file.name.replace(/\.pdf$/i, '')}_images.zip`);
-  }
-}
+            if (pdf.numPages > 1) {
+                const zipBlob = await zip.generateAsync({ type: 'blob' });
+                triggerDownload(zipBlob, `${file.name.replace(/\.pdf$/i, '')}_images.zip`);
+            }
+        }
 
-// B. Görsel -> PDF Motoru
-async function processImagesToPdf(files) {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
+        // B. Görsel -> PDF Motoru
+        async function processImagesToPdf(files) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
 
-  for (let i = 0; i < files.length; i++) {
-    const imgUrl = URL.createObjectURL(files[i]);
-    const img = new Image();
-    img.src = imgUrl;
-    await new Promise(res => img.onload = res);
+            for (let i = 0; i < files.length; i++) {
+                const imgUrl = URL.createObjectURL(files[i]);
+                const img = new Image();
+                img.src = imgUrl;
+                await new Promise(res => img.onload = res);
 
-    const pdfWidth = doc.internal.pageSize.getWidth();
-    const pdfHeight = (img.height * pdfWidth) / img.width;
+                const pdfWidth = doc.internal.pageSize.getWidth();
+                const pdfHeight = (img.height * pdfWidth) / img.width;
 
-    if (i > 0) doc.addPage();
-    doc.addImage(img, 'JPEG', 0, 0, pdfWidth, pdfHeight);
-    URL.revokeObjectURL(imgUrl);
-  }
+                if (i > 0) doc.addPage();
+                doc.addImage(img, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+                URL.revokeObjectURL(imgUrl);
+            }
 
-  doc.save('privacyconvert_document.pdf');
-}
+            doc.save('privacyconvert_document.pdf');
+        }
 
-// C. Standart Görsel -> Görsel Motoru
-async function processStandardImages(files, format) {
-  const mimeType = `image/${format}`;
-  
-  for (const file of files) {
-    const imgUrl = URL.createObjectURL(file);
-    const img = new Image();
-    img.src = imgUrl;
-    await new Promise(res => img.onload = res);
+        // C. Standart Görsel -> Görsel Motoru
+        async function processStandardImages(files, format) {
+            const mimeType = `image/${format}`;
+            
+            for (const file of files) {
+                const imgUrl = URL.createObjectURL(file);
+                const img = new Image();
+                img.src = imgUrl;
+                await new Promise(res => img.onload = res);
 
-    const canvas = document.createElement('canvas');
-    canvas.width = img.width;
-    canvas.height = img.height;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(img, 0, 0);
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
 
-    const blob = await new Promise(res => canvas.toBlob(res, mimeType, 0.9));
-    const nameWithoutExt = file.name.substring(0, file.name.lastIndexOf('.'));
-    triggerDownload(blob, `${nameWithoutExt}.${format}`);
-    URL.revokeObjectURL(imgUrl);
-  }
-}
+                const blob = await new Promise(res => canvas.toBlob(res, mimeType, 0.9));
+                const nameWithoutExt = file.name.substring(0, file.name.lastIndexOf('.'));
+                triggerDownload(blob, `${nameWithoutExt}.${format}`);
+                URL.revokeObjectURL(imgUrl);
+            }
+        }
 
-// İndirme Tetikleyici
-function triggerDownload(blob, filename) {
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = filename;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  setTimeout(() => URL.revokeObjectURL(link.href), 1000);
-}
+        // İndirme Tetikleyici
+        function triggerDownload(blob, filename) {
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+        }
 
-// Durum Göstergeleri
-function showStatus(text) {
-  statusText.textContent = text;
-  statusText.classList.remove('hidden');
-  convertBtn.disabled = true;
-  convertBtn.classList.add('opacity-50', 'cursor-not-allowed');
-}
+        // Durum Göstergeleri
+        function showStatus(text) {
+            statusText.textContent = text;
+            statusText.classList.remove('hidden');
+            convertBtn.disabled = true;
+            convertBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        }
 
-function hideStatus() {
-  statusText.classList.add('hidden');
-  convertBtn.disabled = false;
-  convertBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-}
+        function hideStatus() {
+            statusText.classList.add('hidden');
+            convertBtn.disabled = false;
+            convertBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
     </script>
-
-    <!-- SEO & AdSense Güvenlik İçerikleri -->
-    <section style="max-width: 800px; margin: 40px auto; padding: 20px; font-family: sans-serif; line-height: 1.6; color: #333;">
-      
-      <!-- SSS / FAQ Bölümü -->
-      <h2>Frequently Asked Questions (FAQ)</h2>
-      
-      <div style="margin-bottom: 15px;">
-        <h3>Is PrivacyConvert completely safe and private?</h3>
-        <p>Yes, 100%! Unlike traditional online converters, PrivacyConvert runs entirely inside your web browser using HTML5 Web APIs. Your images are converted locally and are never uploaded to any external server.</p>
-      </div>
-
-      <div style="margin-bottom: 15px;">
-        <h3>Which file formats are supported?</h3>
-        <p>PrivacyConvert allows you to convert and compress popular image formats including JPG, PNG, and WEBP seamlessly.</p>
-      </div>
-
-      <div style="margin-bottom: 15px;">
-        <h3>Is this service free to use?</h3>
-        <p>Yes, PrivacyConvert is 100% free with no hidden fees, subscriptions, or file size limits.</p>
-      </div>
-
-      <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
-
-      <!-- Gizlilik Politikası / Privacy Policy -->
-      <h2>Privacy Policy</h2>
-      <p>At <strong>PrivacyConvert</strong>, accessible from your browser, one of our main priorities is the privacy of our visitors.</p>
-      
-      <h3>Information We Do Not Collect</h3>
-      <p>We do not collect, store, or transmit any images or personal data you process through our website. All image processing (conversion and compression) is performed client-side within your browser.</p>
-
-      <h3>Third-Party Advertising & Cookies</h3>
-      <p>We may use third-party advertising partners, such as Google AdSense, to serve ads when you visit our website. These companies may use cookies to serve ads based on your prior visits to our website or other websites on the Internet.</p>
-
-      <h3>Contact Us</h3>
-      <p>If you have any questions or suggestions about our Privacy Policy, feel free to contact us via our project repository or support links.</p>
-
-    </section>
-
-    <!-- FOOTER / GİZLİLİK POLİTİKASI LİNKİ -->
-    <footer style="text-align: center; margin: 20px auto 40px auto; padding: 20px; font-family: sans-serif; font-size: 14px; color: #666;">
-        <p>
-            <a href="privacy.html" style="color: #666; text-decoration: underline;">Read Full Privacy Policy Page</a>
-        </p>
-    </footer>
-
 </body>
 </html>
