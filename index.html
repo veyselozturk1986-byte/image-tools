@@ -93,11 +93,11 @@
     <div id="shortcutsModal" class="hidden fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 z-50 flex items-center justify-center backdrop-blur-sm">
         <div class="bg-white dark:bg-slate-800 w-full max-w-md rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-700 relative">
             <button onclick="toggleShortcutsModal(false)" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600">✕</button>
-            <h3 class="text-lg font-bold mb-4 text-slate-800 dark:text-white">Keyboard Shortcuts</h3>
+            <h3 id="shortcutsTitle" class="text-lg font-bold mb-4 text-slate-800 dark:text-white">Keyboard Shortcuts</h3>
             <ul class="space-y-3 text-sm text-slate-600 dark:text-slate-300">
-                <li class="flex justify-between items-center bg-slate-50 dark:bg-slate-900 p-2.5 rounded-xl"><span class="font-medium">Command Palette</span><kbd class="bg-slate-200 dark:bg-slate-700 px-2 py-1 rounded font-mono text-xs">Ctrl + K</kbd></li>
-                <li class="flex justify-between items-center bg-slate-50 dark:bg-slate-900 p-2.5 rounded-xl"><span class="font-medium">Reset Workspace</span><kbd class="bg-slate-200 dark:bg-slate-700 px-2 py-1 rounded font-mono text-xs">Esc</kbd></li>
-                <li class="flex justify-between items-center bg-slate-50 dark:bg-slate-900 p-2.5 rounded-xl"><span class="font-medium">Convert & Download</span><kbd class="bg-slate-200 dark:bg-slate-700 px-2 py-1 rounded font-mono text-xs">Ctrl + Enter</kbd></li>
+                <li class="flex justify-between items-center bg-slate-50 dark:bg-slate-900 p-2.5 rounded-xl"><span id="shortcutCmdLabel" class="font-medium">Command Palette</span><kbd class="bg-slate-200 dark:bg-slate-700 px-2 py-1 rounded font-mono text-xs">Ctrl + K</kbd></li>
+                <li class="flex justify-between items-center bg-slate-50 dark:bg-slate-900 p-2.5 rounded-xl"><span id="shortcutResetLabel" class="font-medium">Reset Workspace</span><kbd class="bg-slate-200 dark:bg-slate-700 px-2 py-1 rounded font-mono text-xs">Esc</kbd></li>
+                <li class="flex justify-between items-center bg-slate-50 dark:bg-slate-900 p-2.5 rounded-xl"><span id="shortcutConvertLabel" class="font-medium">Convert & Download</span><kbd class="bg-slate-200 dark:bg-slate-700 px-2 py-1 rounded font-mono text-xs">Ctrl + Enter</kbd></li>
             </ul>
         </div>
     </div>
@@ -117,7 +117,7 @@
                     <option value="rose">🌹 Rose</option>
                     <option value="amber">🟠 Amber</option>
                 </select>
-                <!-- Language Selector (English, Chinese, German, French, Spanish, Arabic) -->
+                <!-- Language Selector -->
                 <select id="langSelect" class="bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold px-3 py-2 border-0 focus:outline-none cursor-pointer">
                     <option value="en">English</option>
                     <option value="zh">中文</option>
@@ -306,13 +306,13 @@
                         <div id="genericTextBox" class="hidden w-full flex flex-col gap-2">
                             <div class="flex justify-between items-center px-1">
                                 <span id="genericTextLabel" class="text-xs font-bold text-slate-500 uppercase">Output:</span>
-                                <button onclick="copyGenericText()" class="text-xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-lg font-semibold">📋 Copy</button>
+                                <button id="copyGenericBtn" onclick="copyGenericText()" class="text-xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-lg font-semibold">📋 Copy</button>
                             </div>
                             <textarea id="genericTextArea" class="w-full h-48 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 text-sm p-4 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none resize-none font-mono shadow-inner" placeholder="Result will appear here..."></textarea>
                         </div>
 
                         <div id="diffResultBox" class="hidden w-full flex flex-col space-y-2">
-                            <span class="text-xs font-bold text-slate-500 uppercase px-1">Comparison Output:</span>
+                            <span id="diffResultLabel" class="text-xs font-bold text-slate-500 uppercase px-1">Comparison Output:</span>
                             <div id="diffOutputContainer" class="w-full min-h-[160px] bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-mono text-sm p-4 rounded-xl border border-slate-200 dark:border-slate-700 whitespace-pre-wrap overflow-y-auto max-h-64"></div>
                         </div>
 
@@ -324,7 +324,7 @@
                         <div id="generatorResultBox" class="hidden w-full flex flex-col items-center justify-center py-8 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 gap-4">
                             <div class="w-full max-w-md flex items-center gap-2 px-4">
                                 <input type="text" id="generatedDisplay" readonly class="w-full p-3 bg-white dark:bg-slate-800 dynamic-text font-mono font-bold text-center rounded-xl border border-slate-200 dark:border-slate-700 text-lg">
-                                <button onclick="copyGenerated()" class="px-4 py-3 dynamic-bg hover:opacity-90 text-white font-bold rounded-xl shadow-sm">Copy</button>
+                                <button id="copyGenBtn" onclick="copyGenerated()" class="px-4 py-3 dynamic-bg hover:opacity-90 text-white font-bold rounded-xl shadow-sm">Copy</button>
                             </div>
                             <button id="genAnotherBtn" class="text-sm font-semibold text-slate-500 hover:text-slate-700 dark:text-slate-400">🔄 Generate Another</button>
                         </div>
@@ -336,13 +336,13 @@
                             
                             <div id="passwordOptionsGroup" class="hidden bg-white dark:bg-slate-800 p-4 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm">
                                 <div class="mb-4">
-                                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 flex justify-between">Length: <span id="passLenVal" class="dynamic-text">16</span></label>
+                                    <label id="passLengthLabel" class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 flex justify-between">Length: <span id="passLenVal" class="dynamic-text">16</span></label>
                                     <input type="range" id="passLength" min="8" max="64" value="16" class="w-full accent-indigo-600 cursor-pointer" oninput="document.getElementById('passLenVal').textContent=this.value; generateNewPassword();">
                                 </div>
                                 <div class="flex flex-wrap gap-4 text-sm font-semibold text-slate-700 dark:text-slate-300">
-                                    <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="passSymbols" checked class="w-4 h-4 rounded text-indigo-600" onchange="generateNewPassword()"> Symbols</label>
-                                    <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="passNumbers" checked class="w-4 h-4 rounded text-indigo-600" onchange="generateNewPassword()"> Numbers</label>
-                                    <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="passUppercase" checked class="w-4 h-4 rounded text-indigo-600" onchange="generateNewPassword()"> Uppercase</label>
+                                    <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="passSymbols" checked class="w-4 h-4 rounded text-indigo-600" onchange="generateNewPassword()"> <span id="passSymText">Symbols</span></label>
+                                    <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="passNumbers" checked class="w-4 h-4 rounded text-indigo-600" onchange="generateNewPassword()"> <span id="passNumText">Numbers</span></label>
+                                    <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="passUppercase" checked class="w-4 h-4 rounded text-indigo-600" onchange="generateNewPassword()"> <span id="passUpText">Uppercase</span></label>
                                 </div>
                             </div>
 
@@ -366,9 +366,9 @@
                             <div id="qualityContainer">
                                 <label id="renderQualityLabel" class="block text-xs font-bold text-slate-500 uppercase mb-2">Render Quality:</label>
                                 <select id="renderScale" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-sm rounded-xl p-2.5 font-semibold">
-                                    <option value="1.5">Standard (150 DPI)</option>
-                                    <option value="2.0" selected>High Quality (200 DPI)</option>
-                                    <option value="3.0">Ultra HD (300 DPI)</option>
+                                    <option value="1.5" id="optStd">Standard (150 DPI)</option>
+                                    <option value="2.0" id="optHigh" selected>High Quality (200 DPI)</option>
+                                    <option value="3.0" id="optUltra">Ultra HD (300 DPI)</option>
                                 </select>
                             </div>
                             <div id="formatContainer">
@@ -378,17 +378,17 @@
                         </div>
 
                         <div id="encryptOptionsGroup" class="hidden space-y-2">
-                            <label class="block text-xs font-bold text-slate-500 uppercase">Set PDF Password:</label>
+                            <label id="setPdfPassLabel" class="block text-xs font-bold text-slate-500 uppercase">Set PDF Password:</label>
                             <input type="password" id="pdfPassInput" placeholder="Enter secure password" class="w-full p-2.5 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white">
                         </div>
 
                         <div id="compressOptionsGroup" class="hidden space-y-2">
-                            <label class="block text-xs font-bold text-slate-500 uppercase">Target File Size (Max MB):</label>
+                            <label id="targetFileSizeLabel" class="block text-xs font-bold text-slate-500 uppercase">Target File Size (Max MB):</label>
                             <input type="number" id="compressionLevel" value="1" step="0.5" min="0.1" class="w-full p-2.5 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white">
                         </div>
 
                         <div id="webpOptionsGroup" class="hidden space-y-2">
-                            <label class="block text-xs font-bold text-slate-500 uppercase">Target Web Format:</label>
+                            <label id="targetWebFormatLabel" class="block text-xs font-bold text-slate-500 uppercase">Target Web Format:</label>
                             <select id="webpFormatSelect" class="w-full p-2.5 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white">
                                 <option value="image/webp">WebP (.webp)</option>
                                 <option value="image/avif">AVIF (.avif)</option>
@@ -396,7 +396,7 @@
                         </div>
 
                         <div id="pdfRangeGroup" class="hidden space-y-2">
-                            <label class="block text-xs font-bold text-slate-500 uppercase">Page Range (e.g. 1, 3-5 or 'all'):</label>
+                            <label id="pageRangeLabel" class="block text-xs font-bold text-slate-500 uppercase">Page Range (e.g. 1, 3-5 or 'all'):</label>
                             <input type="text" id="pdfPageRange" value="all" class="w-full p-2.5 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white">
                         </div>
                     </div>
@@ -464,20 +464,22 @@
 
         // Live Safe Data Counter State
         let totalSafeBytes = parseFloat(localStorage.getItem('privacyConvert_safeBytes')) || 0;
-        function updateLiveCounter(fileSize) {
+        function updateLiveCounter(fileSize = 0) {
             totalSafeBytes += fileSize;
             localStorage.setItem('privacyConvert_safeBytes', totalSafeBytes);
             const mb = (totalSafeBytes / (1024 * 1024)).toFixed(2);
-            document.getElementById('liveCounterStat').textContent = `${mb} MB Safe`;
+            const t = translations[currentLang] || translations['en'];
+            document.getElementById('liveCounterStat').textContent = `${mb} ${t.mbSafe || 'MB Safe'}`;
         }
         updateLiveCounter(0);
 
-        // Comprehensive 6 Languages Translation Map (Including Blocked Cloud Data Label & FAQ)
+        // Comprehensive 6 Languages Translation Map (Including All Tool UI Inner Texts & Placeholders)
         const translations = {
             en: {
                 secTitle: "100% Local & Secure Processing Guarantee",
                 secDesc: "All conversions run client-side. Zero bytes uploaded to any remote server.",
                 blockedCloudData: "Blocked Cloud Data",
+                mbSafe: "MB Safe",
                 dropText: "Click to browse or drag files here",
                 dropSubText: "Support for single or batch processing (Drag to reorder list items below!)",
                 convertBtn: "Convert & Download",
@@ -485,6 +487,34 @@
                 catPdf: "📄 PDF Tools", catImage: "🖼️ Image Tools", catDev: "💻 Text & Dev", catSec: "🔐 Security & Utils",
                 recentActivity: "🕒 Recent Local Activity", clear: "Clear", advancedSettings: "⚙️ Advanced Settings",
                 renderQuality: "Render Quality:", outputInfo: "Output Info:", 
+                searchPlaceholder: "Search 22 secure tools (Ctrl+K)...",
+                cmdPlaceholder: "Type a tool name...",
+                shortcutsTitle: "Keyboard Shortcuts",
+                shortcutCmd: "Command Palette",
+                shortcutReset: "Reset Workspace",
+                shortcutConvert: "Convert & Download",
+                copy: "📋 Copy",
+                generateAnother: "🔄 Generate Another",
+                output: "Output:",
+                comparisonOutput: "Comparison Output:",
+                setPdfPass: "Set PDF Password:",
+                pdfPassPlaceholder: "Enter secure password",
+                targetFileSize: "Target File Size (Max MB):",
+                targetWebFormat: "Target Web Format:",
+                pageRange: "Page Range (e.g. 1, 3-5 or 'all'):",
+                jsonPlaceholder: "Paste raw JSON here...",
+                mdPlaceholder: "Type Markdown here (# Heading)...",
+                urlPlaceholder: "Paste string here to encode/decode...",
+                qrPlaceholder: "Enter URL or text for QR Code...",
+                diffOrigPlaceholder: "Original text...",
+                diffModPlaceholder: "Modified text...",
+                passLen: "Length:",
+                passSym: "Symbols",
+                passNum: "Numbers",
+                passUp: "Uppercase",
+                qualityStd: "Standard (150 DPI)",
+                qualityHigh: "High Quality (200 DPI)",
+                qualityUltra: "Ultra HD (300 DPI)",
                 faqMainTitle: "Frequently Asked Questions & Security Architecture",
                 faq1Title: "How does PrivacyConvert process files without a server?",
                 faq1Desc: "PrivacyConvert uses advanced client-side browser technologies (WebAssembly, PDF.js, Canvas API). When you select or drop a file, your browser's own CPU and memory handle the conversion locally.",
@@ -525,6 +555,7 @@
                 secTitle: "100% 本地与安全处理保证",
                 secDesc: "所有转换均在客户端运行。零字节上传至任何远程服务器。",
                 blockedCloudData: "已拦截的云数据",
+                mbSafe: "MB 安全",
                 dropText: "点击浏览或将文件拖放到此处",
                 dropSubText: "支持单文件或批量处理（可拖动下方列表重新排序！）",
                 convertBtn: "转换并下载",
@@ -532,6 +563,34 @@
                 catPdf: "📄 PDF 工具", catImage: "🖼️ 图像工具", catDev: "💻 文本与开发", catSec: "🔐 安全与实用",
                 recentActivity: "🕒 最近本地活动", clear: "清除", advancedSettings: "⚙️ 高级设置",
                 renderQuality: "渲染质量：", outputInfo: "输出信息：", 
+                searchPlaceholder: "搜索 22 个安全工具 (Ctrl+K)...",
+                cmdPlaceholder: "输入工具名称...",
+                shortcutsTitle: "键盘快捷键",
+                shortcutCmd: "命令面板",
+                shortcutReset: "重置工作区",
+                shortcutConvert: "转换并下载",
+                copy: "📋 复制",
+                generateAnother: "🔄 生成另一个",
+                output: "输出：",
+                comparisonOutput: "对比输出：",
+                setPdfPass: "设置 PDF 密码：",
+                pdfPassPlaceholder: "输入安全密码",
+                targetFileSize: "目标文件大小 (最大 MB)：",
+                targetWebFormat: "目标网页格式：",
+                pageRange: "页码范围 (例如 1, 3-5 或 'all')：",
+                jsonPlaceholder: "在此处粘贴原始 JSON...",
+                mdPlaceholder: "在此处输入 Markdown (# 标题)...",
+                urlPlaceholder: "在此处粘贴要编码/解码的字符串...",
+                qrPlaceholder: "输入二维码的网址或文本...",
+                diffOrigPlaceholder: "原文...",
+                diffModPlaceholder: "修改后的文本...",
+                passLen: "长度：",
+                passSym: "符号",
+                passNum: "数字",
+                passUp: "大写字母",
+                qualityStd: "标准 (150 DPI)",
+                qualityHigh: "高质量 (200 DPI)",
+                qualityUltra: "超高清 (300 DPI)",
                 faqMainTitle: "常见问题与安全架构",
                 faq1Title: "PrivacyConvert 如何在没有服务器的情况下处理文件？",
                 faq1Desc: "PrivacyConvert 使用先进的客户端浏览器技术（WebAssembly、PDF.js、Canvas API）。当您选择或拖放文件时，浏览器的 CPU 和内存会在本地处理转换。",
@@ -572,6 +631,7 @@
                 secTitle: "100% lokale & sichere Verarbeitungsgarantie",
                 secDesc: "Alle Konvertierungen laufen im Browser. Keine Datenübertragung an Server.",
                 blockedCloudData: "Blockierte Cloud-Daten",
+                mbSafe: "MB Sicher",
                 dropText: "Klicken oder Dateien hierher ziehen",
                 dropSubText: "Unterstützung für Einzel- und Stapelverarbeitung",
                 convertBtn: "Konvertieren & Herunterladen",
@@ -579,6 +639,34 @@
                 catPdf: "📄 PDF-Werkzeuge", catImage: "🖼️ Bild-Werkzeuge", catDev: "💻 Text & Dev", catSec: "🔐 Sicherheit & Utils",
                 recentActivity: "🕒 Letzte Aktivitäten", clear: "Löschen", advancedSettings: "⚙️ Erweiterte Einstellungen",
                 renderQuality: "Render-Qualität:", outputInfo: "Ausgabe-Info:", 
+                searchPlaceholder: "22 sichere Werkzeuge durchsuchen (Ctrl+K)...",
+                cmdPlaceholder: "Werkzeugname eingeben...",
+                shortcutsTitle: "Tastaturkürzel",
+                shortcutCmd: "Befehlspalette",
+                shortcutReset: "Arbeitsbereich zurücksetzen",
+                shortcutConvert: "Konvertieren & Herunterladen",
+                copy: "📋 Kopieren",
+                generateAnother: "🔄 Weiteres generieren",
+                output: "Ausgabe:",
+                comparisonOutput: "Vergleichsausgabe:",
+                setPdfPass: "PDF-Passwort festlegen:",
+                pdfPassPlaceholder: "Sicheres Passwort eingeben",
+                targetFileSize: "Zieldateigröße (Max. MB):",
+                targetWebFormat: "Ziel-Webformat:",
+                pageRange: "Seitenbereich (z. B. 1, 3-5 oder 'all'):",
+                jsonPlaceholder: "Rohes JSON hier einfügen...",
+                mdPlaceholder: "Markdown hier eingeben (# Überschrift)...",
+                urlPlaceholder: "String zum Kodieren/Dekodieren hier einfügen...",
+                qrPlaceholder: "URL oder Text für QR-Code eingeben...",
+                diffOrigPlaceholder: "Originaltext...",
+                diffModPlaceholder: "Geänderter Text...",
+                passLen: "Länge:",
+                passSym: "Symbole",
+                passNum: "Zahlen",
+                passUp: "Großbuchstaben",
+                qualityStd: "Standard (150 DPI)",
+                qualityHigh: "Hohe Qualität (200 DPI)",
+                qualityUltra: "Ultra HD (300 DPI)",
                 faqMainTitle: "Häufig gestellte Fragen & Sicherheitsarchitektur",
                 faq1Title: "Wie verarbeitet PrivacyConvert Dateien ohne Server?",
                 faq1Desc: "PrivacyConvert nutzt moderne clientseitige Browser-Technologien (WebAssembly, PDF.js, Canvas API). Wenn Sie eine Datei auswählen oder ablegen, verarbeiten CPU und Arbeitsspeicher Ihres Browsers die Konvertierung lokal.",
@@ -619,6 +707,7 @@
                 secTitle: "Garantie de traitement 100% local et sécurisé",
                 secDesc: "Toutes les conversions s'exécutent côté client. Zéro octet envoyé sur un serveur.",
                 blockedCloudData: "Données cloud bloquées",
+                mbSafe: "MB Sécurisé",
                 dropText: "Cliquez pour parcourir ou glissez des fichiers ici",
                 dropSubText: "Prise en charge du traitement individuel ou par lots",
                 convertBtn: "Convertir et Télécharger",
@@ -626,6 +715,34 @@
                 catPdf: "📄 Outils PDF", catImage: "🖼️ Outils Image", catDev: "💻 Texte & Dev", catSec: "🔐 Sécurité & Utils",
                 recentActivity: "🕒 Activité récente", clear: "Effacer", advancedSettings: "⚙️ Paramètres avancés",
                 renderQuality: "Qualité de rendu:", outputInfo: "Info de sortie:", 
+                searchPlaceholder: "Rechercher 22 outils sécurisés (Ctrl+K)...",
+                cmdPlaceholder: "Taper un nom d'outil...",
+                shortcutsTitle: "Raccourcis clavier",
+                shortcutCmd: "Palette de commandes",
+                shortcutReset: "Réinitialiser l'espace de travail",
+                shortcutConvert: "Convertir et Télécharger",
+                copy: "📋 Copier",
+                generateAnother: "🔄 Générer un autre",
+                output: "Sortie :",
+                comparisonOutput: "Sortie de comparaison :",
+                setPdfPass: "Définir le mot de passe PDF :",
+                pdfPassPlaceholder: "Entrer un mot de passe sécurisé",
+                targetFileSize: "Taille de fichier cible (Max Mo) :",
+                targetWebFormat: "Format Web cible :",
+                pageRange: "Plage de pages (ex. 1, 3-5 ou 'all') :",
+                jsonPlaceholder: "Coller le JSON brut ici...",
+                mdPlaceholder: "Taper le Markdown ici (# Titre)...",
+                urlPlaceholder: "Coller la chaîne à encoder/décoder ici...",
+                qrPlaceholder: "Entrer l'URL ou le texte du code QR...",
+                diffOrigPlaceholder: "Texte d'origine...",
+                diffModPlaceholder: "Texte modifié...",
+                passLen: "Longueur :",
+                passSym: "Symboles",
+                passNum: "Nombres",
+                passUp: "Majuscules",
+                qualityStd: "Standard (150 DPI)",
+                qualityHigh: "Haute qualité (200 DPI)",
+                qualityUltra: "Ultra HD (300 DPI)",
                 faqMainTitle: "Questions Fréquentes & Architecture de Sécurité",
                 faq1Title: "Comment PrivacyConvert traite-t-il les fichiers sans serveur ?",
                 faq1Desc: "PrivacyConvert utilise des technologies de navigateur côté client avancées (WebAssembly, PDF.js, Canvas API). Lorsque vous sélectionnez ou déposez un fichier, le processeur et la mémoire de votre navigateur gèrent la conversion localement.",
@@ -666,6 +783,7 @@
                 secTitle: "Garantía de procesamiento 100% local y seguro",
                 secDesc: "Todas las conversiones se ejecutan localmente. Cero bytes subidos a servidores.",
                 blockedCloudData: "Datos en la nube bloqueados",
+                mbSafe: "MB Seguro",
                 dropText: "Haga clic para buscar o arrastre archivos aquí",
                 dropSubText: "Soporte para procesamiento individual o por lotes",
                 convertBtn: "Convertir y Descargar",
@@ -673,6 +791,34 @@
                 catPdf: "📄 Herramientas PDF", catImage: "🖼️ Herramientas de Imagen", catDev: "💻 Texto y Desarrollo", catSec: "🔐 Seguridad y Utilidades",
                 recentActivity: "🕒 Actividad local reciente", clear: "Limpiar", advancedSettings: "⚙️ Configuración avanzada",
                 renderQuality: "Calidad de renderizado:", outputInfo: "Información de salida:", 
+                searchPlaceholder: "Buscar 22 herramientas seguras (Ctrl+K)...",
+                cmdPlaceholder: "Escribe el nombre de una herramienta...",
+                shortcutsTitle: "Atajos de teclado",
+                shortcutCmd: "Paleta de comandos",
+                shortcutReset: "Restablecer espacio de trabajo",
+                shortcutConvert: "Convertir y Descargar",
+                copy: "📋 Copiar",
+                generateAnother: "🔄 Generar otro",
+                output: "Salida:",
+                comparisonOutput: "Salida de comparación:",
+                setPdfPass: "Establecer contraseña de PDF:",
+                pdfPassPlaceholder: "Ingresar contraseña segura",
+                targetFileSize: "Tamaño de archivo objetivo (Máx. MB):",
+                targetWebFormat: "Formato web objetivo:",
+                pageRange: "Rango de páginas (ej. 1, 3-5 o 'all'):",
+                jsonPlaceholder: "Pegar JSON sin formato aquí...",
+                mdPlaceholder: "Escribe Markdown aquí (# Encabezado)...",
+                urlPlaceholder: "Pega la cadena aquí para codificar/decodificar...",
+                qrPlaceholder: "Introduce URL o texto para el código QR...",
+                diffOrigPlaceholder: "Texto original...",
+                diffModPlaceholder: "Texto modificado...",
+                passLen: "Longitud:",
+                passSym: "Símbolos",
+                passNum: "Números",
+                passUp: "Mayúsculas",
+                qualityStd: "Estándar (150 DPI)",
+                qualityHigh: "Alta calidad (200 DPI)",
+                qualityUltra: "Ultra HD (300 DPI)",
                 faqMainTitle: "Preguntas Frecuentes y Arquitectura de Seguridad",
                 faq1Title: "¿Cómo procesa PrivacyConvert los archivos sin un servidor?",
                 faq1Desc: "PrivacyConvert utiliza tecnologías avanzadas de navegador del lado del cliente (WebAssembly, PDF.js, Canvas API). Cuando selecciona o arrastra un archivo, la CPU y la memoria de su propio navegador manejan la conversión localmente.",
@@ -696,7 +842,7 @@
                     'exif-remover': { label: 'Limpiador EXIF', desc: 'Elimine coordenadas GPS y metadatos privados al instante.' },
                     'extract-pdf-img': { label: 'Extraer Imágenes PDF', desc: 'Extraiga imágenes incrustadas de documentos PDF.' },
                     'redact-tool': { label: 'Ocultar Imagen', desc: 'Oculte información confidencial de forma segura.' },
-                    'json-tool': { label: 'Formateador JSON', desc: 'Formatee y valide datos JSON.' },
+                    'json-tool': { label: 'Formateador JSON', desc: 'Formatez y valide datos JSON.' },
                     'base64-tool': { label: 'Herramienta Base64', desc: 'Codifique o decodifique cadenas Base64.' },
                     'url-tool': { label: 'Herramienta URL', desc: 'Codifique o decodifique cadenas URL.' },
                     'diff-tool': { label: 'Diferencias de Texto', desc: 'Compare dos bloques de texto.' },
@@ -713,6 +859,7 @@
                 secTitle: "ضمان المعالجة المحلية الآمنة 100%",
                 secDesc: "تتم جميع العمليات محلياً. صفر بايت مرفوعة لأي خادم خارجي.",
                 blockedCloudData: "بيانات السحابة المحظورة",
+                mbSafe: "ميغابايت آمن",
                 dropText: "انقر للتصفح أو اسحب الملفات هنا",
                 dropSubText: "يدعم المعالجة الفردية أو المجمعة",
                 convertBtn: "تحويل وتنزيل",
@@ -720,6 +867,34 @@
                 catPdf: "📄 أدوات PDF", catImage: "🖼️ أدوات الصور", catDev: "💻 النصوص والمبرمجين", catSec: "🔐 الأمان والأدوات",
                 recentActivity: "🕒 النشاط المحلي الأخير", clear: "مسح", advancedSettings: "⚙️ إعدادات متقدمة",
                 renderQuality: "جودة العرض:", outputInfo: "معلومات الإخراج:", 
+                searchPlaceholder: "بحث في 22 أداة آمنة (Ctrl+K)...",
+                cmdPlaceholder: "اكتب اسم الأداة...",
+                shortcutsTitle: "اختصارات لوحة المفاتيح",
+                shortcutCmd: "لوحة الأوامر",
+                shortcutReset: "إعادة ضبط مساحة العمل",
+                shortcutConvert: "تحويل وتنزيل",
+                copy: "📋 نسخ",
+                generateAnother: "🔄 إنشاء آخر",
+                output: "المخرجات:",
+                comparisonOutput: "مخرجات المقارنة:",
+                setPdfPass: "تعيين كلمة مرور PDF:",
+                pdfPassPlaceholder: "أدخل كلمة مرور آمنة",
+                targetFileSize: "حجم الملف المستهدف (الحد الأقصى ميغابايت):",
+                targetWebFormat: "تنسيق الويب المستهدف:",
+                pageRange: "نطاق الصفحات (مثال: 1 أو 3-5 أو 'all'):",
+                jsonPlaceholder: "الصق كود JSON هنا...",
+                mdPlaceholder: "اكتب Markdown هنا (# عنوان)...",
+                urlPlaceholder: "الصق النص هنا للتشفير أو فك التشفير...",
+                qrPlaceholder: "أدخل الرابط أو النص لرمز الاستجابة السريعة...",
+                diffOrigPlaceholder: "النص الأصلي...",
+                diffModPlaceholder: "النص المعدل...",
+                passLen: "الطول:",
+                passSym: "رموز",
+                passNum: "أرقام",
+                passUp: "حروف كبيرة",
+                qualityStd: "قياسي (150 DPI)",
+                qualityHigh: "جودة عالية (200 DPI)",
+                qualityUltra: "فائق الوضوح (300 DPI)",
                 faqMainTitle: "الأسئلة الشائعة وهندسة الأمان",
                 faq1Title: "كيف تقوم منصة PrivacyConvert بمعالجة الملفات بدون خادم؟",
                 faq1Desc: "تستخدم PrivacyConvert تقنيات المتصفح المتقدمة من جانب العميل (WebAssembly و PDF.js و Canvas API). عندما تقوم بتحديد ملف أو سحبه، تتولى وحدة المعالجة المركزية وذاكرة متصفحك عملية التحويل محلياً.",
@@ -788,6 +963,46 @@
             document.getElementById('advSettingsTitle').textContent = t.advancedSettings;
             document.getElementById('renderQualityLabel').textContent = t.renderQuality;
             document.getElementById('outputInfoLabel').textContent = t.outputInfo;
+
+            // Search and Placeholders & UI elements
+            document.getElementById('toolSearchInput').placeholder = t.searchPlaceholder;
+            document.getElementById('cmdInput').placeholder = t.cmdPlaceholder;
+            document.getElementById('shortcutsTitle').textContent = t.shortcutsTitle;
+            document.getElementById('shortcutCmdLabel').textContent = t.shortcutCmd;
+            document.getElementById('shortcutResetLabel').textContent = t.shortcutReset;
+            document.getElementById('shortcutConvertLabel').textContent = t.shortcutConvert;
+            
+            document.getElementById('copyGenericBtn').textContent = t.copy;
+            document.getElementById('copyGenBtn').textContent = t.copy.replace('📋 ', '');
+            document.getElementById('genAnotherBtn').textContent = t.generateAnother;
+            document.getElementById('genericTextLabel').textContent = t.output;
+            document.getElementById('diffResultLabel').textContent = t.comparisonOutput;
+            document.getElementById('setPdfPassLabel').textContent = t.setPdfPass;
+            document.getElementById('pdfPassInput').placeholder = t.pdfPassPlaceholder;
+            document.getElementById('targetFileSizeLabel').textContent = t.targetFileSize;
+            document.getElementById('targetWebFormatLabel').textContent = t.targetWebFormat;
+            document.getElementById('pageRangeLabel').textContent = t.pageRange;
+            document.getElementById('passLengthLabel').childNodes[0].nodeValue = `${t.passLen} `;
+            document.getElementById('passSymText').textContent = t.passSym;
+            document.getElementById('passNumText').textContent = t.passNum;
+            document.getElementById('passUpText').textContent = t.passUp;
+
+            document.getElementById('optStd').textContent = t.qualityStd;
+            document.getElementById('optHigh').textContent = t.qualityHigh;
+            document.getElementById('optUltra').textContent = t.qualityUltra;
+
+            // Update active tool input placeholder if active
+            const mainInput = document.getElementById('mainInputField');
+            if (currentTool === 'json-tool') mainInput.placeholder = t.jsonPlaceholder;
+            else if (currentTool === 'md-tool') mainInput.placeholder = t.mdPlaceholder;
+            else if (currentTool === 'base64-tool' || currentTool === 'url-tool') mainInput.placeholder = t.urlPlaceholder;
+            else if (currentTool === 'qr-tool') mainInput.placeholder = t.qrPlaceholder;
+
+            document.getElementById('diffOriginal').placeholder = t.diffOrigPlaceholder;
+            document.getElementById('diffModified').placeholder = t.diffModPlaceholder;
+
+            // Update Live Counter text immediately on language switch
+            updateLiveCounter(0);
 
             // FAQ Translations Update
             document.getElementById('faqMainTitle').textContent = t.faqMainTitle;
@@ -987,6 +1202,7 @@
 
             let requiresFile = true;
             let showAdvanced = true;
+            const mainInput = document.getElementById('mainInputField');
 
             switch(tool) {
                 case 'pdf-to-png': case 'pdf-to-jpg':
@@ -1038,18 +1254,21 @@
                     fileInput.accept = "*/*"; fileInput.multiple = false;
                     showAdvanced = false;
                     break;
-                case 'json-tool': case 'md-tool':
+                case 'json-tool':
                     requiresFile = false; showAdvanced = false;
                     document.getElementById('textInputGroup').classList.remove('hidden');
                     document.getElementById('genericTextBox').classList.remove('hidden');
                     actionArea.classList.remove('hidden');
-                    if(tool === 'md-tool') {
-                        document.getElementById('mainInputField').placeholder = "Type Markdown here (# Heading)...";
-                        document.getElementById('genericTextLabel').textContent = "Rendered HTML:";
-                    } else {
-                        document.getElementById('mainInputField').placeholder = "Paste raw JSON here...";
-                        document.getElementById('genericTextLabel').textContent = "Formatted JSON:";
-                    }
+                    mainInput.placeholder = t.jsonPlaceholder;
+                    document.getElementById('genericTextLabel').textContent = t.output;
+                    break;
+                case 'md-tool':
+                    requiresFile = false; showAdvanced = false;
+                    document.getElementById('textInputGroup').classList.remove('hidden');
+                    document.getElementById('genericTextBox').classList.remove('hidden');
+                    actionArea.classList.remove('hidden');
+                    mainInput.placeholder = t.mdPlaceholder;
+                    document.getElementById('genericTextLabel').textContent = t.output;
                     break;
                 case 'diff-tool':
                     requiresFile = false; showAdvanced = false;
@@ -1062,14 +1281,14 @@
                     document.getElementById('textInputGroup').classList.remove('hidden');
                     document.getElementById('genericTextBox').classList.remove('hidden');
                     actionArea.classList.remove('hidden');
-                    document.getElementById('mainInputField').placeholder = "Paste string here to encode/decode...";
+                    mainInput.placeholder = t.urlPlaceholder;
                     break;
                 case 'password-gen':
                     requiresFile = false; showAdvanced = false;
                     document.getElementById('passwordOptionsGroup').classList.remove('hidden');
                     document.getElementById('generatorResultBox').classList.remove('hidden');
                     actionArea.classList.remove('hidden');
-                    document.getElementById('convertBtnText').textContent = "Copy Password";
+                    document.getElementById('convertBtnText').textContent = t.copy.replace('📋 ', '');
                     document.getElementById('genAnotherBtn').onclick = generateNewPassword;
                     generateNewPassword();
                     break;
@@ -1077,7 +1296,7 @@
                     requiresFile = false; showAdvanced = false;
                     document.getElementById('generatorResultBox').classList.remove('hidden');
                     actionArea.classList.remove('hidden');
-                    document.getElementById('convertBtnText').textContent = "Copy UUID";
+                    document.getElementById('convertBtnText').textContent = t.copy.replace('📋 ', '');
                     document.getElementById('genAnotherBtn').onclick = generateNewUuid;
                     generateNewUuid();
                     break;
@@ -1086,7 +1305,7 @@
                     document.getElementById('textInputGroup').classList.remove('hidden');
                     document.getElementById('qrResultBox').classList.remove('hidden');
                     actionArea.classList.remove('hidden');
-                    document.getElementById('mainInputField').placeholder = "Enter URL or text for QR Code...";
+                    mainInput.placeholder = t.qrPlaceholder;
                     break;
             }
 
