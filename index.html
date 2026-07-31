@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- SEO & PWA Manifest via Data URI -->
-    <title>PrivacyConvert - All-in-One Free, Fast & 100% Private Converters</title>
-    <meta name="description" content="Convert PDF, HEIC, JPG images and extract text with OCR online for free. 100% local in-browser conversion.">
+    <title id="pageTitle">PrivacyConvert - All-in-One Free, Fast & 100% Private Converters</title>
+    <meta name="description" content="Convert PDF, HEIC, JPG images, merge, split, and extract text with OCR online for free. 100% local in-browser conversion.">
     <link rel="manifest" href="data:application/json;charset=utf-8,%7B%22name%22%3A%22PrivacyConvert%22%2C%22short_name%22%3A%22PrivacyConvert%22%2C%22start_url%22%3A%22%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23f8fafc%22%2C%22theme_color%22%3A%22%234f46e5%22%7D">
 
     <!-- Tailwind CSS -->
@@ -24,7 +24,6 @@
     <script src="https://unpkg.com/pdf-lib@1.4.0/dist/pdf-lib.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
-    <!-- Tesseract.js for OCR Text Reader -->
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 </head>
 
@@ -48,9 +47,10 @@
             <a href="#" class="text-xl font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-2 hover:opacity-90 transition">
                 ⚡ PrivacyConvert
             </a>
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-3">
+                <button id="langToggle" class="px-3 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg text-xs font-bold transition">TR / EN</button>
                 <span class="hidden sm:inline-flex bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300 text-xs px-3 py-1 rounded-full font-medium items-center gap-1">
-                    🔒 100% Local & PWA Ready
+                    🔒 100% Local
                 </span>
                 <button id="themeToggle" class="text-xl p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition" title="Toggle Dark Mode">
                     🌙
@@ -65,7 +65,7 @@
         <!-- Title Section -->
         <div class="text-center mb-6">
             <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-                Secure <span id="mainTitleAccent" class="text-indigo-600 dark:text-indigo-400">PDF to PNG</span> Converter
+                <span id="mainTitlePrefix">Secure</span> <span id="mainTitleAccent" class="text-indigo-600 dark:text-indigo-400">PDF to PNG</span> <span id="mainTitleSuffix">Converter</span>
             </h1>
             <p id="mainDesc" class="text-slate-500 dark:text-slate-400 text-sm sm:text-base mt-2 max-w-xl mx-auto">
                 Extract PDF pages into high-resolution PNG images directly in your browser. Fast, free, and completely private.
@@ -76,8 +76,9 @@
         <div class="flex flex-wrap justify-center gap-2 mb-8">
             <button onclick="switchTool('pdf-to-png')" id="tab-pdf-to-png" class="px-4 py-2 text-xs font-bold rounded-xl transition bg-indigo-600 text-white shadow-sm">PDF to PNG</button>
             <button onclick="switchTool('pdf-to-jpg')" id="tab-pdf-to-jpg" class="px-4 py-2 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">PDF to JPG</button>
+            <button onclick="switchTool('merge-pdf')" id="tab-merge-pdf" class="px-4 py-2 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">Merge PDF</button>
             <button onclick="switchTool('split-pdf')" id="tab-split-pdf" class="px-4 py-2 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">Split PDF</button>
-            <button onclick="switchTool('ocr-reader')" id="tab-ocr-reader" class="px-4 py-2 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">OCR Text Reader</button>
+            <button onclick="switchTool('ocr-reader')" id="tab-ocr-reader" class="px-4 py-2 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">OCR Reader</button>
             <button onclick="switchTool('heic-to-jpg')" id="tab-heic-to-jpg" class="px-4 py-2 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">HEIC to JPG</button>
             <button onclick="switchTool('jpg-to-pdf')" id="tab-jpg-to-pdf" class="px-4 py-2 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">JPG to PDF</button>
             <button onclick="switchTool('compress-image')" id="tab-compress-image" class="px-4 py-2 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">Compress</button>
@@ -113,8 +114,8 @@
                     <!-- OCR Result Box -->
                     <div id="ocrResultBox" class="hidden w-full h-full flex flex-col space-y-2 p-2">
                         <div class="flex justify-between items-center text-xs text-slate-400">
-                            <span>Extracted Text (Editable):</span>
-                            <button onclick="copyOcrText()" class="px-2 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition">📋 Copy Text</button>
+                            <span id="ocrLabelText">Extracted Text (Editable):</span>
+                            <button onclick="copyOcrText()" class="px-2 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition">📋 Copy</button>
                         </div>
                         <textarea id="ocrTextArea" class="w-full h-48 bg-slate-800 text-slate-200 text-xs p-3 rounded-lg border border-slate-700 focus:outline-none focus:border-indigo-500 resize-none" placeholder="Extracted text will appear here..."></textarea>
                     </div>
@@ -127,7 +128,7 @@
 
                 <!-- 🛠️ Editor & Options Panel -->
                 <div id="editorTools" class="bg-slate-50 dark:bg-slate-700/50 p-4 rounded-xl border border-slate-200 dark:border-slate-600 space-y-4">
-                    <h3 class="text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">🛠️ Advanced Editing Options</h3>
+                    <h3 class="text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider" id="editorHeaderTitle">🛠️ Advanced Editing Options</h3>
                     
                     <!-- Quick Tools & Filters -->
                     <div id="imageQuickButtons" class="flex flex-wrap items-center gap-2">
@@ -145,14 +146,14 @@
 
                     <!-- Compress Options -->
                     <div id="compressOptionsGroup" class="hidden bg-emerald-50 dark:bg-emerald-900/20 p-3 rounded-lg border border-emerald-100 dark:border-emerald-800/50">
-                        <label for="compressionLevel" class="block text-xs font-semibold text-emerald-900 dark:text-emerald-300 mb-1">
+                        <label for="compressionLevel" class="block text-xs font-semibold text-emerald-900 dark:text-emerald-300 mb-1" id="compressLabelText">
                             🗜️ Target File Size (Max MB per file):
                         </label>
                         <input type="number" id="compressionLevel" value="1" step="0.5" min="0.1" class="w-full p-2 text-xs border border-emerald-200 dark:border-emerald-800 rounded-lg bg-white dark:bg-slate-800 dark:text-white focus:ring-emerald-500 focus:border-emerald-500">
                     </div>
 
                     <div id="batchSortHint" class="hidden text-xs text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 p-2 rounded-lg font-medium">
-                        💡 Tip: Drag and drop the images in the preview box above to change their order.
+                        💡 Tip: Drag and drop items in the preview box above to change their order.
                     </div>
 
                     <!-- PDF Specific Range Group -->
@@ -164,20 +165,31 @@
                         <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1" id="pdfRangeSub">Leave as <strong>'all'</strong> or specify pages like <strong>1, 3-5, 8</strong>.</p>
                     </div>
 
-                    <!-- Watermark & Adjustments Grid -->
+                    <!-- Watermark & Advanced Adjustments Grid -->
                     <div id="watermarkContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3 border-t border-slate-200 dark:border-slate-600">
                         <div>
-                            <label for="watermarkText" class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Text Watermark:</label>
+                            <label for="watermarkText" class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1" id="wmTextLabel">Text Watermark:</label>
                             <input type="text" id="watermarkText" placeholder="e.g. Confidential" class="w-full p-2 text-sm border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-slate-800 dark:text-white">
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Logo Watermark (PNG/JPG):</label>
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1" id="wmLogoLabel">Logo Watermark (PNG/JPG):</label>
                             <input type="file" id="logoInput" accept="image/png, image/jpeg" class="block w-full text-xs text-slate-500 dark:text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-900/50 dark:file:text-indigo-300 cursor-pointer border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800">
+                        </div>
+                        <div>
+                            <label for="watermarkOpacity" class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1" id="wmOpacityLabel">Watermark Opacity:</label>
+                            <input type="range" id="watermarkOpacity" min="0.1" max="1.0" step="0.1" value="0.7" class="w-full accent-indigo-600 cursor-pointer">
+                        </div>
+                        <div>
+                            <label for="watermarkPosition" class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1" id="wmPosLabel">Watermark Position:</label>
+                            <select id="watermarkPosition" class="w-full p-2 text-xs border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 dark:text-white">
+                                <option value="bottom">Bottom Center</option>
+                                <option value="center">Center (Diagonal)</option>
+                            </select>
                         </div>
                     </div>
                     
                     <div id="resizeContainer" class="pt-2">
-                        <label for="resizeWidth" class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Max Output Width (px):</label>
+                        <label for="resizeWidth" class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1" id="resizeLabelText">Max Output Width (px):</label>
                         <input type="number" id="resizeWidth" placeholder="Keep Original Resolution" class="w-full p-2 text-sm border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-slate-800 dark:text-white">
                     </div>
                 </div>
@@ -185,7 +197,7 @@
                 <!-- Quality & Format Settings -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center pt-2">
                     <div id="qualityContainer">
-                        <label for="renderScale" class="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-1">Render Quality / Scale:</label>
+                        <label for="renderScale" class="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-1" id="qualityLabelText">Render Quality / Scale:</label>
                         <select id="renderScale" class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg p-2 font-semibold focus:ring-indigo-500 focus:border-indigo-500 cursor-pointer">
                             <option value="1.5">Standard (150 DPI)</option>
                             <option value="2.0" selected>High Quality (200 DPI)</option>
@@ -193,7 +205,7 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-1">Output Format:</label>
+                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-1" id="formatLabelText">Output Format:</label>
                         <div id="outputFormatBadge" class="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-600 text-sm font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
                             🖼️ PNG
                         </div>
@@ -203,7 +215,7 @@
                 <!-- Convert Button -->
                 <button id="convertBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-4 rounded-xl shadow-md transition-all active:scale-95 text-lg flex items-center justify-center gap-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                    Convert & Download
+                    <span id="convertBtnText">Convert & Download</span>
                 </button>
             </div>
         </div>
@@ -212,6 +224,107 @@
     <!-- JAVASCRIPT LOGIC -->
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        // Translations Dictionary (i18n)
+        let currentLang = 'en';
+        const translations = {
+            en: {
+                titlePrefix: "Secure", titleSuffix: "Converter",
+                descPdfPng: "Extract PDF pages into high-resolution PNG images directly in your browser. Fast, free, and completely private.",
+                descPdfJpg: "Extract PDF pages into high-resolution JPG images directly in your browser.",
+                descMergePdf: "Combine multiple PDF documents into a single organized file securely.",
+                descSplitPdf: "Extract specific pages from a PDF into a new separate document.",
+                descOcr: "Extract editable text from images instantly inside your browser.",
+                descHeic: "Convert Apple HEIC photos to standard JPG images instantly.",
+                descJpgPdf: "Combine and convert multiple images into a single PDF document.",
+                descCompress: "Shrink image file sizes significantly without losing visible quality.",
+                dropPdf: "Click to select PDF files or drag & drop",
+                dropSubPdf: "Select one or multiple PDF documents (.pdf)",
+                dropMergePdf: "Click to select PDF files to merge or drag & drop",
+                dropSubMerge: "Select 2 or more PDF documents to combine",
+                dropOcr: "Click to select image for OCR or drag & drop",
+                dropHeic: "Click to select HEIC files or drag & drop",
+                dropJpgPdf: "Click to select images or drag & drop",
+                dropCompress: "Click to select images to compress or drag & drop",
+                convertBtn: "Convert & Download",
+                clear: "🗑️ Clear",
+                copied: "Text copied to clipboard!",
+                successConv: "Conversion completed!",
+                successMerge: "PDFs successfully merged and downloaded!",
+                successSplit: "PDF successfully split and downloaded!",
+                successOcr: "Text successfully extracted!",
+                successComp: "Image compressed successfully! Saved ",
+                successJpgPdf: "PDF successfully created!"
+            },
+            tr: {
+                titlePrefix: "Güvenli", titleSuffix: "Dönüştürücü",
+                descPdfPng: "PDF sayfalarını doğrudan tarayıcınızda yüksek çözünürlüklü PNG görsellere dönüştürün.",
+                descPdfJpg: "PDF sayfalarını doğrudan tarayıcınızda yüksek çözünürlüklü JPG görsellere dönüştürün.",
+                descMergePdf: "Birden fazla PDF belgesini güvenli bir şekilde tek bir dosyada birleştirin.",
+                descSplitPdf: "Bir PDF'ten istediğiniz sayfaları ayırarak yeni bir belge oluşturun.",
+                descOcr: "Görsellerdeki metinleri tarayıcınızda yapay zeka ile anında metne dönüştürün.",
+                descHeic: "Apple HEIC fotoğraflarını anında standart JPG formatına çevirin.",
+                descJpgPdf: "Birden fazla görseli tek bir PDF belgesinde birleştirin.",
+                descCompress: "Görsel kalitesini kaybetmeden dosya boyutlarını ciddi ölçüde küçültün.",
+                dropPdf: "PDF dosyası seçmek için tıklayın veya sürükleyip bırakın",
+                dropSubPdf: "Bir veya birden fazla PDF belgesi seçin (.pdf)",
+                dropMergePdf: "Birleştirilecek PDF'leri seçin veya sürükleyip bırakın",
+                dropSubMerge: "Birleştirmek için 2 veya daha fazla PDF seçin",
+                dropOcr: "OCR için görsel seçin veya sürükleyip bırakın",
+                dropHeic: "HEIC dosyası seçin veya sürükleyip bırakın",
+                dropJpgPdf: "Görsel seçin veya sürükleyip bırakın",
+                dropCompress: "Sıkıştırılacak görselleri seçin veya sürükleyip bırakın",
+                convertBtn: "Dönüştür ve İndir",
+                clear: "🗑️ Temizle",
+                copied: "Metin panoya kopyalandı!",
+                successConv: "Dönüştürme tamamlandı!",
+                successMerge: "PDF'ler başarıyla birleştirildi ve indirildi!",
+                successSplit: "PDF başarıyla bölündü ve indirildi!",
+                successOcr: "Metin başarıyla çıkarıldı!",
+                successComp: "Görsel sıkıştırıldı! Tasarruf edilen alan: ",
+                successJpgPdf: "PDF başarıyla oluşturuldu!"
+            }
+        };
+
+        function switchLanguage() {
+            currentLang = currentLang === 'en' ? 'tr' : 'en';
+            document.getElementById('langToggle').textContent = currentLang.toUpperCase();
+            updateUITexts();
+        }
+
+        document.getElementById('langToggle').addEventListener('click', switchLanguage);
+
+        function updateUITexts() {
+            const t = translations[currentLang];
+            document.getElementById('mainTitlePrefix').textContent = t.titlePrefix;
+            document.getElementById('mainTitleSuffix').textContent = t.titleSuffix;
+            document.getElementById('clearBtn').innerHTML = t.clear;
+            document.getElementById('convertBtnText').textContent = t.convertBtn;
+            
+            if (currentTool === 'pdf-to-png' || currentTool === 'pdf-to-jpg') {
+                document.getElementById('mainDesc').textContent = currentTool === 'pdf-to-png' ? t.descPdfPng : t.descPdfJpg;
+                document.getElementById('dropText').textContent = t.dropPdf;
+                document.getElementById('dropSubText').textContent = t.dropSubPdf;
+            } else if (currentTool === 'merge-pdf') {
+                document.getElementById('mainDesc').textContent = t.descMergePdf;
+                document.getElementById('dropText').textContent = t.dropMergePdf;
+                document.getElementById('dropSubText').textContent = t.dropSubMerge;
+            } else if (currentTool === 'split-pdf') {
+                document.getElementById('mainDesc').textContent = t.descSplitPdf;
+            } else if (currentTool === 'ocr-reader') {
+                document.getElementById('mainDesc').textContent = t.descOcr;
+                document.getElementById('dropText').textContent = t.dropOcr;
+            } else if (currentTool === 'heic-to-jpg') {
+                document.getElementById('mainDesc').textContent = t.descHeic;
+                document.getElementById('dropText').textContent = t.dropHeic;
+            } else if (currentTool === 'jpg-to-pdf') {
+                document.getElementById('mainDesc').textContent = t.descJpgPdf;
+                document.getElementById('dropText').textContent = t.dropJpgPdf;
+            } else if (currentTool === 'compress-image') {
+                document.getElementById('mainDesc').textContent = t.descCompress;
+                document.getElementById('dropText').textContent = t.dropCompress;
+            }
+        }
 
         // Toast Notification System
         function showToast(message, type = 'success') {
@@ -233,7 +346,7 @@
             const textarea = document.getElementById('ocrTextArea');
             textarea.select();
             document.execCommand('copy');
-            showToast("Text copied to clipboard!");
+            showToast(translations[currentLang].copied);
         }
 
         // Dark Mode Toggle Logic
@@ -304,7 +417,7 @@
             currentTool = tool;
             resetApp();
 
-            ['pdf-to-png', 'pdf-to-jpg', 'split-pdf', 'ocr-reader', 'heic-to-jpg', 'jpg-to-pdf', 'compress-image'].forEach(t => {
+            ['pdf-to-png', 'pdf-to-jpg', 'merge-pdf', 'split-pdf', 'ocr-reader', 'heic-to-jpg', 'jpg-to-pdf', 'compress-image'].forEach(t => {
                 const btn = document.getElementById(`tab-${t}`);
                 if (btn) {
                     if (t === tool) btn.className = "px-4 py-2 text-xs font-bold rounded-xl transition bg-indigo-600 text-white shadow-sm";
@@ -313,7 +426,6 @@
             });
 
             const title = document.getElementById('mainTitleAccent');
-            const desc = document.getElementById('mainDesc');
             const pdfGroup = document.getElementById('pdfRangeGroup');
             const quality = document.getElementById('qualityContainer');
             const formatBadge = document.getElementById('outputFormatBadge');
@@ -324,40 +436,43 @@
 
             if (tool === 'pdf-to-png' || tool === 'pdf-to-jpg') {
                 title.textContent = tool === 'pdf-to-png' ? "PDF to PNG" : "PDF to JPG";
-                desc.textContent = "Extract PDF pages into high-resolution images directly in your browser.";
                 fileInput.accept = ".pdf"; fileInput.multiple = true;
                 quality.style.display = 'block';
                 document.getElementById('pdfRangeLabel').textContent = "📄 PDF Page Range to Process:";
                 document.getElementById('pdfRangeSub').innerHTML = "Leave as <strong>'all'</strong> or specify pages like <strong>1, 3-5, 8</strong>.";
                 formatBadge.innerHTML = tool === 'pdf-to-png' ? "🖼️ PNG (Lossless)" : "🖼️ JPG (Compressed)";
+            } else if (tool === 'merge-pdf') {
+                title.textContent = "Merge PDFs";
+                fileInput.accept = ".pdf"; fileInput.multiple = true;
+                quality.style.display = 'none'; imageQuickButtons.style.display = 'none'; watermarkContainer.style.display = 'none'; resizeContainer.style.display = 'none'; pdfGroup.style.display = 'none';
+                batchSortHint.style.display = 'block';
+                formatBadge.innerHTML = "📄 Merged PDF Document";
             } else if (tool === 'split-pdf') {
-                title.textContent = "Split PDF"; desc.textContent = "Extract specific pages from a PDF into a new separate document.";
+                title.textContent = "Split PDF";
                 fileInput.accept = ".pdf"; fileInput.multiple = false;
                 quality.style.display = 'none'; imageQuickButtons.style.display = 'none'; watermarkContainer.style.display = 'none'; resizeContainer.style.display = 'none';
                 document.getElementById('pdfRangeLabel').textContent = "📄 Pages to Keep in New PDF:";
                 document.getElementById('pdfRangeSub').innerHTML = "Specify pages to extract e.g. <strong>1-3, 5</strong>.";
                 formatBadge.innerHTML = "📄 Split PDF Document";
             } else if (tool === 'ocr-reader') {
-                title.textContent = "OCR Text Reader"; desc.textContent = "Extract editable text from images instantly inside your browser.";
+                title.textContent = "OCR Text Reader";
                 fileInput.accept = "image/jpeg,image/png,image/webp,image/heic"; fileInput.multiple = false;
                 pdfGroup.style.display = 'none'; quality.style.display = 'none'; imageQuickButtons.style.display = 'none'; watermarkContainer.style.display = 'none'; resizeContainer.style.display = 'none';
-                document.getElementById('dropText').textContent = "Click to select image for OCR or drag & drop";
                 formatBadge.innerHTML = "📝 Text File (.txt)";
-                convertBtn.innerHTML = "Extract & Download Text";
             } else if (tool === 'heic-to-jpg') {
-                title.textContent = "HEIC to JPG"; desc.textContent = "Convert Apple HEIC photos to standard JPG images instantly.";
+                title.textContent = "HEIC to JPG";
                 fileInput.accept = ".heic,.HEIC"; fileInput.multiple = true;
                 pdfGroup.style.display = 'none'; quality.style.display = 'none';
                 formatBadge.innerHTML = "🖼️ JPG";
             } else if (tool === 'jpg-to-pdf') {
-                title.textContent = "JPG to PDF"; desc.textContent = "Combine and convert multiple images into a single PDF document.";
+                title.textContent = "JPG to PDF";
                 fileInput.accept = "image/jpeg,image/png,image/webp"; fileInput.multiple = true;
                 pdfGroup.style.display = 'none'; quality.style.display = 'none';
                 imageQuickButtons.style.display = 'none'; watermarkContainer.style.display = 'none';
                 batchSortHint.style.display = 'block'; resizeContainer.style.display = 'none';
                 formatBadge.innerHTML = "📄 PDF Document";
             } else if (tool === 'compress-image') {
-                title.textContent = "Compress Image"; desc.textContent = "Shrink image file sizes significantly without losing visible quality.";
+                title.textContent = "Compress Image";
                 fileInput.accept = "image/jpeg,image/png,image/webp"; fileInput.multiple = true;
                 pdfGroup.style.display = 'none'; quality.style.display = 'none';
                 imageQuickButtons.style.display = 'none'; resizeContainer.style.display = 'none';
@@ -365,9 +480,7 @@
                 compressOptionsGroup.style.display = 'block'; batchSortHint.style.display = 'block';
                 formatBadge.innerHTML = "🗜️ Compressed Image";
             }
-            if (tool !== 'ocr-reader') {
-                convertBtn.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> Convert & Download`;
-            }
+            updateUITexts();
         }
 
         // Drag & Drop Handling
@@ -387,22 +500,27 @@
             showProgress("Loading...", "Preparing preview layout");
 
             try {
-                if (currentTool === 'jpg-to-pdf' || currentTool === 'compress-image') {
+                if (currentTool === 'jpg-to-pdf' || currentTool === 'compress-image' || currentTool === 'merge-pdf') {
                     imagePreview.classList.add('hidden'); nonImagePreview.classList.add('hidden'); ocrResultBox.classList.add('hidden');
                     batchPreviewGrid.classList.remove('hidden'); batchPreviewGrid.innerHTML = '';
                     
                     for (let i = 0; i < selectedFiles.length; i++) {
                         const file = selectedFiles[i];
-                        const reader = new FileReader();
-                        reader.onload = (e) => {
-                            const div = document.createElement('div');
-                            div.className = 'relative aspect-square bg-slate-800 rounded-lg overflow-hidden border-2 border-transparent hover:border-indigo-500 cursor-grab';
-                            div.dataset.index = i;
-                            const sizeText = (file.size / 1024 / 1024).toFixed(2) + " MB";
-                            div.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover opacity-90 hover:opacity-100 transition"><span class="absolute top-1 left-1 bg-black/70 text-white text-[10px] px-1.5 rounded">${i+1}</span><span class="absolute bottom-1 right-1 bg-black/70 text-white text-[9px] px-1.5 rounded">${sizeText}</span>`;
-                            batchPreviewGrid.appendChild(div);
-                        };
-                        reader.readAsDataURL(file);
+                        const div = document.createElement('div');
+                        div.className = 'relative aspect-square bg-slate-800 rounded-lg overflow-hidden border-2 border-transparent hover:border-indigo-500 cursor-grab flex flex-col items-center justify-center p-2 text-center text-white';
+                        div.dataset.index = i;
+                        const sizeText = (file.size / 1024 / 1024).toFixed(2) + " MB";
+                        
+                        if (currentTool === 'merge-pdf') {
+                            div.innerHTML = `<span class="text-3xl mb-1">📄</span><span class="text-[11px] font-bold truncate w-full">${file.name}</span><span class="absolute bottom-1 right-1 bg-black/70 text-[9px] px-1.5 rounded">${sizeText}</span><span class="absolute top-1 left-1 bg-indigo-600 text-[10px] px-1.5 rounded">${i+1}</span>`;
+                        } else {
+                            const reader = new FileReader();
+                            reader.onload = (e) => {
+                                div.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover opacity-90 hover:opacity-100 transition"><span class="absolute top-1 left-1 bg-black/70 text-white text-[10px] px-1.5 rounded">${i+1}</span><span class="absolute bottom-1 right-1 bg-black/70 text-white text-[9px] px-1.5 rounded">${sizeText}</span>`;
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                        batchPreviewGrid.appendChild(div);
                     }
                     sortableInstance = new Sortable(batchPreviewGrid, { animation: 150, ghostClass: 'opacity-50' });
                 } else if (currentTool === 'ocr-reader') {
@@ -417,7 +535,7 @@
                                 logger: m => console.log(m)
                             });
                             document.getElementById('ocrTextArea').value = result.data.text;
-                            showToast("Text successfully extracted!");
+                            showToast(translations[currentLang].successOcr);
                         } catch (err) {
                             showToast("OCR failed: " + err.message, 'error');
                         } finally {
@@ -529,13 +647,25 @@
             }
             const ctx = workingCanvas.getContext('2d');
             const wm = document.getElementById('watermarkText').value.trim();
+            const opacity = parseFloat(document.getElementById('watermarkOpacity').value) || 0.7;
+            const position = document.getElementById('watermarkPosition').value;
+
             if (wm) {
                 const fontSize = Math.max(24, Math.floor(workingCanvas.width / 20));
                 ctx.font = `bold ${fontSize}px sans-serif`;
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
                 ctx.shadowColor = 'rgba(0,0,0,0.8)'; ctx.shadowBlur = 10;
-                ctx.textAlign = 'center'; 
-                ctx.fillText(wm, workingCanvas.width / 2, workingCanvas.height - (workingCanvas.height * 0.05));
+                ctx.textAlign = 'center';
+                
+                if (position === 'center') {
+                    ctx.save();
+                    ctx.translate(workingCanvas.width / 2, workingCanvas.height / 2);
+                    ctx.rotate(-Math.PI / 4);
+                    ctx.fillText(wm, 0, 0);
+                    ctx.restore();
+                } else {
+                    ctx.fillText(wm, workingCanvas.width / 2, workingCanvas.height - (workingCanvas.height * 0.05));
+                }
                 ctx.shadowBlur = 0;
             }
             if (customLogo) {
@@ -543,7 +673,7 @@
                 const ratio = logoTargetWidth / customLogo.width;
                 const logoTargetHeight = customLogo.height * ratio;
                 const padding = workingCanvas.width * 0.02;
-                ctx.globalAlpha = 0.8;
+                ctx.globalAlpha = opacity;
                 ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = 15;
                 ctx.drawImage(customLogo, workingCanvas.width - logoTargetWidth - padding, workingCanvas.height - logoTargetHeight - padding, logoTargetWidth, logoTargetHeight);
                 ctx.globalAlpha = 1.0; ctx.shadowBlur = 0;
@@ -578,7 +708,7 @@
                 const text = document.getElementById('ocrTextArea').value;
                 const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
                 triggerDownloadWithShare(blob, `extracted_text_${Date.now()}.txt`);
-                showToast("Text file downloaded successfully!");
+                showToast(translations[currentLang].successOcr);
                 return;
             }
 
@@ -587,7 +717,24 @@
             try {
                 const zip = new JSZip();
 
-                if (currentTool === 'split-pdf') {
+                if (currentTool === 'merge-pdf') {
+                    showProgress("Merging PDFs", "Combining documents..."); await yieldToMain();
+                    let orderedFiles = [];
+                    Array.from(batchPreviewGrid.children).forEach(node => { orderedFiles.push(selectedFiles[parseInt(node.dataset.index)]); });
+
+                    const mergedPdf = await PDFLib.PDFDocument.create();
+                    for (let file of orderedFiles) {
+                        const arrayBuffer = await file.arrayBuffer();
+                        const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
+                        const pages = await mergedPdf.copyPages(pdfDoc, pdfDoc.getPageIndices());
+                        pages.forEach(page => mergedPdf.addPage(page));
+                    }
+                    const pdfBytes = await mergedPdf.save();
+                    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                    triggerDownloadWithShare(blob, `merged_${Date.now()}.pdf`);
+                    showToast(translations[currentLang].successMerge);
+
+                } else if (currentTool === 'split-pdf') {
                     showProgress("Splitting PDF", "Extracting pages..."); await yieldToMain();
                     const file = selectedFiles[0];
                     const arrayBuffer = await file.arrayBuffer();
@@ -601,7 +748,7 @@
                     const pdfBytes = await newPdfDoc.save();
                     const blob = new Blob([pdfBytes], { type: 'application/pdf' });
                     triggerDownloadWithShare(blob, `split_${file.name}`);
-                    showToast("PDF successfully split and downloaded!");
+                    showToast(translations[currentLang].successSplit);
 
                 } else if (currentTool === 'compress-image') {
                     const maxSizeMB = parseFloat(document.getElementById('compressionLevel').value) || 1;
@@ -609,22 +756,28 @@
                     let orderedFiles = [];
                     Array.from(batchPreviewGrid.children).forEach(node => { orderedFiles.push(selectedFiles[parseInt(node.dataset.index)]); });
 
+                    let totalOriginalSize = orderedFiles.reduce((acc, f) => acc + f.size, 0);
+                    let totalNewSize = 0;
+
                     for (let i = 0; i < orderedFiles.length; i++) {
                         const file = orderedFiles[i];
                         showProgress("Compressing", `File ${i+1} of ${orderedFiles.length}...`); await yieldToMain();
                         const compressedFile = await imageCompression(file, options);
+                        totalNewSize += compressedFile.size;
                         
                         if (orderedFiles.length === 1) {
                             triggerDownloadWithShare(compressedFile, `compressed_${file.name}`); 
-                            showToast("Image compressed successfully!");
+                            const savedMB = ((file.size - compressedFile.size) / 1024 / 1024).toFixed(2);
+                            showToast(translations[currentLang].successComp + `${Math.max(0, savedMB)} MB`);
                             hideProgress(); return;
                         } else zip.file(`compressed_${file.name}`, compressedFile);
                     }
                     if (orderedFiles.length > 1) {
                         showProgress("Zipping", "Creating archive..."); await yieldToMain();
                         const zipBlob = await zip.generateAsync({ type: 'blob' });
-                        triggerDownloadWithShare(zipBlob, `compressed_images_${Date.now()}.zip`);
-                        showToast("All images compressed and archived!");
+                        triggerDownloadWithShare(zipBlob, `compress_archive_${Date.now()}.zip`);
+                        const savedMB = ((totalOriginalSize - totalNewSize) / 1024 / 1024).toFixed(2);
+                        showToast(translations[currentLang].successComp + `${Math.max(0, savedMB)} MB`);
                     }
 
                 } else if (currentTool === 'jpg-to-pdf') {
@@ -642,7 +795,7 @@
                     }
                     const pdfBlob = new Blob([await pdfDoc.save()], { type: 'application/pdf' });
                     triggerDownloadWithShare(pdfBlob, `combined_${Date.now()}.pdf`);
-                    showToast("PDF successfully created!");
+                    showToast(translations[currentLang].successJpgPdf);
 
                 } else if (currentTool === 'pdf-to-png' || currentTool === 'pdf-to-jpg') {
                     const scale = parseFloat(document.getElementById('renderScale').value) || 2.0;
@@ -680,7 +833,7 @@
 
                             if (selectedFiles.length === 1 && targetPages.length === 1) {
                                 triggerDownloadWithShare(blob, `${baseName}_p${pageNum}.${ext}`); 
-                                showToast("Conversion completed!");
+                                showToast(translations[currentLang].successConv);
                                 hideProgress(); return;
                             } else zip.file(`${baseName}_p${pageNum}.${ext}`, blob);
                         }
@@ -688,7 +841,7 @@
                     if (totalRendered > 1) {
                         showProgress("Zipping", "Creating archive..."); await yieldToMain();
                         triggerDownloadWithShare(await zip.generateAsync({ type: 'blob' }), `converted_${Date.now()}.zip`);
-                        showToast("Batch conversion completed!");
+                        showToast(translations[currentLang].successConv);
                     }
 
                 } else if (currentTool === 'heic-to-jpg') {
@@ -713,11 +866,11 @@
                     }
                     if (selectedFiles.length === 1 && !cropper && currentRotation === 0 && !isGrayscale && !customLogo && !document.getElementById('watermarkText').value.trim()) {
                         triggerDownloadWithShare(await zip.file(Object.keys(zip.files)[0]).async("blob"), Object.keys(zip.files)[0]);
-                        showToast("HEIC successfully converted!");
+                        showToast(translations[currentLang].successConv);
                     } else {
                         showProgress("Zipping", "Creating archive..."); await yieldToMain();
                         triggerDownloadWithShare(await zip.generateAsync({ type: 'blob' }), `heic_converted_${Date.now()}.zip`);
-                        showToast("All HEIC images converted!");
+                        showToast(translations[currentLang].successConv);
                     }
                 }
             } catch (err) { 
