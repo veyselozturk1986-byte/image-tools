@@ -179,19 +179,16 @@
                 <div id="previewWrapper" class="w-full relative">
                     
                     <!-- Advanced File List (Batch View) -->
-                    <div id="fileListContainer" class="hidden w-full max-h-64 overflow-y-auto space-y-2 pr-2 custom-scrollbar">
-                        <!-- File items injected here -->
-                    </div>
+                    <div id="fileListContainer" class="hidden w-full max-h-64 overflow-y-auto space-y-2 pr-2 custom-scrollbar"></div>
 
                     <!-- Single Image Preview -->
                     <div id="imagePreviewBox" class="hidden w-full flex justify-center bg-slate-900 rounded-2xl overflow-hidden border border-slate-700 p-2">
                          <img id="imagePreview" class="max-w-full max-h-[300px] object-contain rounded-xl transition-all duration-300" alt="File Preview" />
                     </div>
                     
-                    <!-- Text/Data Result Boxes (JSON, OCR, Crypto etc) -->
+                    <!-- Text/Data Result Boxes -->
                     <div id="textDataBoxes" class="w-full h-full flex flex-col gap-4">
                         
-                        <!-- Common Text Area Setup (OCR, Base64, URL, Hash) -->
                         <div id="genericTextBox" class="hidden w-full flex flex-col gap-2">
                             <div class="flex justify-between items-center px-1">
                                 <span id="genericTextLabel" class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Output:</span>
@@ -199,22 +196,19 @@
                                     📋 Copy
                                 </button>
                             </div>
-                            <textarea id="genericTextArea" class="w-full h-48 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 text-sm p-4 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none resize-none font-mono shadow-inner transition-colors" placeholder="Result will appear here..."></textarea>
+                            <textarea id="genericTextArea" class="w-full h-48 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 text-sm p-4 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none resize-none font-mono shadow-inner transition-colors" placeholder="Result will appear here..."></textarea>
                         </div>
 
-                        <!-- Diff Tool Specific -->
                         <div id="diffResultBox" class="hidden w-full flex flex-col space-y-2">
                             <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-1">Comparison Output:</span>
                             <div id="diffOutputContainer" class="w-full min-h-[160px] bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-mono text-sm p-4 rounded-xl border border-slate-200 dark:border-slate-700 whitespace-pre-wrap shadow-inner overflow-y-auto max-h-64"></div>
                         </div>
 
-                        <!-- QR Code Specific -->
                         <div id="qrResultBox" class="hidden w-full flex flex-col items-center justify-center py-6 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700">
                             <div id="qrcodeDisplay" class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100"></div>
                             <p class="text-sm font-medium text-slate-600 dark:text-slate-400 mt-4 px-4 text-center break-all" id="qrTextDisplay"></p>
                         </div>
 
-                        <!-- Generator Tools (Password, UUID) -->
                         <div id="generatorResultBox" class="hidden w-full flex flex-col items-center justify-center py-8 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 gap-4">
                             <div class="w-full max-w-md flex items-center gap-2 px-4">
                                 <input type="text" id="generatedDisplay" readonly class="w-full p-3 bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 font-mono font-bold text-center rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm focus:outline-none text-lg">
@@ -225,7 +219,6 @@
                             </button>
                         </div>
 
-                        <!-- Input specific areas -->
                         <div id="primaryInputsArea" class="w-full flex flex-col gap-4">
                             <div id="textInputGroup" class="hidden">
                                 <textarea id="mainInputField" class="w-full h-32 p-4 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none resize-none shadow-sm" placeholder="Paste data here..."></textarea>
@@ -281,7 +274,7 @@
 
                         <div id="encryptOptionsGroup" class="hidden space-y-2">
                             <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Set Password Protection:</label>
-                            <input type="password" placeholder="Enter secure password" class="w-full p-2.5 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <input type="password" id="pdfPassInput" placeholder="Enter secure password" class="w-full p-2.5 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                         </div>
 
                         <div id="batesOptionsGroup" class="hidden space-y-2">
@@ -291,12 +284,12 @@
 
                         <div id="compressOptionsGroup" class="hidden space-y-2">
                             <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Target File Size (Max MB):</label>
-                            <input type="number" value="1" step="0.5" min="0.1" class="w-full p-2.5 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <input type="number" id="compressionLevel" value="1" step="0.5" min="0.1" class="w-full p-2.5 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                         </div>
 
                         <div id="webpOptionsGroup" class="hidden space-y-2">
                             <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Target Web Format:</label>
-                            <select class="w-full p-2.5 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <select id="webpFormatSelect" class="w-full p-2.5 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                                 <option value="image/webp">WebP (.webp)</option>
                                 <option value="image/avif">AVIF (.avif)</option>
                             </select>
@@ -304,7 +297,7 @@
 
                         <div id="pdfRangeGroup" class="hidden space-y-2">
                             <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Page Range (e.g. 1, 3-5 or 'all'):</label>
-                            <input type="text" value="all" class="w-full p-2.5 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <input type="text" id="pdfPageRange" value="all" class="w-full p-2.5 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                         </div>
 
                         <div id="watermarkContainer" class="hidden grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-slate-200 dark:border-slate-700">
@@ -346,31 +339,43 @@
         try { if (typeof pdfjsLib !== 'undefined') pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; } catch(e) {}
 
         const toolSeoMeta = {
-            'pdf-to-png': { title: 'PDF to PNG - PrivacyConvert', desc: 'Extract PDF pages into PNG images.', label: 'PDF to PNG', cat: 'pdf' },
-            'pdf-to-jpg': { title: 'PDF to JPG - PrivacyConvert', desc: 'Extract PDF pages into JPG images.', label: 'PDF to JPG', cat: 'pdf' },
-            'merge-pdf': { title: 'Merge PDF - PrivacyConvert', desc: 'Combine multiple PDF documents.', label: 'Merge PDF', cat: 'pdf' },
-            'split-pdf': { title: 'Split PDF - PrivacyConvert', desc: 'Extract specific pages from a PDF.', label: 'Split PDF', cat: 'pdf' },
-            'jpg-to-pdf': { title: 'JPG to PDF - PrivacyConvert', desc: 'Convert images into a single PDF.', label: 'JPG to PDF', cat: 'pdf' },
+            'pdf-to-png': { title: 'PDF to PNG - PrivacyConvert', desc: 'Extract PDF pages into PNG images.', label: 'PDF to PNG' },
+            'pdf-to-jpg': { title: 'PDF to JPG - PrivacyConvert', desc: 'Extract PDF pages into JPG images.', label: 'PDF to JPG' },
+            'merge-pdf': { title: 'Merge PDF - PrivacyConvert', desc: 'Combine multiple PDF documents.', label: 'Merge PDF' },
+            'split-pdf': { title: 'Split PDF - PrivacyConvert', desc: 'Extract specific pages from a PDF.', label: 'Split PDF' },
+            'jpg-to-pdf': { title: 'JPG to PDF - PrivacyConvert', desc: 'Convert images into a single PDF.', label: 'JPG to PDF' },
             
-            'compress-image': { title: 'Compress Image - PrivacyConvert', desc: 'Shrink image file sizes.', label: 'Compress Image', cat: 'image' },
-            'heic-to-jpg': { title: 'HEIC to JPG - PrivacyConvert', desc: 'Convert Apple HEIC photos to JPG.', label: 'HEIC to JPG', cat: 'image' },
-            'webp-converter': { title: 'WebP Converter - PrivacyConvert', desc: 'Convert images to WebP/AVIF.', label: 'WebP Converter', cat: 'image' },
-            'extract-pdf-img': { title: 'Extract PDF Images - PrivacyConvert', desc: 'Extract embedded images from PDF.', label: 'Extract PDF Images', cat: 'image' },
-            'redact-tool': { title: 'Redact Image - PrivacyConvert', desc: 'Blackout sensitive info securely.', label: 'Redact Image', cat: 'image' },
+            'compress-image': { title: 'Compress Image - PrivacyConvert', desc: 'Shrink image file sizes.', label: 'Compress Image' },
+            'heic-to-jpg': { title: 'HEIC to JPG - PrivacyConvert', desc: 'Convert Apple HEIC photos to JPG.', label: 'HEIC to JPG' },
+            'webp-converter': { title: 'WebP Converter - PrivacyConvert', desc: 'Convert images to WebP/AVIF.', label: 'WebP Converter' },
+            'extract-pdf-img': { title: 'Extract PDF Images - PrivacyConvert', desc: 'Extract embedded images from PDF.', label: 'Extract PDF Images' },
+            'redact-tool': { title: 'Redact Image - PrivacyConvert', desc: 'Blackout sensitive info securely.', label: 'Redact Image' },
             
-            'json-tool': { title: 'JSON Formatter - PrivacyConvert', desc: 'Format and validate JSON.', label: 'JSON Formatter', cat: 'dev' },
-            'base64-tool': { title: 'Base64 Tool - PrivacyConvert', desc: 'Encode or decode Base64 strings.', label: 'Base64 Tool', cat: 'dev' },
-            'url-tool': { title: 'URL Tool - PrivacyConvert', desc: 'Encode or decode URLs.', label: 'URL Tool', cat: 'dev' },
-            'diff-tool': { title: 'Text Diff - PrivacyConvert', desc: 'Compare two text blocks.', label: 'Text Diff', cat: 'dev' },
-            'md-tool': { title: 'Markdown Preview - PrivacyConvert', desc: 'Preview Markdown to HTML.', label: 'Markdown Preview', cat: 'dev' },
+            'json-tool': { title: 'JSON Formatter - PrivacyConvert', desc: 'Format and validate JSON.', label: 'JSON Formatter' },
+            'base64-tool': { title: 'Base64 Tool - PrivacyConvert', desc: 'Encode or decode Base64 strings.', label: 'Base64 Tool' },
+            'url-tool': { title: 'URL Tool - PrivacyConvert', desc: 'Encode or decode URLs.', label: 'URL Tool' },
+            'diff-tool': { title: 'Text Diff - PrivacyConvert', desc: 'Compare two text blocks.', label: 'Text Diff' },
+            'md-tool': { title: 'Markdown Preview - PrivacyConvert', desc: 'Preview Markdown to HTML.', label: 'Markdown Preview' },
             
-            'password-gen': { title: 'Password Generator - PrivacyConvert', desc: 'Generate secure passwords.', label: 'Password Generator', cat: 'security' },
-            'encrypt-pdf': { title: 'Encrypt PDF - PrivacyConvert', desc: 'Add password protection to PDF.', label: 'Encrypt PDF', cat: 'security' },
-            'hash-calc': { title: 'File Hash - PrivacyConvert', desc: 'Calculate SHA-256 and MD5 hashes.', label: 'File Hash', cat: 'security' },
-            'uuid-gen': { title: 'UUID Generator - PrivacyConvert', desc: 'Generate unique UUIDs.', label: 'UUID Generator', cat: 'security' },
-            'qr-tool': { title: 'QR Code - PrivacyConvert', desc: 'Generate QR codes.', label: 'QR Code Generator', cat: 'security' },
-            'ocr-reader': { title: 'OCR Reader - PrivacyConvert', desc: 'Extract text from images using AI.', label: 'OCR Text Reader', cat: 'security' }
+            'password-gen': { title: 'Password Generator - PrivacyConvert', desc: 'Generate secure passwords.', label: 'Password Generator' },
+            'encrypt-pdf': { title: 'Encrypt PDF - PrivacyConvert', desc: 'Add password protection to PDF.', label: 'Encrypt PDF' },
+            'hash-calc': { title: 'File Hash - PrivacyConvert', desc: 'Calculate SHA-256 checksum hashes.', label: 'File Hash' },
+            'uuid-gen': { title: 'UUID Generator - PrivacyConvert', desc: 'Generate unique UUIDs.', label: 'UUID Generator' },
+            'qr-tool': { title: 'QR Code - PrivacyConvert', desc: 'Generate QR codes.', label: 'QR Code Generator' },
+            'ocr-reader': { title: 'OCR Reader - PrivacyConvert', desc: 'Extract text from images using AI.', label: 'OCR Text Reader' }
         };
+
+        // HELPER: DOWNLOAD BLOB TO LOCAL DISK
+        function downloadBlob(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
 
         const themeToggle = document.getElementById('themeToggle');
         themeToggle.addEventListener('click', () => {
@@ -501,6 +506,11 @@
                     document.getElementById('outputFormatBadge').innerHTML = "📄 PDF";
                     showAdvanced = false;
                     break;
+                case 'jpg-to-pdf':
+                    fileInput.accept = "image/png,image/jpeg"; fileInput.multiple = true;
+                    document.getElementById('outputFormatBadge').innerHTML = "📄 PDF";
+                    showAdvanced = false;
+                    break;
                 case 'compress-image':
                     fileInput.accept = "image/*"; fileInput.multiple = true;
                     document.getElementById('compressOptionsGroup').classList.remove('hidden');
@@ -515,7 +525,7 @@
                     fileInput.accept = "image/*,.pdf"; fileInput.multiple = true;
                     showAdvanced = false;
                     break;
-                case 'hash-calc': case 'ocr-reader': case 'sign-tool':
+                case 'hash-calc': case 'ocr-reader':
                     fileInput.accept = "*/*"; fileInput.multiple = false;
                     showAdvanced = false;
                     break;
@@ -611,7 +621,7 @@
             
             if(currentTool === 'hash-calc' || currentTool === 'ocr-reader') {
                 document.getElementById('genericTextBox').classList.remove('hidden');
-                document.getElementById('genericTextArea').value = `Ready to process: ${selectedFiles[0].name}\nClick Convert to begin...`;
+                document.getElementById('genericTextArea').value = `Ready to process: ${selectedFiles[0].name}\nClick Convert & Download to start...`;
             }
         }
 
@@ -741,8 +751,13 @@
             showToast("History cleared");
         }
 
+        // ==========================================
+        // REAL CONVERSION & DOWNLOAD ENGINE
+        // ==========================================
         const convertBtn = document.getElementById('convertBtn');
         convertBtn.addEventListener('click', async () => {
+            
+            // Text Generators
             if (currentTool === 'password-gen' || currentTool === 'uuid-gen') { window.copyGenerated(); return; }
             if (currentTool === 'json-tool') { processJson(); addHistory("Formatted JSON String"); return; }
             
@@ -765,7 +780,8 @@
                 if(!input) return;
                 
                 if (currentTool === 'base64-tool') {
-                    try { const isB64 = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/.test(input);
+                    try { 
+                        const isB64 = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/.test(input);
                         if(isB64 && input.length % 4 === 0) { output.value = atob(input); showToast("Decoded Base64"); addHistory("Decoded Base64 String"); } 
                         else { output.value = btoa(input); showToast("Encoded Base64"); addHistory("Encoded Base64 String");}
                     } catch(e) { output.value = btoa(input); showToast("Encoded Base64"); addHistory("Encoded Base64 String"); }
@@ -777,6 +793,7 @@
                 return;
             }
 
+            // Check files
             if (selectedFiles.length === 0 && currentTool !== 'md-tool' && currentTool !== 'diff-tool') {
                 showToast("Please add files first", "error");
                 dropZone.classList.add('border-red-500', 'bg-red-50');
@@ -786,22 +803,169 @@
 
             const modal = document.getElementById('progressModal');
             modal.classList.remove('hidden');
-            
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                const filesCount = selectedFiles.length;
-                let historyMsg = `Processed ${filesCount} file(s) via ${toolSeoMeta[currentTool].label}`;
-                
-                if (currentTool === 'hash-calc') {
-                    document.getElementById('genericTextArea').value = `SHA-256 for ${selectedFiles[0].name}:\ne3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n(Mock implementation)`;
-                } 
-                else if (filesCount > 1) {
-                    historyMsg += " (ZIP Generated)";
+
+            try {
+                // 1. PDF TO PNG / JPG
+                if (currentTool === 'pdf-to-png' || currentTool === 'pdf-to-jpg') {
+                    const file = selectedFiles[0];
+                    const arrayBuffer = await file.arrayBuffer();
+                    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                    const scale = parseFloat(document.getElementById('renderScale').value) || 2.0;
+                    const zip = new JSZip();
+                    const ext = currentTool === 'pdf-to-png' ? 'png' : 'jpg';
+                    const mime = currentTool === 'pdf-to-png' ? 'image/png' : 'image/jpeg';
+
+                    for (let i = 1; i <= pdf.numPages; i++) {
+                        const page = await pdf.getPage(i);
+                        const viewport = page.getViewport({ scale: scale });
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        canvas.height = viewport.height;
+                        canvas.width = viewport.width;
+
+                        await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+                        const blob = await new Promise(resolve => canvas.toBlob(resolve, mime, 0.92));
+
+                        if (pdf.numPages === 1) {
+                            downloadBlob(blob, `${file.name.replace(/\.[^/.]+$/, "")}_page1.${ext}`);
+                        } else {
+                            zip.file(`page_${i}.${ext}`, blob);
+                        }
+                    }
+
+                    if (pdf.numPages > 1) {
+                        const zipBlob = await zip.generateAsync({ type: "blob" });
+                        downloadBlob(zipBlob, `${file.name.replace(/\.[^/.]+$/, "")}_pages.zip`);
+                    }
+                    addHistory(`Converted PDF (${pdf.numPages} pgs) to ${ext.toUpperCase()}`);
                 }
 
-                addHistory(historyMsg);
-                showToast("Process completed securely!");
-            }, 1200);
+                // 2. JPG TO PDF
+                else if (currentTool === 'jpg-to-pdf') {
+                    const pdfDoc = await PDFLib.PDFDocument.create();
+                    for (let file of selectedFiles) {
+                        const imgBytes = await file.arrayBuffer();
+                        let img = file.type === 'image/png' ? await pdfDoc.embedPng(imgBytes) : await pdfDoc.embedJpg(imgBytes);
+                        const page = pdfDoc.addPage([img.width, img.height]);
+                        page.drawImage(img, { x: 0, y: 0, width: img.width, height: img.height });
+                    }
+                    const pdfBytes = await pdfDoc.save();
+                    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                    downloadBlob(blob, 'converted_images.pdf');
+                    addHistory(`Combined ${selectedFiles.length} images into PDF`);
+                }
+
+                // 3. MERGE PDF
+                else if (currentTool === 'merge-pdf') {
+                    const mergedPdf = await PDFLib.PDFDocument.create();
+                    for (let file of selectedFiles) {
+                        const bytes = await file.arrayBuffer();
+                        const pdf = await PDFLib.PDFDocument.load(bytes);
+                        const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                        copiedPages.forEach((page) => mergedPdf.addPage(page));
+                    }
+                    const pdfBytes = await mergedPdf.save();
+                    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                    downloadBlob(blob, 'merged_document.pdf');
+                    addHistory(`Merged ${selectedFiles.length} PDF files`);
+                }
+
+                // 4. SPLIT PDF
+                else if (currentTool === 'split-pdf') {
+                    const file = selectedFiles[0];
+                    const bytes = await file.arrayBuffer();
+                    const pdf = await PDFLib.PDFDocument.load(bytes);
+                    const zip = new JSZip();
+                    
+                    for (let i = 0; i < pdf.getPageCount(); i++) {
+                        const newDoc = await PDFLib.PDFDocument.create();
+                        const [copiedPage] = await newDoc.copyPages(pdf, [i]);
+                        newDoc.addPage(copiedPage);
+                        const newBytes = await newDoc.save();
+                        zip.file(`page_${i + 1}.pdf`, new Blob([newBytes], { type: 'application/pdf' }));
+                    }
+                    const zipBlob = await zip.generateAsync({ type: "blob" });
+                    downloadBlob(zipBlob, `${file.name.replace(/\.[^/.]+$/, "")}_split.zip`);
+                    addHistory(`Split PDF into ${pdf.getPageCount()} pages`);
+                }
+
+                // 5. COMPRESS IMAGE
+                else if (currentTool === 'compress-image') {
+                    const targetMB = parseFloat(document.getElementById('compressionLevel')?.value) || 1.0;
+                    const zip = new JSZip();
+                    for (let file of selectedFiles) {
+                        let compressed = file;
+                        if (typeof imageCompression !== 'undefined') {
+                            compressed = await imageCompression(file, { maxSizeMB: targetMB, maxWidthOrHeight: 1920, useWebWorker: true });
+                        }
+                        if (selectedFiles.length === 1) {
+                            downloadBlob(compressed, `compressed_${file.name}`);
+                        } else {
+                            zip.file(`compressed_${file.name}`, compressed);
+                        }
+                    }
+                    if (selectedFiles.length > 1) {
+                        const zipBlob = await zip.generateAsync({ type: "blob" });
+                        downloadBlob(zipBlob, "compressed_images.zip");
+                    }
+                    addHistory(`Compressed ${selectedFiles.length} image(s)`);
+                }
+
+                // 6. FILE CHECKSUM HASH
+                else if (currentTool === 'hash-calc') {
+                    const buffer = await selectedFiles[0].arrayBuffer();
+                    const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+                    const hashArray = Array.from(new Uint8Array(hashBuffer));
+                    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+                    
+                    const outputText = `File: ${selectedFiles[0].name}\nSize: ${selectedFiles[0].size} bytes\nSHA-256 Checksum:\n${hashHex}`;
+                    document.getElementById('genericTextBox').classList.remove('hidden');
+                    document.getElementById('genericTextArea').value = outputText;
+                    
+                    const blob = new Blob([outputText], { type: 'text/plain;charset=utf-8' });
+                    downloadBlob(blob, `${selectedFiles[0].name}_hash.txt`);
+                    addHistory(`Calculated SHA-256 for ${selectedFiles[0].name}`);
+                }
+
+                // 7. OCR READER
+                else if (currentTool === 'ocr-reader') {
+                    if (typeof Tesseract !== 'undefined') {
+                        const result = await Tesseract.recognize(selectedFiles[0], 'eng');
+                        const text = result.data.text;
+                        document.getElementById('genericTextBox').classList.remove('hidden');
+                        document.getElementById('genericTextArea').value = text;
+                        
+                        const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+                        downloadBlob(blob, `${selectedFiles[0].name}_ocr.txt`);
+                        addHistory(`Extracted OCR text from ${selectedFiles[0].name}`);
+                    }
+                }
+
+                // 8. WEBP / AVIF CONVERTER
+                else if (currentTool === 'webp-converter') {
+                    const format = document.getElementById('webpFormatSelect')?.value || 'image/webp';
+                    const ext = format.includes('webp') ? 'webp' : 'avif';
+                    for (let file of selectedFiles) {
+                        const img = new Image();
+                        const url = URL.createObjectURL(file);
+                        await new Promise((res) => { img.onload = res; img.src = url; });
+                        const canvas = document.createElement('canvas');
+                        canvas.width = img.width; canvas.height = img.height;
+                        canvas.getContext('2d').drawImage(img, 0, 0);
+                        const blob = await new Promise(r => canvas.toBlob(r, format, 0.9));
+                        URL.revokeObjectURL(url);
+                        downloadBlob(blob, `${file.name.replace(/\.[^/.]+$/, "")}.${ext}`);
+                    }
+                    addHistory(`Converted ${selectedFiles.length} image(s) to ${ext.toUpperCase()}`);
+                }
+
+                showToast("Process completed & File downloaded!");
+            } catch(e) {
+                console.error(e);
+                showToast("Error processing file: " + e.message, "error");
+            } finally {
+                modal.classList.add('hidden');
+            }
         });
     </script>
 </body>
