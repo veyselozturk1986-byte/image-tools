@@ -56,62 +56,56 @@
         </div>
     </div>
 
-    <!-- Main Tool Container -->
-    <main class="flex-1 max-w-3xl w-full mx-auto p-6 flex flex-col justify-center">
-        <div class="bg-white rounded-2xl shadow-xl p-8 border border-slate-100">
-            
-            <div class="text-center mb-8">
-                <h2 class="text-3xl font-extrabold text-slate-900 mb-2">Convert & Compress Images Privately</h2>
-                <p class="text-slate-500 text-sm">Your photos never leave your device. Zero server uploads, maximum speed.</p>
-            </div>
+    
 
-            <!-- Drag & Drop Zone -->
-            <div id="dropZone" class="border-2 border-dashed border-indigo-200 rounded-xl p-8 text-center bg-indigo-50/50 hover:bg-indigo-50 transition cursor-pointer mb-6">
-                <input type="file" id="fileInput" accept="image/*" class="hidden">
-                <div class="flex flex-col items-center">
-                    <svg class="w-12 h-12 text-indigo-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                    </svg>
-                    <p class="text-slate-700 font-semibold mb-1">Drag and drop your image here, or click to browse</p>
-                    <p class="text-slate-400 text-xs">Supports JPG, PNG, WEBP</p>
-                </div>
-            </div>
+       <!-- PrivacyConvert Ana Dönüştürücü Kartı -->
+<div class="max-w-xl mx-auto my-8 p-6 bg-white rounded-2xl shadow-lg border border-slate-100">
+  
+  <!-- Dosya Yükleme Sürükle-Bırak Alanı -->
+  <div id="dropZone" class="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center cursor-pointer hover:border-indigo-500 hover:bg-slate-50 transition-all">
+    <svg class="w-12 h-12 mx-auto text-slate-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+    </svg>
+    <p class="text-slate-600 font-medium">Click to upload or drag & drop</p>
+    <p class="text-xs text-slate-400 mt-1">PNG, JPG, WEBP, or PDF (100% Client-Side)</p>
+    
+    <!-- PDF kabul eden input -->
+    <input 
+      type="file" 
+      id="fileInput" 
+      accept="image/png, image/jpeg, image/webp, .pdf" 
+      multiple 
+      class="hidden" 
+    />
+  </div>
 
-            <!-- Controls Area (Hidden initially) -->
-            <div id="settingsArea" class="hidden space-y-6">
-                <div class="flex items-center gap-4 bg-slate-50 p-4 rounded-lg">
-                    <img id="previewImg" class="w-20 h-20 object-cover rounded-md border" src="" alt="Preview">
-                    <div class="flex-1 overflow-hidden">
-                        <p id="fileName" class="font-medium text-slate-800 truncate"></p>
-                        <p id="fileSize" class="text-xs text-slate-500"></p>
-                    </div>
-                </div>
+  <!-- Dosya Bilgisi ve Format Seçimi (Varsayılan olarak gizli) -->
+  <div id="actionArea" class="mt-6 hidden space-y-4">
+    <div class="p-3 bg-slate-100 rounded-lg text-sm font-semibold text-slate-700 truncate" id="fileName">
+      No file selected
+    </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Format Dropdown -->
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-2">TARGET FORMAT</label>
-                        <select id="formatSelect" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none">
-                            <option value="image/jpeg">JPG / JPEG</option>
-                            <option value="image/png">PNG</option>
-                            <option value="image/webp">WEBP</option>
-                        </select>
-                    </div>
+    <div class="flex items-center justify-between gap-4">
+      <label for="targetFormat" class="text-sm font-medium text-slate-600">Convert to:</label>
+      <select id="targetFormat" class="bg-white border border-slate-300 text-slate-800 text-sm rounded-lg p-2.5 focus:ring-indigo-500 focus:border-indigo-500 font-medium cursor-pointer">
+        <option value="jpg">JPG (Image)</option>
+        <option value="png">PNG (Image)</option>
+        <option value="webp">WEBP (Image)</option>
+        <option value="pdf">PDF (Document)</option>
+      </select>
+    </div>
 
-                    <!-- Quality Slider -->
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-2">QUALITY (<span id="qualityVal">80</span>%)</label>
-                        <input type="range" id="qualityRange" min="10" max="100" value="80" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600 mt-3">
-                    </div>
-                </div>
+    <!-- Tetikleyici Buton -->
+    <button id="convertBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl transition-all shadow-md active:scale-95">
+      Convert Now
+    </button>
+  </div>
 
-                <!-- Convert Button -->
-                <button id="convertBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-indigo-200">
-                    Convert & Download Image
-                </button>
-            </div>
-
-        </div>
+  <!-- İlerleme / Durum Mesajı -->
+  <div id="statusText" class="mt-4 text-center text-sm font-medium text-indigo-600 hidden">
+    Processing file locally...
+  </div>
+</div>
     </main>
 
     <!-- Bottom AdSpace Placeholder (AdSense) -->
