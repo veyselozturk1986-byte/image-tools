@@ -324,7 +324,7 @@
             </div>
         </div>
 
-        <!-- FAQ & Security Architecture Trust Section -->
+        <!-- FAQ & Security Architecture Trust Section with Proof Proofs -->
         <div class="max-w-3xl mx-auto mt-12 bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 space-y-6 transition-colors duration-300">
             <h2 id="faqMainTitle" class="text-xl font-extrabold text-slate-900 dark:text-white text-center mb-6">Frequently Asked Questions & Security Architecture</h2>
             <div class="space-y-4 text-sm text-slate-600 dark:text-slate-300">
@@ -336,9 +336,17 @@
                     <h3 id="faq2Title" class="font-bold text-slate-800 dark:text-slate-200 mb-1">Do my files ever leave my device?</h3>
                     <p id="faq2Desc" class="leading-relaxed opacity-90">Never. Because there is no backend server processing your files, your sensitive documents, PDFs, and images never touch the internet or any remote cloud storage. They remain 100% on your local machine.</p>
                 </div>
-                <div>
+                <div class="border-b border-slate-100 dark:border-slate-700 pb-4">
                     <h3 id="faq3Title" class="font-bold text-slate-800 dark:text-slate-200 mb-1">Why is this approach safer than traditional online converters?</h3>
                     <p id="faq3Desc" class="leading-relaxed opacity-90">Traditional online converters require you to upload your sensitive files to their remote servers, posing major data breach and privacy risks. PrivacyConvert eliminates this risk entirely by keeping data handling strictly offline-capable within your secure browser sandbox.</p>
+                </div>
+                <div>
+                    <h3 id="faq4Title" class="font-bold text-slate-800 dark:text-slate-200 mb-1">How can you verify this yourself (Zero Network Proof)?</h3>
+                    <p id="faq4Desc" class="leading-relaxed opacity-90 mb-3">You don't just have to take our word for it. You can inspect and prove this right now using two simple built-in methods:</p>
+                    <ul class="list-disc pl-5 space-y-2 opacity-90">
+                        <li id="verifyStep1"><strong>Network Inspector Test:</strong> Press <kbd class="bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded font-mono text-xs">F12</kbd> to open browser Developer Tools, go to the <strong>Network</strong> tab, and convert any file. You will observe zero outbound file upload requests.</li>
+                        <li id="verifyStep2"><strong>Offline Mode Test:</strong> Completely disconnect your computer from Wi-Fi or internet. PrivacyConvert will continue to convert and process your files without interruption.</li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -357,7 +365,7 @@
     <script>
         try { if (typeof pdfjsLib !== 'undefined') pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; } catch(e) {}
 
-        // Complete Localized Translations Dictionary (EN, ES, AR) including FAQ & Trust info
+        // Complete Localized Translations Dictionary (EN, ES, AR) including Verification Proofs
         const translations = {
             en: {
                 secTitle: "100% Local & Secure Processing Guarantee",
@@ -382,6 +390,10 @@
                 faq2Desc: "Never. Because there is no backend server processing your files, your sensitive documents, PDFs, and images never touch the internet or any remote cloud storage. They remain 100% on your local machine.",
                 faq3Title: "Why is this approach safer than traditional online converters?",
                 faq3Desc: "Traditional online converters require you to upload your sensitive files to their remote servers, posing major data breach and privacy risks. PrivacyConvert eliminates this risk entirely by keeping data handling strictly offline-capable within your secure browser sandbox.",
+                faq4Title: "How can you verify this yourself (Zero Network Proof)?",
+                faq4Desc: "You don't just have to take our word for it. You can inspect and prove this right now using two simple built-in methods:",
+                verifyStep1: "Network Inspector Test: Press F12 to open browser Developer Tools, go to the Network tab, and convert any file. You will observe zero outbound file upload requests.",
+                verifyStep2: "Offline Mode Test: Completely disconnect your computer from Wi-Fi or internet. PrivacyConvert will continue to convert and process your files without interruption.",
                 tools: {
                     'pdf-to-png': { label: 'PDF to PNG', desc: 'Extract PDF pages into PNG images directly in your browser. Fast, free, and completely private.' },
                     'pdf-to-jpg': { label: 'PDF to JPG', desc: 'Extract PDF pages into JPG images directly in your browser. Fast, free, and completely private.' },
@@ -429,6 +441,10 @@
                 faq2Desc: "Nunca. Debido a que no hay un servidor backend que procese sus archivos, sus documentos sensibles, PDF e imágenes nunca tocan internet ni ningún almacenamiento en la nube remoto. Permanecen 100% en su máquina local.",
                 faq3Title: "¿Por qué este enfoque es más seguro que los conversores en línea tradicionales?",
                 faq3Desc: "Los conversores tradicionales requieren que suba sus archivos a sus servidores remotos, lo que plantea riesgos de violación de datos. PrivacyConvert elimina este riesgo por completo manteniendo el manejo de datos estrictamente fuera de línea dentro del espacio seguro de su navegador.",
+                faq4Title: "¿Cómo puede verificar esto usted mismo (Prueba de red cero)?",
+                faq4Desc: "No tiene que confiar ciegamente en nuestra palabra. Puede inspeccionar y comprobarlo ahora mismo usando dos métodos sencillos:",
+                verifyStep1: "Prueba de Inspector de Red: Presione F12 para abrir las Herramientas de Desarrollador, vaya a la pestaña Red (Network) y convierta cualquier archivo. Observará cero solicitudes salientes de carga de archivos.",
+                verifyStep2: "Prueba de Modo Sin Conexión: Desconecte completamente su computadora del Wi-Fi o internet. PrivacyConvert continuará convirtiendo y procesando sus archivos sin interrupción.",
                 tools: {
                     'pdf-to-png': { label: 'PDF a PNG', desc: 'Extraiga páginas de PDF en imágenes PNG directamente en su navegador. Rápido, gratis y privado.' },
                     'pdf-to-jpg': { label: 'PDF a JPG', desc: 'Extraiga páginas de PDF en imágenes JPG directamente en su navegador. Rápido, gratis y privado.' },
@@ -476,6 +492,10 @@
                 faq2Desc: "أبداً. نظراً لعدم وجود خادم خلفي (Backend Server) يعالج ملفاتك، فإن مستنداتك الحساسة وملفات PDF والصور لا تلمس الإنترنت أبداً ولا يتم تخزينها في أي سحابة خارجية. تظل 100% على جهازك المحلي.",
                 faq3Title: "لماذا يُعد هذا النهج أكثر أماناً من المحولات التقليدية عبر الإنترنت؟",
                 faq3Desc: "تتطلب المحولات التقليدية رفع ملفاتك الحساسة إلى خوادمهم البعيدة، مما يمثل مخاطر كبيرة على الخصوصية واختراق البيانات. تقضي PrivacyConvert على هذا الخطر تماماً من خلال الحفاظ على التعامل مع البيانات في وضع عدم الاتصال داخل نطاق متصفحك الآمن.",
+                faq4Title: "كيف يمكنك التحقق من ذلك بنفسك (إثبات انعدام حركة مرور الشبكة)؟",
+                faq4Desc: "ليس عليك فقط أن تصدق كلامنا. يمكنك فحص وإثبات ذلك بنفسك الآن باستخدام طريقتين بسيطتين:",
+                verifyStep1: "اختبار فاحص الشبكة (Network): اضغط على F12 لفتح أدوات المطور في المتصفح، وانتقل إلى تبويب Network، وقم بتحويل أي ملف. ستلاحظ تماماً عدم إرسال أي طلبات رفع ملفات خارجية.",
+                verifyStep2: "اختبار وضع عدم الاتصال (Offline): قم بفصل جهاز الكمبيوتر الخاص بك تماماً عن الواي فاي أو الإنترنت. ستستمر PrivacyConvert في تحويل ومعالجة ملفاتك دون أي انقطاع.",
                 tools: {
                     'pdf-to-png': { label: 'PDF إلى PNG', desc: 'استخراج صفحات PDF إلى صور PNG مباشرة في متصفحك. سريع، مجاني، وآمن تماماً.' },
                     'pdf-to-jpg': { label: 'PDF إلى JPG', desc: 'استخراج صفحات PDF إلى صور JPG مباشرة في متصفحك. سريع، مجاني، وآمن تماماً.' },
@@ -532,7 +552,7 @@
             document.getElementById('renderQualityLabel').textContent = t.renderQuality;
             document.getElementById('outputInfoLabel').textContent = t.outputInfo;
 
-            // FAQ Texts
+            // FAQ & Proof Texts
             document.getElementById('faqMainTitle').textContent = t.faqMainTitle;
             document.getElementById('faq1Title').textContent = t.faq1Title;
             document.getElementById('faq1Desc').textContent = t.faq1Desc;
@@ -540,6 +560,10 @@
             document.getElementById('faq2Desc').textContent = t.faq2Desc;
             document.getElementById('faq3Title').textContent = t.faq3Title;
             document.getElementById('faq3Desc').textContent = t.faq3Desc;
+            document.getElementById('faq4Title').textContent = t.faq4Title;
+            document.getElementById('faq4Desc').textContent = t.faq4Desc;
+            document.getElementById('verifyStep1').innerHTML = `<strong>${t.verifyStep1.split(':')[0]}:</strong>${t.verifyStep1.split(':')[1]}`;
+            document.getElementById('verifyStep2').innerHTML = `<strong>${t.verifyStep2.split(':')[0]}:</strong>${t.verifyStep2.split(':')[1]}`;
 
             // Update all tool tab buttons labels
             Object.keys(t.tools).forEach(key => {
