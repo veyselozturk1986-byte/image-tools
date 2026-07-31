@@ -3,148 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <title>HEIC to JPG Converter - 100% Private & Free</title>
-    <meta name="description" content="Convert iPhone HEIC photos to standard JPG format directly in your browser. Fast, 100% private, and free. No server upload.">
-    
-    <!-- Tailwind CSS -->
+    <title>Convert HEIC to JPG Online - 100% Free & Private | PrivacyConvert</title>
+    <meta name="description" content="Convert iPhone HEIC photos to JPG format directly in your browser. 100% private, fast, and free. No server uploads.">
+    <meta name="keywords" content="heic to jpg, convert heic to jpg, iphone photo converter, heic converter online, privacy first heic converter">
+    <meta name="author" content="PrivacyConvert">
+
     <script src="https://cdn.tailwindcss.com"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4444769373675024" crossorigin="anonymous"></script>
 
-    <!-- HEIC2ANY Kütüphanesi -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/heic2any/0.0.4/heic2any.min.js"></script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "PrivacyConvert - HEIC to JPG Converter",
+      "operatingSystem": "All",
+      "applicationCategory": "UtilitiesApplication",
+      "offers": { "@type": "Offer", "price": "0.00", "priceCurrency": "USD" },
+      "description": "Convert HEIC photos to JPG locally inside your web browser."
+    }
+    </script>
 </head>
-
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans">
-
-    <!-- Header / Navbar -->
     <header class="bg-white border-b border-slate-200 py-4 px-6 shadow-sm">
         <div class="max-w-4xl mx-auto flex justify-between items-center">
-            <a href="../index.html" class="text-xl font-bold text-indigo-600 flex items-center gap-2">
-                ⚡ PrivacyConvert
-            </a>
-            <a href="../index.html" class="text-sm font-medium text-indigo-600 hover:underline">
-                ← Back to All Tools
-            </a>
+            <a href="../index.html" class="text-xl font-bold text-indigo-600 flex items-center gap-2 hover:opacity-90 transition">⚡ PrivacyConvert</a>
+            <div class="flex items-center gap-4">
+                <nav class="hidden md:flex text-sm text-slate-600 gap-4 font-medium">
+                    <a href="../pdf-to-jpg/index.html" class="hover:text-indigo-600 transition">PDF to JPG</a>
+                    <a href="../heic-to-jpg/index.html" class="text-indigo-600 font-semibold">HEIC to JPG</a>
+                    <a href="../jpg-to-pdf/index.html" class="hover:text-indigo-600 transition">JPG to PDF</a>
+                </nav>
+                <span class="hidden sm:inline-flex bg-emerald-100 text-emerald-800 text-xs px-3 py-1 rounded-full font-medium">🔒 100% Local</span>
+            </div>
         </div>
     </header>
 
-    <!-- Main Content -->
     <main class="flex-grow max-w-4xl mx-auto w-full px-4 py-8">
-        
         <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-slate-900">HEIC to JPG Converter</h1>
-            <p class="text-sm text-slate-500 mt-2">Convert your iPhone photos (.HEIC) to universal JPG format safely in your browser.</p>
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900">Convert <span class="text-indigo-600">HEIC to JPG</span> Online</h1>
+            <p class="text-slate-500 text-sm sm:text-base mt-2">Convert your Apple iPhone HEIC images to standard JPGs without uploading files to any server.</p>
         </div>
 
-        <!-- Conversion Card -->
         <div class="max-w-xl mx-auto p-6 bg-white rounded-2xl shadow-lg border border-slate-100">
-            
-            <!-- Drag & Drop Zone -->
             <div id="dropZone" class="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center cursor-pointer hover:border-indigo-500 hover:bg-slate-50 transition-all">
-                <div class="text-4xl mb-2">📱</div>
-                <p class="text-slate-700 font-medium">Click to upload or drag & drop HEIC photos</p>
-                <p class="text-xs text-slate-400 mt-1">Select .HEIC or .HEIF files (100% In-Browser)</p>
+                <p class="text-slate-600 font-medium">Click to select HEIC files or drag & drop</p>
+                <p class="text-xs text-slate-400 mt-1">Select .HEIC / .HEIF photos</p>
             </div>
+            <input type="file" id="fileInput" accept=".heic,.heif" multiple class="hidden" />
 
-            <!-- CRITICAL: Hidden File Input -->
-            <input type="file" id="fileInput" accept=".heic, .heif, image/heic, image/heif" multiple class="hidden" />
-
-            <!-- Action Area -->
-            <div id="actionArea" class="mt-6 hidden space-y-4">
-                <div class="p-3 bg-slate-100 rounded-lg text-sm font-semibold text-slate-700 truncate" id="fileName">
-                    No file selected
+            <div id="actionArea" class="mt-6 hidden space-y-5">
+                <div id="previewContainer" class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center gap-4">
+                    <div id="previewThumbnail" class="w-16 h-16 bg-slate-200 rounded-lg flex items-center justify-center text-2xl flex-shrink-0">📱</div>
+                    <div class="overflow-hidden flex-grow">
+                        <p class="text-sm font-semibold text-slate-800 truncate" id="fileName">No file selected</p>
+                        <p class="text-xs text-slate-400" id="fileSize">Ready</p>
+                    </div>
                 </div>
 
-                <button id="convertBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl transition-all shadow-md active:scale-95">
-                    Convert HEIC to JPG
-                </button>
-            </div>
+                <div class="flex items-center justify-between gap-4">
+                    <label for="targetFormat" class="text-sm font-medium text-slate-700">Convert to:</label>
+                    <select id="targetFormat" class="bg-white border border-slate-300 text-slate-800 text-sm rounded-lg p-2.5 font-medium">
+                        <option value="jpg" selected>JPG (Image)</option>
+                        <option value="png">PNG (Image)</option>
+                    </select>
+                </div>
 
-            <!-- Status Text -->
-            <div id="statusText" class="mt-4 text-center text-sm font-medium text-indigo-600 hidden">
-                Converting HEIC photos... Please wait.
+                <div class="space-y-2 pt-2 border-t border-slate-100">
+                    <div class="flex justify-between items-center text-xs font-medium text-slate-600">
+                        <span>Quality:</span>
+                        <span id="qualityVal" class="font-bold text-indigo-600">85%</span>
+                    </div>
+                    <input type="range" id="qualityRange" min="30" max="100" value="85" step="5" class="w-full accent-indigo-600 cursor-pointer">
+                </div>
+
+                <button id="convertBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3.5 px-4 rounded-xl shadow-md transition-all">Convert HEIC to JPG</button>
             </div>
+            <div id="statusText" class="mt-4 text-center text-sm font-medium text-indigo-600 hidden">Processing...</div>
         </div>
-
     </main>
 
-    <!-- Footer -->
     <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500">
         <p>© 2026 PrivacyConvert — 100% Client-Side Processing.</p>
     </footer>
 
-    <!-- JS Logic -->
     <script>
         const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('fileInput');
         const actionArea = document.getElementById('actionArea');
         const fileNameDisplay = document.getElementById('fileName');
+        const fileSizeDisplay = document.getElementById('fileSize');
         const convertBtn = document.getElementById('convertBtn');
         const statusText = document.getElementById('statusText');
-
+        const qualityRange = document.getElementById('qualityRange');
+        const qualityVal = document.getElementById('qualityVal');
         let selectedFiles = [];
 
-        // Tıklama Olayı (Sayfa yüklenir yüklenmez tetiklenir)
-        dropZone.addEventListener('click', () => {
-            fileInput.click();
-        });
+        qualityRange.addEventListener('input', (e) => qualityVal.textContent = `${e.target.value}%`);
+        dropZone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
 
-        fileInput.addEventListener('change', (e) => handleSelection(e.target.files));
-
-        // Drag & Drop
-        dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropZone.classList.add('border-indigo-500', 'bg-slate-50');
-        });
-
-        dropZone.addEventListener('dragleave', () => {
-            dropZone.classList.remove('border-indigo-500', 'bg-slate-50');
-        });
-
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('border-indigo-500', 'bg-slate-50');
-            handleSelection(e.dataTransfer.files);
-        });
-
-        function handleSelection(files) {
+        function handleFiles(files) {
             if (!files.length) return;
             selectedFiles = Array.from(files);
-            
-            if (selectedFiles.length === 1) {
-                fileNameDisplay.textContent = selectedFiles[0].name;
-            } else {
-                fileNameDisplay.textContent = `${selectedFiles.length} HEIC files selected`;
-            }
+            fileNameDisplay.textContent = selectedFiles.length === 1 ? selectedFiles[0].name : `${selectedFiles.length} files selected`;
+            fileSizeDisplay.textContent = selectedFiles.length === 1 ? `${(selectedFiles[0].size/1024).toFixed(1)} KB` : 'Batch mode';
             actionArea.classList.remove('hidden');
         }
 
-        // Dönüştürme
         convertBtn.addEventListener('click', async () => {
-            if (!selectedFiles.length) return;
-
-            showStatus("Converting HEIC locally... This may take a few seconds.");
+            const format = document.getElementById('targetFormat').value;
+            const quality = parseFloat(qualityRange.value) / 100;
+            statusText.classList.remove('hidden');
+            convertBtn.disabled = true;
 
             try {
-                for (let i = 0; i < selectedFiles.length; i++) {
-                    const file = selectedFiles[i];
-                    
-                    // HEIC2ANY Dönüştürme İşlemi
-                    const conversionResult = await heic2any({
-                        blob: file,
-                        toType: "image/jpeg",
-                        quality: 0.9
-                    });
+                const zip = new JSZip();
+                const isSingle = selectedFiles.length === 1;
 
-                    const blob = Array.isArray(conversionResult) ? conversionResult[0] : conversionResult;
-                    const cleanName = file.name.replace(/\.(heic|heif)$/i, '');
-                    triggerDownload(blob, `${cleanName}.jpg`);
+                for (let i = 0; i < selectedFiles.length; i++) {
+                    statusText.textContent = `Converting image ${i + 1} of ${selectedFiles.length}...`;
+                    const file = selectedFiles[i];
+                    const pngBlob = await heic2any({ blob: file, toType: 'image/png' });
+                    const blobResult = Array.isArray(pngBlob) ? pngBlob[0] : pngBlob;
+
+                    const img = new Image();
+                    img.src = URL.createObjectURL(blobResult);
+                    await new Promise(res => img.onload = res);
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width; canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    if (format === 'jpg') { ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, canvas.width, canvas.height); }
+                    ctx.drawImage(img, 0, 0);
+
+                    const outBlob = await new Promise(res => canvas.toBlob(res, `image/${format}`, quality));
+                    const baseName = file.name.replace(/\.(heic|heif)$/i, '');
+
+                    if (isSingle) triggerDownload(outBlob, `${baseName}.${format}`);
+                    else zip.file(`${baseName}.${format}`, outBlob);
+                }
+
+                if (!isSingle) {
+                    statusText.textContent = 'Creating ZIP archive...';
+                    const zipBlob = await zip.generateAsync({ type: 'blob' });
+                    triggerDownload(zipBlob, `heic_converted_${Date.now()}.zip`);
                 }
             } catch (err) {
-                console.error(err);
-                alert("An error occurred while converting the HEIC file.");
+                alert('HEIC conversion failed: ' + err.message);
             } finally {
-                hideStatus();
+                statusText.classList.add('hidden');
+                convertBtn.disabled = false;
             }
         });
 
@@ -155,20 +166,6 @@
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            setTimeout(() => URL.revokeObjectURL(link.href), 1000);
-        }
-
-        function showStatus(text) {
-            statusText.textContent = text;
-            statusText.classList.remove('hidden');
-            convertBtn.disabled = true;
-            convertBtn.classList.add('opacity-50', 'cursor-not-allowed');
-        }
-
-        function hideStatus() {
-            statusText.classList.add('hidden');
-            convertBtn.disabled = false;
-            convertBtn.classList.remove('opacity-50', 'cursor-not-allowed');
         }
     </script>
 </body>
