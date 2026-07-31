@@ -77,6 +77,15 @@
             </p>
         </div>
 
+        <!-- 100% Security & Privacy Explanation Banner -->
+        <div class="max-w-2xl mx-auto mb-6 p-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/50 rounded-xl text-xs sm:text-sm text-emerald-900 dark:text-emerald-300 flex items-start gap-3 shadow-sm">
+            <span class="text-xl">🛡️</span>
+            <div>
+                <strong id="secBannerTitle" class="block font-bold mb-1">100% Local & Secure Processing Guarantee</strong>
+                <p id="secBannerDesc">All file conversions, OCR readings, encryptions, and edits occur entirely inside your web browser using client-side Web APIs and script libraries. Your files never leave your device, are never uploaded to any remote server, and remain completely private.</p>
+            </div>
+        </div>
+
         <!-- Converter Navigation Tabs -->
         <div class="flex flex-wrap justify-center gap-2 mb-8">
             <button onclick="switchTool('pdf-to-png')" id="tab-pdf-to-png" class="px-4 py-2 text-xs font-bold rounded-xl transition bg-indigo-600 text-white shadow-sm">PDF to PNG</button>
@@ -314,7 +323,7 @@
         </div>
     </main>
 
-    <!-- JAVASCRIPT LOGIC (Safety-Wrapped) -->
+    <!-- JAVASCRIPT LOGIC (Multi-Language & Security Explained) -->
     <script>
         try {
             if (typeof pdfjsLib !== 'undefined') {
@@ -326,13 +335,15 @@
         const translations = {
             en: {
                 titlePrefix: "Secure", titleSuffix: "Converter",
+                secTitle: "100% Local & Secure Processing Guarantee",
+                secDesc: "All file conversions, OCR readings, encryptions, and edits occur entirely inside your web browser using client-side Web APIs and script libraries. Your files never leave your device, are never uploaded to any remote server, and remain completely private.",
                 descPdfPng: "Extract PDF pages into high-resolution PNG images directly in your browser. Fast, free, and completely private.",
                 descPdfJpg: "Extract PDF pages into high-resolution JPG images directly in your browser.",
                 descMergePdf: "Combine multiple PDF documents into a single organized file securely.",
                 descSplitPdf: "Extract specific pages from a PDF into a new separate document.",
-                descEncrypt: "Add password encryption to secure your confidential PDF documents.",
+                descEncrypt: "Add password encryption to secure your confidential PDF documents locally.",
                 descBates: "Stamp custom bates numbering and page indexes onto PDF documents.",
-                descOcr: "Extract editable text from images instantly inside your browser.",
+                descOcr: "Extract editable text from images instantly inside your browser using AI OCR.",
                 descRedact: "Blackout sensitive information or censor areas securely on images.",
                 descSign: "Draw your digital signature and stamp it onto documents.",
                 descQr: "Generate QR codes locally or read them instantly.",
@@ -373,13 +384,15 @@
             },
             es: {
                 titlePrefix: "Seguro", titleSuffix: "Convertidor",
+                secTitle: "Garantía de Procesamiento 100% Local y Seguro",
+                secDesc: "Todas las conversiones de archivos, lecturas OCR, cifrados y ediciones ocurren enteramente dentro de su navegador web utilizando APIs web y librerías del lado del cliente. Sus archivos nunca abandonan su dispositivo, no se cargan a ningún servidor remoto y permanecen totalmente privados.",
                 descPdfPng: "Extraiga páginas de PDF en imágenes PNG de alta resolución directamente en su navegador.",
                 descPdfJpg: "Extraiga páginas de PDF en imágenes JPG de alta resolución directamente en su navegador.",
                 descMergePdf: "Combine múltiples documentos PDF en un solo archivo organizado de forma segura.",
                 descSplitPdf: "Extraiga páginas específicas de un PDF en un nuevo documento separado.",
-                descEncrypt: "Agregue cifrado de contraseña para proteger sus documentos PDF confidenciales.",
+                descEncrypt: "Agregue cifrado de contraseña para proteger sus documentos PDF confidenciales localmente.",
                 descBates: "Estampe numeración Bates e índices de página personalizados en documentos PDF.",
-                descOcr: "Extraiga texto editable de imágenes instantáneamente dentro de su navegador.",
+                descOcr: "Extraiga texto editable de imágenes instantáneamente dentro de su navegador usando OCR.",
                 descRedact: "Oculte información confidencial o censure áreas de forma segura en las imágenes.",
                 descSign: "Dibuje su firma digital y estamápela en los documentos.",
                 descQr: "Genere códigos QR localmente o léalos al instante.",
@@ -420,11 +433,13 @@
             },
             ar: {
                 titlePrefix: "آمن", titleSuffix: "محول",
+                secTitle: "ضمان المعالجة المحلية الآمنة بنسبة 100%",
+                secDesc: "تتم جميع عمليات تحويل الملفات، وقراءات التعرف الضوئي (OCR)، والتشفير، والتعديلات بالكامل داخل متصفح الويب الخاص بك باستخدام تقنيات المتصفح المحلية (Client-side). لا تغادر ملفاتك جهازك أبداً، ولا يتم تحميلها على أي خادم خارجي، وتظل سرية تماماً.",
                 descPdfPng: "استخراج صفحات ملفات PDF إلى صور PNG عالية الدقة مباشرة في متصفحك.",
                 descPdfJpg: "استخراج صفحات ملفات PDF إلى صور JPG عالية الدقة مباشرة في متصفحك.",
                 descMergePdf: "دمج مستندات PDF متعددة في ملف واحد منظم بأمان.",
                 descSplitPdf: "استخراج صفحات محددة من ملف PDF إلى مستند جديد منفصل.",
-                descEncrypt: "إضافة تشفير بكلمة مرور لتأمين مستندات PDF السرية الخاصة بك.",
+                descEncrypt: "إضافة تشفير بكلمة مرور لتأمين مستندات PDF السرية محلياً.",
                 descBates: "ختم ترقيم Bates وفهارس الصفحات المخصصة على مستندات PDF.",
                 descOcr: "استخراج النص القابل للتعديل من الصور فوراً داخل متصفحك.",
                 descRedact: "حجب المعلومات الحساسة أو رقابة المناطق بأمان على الصور.",
@@ -487,11 +502,15 @@
             const elSuffix = document.getElementById('mainTitleSuffix');
             const elClear = document.getElementById('clearBtn');
             const elBtnText = document.getElementById('convertBtnText');
+            const secBannerTitle = document.getElementById('secBannerTitle');
+            const secBannerDesc = document.getElementById('secBannerDesc');
             
             if(elPrefix) elPrefix.textContent = t.titlePrefix;
             if(elSuffix) elSuffix.textContent = t.titleSuffix;
             if(elClear) elClear.innerHTML = t.clear;
             if(elBtnText) elBtnText.textContent = t.convertBtn;
+            if(secBannerTitle) secBannerTitle.textContent = t.secTitle;
+            if(secBannerDesc) secBannerDesc.textContent = t.secDesc;
             
             const mainDesc = document.getElementById('mainDesc');
             const dropText = document.getElementById('dropText');
