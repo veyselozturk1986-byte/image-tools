@@ -473,7 +473,7 @@
         }
         updateLiveCounter(0);
 
-        // Comprehensive 6 Languages Translation Map (Including All Tool UI Inner Texts & Placeholders)
+        // Comprehensive 6 Languages Translation Map (Fully Localized UI, Inputs, and Placeholders)
         const translations = {
             en: {
                 secTitle: "100% Local & Secure Processing Guarantee",
@@ -508,6 +508,7 @@
                 qrPlaceholder: "Enter URL or text for QR Code...",
                 diffOrigPlaceholder: "Original text...",
                 diffModPlaceholder: "Modified text...",
+                resultPlaceholder: "Result will appear here...",
                 passLen: "Length:",
                 passSym: "Symbols",
                 passNum: "Numbers",
@@ -584,6 +585,7 @@
                 qrPlaceholder: "输入二维码的网址或文本...",
                 diffOrigPlaceholder: "原文...",
                 diffModPlaceholder: "修改后的文本...",
+                resultPlaceholder: "结果将显示在此处...",
                 passLen: "长度：",
                 passSym: "符号",
                 passNum: "数字",
@@ -660,6 +662,7 @@
                 qrPlaceholder: "URL oder Text für QR-Code eingeben...",
                 diffOrigPlaceholder: "Originaltext...",
                 diffModPlaceholder: "Geänderter Text...",
+                resultPlaceholder: "Ergebnis wird hier angezeigt...",
                 passLen: "Länge:",
                 passSym: "Symbole",
                 passNum: "Zahlen",
@@ -736,6 +739,7 @@
                 qrPlaceholder: "Entrer l'URL ou le texte du code QR...",
                 diffOrigPlaceholder: "Texte d'origine...",
                 diffModPlaceholder: "Texte modifié...",
+                resultPlaceholder: "Le résultat apparaîtra ici...",
                 passLen: "Longueur :",
                 passSym: "Symboles",
                 passNum: "Nombres",
@@ -812,6 +816,7 @@
                 qrPlaceholder: "Introduce URL o texto para el código QR...",
                 diffOrigPlaceholder: "Texto original...",
                 diffModPlaceholder: "Texto modificado...",
+                resultPlaceholder: "El resultado aparecerá aquí...",
                 passLen: "Longitud:",
                 passSym: "Símbolos",
                 passNum: "Números",
@@ -888,6 +893,7 @@
                 qrPlaceholder: "أدخل الرابط أو النص لرمز الاستجابة السريعة...",
                 diffOrigPlaceholder: "النص الأصلي...",
                 diffModPlaceholder: "النص المعدل...",
+                resultPlaceholder: "ستظهر النتيجة هنا...",
                 passLen: "الطول:",
                 passSym: "رموز",
                 passNum: "أرقام",
@@ -964,7 +970,7 @@
             document.getElementById('renderQualityLabel').textContent = t.renderQuality;
             document.getElementById('outputInfoLabel').textContent = t.outputInfo;
 
-            // Search and Placeholders & UI elements
+            // Search, Modals, and Tool Placeholders
             document.getElementById('toolSearchInput').placeholder = t.searchPlaceholder;
             document.getElementById('cmdInput').placeholder = t.cmdPlaceholder;
             document.getElementById('shortcutsTitle').textContent = t.shortcutsTitle;
@@ -990,16 +996,17 @@
             document.getElementById('optStd').textContent = t.qualityStd;
             document.getElementById('optHigh').textContent = t.qualityHigh;
             document.getElementById('optUltra').textContent = t.qualityUltra;
+            document.getElementById('genericTextArea').placeholder = t.resultPlaceholder;
 
-            // Update active tool input placeholder if active
+            document.getElementById('diffOriginal').placeholder = t.diffOrigPlaceholder;
+            document.getElementById('diffModified').placeholder = t.diffModPlaceholder;
+
+            // Update active tool input placeholders on language switch
             const mainInput = document.getElementById('mainInputField');
             if (currentTool === 'json-tool') mainInput.placeholder = t.jsonPlaceholder;
             else if (currentTool === 'md-tool') mainInput.placeholder = t.mdPlaceholder;
             else if (currentTool === 'base64-tool' || currentTool === 'url-tool') mainInput.placeholder = t.urlPlaceholder;
             else if (currentTool === 'qr-tool') mainInput.placeholder = t.qrPlaceholder;
-
-            document.getElementById('diffOriginal').placeholder = t.diffOrigPlaceholder;
-            document.getElementById('diffModified').placeholder = t.diffModPlaceholder;
 
             // Update Live Counter text immediately on language switch
             updateLiveCounter(0);
