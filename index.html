@@ -4,14 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
+    <!-- SEO & Open Graph Tags -->
     <title>PrivacyConvert - All-in-One Free, Fast & 100% Private Converters</title>
     <meta name="description" content="Convert PDF, HEIC, JPG images online for free. 100% local in-browser conversion with zero server uploads, cropping, watermarking, and batch processing.">
     <meta name="keywords" content="pdf to png, pdf to jpg, heic to jpg, jpg to pdf, local converter">
     <meta name="author" content="PrivacyConvert">
+    <meta property="og:title" content="PrivacyConvert - Secure Local Converter">
+    <meta property="og:description" content="Convert your files securely inside your browser. No server uploads.">
+    <meta property="og:type" content="website">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4444769373675024" crossorigin="anonymous"></script>
 
     <!-- Cropper.js CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
@@ -20,12 +23,22 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
-    <!-- HEIC & PDF-LIB Libraries for Full Functionality -->
     <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
     <script src="https://unpkg.com/pdf-lib@1.4.0/dist/pdf-lib.min.js"></script>
+    <!-- SortableJS for Drag & Drop Grid -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 </head>
 
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans">
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans relative">
+
+    <!-- Progress Overlay Modal -->
+    <div id="progressModal" class="hidden fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center backdrop-blur-sm transition-opacity">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl w-80 text-center flex flex-col items-center">
+            <div class="w-14 h-14 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin mb-4"></div>
+            <h3 class="text-lg font-bold text-slate-800 mb-2" id="progressTitle">Processing...</h3>
+            <p id="progressText" class="text-sm text-slate-500 font-medium">Please wait</p>
+        </div>
+    </div>
 
     <!-- Header / Navbar -->
     <header class="bg-white border-b border-slate-200 py-4 px-6 shadow-sm">
@@ -63,10 +76,15 @@
         </div>
 
         <!-- Main Converter Card -->
-        <div class="max-w-2xl mx-auto p-6 bg-white rounded-2xl shadow-lg border border-slate-100">
+        <div class="max-w-2xl mx-auto p-6 bg-white rounded-2xl shadow-lg border border-slate-100 relative">
             
+            <!-- Clear Button -->
+            <button id="clearBtn" class="hidden absolute top-4 right-4 text-xs font-bold text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg transition items-center gap-1">
+                🗑️ Clear
+            </button>
+
             <!-- Drag & Drop Area -->
-            <div id="dropZone" class="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center cursor-pointer hover:border-indigo-500 hover:bg-slate-50 transition-all">
+            <div id="dropZone" class="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center cursor-pointer hover:border-indigo-500 hover:bg-slate-50 transition-all mt-4">
                 <svg class="w-12 h-12 mx-auto text-slate-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
                 </svg>
@@ -82,7 +100,15 @@
                 
                 <!-- Live Preview Wrapper -->
                 <div id="previewWrapper" class="p-4 bg-slate-900 rounded-xl border border-slate-800 flex flex-col items-center justify-center min-h-[200px] max-h-[380px] overflow-hidden relative">
+                    <!-- Single Image Preview (For PDF/HEIC) -->
                     <img id="imagePreview" class="max-w-full max-h-[320px] object-contain rounded hidden" alt="File Preview" />
+                    
+                    <!-- Batch Image Grid (For JPG to PDF) -->
+                    <div id="batchPreviewGrid" class="hidden w-full h-full grid grid-cols-3 sm:grid-cols-4 gap-3 overflow-y-auto p-2">
+                        <!-- Thumbnails injected via JS -->
+                    </div>
+
+                    <!-- Non-Image Document Info -->
                     <div id="nonImagePreview" class="text-center text-slate-300 py-8 space-y-2 hidden">
                         <span class="text-4xl block" id="previewIcon">📄</span>
                         <p class="text-sm font-medium" id="fileName">File Loaded</p>
@@ -92,16 +118,20 @@
 
                 <!-- 🛠️ Editor & Options Panel -->
                 <div id="editorTools" class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-4">
-                    <h3 class="text-xs font-bold text-slate-600 uppercase tracking-wider">🛠️ Conversion & Editing Options</h3>
+                    <h3 class="text-xs font-bold text-slate-600 uppercase tracking-wider">🛠️ Conversion Options</h3>
                     
                     <!-- Quick Tools -->
                     <div id="imageQuickButtons" class="flex flex-wrap items-center gap-2">
                         <button type="button" id="rotateRightBtn" class="px-3 py-1.5 bg-white border border-slate-300 hover:bg-slate-100 text-xs font-semibold rounded-lg text-slate-700 transition flex items-center gap-1 shadow-sm">
-                            🔄 Rotate Preview 90°
+                            🔄 Rotate 90°
                         </button>
                         <button type="button" id="toggleCropBtn" class="px-3 py-1.5 bg-indigo-50 border border-indigo-200 hover:bg-indigo-100 text-xs font-semibold rounded-lg text-indigo-700 transition flex items-center gap-1 shadow-sm">
-                            ✂️ Crop Preview Area
+                            ✂️ Crop Area
                         </button>
+                    </div>
+
+                    <div id="batchSortHint" class="hidden text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 p-2 rounded-lg font-medium">
+                        💡 Tip: Drag and drop the images in the preview box above to change their order in the PDF.
                     </div>
 
                     <!-- PDF Specific Range Group -->
@@ -115,7 +145,7 @@
 
                     <!-- Width & Watermark Grid -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-200 text-xs">
-                        <div>
+                        <div id="resizeContainer">
                             <label for="resizeWidth" class="block font-medium text-slate-700 mb-1">Max Output Width (px):</label>
                             <input type="number" id="resizeWidth" placeholder="Original Resolution" class="w-full p-2 border border-slate-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-white">
                         </div>
@@ -131,28 +161,23 @@
                     <div id="qualityContainer">
                         <label for="renderScale" class="block text-xs font-bold text-slate-600 uppercase mb-1">Render Quality / Scale:</label>
                         <select id="renderScale" class="w-full bg-white border border-slate-300 text-slate-800 text-sm rounded-lg p-2.5 font-semibold focus:ring-indigo-500 focus:border-indigo-500 cursor-pointer">
-                            <option value="1.5">Standard (150 DPI equivalent)</option>
-                            <option value="2.0" selected>High Quality (200 DPI equivalent)</option>
-                            <option value="3.0">Ultra HD (300 DPI equivalent)</option>
+                            <option value="1.5">Standard (150 DPI)</option>
+                            <option value="2.0" selected>High Quality (200 DPI)</option>
+                            <option value="3.0">Ultra HD (300 DPI)</option>
                         </select>
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Output Format:</label>
                         <div id="outputFormatBadge" class="p-2.5 bg-slate-100 rounded-lg border border-slate-200 text-xs font-bold text-slate-700">
-                            🖼️ PNG (Lossless High-Quality)
+                            🖼️ PNG
                         </div>
                     </div>
                 </div>
 
                 <!-- Convert Button -->
-                <button id="convertBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3.5 px-4 rounded-xl shadow-md transition-all active:scale-95">
+                <button id="convertBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-4 rounded-xl shadow-md transition-all active:scale-95 text-lg">
                     Convert & Download
                 </button>
-            </div>
-
-            <!-- Status Message -->
-            <div id="statusText" class="mt-4 text-center text-sm font-semibold text-indigo-600 hidden">
-                Processing...
             </div>
         </div>
     </main>
@@ -161,44 +186,68 @@
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-        // State & Elements
+        // State
         let currentTool = 'pdf-to-png';
         let selectedFiles = [];
         let cropper = null;
         let currentRotation = 0;
+        let sortableInstance = null;
 
+        // Elements
         const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('fileInput');
         const actionArea = document.getElementById('actionArea');
         const imagePreview = document.getElementById('imagePreview');
+        const batchPreviewGrid = document.getElementById('batchPreviewGrid');
         const nonImagePreview = document.getElementById('nonImagePreview');
-        const fileNameDisplay = document.getElementById('fileName');
-        const fileSizeDisplay = document.getElementById('fileSize');
+        const clearBtn = document.getElementById('clearBtn');
         const convertBtn = document.getElementById('convertBtn');
-        const statusText = document.getElementById('statusText');
-        const renderScaleSelect = document.getElementById('renderScale');
         
-        const pdfPageRange = document.getElementById('pdfPageRange');
-        const toggleCropBtn = document.getElementById('toggleCropBtn');
-        const rotateRightBtn = document.getElementById('rotateRightBtn');
-        const resizeWidthInput = document.getElementById('resizeWidth');
-        const watermarkInput = document.getElementById('watermarkText');
-        const pdfRangeGroup = document.getElementById('pdfRangeGroup');
-        const watermarkContainer = document.getElementById('watermarkContainer');
-        const qualityContainer = document.getElementById('qualityContainer');
-        const outputFormatBadge = document.getElementById('outputFormatBadge');
-        const mainTitleAccent = document.getElementById('mainTitleAccent');
-        const mainDesc = document.getElementById('mainDesc');
-        const dropText = document.getElementById('dropText');
-        const dropSubText = document.getElementById('dropSubText');
+        // Progress Overlay
+        const progressModal = document.getElementById('progressModal');
+        const progressTitle = document.getElementById('progressTitle');
+        const progressText = document.getElementById('progressText');
+
+        // Tool Options
+        const imageQuickButtons = document.getElementById('imageQuickButtons');
+        const batchSortHint = document.getElementById('batchSortHint');
+        const resizeContainer = document.getElementById('resizeContainer');
+
+        function showProgress(title, text) {
+            progressTitle.textContent = title;
+            progressText.textContent = text;
+            progressModal.classList.remove('hidden');
+        }
+
+        function hideProgress() {
+            progressModal.classList.add('hidden');
+        }
+
+        // Small delay to allow browser UI to update (prevents freezing)
+        async function yieldToMain() {
+            return new Promise(resolve => setTimeout(resolve, 10));
+        }
+
+        function resetApp() {
+            selectedFiles = [];
+            currentRotation = 0;
+            if (cropper) { cropper.destroy(); cropper = null; }
+            actionArea.classList.add('hidden');
+            dropZone.classList.remove('hidden');
+            clearBtn.classList.add('hidden');
+            imagePreview.src = '';
+            batchPreviewGrid.innerHTML = '';
+            if (sortableInstance) { sortableInstance.destroy(); sortableInstance = null; }
+            document.getElementById('toggleCropBtn').innerHTML = "✂️ Crop Area";
+        }
+
+        clearBtn.addEventListener('click', resetApp);
 
         function switchTool(tool) {
             currentTool = tool;
-            selectedFiles = [];
-            actionArea.classList.add('hidden');
-            if (cropper) { cropper.destroy(); cropper = null; }
+            resetApp();
 
-            // Update active button styling
+            // Active button styling
             ['pdf-to-png', 'pdf-to-jpg', 'heic-to-jpg', 'jpg-to-pdf'].forEach(t => {
                 const btn = document.getElementById(`tab-${t}`);
                 if (t === tool) {
@@ -208,61 +257,218 @@
                 }
             });
 
-            // Configure UI per tool
-            if (tool === 'pdf-to-png') {
-                mainTitleAccent.textContent = "PDF to PNG";
-                mainDesc.textContent = "Extract PDF pages into high-resolution PNG images directly in your browser.";
-                dropText.textContent = "Click to select PDF files or drag & drop";
-                dropSubText.textContent = "Select one or multiple PDF documents (.pdf)";
+            // UI Config
+            const title = document.getElementById('mainTitleAccent');
+            const desc = document.getElementById('mainDesc');
+            const pdfGroup = document.getElementById('pdfRangeGroup');
+            const quality = document.getElementById('qualityContainer');
+            const formatBadge = document.getElementById('outputFormatBadge');
+            const watermark = document.getElementById('watermarkContainer');
+
+            if (tool === 'pdf-to-png' || tool === 'pdf-to-jpg') {
+                title.textContent = tool === 'pdf-to-png' ? "PDF to PNG" : "PDF to JPG";
+                desc.textContent = "Extract PDF pages into high-resolution images directly in your browser.";
                 fileInput.accept = ".pdf";
                 fileInput.multiple = true;
-                pdfRangeGroup.style.display = 'block';
-                watermarkContainer.style.display = 'block';
-                qualityContainer.style.display = 'block';
-                outputFormatBadge.textContent = "🖼️ PNG (Lossless High-Quality)";
-            } else if (tool === 'pdf-to-jpg') {
-                mainTitleAccent.textContent = "PDF to JPG";
-                mainDesc.textContent = "Convert PDF document pages into high-quality JPG images securely.";
-                dropText.textContent = "Click to select PDF files or drag & drop";
-                dropSubText.textContent = "Select one or multiple PDF documents (.pdf)";
-                fileInput.accept = ".pdf";
-                fileInput.multiple = true;
-                pdfRangeGroup.style.display = 'block';
-                watermarkContainer.style.display = 'block';
-                qualityContainer.style.display = 'block';
-                outputFormatBadge.textContent = "🖼️ JPG (Compressed Image)";
+                pdfGroup.style.display = 'block';
+                watermark.style.display = 'block';
+                quality.style.display = 'block';
+                imageQuickButtons.style.display = 'flex';
+                batchSortHint.style.display = 'none';
+                resizeContainer.style.display = 'block';
+                formatBadge.textContent = tool === 'pdf-to-png' ? "🖼️ PNG (Lossless)" : "🖼️ JPG (Compressed)";
             } else if (tool === 'heic-to-jpg') {
-                mainTitleAccent.textContent = "HEIC to JPG";
-                mainDesc.textContent = "Convert Apple HEIC photos to standard JPG images instantly.";
-                dropText.textContent = "Click to select HEIC files or drag & drop";
-                dropSubText.textContent = "Select HEIC image files (.heic)";
+                title.textContent = "HEIC to JPG";
+                desc.textContent = "Convert Apple HEIC photos to standard JPG images instantly.";
                 fileInput.accept = ".heic,.HEIC";
                 fileInput.multiple = true;
-                pdfRangeGroup.style.display = 'none';
-                watermarkContainer.style.display = 'block';
-                qualityContainer.style.display = 'none';
-                outputFormatBadge.textContent = "🖼️ JPG Format";
+                pdfGroup.style.display = 'none';
+                watermark.style.display = 'block';
+                quality.style.display = 'none';
+                imageQuickButtons.style.display = 'flex';
+                batchSortHint.style.display = 'none';
+                resizeContainer.style.display = 'block';
+                formatBadge.textContent = "🖼️ JPG";
             } else if (tool === 'jpg-to-pdf') {
-                mainTitleAccent.textContent = "JPG to PDF";
-                mainDesc.textContent = "Combine and convert multiple JPG images into a single PDF document.";
-                dropText.textContent = "Click to select JPG/PNG images or drag & drop";
-                dropSubText.textContent = "Select image files (.jpg, .jpeg, .png)";
-                fileInput.accept = "image/jpeg,image/png";
+                title.textContent = "JPG to PDF";
+                desc.textContent = "Combine and convert multiple images into a single PDF document.";
+                fileInput.accept = "image/jpeg,image/png,image/webp";
                 fileInput.multiple = true;
-                pdfRangeGroup.style.display = 'none';
-                watermarkContainer.style.display = 'none';
-                qualityContainer.style.display = 'none';
-                outputFormatBadge.textContent = "📄 PDF Document";
+                pdfGroup.style.display = 'none';
+                watermark.style.display = 'none';
+                quality.style.display = 'none';
+                imageQuickButtons.style.display = 'none'; // Cropping makes less sense for batch PDF
+                batchSortHint.style.display = 'block';
+                resizeContainer.style.display = 'none';
+                formatBadge.textContent = "📄 PDF Document";
             }
         }
 
-        function showStatus(msg) {
-            statusText.textContent = msg;
-            statusText.classList.remove('hidden');
+        // Drag & Drop
+        dropZone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('border-indigo-500', 'bg-slate-50'); });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('border-indigo-500', 'bg-slate-50'));
+        dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('border-indigo-500', 'bg-slate-50'); handleFiles(e.dataTransfer.files); });
+
+        async function handleFiles(files) {
+            const validFiles = Array.from(files);
+            if (!validFiles.length) return;
+            selectedFiles = validFiles;
+
+            dropZone.classList.add('hidden');
+            actionArea.classList.remove('hidden');
+            clearBtn.classList.remove('hidden');
+            clearBtn.style.display = 'inline-flex';
+
+            showProgress("Loading...", "Preparing preview layout");
+
+            try {
+                if (currentTool === 'jpg-to-pdf') {
+                    // Batch Grid View
+                    imagePreview.classList.add('hidden');
+                    nonImagePreview.classList.add('hidden');
+                    batchPreviewGrid.classList.remove('hidden');
+                    batchPreviewGrid.innerHTML = '';
+                    
+                    for (let i = 0; i < selectedFiles.length; i++) {
+                        const file = selectedFiles[i];
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            const div = document.createElement('div');
+                            div.className = 'relative aspect-square bg-slate-800 rounded-lg overflow-hidden border-2 border-transparent hover:border-indigo-500 cursor-grab';
+                            div.dataset.index = i; // Store original index
+                            div.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover opacity-90 hover:opacity-100 transition"><span class="absolute top-1 left-1 bg-black/60 text-white text-[10px] px-1.5 rounded">${i+1}</span>`;
+                            batchPreviewGrid.appendChild(div);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+
+                    // Init SortableJS
+                    sortableInstance = new Sortable(batchPreviewGrid, {
+                        animation: 150,
+                        ghostClass: 'opacity-50'
+                    });
+
+                } else {
+                    // Single Image Preview View
+                    batchPreviewGrid.classList.add('hidden');
+                    const firstFile = selectedFiles[0];
+
+                    if (currentTool === 'pdf-to-png' || currentTool === 'pdf-to-jpg') {
+                        const arrayBuffer = await firstFile.arrayBuffer();
+                        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                        const page = await pdf.getPage(1);
+                        const viewport = page.getViewport({ scale: 1.0 });
+                        const canvas = document.createElement('canvas');
+                        canvas.height = viewport.height;
+                        canvas.width = viewport.width;
+                        await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+
+                        imagePreview.src = canvas.toDataURL('image/png');
+                        imagePreview.classList.remove('hidden');
+                        nonImagePreview.classList.add('hidden');
+                    } else if (currentTool === 'heic-to-jpg') {
+                        const convertedBlob = await heic2any({ blob: firstFile, toType: 'image/jpeg', quality: 0.5 });
+                        imagePreview.src = URL.createObjectURL(Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob);
+                        imagePreview.classList.remove('hidden');
+                        nonImagePreview.classList.add('hidden');
+                    }
+                }
+            } catch (err) {
+                console.error("Preview Error:", err);
+                imagePreview.classList.add('hidden');
+                batchPreviewGrid.classList.add('hidden');
+                nonImagePreview.classList.remove('hidden');
+                document.getElementById('fileName').textContent = `${selectedFiles.length} files loaded`;
+            } finally {
+                hideProgress();
+            }
         }
 
-        function hideStatus() {
-            statusText.classList.add('hidden');
+        // Editor Controls
+        document.getElementById('rotateRightBtn').addEventListener('click', () => {
+            currentRotation = (currentRotation + 90) % 360;
+            imagePreview.style.transform = `rotate(${currentRotation}deg)`;
+            if (cropper) cropper.rotateTo(currentRotation);
+        });
+
+        document.getElementById('toggleCropBtn').addEventListener('click', function() {
+            if (!cropper) {
+                cropper = new Cropper(imagePreview, {
+                    viewMode: 1,
+                    autoCropArea: 0.8,
+                    background: false
+                });
+                this.innerHTML = "✅ Apply Crop";
+                this.classList.replace('bg-indigo-50', 'bg-emerald-50');
+                this.classList.replace('text-indigo-700', 'text-emerald-700');
+            } else {
+                cropper.destroy();
+                cropper = null;
+                this.innerHTML = "✂️ Crop Area";
+                this.classList.replace('bg-emerald-50', 'bg-indigo-50');
+                this.classList.replace('text-emerald-700', 'text-indigo-700');
+            }
+        });
+
+        // Parse ranges like "1, 3-5"
+        function parsePageRange(rangeStr, totalPages) {
+            if (!rangeStr || rangeStr.trim() === '' || rangeStr.trim().toLowerCase() === 'all') {
+                return Array.from({ length: totalPages }, (_, i) => i + 1);
+            }
+            const pages = new Set();
+            rangeStr.split(',').forEach(part => {
+                part = part.trim();
+                if (part.includes('-')) {
+                    const [start, end] = part.split('-').map(n => parseInt(n, 10));
+                    if (!isNaN(start) && !isNaN(end)) {
+                        for (let i = Math.max(1, start); i <= Math.min(totalPages, end); i++) pages.add(i);
+                    }
+                } else {
+                    const num = parseInt(part, 10);
+                    if (!isNaN(num) && num >= 1 && num <= totalPages) pages.add(num);
+                }
+            });
+            return Array.from(pages).sort((a, b) => a - b);
+        }
+
+        // Helper to get correctly rotated/cropped canvas
+        function getProcessedCanvas(sourceCanvas) {
+            if (cropper) {
+                // If cropper is active, it handles rotation too
+                return cropper.getCroppedCanvas({ fillColor: '#fff' }); 
+            } else if (currentRotation !== 0) {
+                // Manual rotation handling if only rotate was clicked
+                const tempCanvas = document.createElement('canvas');
+                const ctx = tempCanvas.getContext('2d');
+                if (currentRotation === 90 || currentRotation === 270) {
+                    tempCanvas.width = sourceCanvas.height;
+                    tempCanvas.height = sourceCanvas.width;
+                } else {
+                    tempCanvas.width = sourceCanvas.width;
+                    tempCanvas.height = sourceCanvas.height;
+                }
+                ctx.translate(tempCanvas.width/2, tempCanvas.height/2);
+                ctx.rotate(currentRotation * Math.PI / 180);
+                ctx.drawImage(sourceCanvas, -sourceCanvas.width/2, -sourceCanvas.height/2);
+                return tempCanvas;
+            }
+            return sourceCanvas;
+        }
+
+        function applyWatermark(canvas) {
+            const wm = document.getElementById('watermarkText').value.trim();
+            if (wm) {
+                const ctx = canvas.getContext('2d');
+                const fontSize = Math.max(24, Math.floor(canvas.width / 20));
+                ctx.font = `bold ${fontSize}px sans-serif`;
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                ctx.shadowColor = 'rgba(0,0,0,0.7)';
+                ctx.shadowBlur = 8;
+                ctx.textAlign = 'center';
+                ctx.fillText(wm, canvas.width / 2, canvas.height - 40);
+            }
         }
 
         function triggerDownload(blob, filename) {
@@ -276,174 +482,35 @@
             URL.revokeObjectURL(url);
         }
 
-        // Drag & Drop Handlers
-        dropZone.addEventListener('click', () => fileInput.click());
-        fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
-
-        dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropZone.classList.add('border-indigo-500', 'bg-slate-50');
-        });
-        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('border-indigo-500', 'bg-slate-50'));
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('border-indigo-500', 'bg-slate-50');
-            handleFiles(e.dataTransfer.files);
-        });
-
-        async function handleFiles(files) {
-            const validFiles = Array.from(files);
-            if (!validFiles.length) {
-                alert('Please select valid files.');
-                return;
-            }
-            selectedFiles = validFiles;
-            
-            if (cropper) {
-                cropper.destroy();
-                cropper = null;
-                toggleCropBtn.textContent = "✂️ Crop Preview Area";
-            }
-            currentRotation = 0;
-            imagePreview.style.transform = 'none';
-
-            actionArea.classList.remove('hidden');
-            const firstFile = selectedFiles[0];
-
-            showStatus("Loading preview...");
-            try {
-                if (currentTool === 'pdf-to-png' || currentTool === 'pdf-to-jpg') {
-                    const arrayBuffer = await firstFile.arrayBuffer();
-                    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-                    const page = await pdf.getPage(1);
-                    const viewport = page.getViewport({ scale: 1.2 });
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    canvas.height = viewport.height;
-                    canvas.width = viewport.width;
-                    await page.render({ canvasContext: ctx, viewport }).promise;
-
-                    imagePreview.src = canvas.toDataURL('image/png');
-                    imagePreview.classList.remove('hidden');
-                    nonImagePreview.classList.add('hidden');
-                } else if (currentTool === 'heic-to-jpg') {
-                    const convertedBlob = await heic2any({ blob: firstFile, toType: 'image/jpeg', quality: 0.8 });
-                    const url = URL.createObjectURL(Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob);
-                    imagePreview.src = url;
-                    imagePreview.classList.remove('hidden');
-                    nonImagePreview.classList.add('hidden');
-                } else {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        imagePreview.src = e.target.result;
-                        imagePreview.classList.remove('hidden');
-                        nonImagePreview.classList.add('hidden');
-                    };
-                    reader.readAsDataURL(firstFile);
-                }
-            } catch (err) {
-                console.error("Preview Error:", err);
-                showNonImagePreview(firstFile);
-            } finally {
-                hideStatus();
-            }
-        }
-
-        function showNonImagePreview(file) {
-            imagePreview.classList.add('hidden');
-            nonImagePreview.classList.remove('hidden');
-            fileNameDisplay.textContent = selectedFiles.length === 1 ? file.name : `${selectedFiles.length} files selected`;
-            fileSizeDisplay.textContent = selectedFiles.length === 1 ? `${(file.size/1024).toFixed(1)} KB` : 'Batch Mode';
-        }
-
-        function parsePageRange(rangeStr, totalPages) {
-            if (!rangeStr || rangeStr.trim() === '' || rangeStr.trim().toLowerCase() === 'all') {
-                return Array.from({ length: totalPages }, (_, i) => i + 1);
-            }
-            const pages = new Set();
-            const parts = rangeStr.split(',');
-            for (let part of parts) {
-                part = part.trim();
-                if (part.includes('-')) {
-                    const [start, end] = part.split('-').map(n => parseInt(n.trim(), 10));
-                    if (!isNaN(start) && !isNaN(end)) {
-                        for (let i = Math.max(1, start); i <= Math.min(totalPages, end); i++) {
-                            pages.add(i);
-                        }
-                    }
-                } else {
-                    const num = parseInt(part, 10);
-                    if (!isNaN(num) && num >= 1 && num <= totalPages) {
-                        pages.add(num);
-                    }
-                }
-            }
-            return Array.from(pages).sort((a, b) => a - b);
-        }
-
-        function applyWatermarkToCanvas(canvas) {
-            const watermark = watermarkInput.value.trim();
-            if (watermark) {
-                const ctx = canvas.getContext('2d');
-                const fontSize = Math.max(18, Math.floor(canvas.width / 22));
-                ctx.font = `bold ${fontSize}px sans-serif`;
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
-                ctx.shadowColor = 'rgba(0,0,0,0.6)';
-                ctx.shadowBlur = 6;
-                ctx.textAlign = 'right';
-                ctx.fillText(watermark, canvas.width - 25, canvas.height - 25);
-            }
-        }
-
-        // Editor Controls
-        rotateRightBtn.addEventListener('click', () => {
-            currentRotation = (currentRotation + 90) % 360;
-            imagePreview.style.transform = `rotate(${currentRotation}deg)`;
-            if (cropper) {
-                cropper.rotateTo(currentRotation);
-            }
-        });
-
-        toggleCropBtn.addEventListener('click', () => {
-            if (!cropper) {
-                cropper = new Cropper(imagePreview, {
-                    aspectRatio: NaN,
-                    viewMode: 1,
-                });
-                toggleCropBtn.textContent = "✅ Apply Crop";
-                toggleCropBtn.classList.replace('bg-indigo-50', 'bg-emerald-50');
-                toggleCropBtn.classList.replace('text-indigo-700', 'text-emerald-700');
-            } else {
-                cropper.destroy();
-                cropper = null;
-                toggleCropBtn.textContent = "✂️ Crop Preview Area";
-                toggleCropBtn.classList.replace('bg-emerald-50', 'bg-indigo-50');
-                toggleCropBtn.classList.replace('text-emerald-700', 'text-indigo-700');
-            }
-        });
-
-        // Convert Action Handler
+        // MAIN CONVERT EXECUTION
         convertBtn.addEventListener('click', async () => {
             if (!selectedFiles.length) return;
+            
+            showProgress("Converting...", "Starting engine");
+            await yieldToMain();
 
-            showStatus("Processing files...");
             try {
                 const zip = new JSZip();
 
                 if (currentTool === 'pdf-to-png' || currentTool === 'pdf-to-jpg') {
-                    const scale = parseFloat(renderScaleSelect.value) || 2.0;
+                    const scale = parseFloat(document.getElementById('renderScale').value) || 2.0;
                     const format = currentTool === 'pdf-to-png' ? 'image/png' : 'image/jpeg';
                     const ext = currentTool === 'pdf-to-png' ? 'png' : 'jpg';
+                    const maxWidth = parseInt(document.getElementById('resizeWidth').value);
+
+                    let totalRendered = 0;
 
                     for (let fIdx = 0; fIdx < selectedFiles.length; fIdx++) {
                         const file = selectedFiles[fIdx];
                         const arrayBuffer = await file.arrayBuffer();
                         const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-                        const targetPages = parsePageRange(pdfPageRange.value, pdf.numPages);
+                        const targetPages = parsePageRange(document.getElementById('pdfPageRange').value, pdf.numPages);
                         const pdfBaseName = file.name.replace(/\.[^/.]+$/, "");
 
                         for (let pageNum of targetPages) {
-                            showStatus(`Rendering PDF page ${pageNum}/${pdf.numPages}...`);
+                            showProgress("Rendering Pages", `PDF ${fIdx+1} - Page ${pageNum}/${pdf.numPages}`);
+                            await yieldToMain(); // Yield to update UI
+
                             const page = await pdf.getPage(pageNum);
                             const viewport = page.getViewport({ scale });
                             let canvas = document.createElement('canvas');
@@ -451,9 +518,13 @@
                             canvas.width = viewport.width;
                             canvas.height = viewport.height;
 
+                            // Render PDF to Canvas
                             await page.render({ canvasContext: ctx, viewport }).promise;
 
-                            const maxWidth = parseInt(resizeWidthInput.value);
+                            // Apply Rotate/Crop
+                            canvas = getProcessedCanvas(canvas);
+
+                            // Apply Resize
                             if (maxWidth && maxWidth < canvas.width) {
                                 const resScale = maxWidth / canvas.width;
                                 const resizedCanvas = document.createElement('canvas');
@@ -463,42 +534,88 @@
                                 canvas = resizedCanvas;
                             }
 
-                            applyWatermarkToCanvas(canvas);
+                            // Apply Watermark
+                            applyWatermark(canvas);
 
                             const blob = await new Promise(res => canvas.toBlob(res, format, 0.9));
+                            totalRendered++;
 
                             if (selectedFiles.length === 1 && targetPages.length === 1) {
                                 triggerDownload(blob, `${pdfBaseName}_page_${pageNum}.${ext}`);
-                                hideStatus();
+                                hideProgress();
                                 return;
                             } else {
                                 zip.file(`${pdfBaseName}_page_${pageNum}.${ext}`, blob);
                             }
                         }
                     }
-                    const zipBlob = await zip.generateAsync({ type: 'blob' });
-                    triggerDownload(zipBlob, `converted_images_${Date.now()}.zip`);
+                    if (totalRendered > 1) {
+                        showProgress("Zipping Files", "Creating final download archive...");
+                        await yieldToMain();
+                        const zipBlob = await zip.generateAsync({ type: 'blob' });
+                        triggerDownload(zipBlob, `converted_images_${Date.now()}.zip`);
+                    }
 
                 } else if (currentTool === 'heic-to-jpg') {
-                    for (let file of selectedFiles) {
+                    for (let i = 0; i < selectedFiles.length; i++) {
+                        showProgress("Converting HEIC", `File ${i+1} of ${selectedFiles.length}`);
+                        await yieldToMain();
+                        
+                        const file = selectedFiles[i];
                         const outBlob = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.9 });
                         const finalBlob = Array.isArray(outBlob) ? outBlob[0] : outBlob;
-                        const baseName = file.name.replace(/\.[^/.]+$/, "");
-                        if (selectedFiles.length === 1) {
-                            triggerDownload(finalBlob, `${baseName}.jpg`);
+                        
+                        // To apply crop/rotate to HEIC, we'd need to draw it to canvas first.
+                        // For simplicity and speed, if crop/rotate is used on HEIC, we handle it:
+                        if (cropper || currentRotation !== 0) {
+                            const img = new Image();
+                            img.src = URL.createObjectURL(finalBlob);
+                            await new Promise(r => img.onload = r);
+                            const canvas = document.createElement('canvas');
+                            canvas.width = img.width; canvas.height = img.height;
+                            canvas.getContext('2d').drawImage(img, 0, 0);
+                            const processed = getProcessedCanvas(canvas);
+                            applyWatermark(processed);
+                            const processedBlob = await new Promise(res => processed.toBlob(res, 'image/jpeg', 0.9));
+                            zip.file(`${file.name.replace(/\.[^/.]+$/, "")}.jpg`, processedBlob);
                         } else {
-                            zip.file(`${baseName}.jpg`, finalBlob);
+                            zip.file(`${file.name.replace(/\.[^/.]+$/, "")}.jpg`, finalBlob);
                         }
                     }
-                    if (selectedFiles.length > 1) {
+                    if (selectedFiles.length === 1 && !cropper && currentRotation === 0) {
+                        // Quick download if single file and no edits
+                        const firstFile = zip.file(Object.keys(zip.files)[0]);
+                        const finalBlob = await firstFile.async("blob");
+                        triggerDownload(finalBlob, Object.keys(zip.files)[0]);
+                    } else {
+                        showProgress("Zipping Files", "Creating archive...");
+                        await yieldToMain();
                         const zipBlob = await zip.generateAsync({ type: 'blob' });
-                        triggerDownload(zipBlob, `heic_images_${Date.now()}.zip`);
+                        triggerDownload(zipBlob, `heic_converted_${Date.now()}.zip`);
                     }
+
                 } else if (currentTool === 'jpg-to-pdf') {
+                    showProgress("Building PDF", "Merging images...");
+                    await yieldToMain();
+
+                    // Get Ordered Files from Sortable UI
+                    let orderedFiles = [];
+                    const DOMnodes = Array.from(batchPreviewGrid.children);
+                    DOMnodes.forEach(node => {
+                        const originalIndex = parseInt(node.dataset.index);
+                        orderedFiles.push(selectedFiles[originalIndex]);
+                    });
+
                     const pdfDoc = await PDFLib.PDFDocument.create();
-                    for (let file of selectedFiles) {
+                    for (let i = 0; i < orderedFiles.length; i++) {
+                        showProgress("Building PDF", `Adding image ${i+1} of ${orderedFiles.length}...`);
+                        await yieldToMain();
+
+                        const file = orderedFiles[i];
                         const arrayBuffer = await file.arrayBuffer();
                         let embeddedImage;
+                        
+                        // Compress/Handle formats via canvas if needed, but pdf-lib handles JPG/PNG directly well.
                         if (file.type === 'image/png') {
                             embeddedImage = await pdfDoc.embedPng(arrayBuffer);
                         } else {
@@ -506,12 +623,12 @@
                         }
                         const page = pdfDoc.addPage([embeddedImage.width, embeddedImage.height]);
                         page.drawImage(embeddedImage, {
-                            x: 0,
-                            y: 0,
-                            width: embeddedImage.width,
-                            height: embeddedImage.height,
+                            x: 0, y: 0, width: embeddedImage.width, height: embeddedImage.height,
                         });
                     }
+                    
+                    showProgress("Finalizing", "Saving PDF Document...");
+                    await yieldToMain();
                     const pdfBytes = await pdfDoc.save();
                     const pdfBlob = new Blob([pdfBytes], { type: 'application/pdf' });
                     triggerDownload(pdfBlob, `combined_document_${Date.now()}.pdf`);
@@ -520,7 +637,7 @@
                 console.error(err);
                 alert("An error occurred: " + err.message);
             } finally {
-                hideStatus();
+                hideProgress();
             }
         });
     </script>
