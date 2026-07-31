@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,14 +7,19 @@
     <!-- SEO & Open Graph Tags -->
     <title>PrivacyConvert - All-in-One Free, Fast & 100% Private Converters</title>
     <meta name="description" content="Convert PDF, HEIC, JPG images online for free. 100% local in-browser conversion with zero server uploads, cropping, watermarking, and batch processing.">
-    <meta name="keywords" content="pdf to png, pdf to jpg, heic to jpg, jpg to pdf, local converter">
+    <meta name="keywords" content="pdf to png, pdf to jpg, heic to jpg, jpg to pdf, image compression, local converter">
     <meta name="author" content="PrivacyConvert">
     <meta property="og:title" content="PrivacyConvert - Secure Local Converter">
-    <meta property="og:description" content="Convert your files securely inside your browser. No server uploads.">
+    <meta property="og:description" content="Convert and compress your files securely inside your browser. No server uploads.">
     <meta property="og:type" content="website">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class', // Karanlık mod için class tabanlı geçiş
+        }
+    </script>
 
     <!-- Cropper.js CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
@@ -25,31 +30,35 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
     <script src="https://unpkg.com/pdf-lib@1.4.0/dist/pdf-lib.min.js"></script>
-    <!-- SortableJS for Drag & Drop Grid -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <!-- Image Compression Library -->
+    <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
 </head>
 
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans relative">
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans relative transition-colors duration-200">
 
     <!-- Progress Overlay Modal -->
-    <div id="progressModal" class="hidden fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center backdrop-blur-sm transition-opacity">
-        <div class="bg-white p-8 rounded-2xl shadow-2xl w-80 text-center flex flex-col items-center">
-            <div class="w-14 h-14 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin mb-4"></div>
-            <h3 class="text-lg font-bold text-slate-800 mb-2" id="progressTitle">Processing...</h3>
-            <p id="progressText" class="text-sm text-slate-500 font-medium">Please wait</p>
+    <div id="progressModal" class="hidden fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 z-50 flex items-center justify-center backdrop-blur-sm transition-opacity">
+        <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-2xl w-80 text-center flex flex-col items-center border border-slate-200 dark:border-slate-700">
+            <div class="w-14 h-14 border-4 border-indigo-100 dark:border-slate-600 border-t-indigo-600 dark:border-t-indigo-400 rounded-full animate-spin mb-4"></div>
+            <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-2" id="progressTitle">Processing...</h3>
+            <p id="progressText" class="text-sm text-slate-500 dark:text-slate-400 font-medium">Please wait</p>
         </div>
     </div>
 
     <!-- Header / Navbar -->
-    <header class="bg-white border-b border-slate-200 py-4 px-6 shadow-sm">
+    <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 py-4 px-6 shadow-sm transition-colors duration-200">
         <div class="max-w-5xl mx-auto flex justify-between items-center">
-            <a href="#" class="text-xl font-bold text-indigo-600 flex items-center gap-2 hover:opacity-90 transition">
+            <a href="#" class="text-xl font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-2 hover:opacity-90 transition">
                 ⚡ PrivacyConvert
             </a>
             <div class="flex items-center gap-4">
-                <span class="hidden sm:inline-flex bg-emerald-100 text-emerald-800 text-xs px-3 py-1 rounded-full font-medium items-center gap-1">
-                    🔒 100% Local Processing
+                <span class="hidden sm:inline-flex bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300 text-xs px-3 py-1 rounded-full font-medium items-center gap-1">
+                    🔒 100% Local
                 </span>
+                <button id="themeToggle" class="text-xl p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition" title="Toggle Dark Mode">
+                    🌙
+                </button>
             </div>
         </div>
     </header>
@@ -59,10 +68,10 @@
 
         <!-- Title Section -->
         <div class="text-center mb-6">
-            <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-                Secure <span id="mainTitleAccent" class="text-indigo-600">PDF to PNG</span> Converter
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                Secure <span id="mainTitleAccent" class="text-indigo-600 dark:text-indigo-400">PDF to PNG</span> Converter
             </h1>
-            <p id="mainDesc" class="text-slate-500 text-sm sm:text-base mt-2 max-w-xl mx-auto">
+            <p id="mainDesc" class="text-slate-500 dark:text-slate-400 text-sm sm:text-base mt-2 max-w-xl mx-auto">
                 Extract PDF pages into high-resolution PNG images directly in your browser. Fast, free, and completely private.
             </p>
         </div>
@@ -70,26 +79,27 @@
         <!-- Converter Navigation Tabs -->
         <div class="flex flex-wrap justify-center gap-2 mb-8">
             <button onclick="switchTool('pdf-to-png')" id="tab-pdf-to-png" class="px-4 py-2 text-xs font-bold rounded-xl transition bg-indigo-600 text-white shadow-sm">PDF to PNG</button>
-            <button onclick="switchTool('pdf-to-jpg')" id="tab-pdf-to-jpg" class="px-4 py-2 text-xs font-bold rounded-xl transition bg-white text-slate-600 border border-slate-200 hover:bg-slate-100">PDF to JPG</button>
-            <button onclick="switchTool('heic-to-jpg')" id="tab-heic-to-jpg" class="px-4 py-2 text-xs font-bold rounded-xl transition bg-white text-slate-600 border border-slate-200 hover:bg-slate-100">HEIC to JPG</button>
-            <button onclick="switchTool('jpg-to-pdf')" id="tab-jpg-to-pdf" class="px-4 py-2 text-xs font-bold rounded-xl transition bg-white text-slate-600 border border-slate-200 hover:bg-slate-100">JPG to PDF</button>
+            <button onclick="switchTool('pdf-to-jpg')" id="tab-pdf-to-jpg" class="px-4 py-2 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">PDF to JPG</button>
+            <button onclick="switchTool('heic-to-jpg')" id="tab-heic-to-jpg" class="px-4 py-2 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">HEIC to JPG</button>
+            <button onclick="switchTool('jpg-to-pdf')" id="tab-jpg-to-pdf" class="px-4 py-2 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">JPG to PDF</button>
+            <button onclick="switchTool('compress-image')" id="tab-compress-image" class="px-4 py-2 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700">Compress Image</button>
         </div>
 
         <!-- Main Converter Card -->
-        <div class="max-w-2xl mx-auto p-6 bg-white rounded-2xl shadow-lg border border-slate-100 relative">
+        <div class="max-w-2xl mx-auto p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-100 dark:border-slate-700 relative transition-colors duration-200">
             
             <!-- Clear Button -->
-            <button id="clearBtn" class="hidden absolute top-4 right-4 text-xs font-bold text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg transition items-center gap-1">
+            <button id="clearBtn" class="hidden absolute top-4 right-4 text-xs font-bold text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 bg-red-50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/50 px-3 py-1.5 rounded-lg transition items-center gap-1">
                 🗑️ Clear
             </button>
 
             <!-- Drag & Drop Area -->
-            <div id="dropZone" class="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center cursor-pointer hover:border-indigo-500 hover:bg-slate-50 transition-all mt-4">
-                <svg class="w-12 h-12 mx-auto text-slate-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div id="dropZone" class="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl p-8 text-center cursor-pointer hover:border-indigo-500 dark:hover:border-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all mt-4">
+                <svg class="w-12 h-12 mx-auto text-slate-400 dark:text-slate-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
                 </svg>
-                <p id="dropText" class="text-slate-700 font-semibold">Click to select PDF files or drag & drop</p>
-                <p id="dropSubText" class="text-xs text-slate-400 mt-1">Select one or multiple PDF documents (.pdf)</p>
+                <p id="dropText" class="text-slate-700 dark:text-slate-300 font-semibold">Click to select PDF files or drag & drop</p>
+                <p id="dropSubText" class="text-xs text-slate-400 dark:text-slate-500 mt-1">Select one or multiple PDF documents (.pdf)</p>
             </div>
 
             <!-- File Input -->
@@ -100,10 +110,10 @@
                 
                 <!-- Live Preview Wrapper -->
                 <div id="previewWrapper" class="p-4 bg-slate-900 rounded-xl border border-slate-800 flex flex-col items-center justify-center min-h-[200px] max-h-[380px] overflow-hidden relative">
-                    <!-- Single Image Preview (For PDF/HEIC) -->
+                    <!-- Single Image Preview -->
                     <img id="imagePreview" class="max-w-full max-h-[320px] object-contain rounded hidden" alt="File Preview" />
                     
-                    <!-- Batch Image Grid (For JPG to PDF) -->
+                    <!-- Batch Image Grid -->
                     <div id="batchPreviewGrid" class="hidden w-full h-full grid grid-cols-3 sm:grid-cols-4 gap-3 overflow-y-auto p-2">
                         <!-- Thumbnails injected via JS -->
                     </div>
@@ -117,41 +127,49 @@
                 </div>
 
                 <!-- 🛠️ Editor & Options Panel -->
-                <div id="editorTools" class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-4">
-                    <h3 class="text-xs font-bold text-slate-600 uppercase tracking-wider">🛠️ Conversion Options</h3>
+                <div id="editorTools" class="bg-slate-50 dark:bg-slate-700/50 p-4 rounded-xl border border-slate-200 dark:border-slate-600 space-y-4">
+                    <h3 class="text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">🛠️ Conversion Options</h3>
                     
                     <!-- Quick Tools -->
                     <div id="imageQuickButtons" class="flex flex-wrap items-center gap-2">
-                        <button type="button" id="rotateRightBtn" class="px-3 py-1.5 bg-white border border-slate-300 hover:bg-slate-100 text-xs font-semibold rounded-lg text-slate-700 transition flex items-center gap-1 shadow-sm">
+                        <button type="button" id="rotateRightBtn" class="px-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 text-xs font-semibold rounded-lg text-slate-700 dark:text-slate-200 transition flex items-center gap-1 shadow-sm">
                             🔄 Rotate 90°
                         </button>
-                        <button type="button" id="toggleCropBtn" class="px-3 py-1.5 bg-indigo-50 border border-indigo-200 hover:bg-indigo-100 text-xs font-semibold rounded-lg text-indigo-700 transition flex items-center gap-1 shadow-sm">
+                        <button type="button" id="toggleCropBtn" class="px-3 py-1.5 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 text-xs font-semibold rounded-lg text-indigo-700 dark:text-indigo-300 transition flex items-center gap-1 shadow-sm">
                             ✂️ Crop Area
                         </button>
                     </div>
 
-                    <div id="batchSortHint" class="hidden text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 p-2 rounded-lg font-medium">
-                        💡 Tip: Drag and drop the images in the preview box above to change their order in the PDF.
+                    <!-- Compress Options (NEW) -->
+                    <div id="compressOptionsGroup" class="hidden bg-emerald-50 dark:bg-emerald-900/20 p-3 rounded-lg border border-emerald-100 dark:border-emerald-800/50">
+                        <label for="compressionLevel" class="block text-xs font-semibold text-emerald-900 dark:text-emerald-300 mb-1">
+                            🗜️ Target File Size (Max MB per file):
+                        </label>
+                        <input type="number" id="compressionLevel" value="1" step="0.5" min="0.1" class="w-full p-2 text-xs border border-emerald-200 dark:border-emerald-800 rounded-lg bg-white dark:bg-slate-800 dark:text-white focus:ring-emerald-500 focus:border-emerald-500">
+                    </div>
+
+                    <div id="batchSortHint" class="hidden text-xs text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 p-2 rounded-lg font-medium">
+                        💡 Tip: Drag and drop the images in the preview box above to change their order.
                     </div>
 
                     <!-- PDF Specific Range Group -->
-                    <div id="pdfRangeGroup" class="bg-indigo-50/50 p-3 rounded-lg border border-indigo-100">
-                        <label for="pdfPageRange" class="block text-xs font-semibold text-indigo-950 mb-1">
+                    <div id="pdfRangeGroup" class="bg-indigo-50/50 dark:bg-indigo-900/20 p-3 rounded-lg border border-indigo-100 dark:border-indigo-800/50">
+                        <label for="pdfPageRange" class="block text-xs font-semibold text-indigo-950 dark:text-indigo-300 mb-1">
                             📄 PDF Page Range to Process:
                         </label>
-                        <input type="text" id="pdfPageRange" placeholder="e.g. 1, 3-5 or 'all'" value="all" class="w-full p-2 text-xs border border-indigo-200 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-white">
-                        <p class="text-[11px] text-slate-500 mt-1">Leave as <strong>'all'</strong> or specify pages like <strong>1, 3-5, 8</strong>.</p>
+                        <input type="text" id="pdfPageRange" placeholder="e.g. 1, 3-5 or 'all'" value="all" class="w-full p-2 text-xs border border-indigo-200 dark:border-indigo-800 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-slate-800 dark:text-white">
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Leave as <strong>'all'</strong> or specify pages like <strong>1, 3-5, 8</strong>.</p>
                     </div>
 
                     <!-- Width & Watermark Grid -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-200 text-xs">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-200 dark:border-slate-600 text-xs">
                         <div id="resizeContainer">
-                            <label for="resizeWidth" class="block font-medium text-slate-700 mb-1">Max Output Width (px):</label>
-                            <input type="number" id="resizeWidth" placeholder="Original Resolution" class="w-full p-2 border border-slate-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-white">
+                            <label for="resizeWidth" class="block font-medium text-slate-700 dark:text-slate-300 mb-1">Max Output Width (px):</label>
+                            <input type="number" id="resizeWidth" placeholder="Original Resolution" class="w-full p-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-slate-800 dark:text-white">
                         </div>
                         <div id="watermarkContainer">
-                            <label for="watermarkText" class="block font-medium text-slate-700 mb-1">Watermark Text:</label>
-                            <input type="text" id="watermarkText" placeholder="e.g. Confidential / Draft" class="w-full p-2 border border-slate-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-white">
+                            <label for="watermarkText" class="block font-medium text-slate-700 dark:text-slate-300 mb-1">Watermark Text:</label>
+                            <input type="text" id="watermarkText" placeholder="e.g. Confidential" class="w-full p-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-slate-800 dark:text-white">
                         </div>
                     </div>
                 </div>
@@ -159,16 +177,16 @@
                 <!-- Quality & Format Settings -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center pt-2">
                     <div id="qualityContainer">
-                        <label for="renderScale" class="block text-xs font-bold text-slate-600 uppercase mb-1">Render Quality / Scale:</label>
-                        <select id="renderScale" class="w-full bg-white border border-slate-300 text-slate-800 text-sm rounded-lg p-2.5 font-semibold focus:ring-indigo-500 focus:border-indigo-500 cursor-pointer">
+                        <label for="renderScale" class="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-1">Render Quality / Scale:</label>
+                        <select id="renderScale" class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg p-2.5 font-semibold focus:ring-indigo-500 focus:border-indigo-500 cursor-pointer">
                             <option value="1.5">Standard (150 DPI)</option>
                             <option value="2.0" selected>High Quality (200 DPI)</option>
                             <option value="3.0">Ultra HD (300 DPI)</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Output Format:</label>
-                        <div id="outputFormatBadge" class="p-2.5 bg-slate-100 rounded-lg border border-slate-200 text-xs font-bold text-slate-700">
+                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-1">Output Format:</label>
+                        <div id="outputFormatBadge" class="p-2.5 bg-slate-100 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-600 text-xs font-bold text-slate-700 dark:text-slate-300">
                             🖼️ PNG
                         </div>
                     </div>
@@ -185,6 +203,21 @@
     <!-- JAVASCRIPT LOGIC -->
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        // Dark Mode Toggle Logic
+        const themeToggle = document.getElementById('themeToggle');
+        const htmlElement = document.documentElement;
+        
+        // Cihazın kendi tercihine göre başlangıç (opsiyonel)
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            htmlElement.classList.add('dark');
+            themeToggle.textContent = '☀️';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            htmlElement.classList.toggle('dark');
+            themeToggle.textContent = htmlElement.classList.contains('dark') ? '☀️' : '🌙';
+        });
 
         // State
         let currentTool = 'pdf-to-png';
@@ -203,30 +236,23 @@
         const clearBtn = document.getElementById('clearBtn');
         const convertBtn = document.getElementById('convertBtn');
         
-        // Progress Overlay
         const progressModal = document.getElementById('progressModal');
         const progressTitle = document.getElementById('progressTitle');
         const progressText = document.getElementById('progressText');
 
-        // Tool Options
         const imageQuickButtons = document.getElementById('imageQuickButtons');
         const batchSortHint = document.getElementById('batchSortHint');
         const resizeContainer = document.getElementById('resizeContainer');
+        const compressOptionsGroup = document.getElementById('compressOptionsGroup');
+        const watermarkContainer = document.getElementById('watermarkContainer');
 
         function showProgress(title, text) {
             progressTitle.textContent = title;
             progressText.textContent = text;
             progressModal.classList.remove('hidden');
         }
-
-        function hideProgress() {
-            progressModal.classList.add('hidden');
-        }
-
-        // Small delay to allow browser UI to update (prevents freezing)
-        async function yieldToMain() {
-            return new Promise(resolve => setTimeout(resolve, 10));
-        }
+        function hideProgress() { progressModal.classList.add('hidden'); }
+        async function yieldToMain() { return new Promise(resolve => setTimeout(resolve, 10)); }
 
         function resetApp() {
             selectedFiles = [];
@@ -247,13 +273,13 @@
             currentTool = tool;
             resetApp();
 
-            // Active button styling
-            ['pdf-to-png', 'pdf-to-jpg', 'heic-to-jpg', 'jpg-to-pdf'].forEach(t => {
+            // Active button styling (Dark mode uyumlu)
+            ['pdf-to-png', 'pdf-to-jpg', 'heic-to-jpg', 'jpg-to-pdf', 'compress-image'].forEach(t => {
                 const btn = document.getElementById(`tab-${t}`);
                 if (t === tool) {
                     btn.className = "px-4 py-2 text-xs font-bold rounded-xl transition bg-indigo-600 text-white shadow-sm";
                 } else {
-                    btn.className = "px-4 py-2 text-xs font-bold rounded-xl transition bg-white text-slate-600 border border-slate-200 hover:bg-slate-100";
+                    btn.className = "px-4 py-2 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700";
                 }
             });
 
@@ -263,53 +289,56 @@
             const pdfGroup = document.getElementById('pdfRangeGroup');
             const quality = document.getElementById('qualityContainer');
             const formatBadge = document.getElementById('outputFormatBadge');
-            const watermark = document.getElementById('watermarkContainer');
+            
+            // Default Resets
+            imageQuickButtons.style.display = 'flex';
+            batchSortHint.style.display = 'none';
+            resizeContainer.style.display = 'block';
+            compressOptionsGroup.style.display = 'none';
+            watermarkContainer.style.display = 'block';
 
             if (tool === 'pdf-to-png' || tool === 'pdf-to-jpg') {
                 title.textContent = tool === 'pdf-to-png' ? "PDF to PNG" : "PDF to JPG";
                 desc.textContent = "Extract PDF pages into high-resolution images directly in your browser.";
-                fileInput.accept = ".pdf";
-                fileInput.multiple = true;
-                pdfGroup.style.display = 'block';
-                watermark.style.display = 'block';
-                quality.style.display = 'block';
-                imageQuickButtons.style.display = 'flex';
-                batchSortHint.style.display = 'none';
-                resizeContainer.style.display = 'block';
+                fileInput.accept = ".pdf"; fileInput.multiple = true;
+                pdfGroup.style.display = 'block'; quality.style.display = 'block';
+                document.getElementById('dropText').textContent = "Click to select PDF files or drag & drop";
                 formatBadge.textContent = tool === 'pdf-to-png' ? "🖼️ PNG (Lossless)" : "🖼️ JPG (Compressed)";
             } else if (tool === 'heic-to-jpg') {
                 title.textContent = "HEIC to JPG";
                 desc.textContent = "Convert Apple HEIC photos to standard JPG images instantly.";
-                fileInput.accept = ".heic,.HEIC";
-                fileInput.multiple = true;
-                pdfGroup.style.display = 'none';
-                watermark.style.display = 'block';
-                quality.style.display = 'none';
-                imageQuickButtons.style.display = 'flex';
-                batchSortHint.style.display = 'none';
-                resizeContainer.style.display = 'block';
+                fileInput.accept = ".heic,.HEIC"; fileInput.multiple = true;
+                pdfGroup.style.display = 'none'; quality.style.display = 'none';
+                document.getElementById('dropText').textContent = "Click to select HEIC files or drag & drop";
                 formatBadge.textContent = "🖼️ JPG";
             } else if (tool === 'jpg-to-pdf') {
                 title.textContent = "JPG to PDF";
                 desc.textContent = "Combine and convert multiple images into a single PDF document.";
-                fileInput.accept = "image/jpeg,image/png,image/webp";
-                fileInput.multiple = true;
-                pdfGroup.style.display = 'none';
-                watermark.style.display = 'none';
-                quality.style.display = 'none';
-                imageQuickButtons.style.display = 'none'; // Cropping makes less sense for batch PDF
-                batchSortHint.style.display = 'block';
-                resizeContainer.style.display = 'none';
+                fileInput.accept = "image/jpeg,image/png,image/webp"; fileInput.multiple = true;
+                pdfGroup.style.display = 'none'; quality.style.display = 'none';
+                imageQuickButtons.style.display = 'none'; watermarkContainer.style.display = 'none';
+                batchSortHint.style.display = 'block'; resizeContainer.style.display = 'none';
+                document.getElementById('dropText').textContent = "Click to select Image files or drag & drop";
                 formatBadge.textContent = "📄 PDF Document";
+            } else if (tool === 'compress-image') {
+                title.textContent = "Compress Image";
+                desc.textContent = "Shrink image file sizes significantly without losing visible quality.";
+                fileInput.accept = "image/jpeg,image/png,image/webp"; fileInput.multiple = true;
+                pdfGroup.style.display = 'none'; quality.style.display = 'none';
+                imageQuickButtons.style.display = 'none'; resizeContainer.style.display = 'none';
+                watermarkContainer.style.display = 'none';
+                compressOptionsGroup.style.display = 'block'; batchSortHint.style.display = 'block';
+                document.getElementById('dropText').textContent = "Click to select Images to compress";
+                formatBadge.textContent = "🗜️ Compressed Image";
             }
         }
 
         // Drag & Drop
         dropZone.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
-        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('border-indigo-500', 'bg-slate-50'); });
-        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('border-indigo-500', 'bg-slate-50'));
-        dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('border-indigo-500', 'bg-slate-50'); handleFiles(e.dataTransfer.files); });
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('border-indigo-500'); });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('border-indigo-500'));
+        dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('border-indigo-500'); handleFiles(e.dataTransfer.files); });
 
         async function handleFiles(files) {
             const validFiles = Array.from(files);
@@ -324,12 +353,9 @@
             showProgress("Loading...", "Preparing preview layout");
 
             try {
-                if (currentTool === 'jpg-to-pdf') {
-                    // Batch Grid View
-                    imagePreview.classList.add('hidden');
-                    nonImagePreview.classList.add('hidden');
-                    batchPreviewGrid.classList.remove('hidden');
-                    batchPreviewGrid.innerHTML = '';
+                if (currentTool === 'jpg-to-pdf' || currentTool === 'compress-image') {
+                    imagePreview.classList.add('hidden'); nonImagePreview.classList.add('hidden');
+                    batchPreviewGrid.classList.remove('hidden'); batchPreviewGrid.innerHTML = '';
                     
                     for (let i = 0; i < selectedFiles.length; i++) {
                         const file = selectedFiles[i];
@@ -337,21 +363,16 @@
                         reader.onload = (e) => {
                             const div = document.createElement('div');
                             div.className = 'relative aspect-square bg-slate-800 rounded-lg overflow-hidden border-2 border-transparent hover:border-indigo-500 cursor-grab';
-                            div.dataset.index = i; // Store original index
-                            div.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover opacity-90 hover:opacity-100 transition"><span class="absolute top-1 left-1 bg-black/60 text-white text-[10px] px-1.5 rounded">${i+1}</span>`;
+                            div.dataset.index = i;
+                            const sizeText = (file.size / 1024 / 1024).toFixed(2) + " MB";
+                            div.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover opacity-90 hover:opacity-100 transition"><span class="absolute top-1 left-1 bg-black/70 text-white text-[10px] px-1.5 rounded">${i+1}</span><span class="absolute bottom-1 right-1 bg-black/70 text-white text-[9px] px-1.5 rounded">${sizeText}</span>`;
                             batchPreviewGrid.appendChild(div);
                         };
                         reader.readAsDataURL(file);
                     }
-
-                    // Init SortableJS
-                    sortableInstance = new Sortable(batchPreviewGrid, {
-                        animation: 150,
-                        ghostClass: 'opacity-50'
-                    });
+                    sortableInstance = new Sortable(batchPreviewGrid, { animation: 150, ghostClass: 'opacity-50' });
 
                 } else {
-                    // Single Image Preview View
                     batchPreviewGrid.classList.add('hidden');
                     const firstFile = selectedFiles[0];
 
@@ -359,31 +380,23 @@
                         const arrayBuffer = await firstFile.arrayBuffer();
                         const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
                         const page = await pdf.getPage(1);
-                        const viewport = page.getViewport({ scale: 1.0 });
                         const canvas = document.createElement('canvas');
-                        canvas.height = viewport.height;
-                        canvas.width = viewport.width;
+                        const viewport = page.getViewport({ scale: 1.0 });
+                        canvas.height = viewport.height; canvas.width = viewport.width;
                         await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
-
                         imagePreview.src = canvas.toDataURL('image/png');
-                        imagePreview.classList.remove('hidden');
-                        nonImagePreview.classList.add('hidden');
+                        imagePreview.classList.remove('hidden'); nonImagePreview.classList.add('hidden');
                     } else if (currentTool === 'heic-to-jpg') {
                         const convertedBlob = await heic2any({ blob: firstFile, toType: 'image/jpeg', quality: 0.5 });
                         imagePreview.src = URL.createObjectURL(Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob);
-                        imagePreview.classList.remove('hidden');
-                        nonImagePreview.classList.add('hidden');
+                        imagePreview.classList.remove('hidden'); nonImagePreview.classList.add('hidden');
                     }
                 }
             } catch (err) {
                 console.error("Preview Error:", err);
-                imagePreview.classList.add('hidden');
-                batchPreviewGrid.classList.add('hidden');
-                nonImagePreview.classList.remove('hidden');
+                imagePreview.classList.add('hidden'); batchPreviewGrid.classList.add('hidden'); nonImagePreview.classList.remove('hidden');
                 document.getElementById('fileName').textContent = `${selectedFiles.length} files loaded`;
-            } finally {
-                hideProgress();
-            }
+            } finally { hideProgress(); }
         }
 
         // Editor Controls
@@ -395,36 +408,22 @@
 
         document.getElementById('toggleCropBtn').addEventListener('click', function() {
             if (!cropper) {
-                cropper = new Cropper(imagePreview, {
-                    viewMode: 1,
-                    autoCropArea: 0.8,
-                    background: false
-                });
+                cropper = new Cropper(imagePreview, { viewMode: 1, autoCropArea: 0.8, background: false });
                 this.innerHTML = "✅ Apply Crop";
-                this.classList.replace('bg-indigo-50', 'bg-emerald-50');
-                this.classList.replace('text-indigo-700', 'text-emerald-700');
             } else {
-                cropper.destroy();
-                cropper = null;
+                cropper.destroy(); cropper = null;
                 this.innerHTML = "✂️ Crop Area";
-                this.classList.replace('bg-emerald-50', 'bg-indigo-50');
-                this.classList.replace('text-emerald-700', 'text-indigo-700');
             }
         });
 
-        // Parse ranges like "1, 3-5"
         function parsePageRange(rangeStr, totalPages) {
-            if (!rangeStr || rangeStr.trim() === '' || rangeStr.trim().toLowerCase() === 'all') {
-                return Array.from({ length: totalPages }, (_, i) => i + 1);
-            }
+            if (!rangeStr || rangeStr.trim() === '' || rangeStr.trim().toLowerCase() === 'all') return Array.from({ length: totalPages }, (_, i) => i + 1);
             const pages = new Set();
             rangeStr.split(',').forEach(part => {
                 part = part.trim();
                 if (part.includes('-')) {
                     const [start, end] = part.split('-').map(n => parseInt(n, 10));
-                    if (!isNaN(start) && !isNaN(end)) {
-                        for (let i = Math.max(1, start); i <= Math.min(totalPages, end); i++) pages.add(i);
-                    }
+                    if (!isNaN(start) && !isNaN(end)) for (let i = Math.max(1, start); i <= Math.min(totalPages, end); i++) pages.add(i);
                 } else {
                     const num = parseInt(part, 10);
                     if (!isNaN(num) && num >= 1 && num <= totalPages) pages.add(num);
@@ -433,24 +432,13 @@
             return Array.from(pages).sort((a, b) => a - b);
         }
 
-        // Helper to get correctly rotated/cropped canvas
         function getProcessedCanvas(sourceCanvas) {
-            if (cropper) {
-                // If cropper is active, it handles rotation too
-                return cropper.getCroppedCanvas({ fillColor: '#fff' }); 
-            } else if (currentRotation !== 0) {
-                // Manual rotation handling if only rotate was clicked
-                const tempCanvas = document.createElement('canvas');
-                const ctx = tempCanvas.getContext('2d');
-                if (currentRotation === 90 || currentRotation === 270) {
-                    tempCanvas.width = sourceCanvas.height;
-                    tempCanvas.height = sourceCanvas.width;
-                } else {
-                    tempCanvas.width = sourceCanvas.width;
-                    tempCanvas.height = sourceCanvas.height;
-                }
-                ctx.translate(tempCanvas.width/2, tempCanvas.height/2);
-                ctx.rotate(currentRotation * Math.PI / 180);
+            if (cropper) return cropper.getCroppedCanvas({ fillColor: '#fff' }); 
+            if (currentRotation !== 0) {
+                const tempCanvas = document.createElement('canvas'); const ctx = tempCanvas.getContext('2d');
+                if (currentRotation === 90 || currentRotation === 270) { tempCanvas.width = sourceCanvas.height; tempCanvas.height = sourceCanvas.width; }
+                else { tempCanvas.width = sourceCanvas.width; tempCanvas.height = sourceCanvas.height; }
+                ctx.translate(tempCanvas.width/2, tempCanvas.height/2); ctx.rotate(currentRotation * Math.PI / 180);
                 ctx.drawImage(sourceCanvas, -sourceCanvas.width/2, -sourceCanvas.height/2);
                 return tempCanvas;
             }
@@ -464,181 +452,145 @@
                 const fontSize = Math.max(24, Math.floor(canvas.width / 20));
                 ctx.font = `bold ${fontSize}px sans-serif`;
                 ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-                ctx.shadowColor = 'rgba(0,0,0,0.7)';
-                ctx.shadowBlur = 8;
-                ctx.textAlign = 'center';
-                ctx.fillText(wm, canvas.width / 2, canvas.height - 40);
+                ctx.shadowColor = 'rgba(0,0,0,0.7)'; ctx.shadowBlur = 8;
+                ctx.textAlign = 'center'; ctx.fillText(wm, canvas.width / 2, canvas.height - 40);
             }
         }
 
         function triggerDownload(blob, filename) {
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+            const url = URL.createObjectURL(blob); const a = document.createElement('a');
+            a.href = url; a.download = filename; document.body.appendChild(a); a.click();
+            document.body.removeChild(a); URL.revokeObjectURL(url);
         }
 
-        // MAIN CONVERT EXECUTION
+        // MAIN EXECUTION
         convertBtn.addEventListener('click', async () => {
             if (!selectedFiles.length) return;
-            
-            showProgress("Converting...", "Starting engine");
-            await yieldToMain();
+            showProgress("Processing...", "Starting engine"); await yieldToMain();
 
             try {
                 const zip = new JSZip();
 
-                if (currentTool === 'pdf-to-png' || currentTool === 'pdf-to-jpg') {
+                if (currentTool === 'compress-image') {
+                    // COMPRESS IMAGE LOGIC
+                    const maxSizeMB = parseFloat(document.getElementById('compressionLevel').value) || 1;
+                    const options = { maxSizeMB: maxSizeMB, maxWidthOrHeight: 2500, useWebWorker: true };
+                    
+                    let orderedFiles = [];
+                    const DOMnodes = Array.from(batchPreviewGrid.children);
+                    DOMnodes.forEach(node => { orderedFiles.push(selectedFiles[parseInt(node.dataset.index)]); });
+
+                    for (let i = 0; i < orderedFiles.length; i++) {
+                        const file = orderedFiles[i];
+                        showProgress("Compressing", `File ${i+1} of ${orderedFiles.length}...`);
+                        await yieldToMain();
+                        const compressedFile = await imageCompression(file, options);
+                        
+                        if (orderedFiles.length === 1) {
+                            triggerDownload(compressedFile, `compressed_${file.name}`);
+                            hideProgress(); return;
+                        } else {
+                            zip.file(`compressed_${file.name}`, compressedFile);
+                        }
+                    }
+                    if (orderedFiles.length > 1) {
+                        showProgress("Zipping", "Creating archive..."); await yieldToMain();
+                        const zipBlob = await zip.generateAsync({ type: 'blob' });
+                        triggerDownload(zipBlob, `compressed_images_${Date.now()}.zip`);
+                    }
+
+                } else if (currentTool === 'jpg-to-pdf') {
+                    showProgress("Building PDF", "Merging images..."); await yieldToMain();
+                    let orderedFiles = [];
+                    const DOMnodes = Array.from(batchPreviewGrid.children);
+                    DOMnodes.forEach(node => { orderedFiles.push(selectedFiles[parseInt(node.dataset.index)]); });
+
+                    const pdfDoc = await PDFLib.PDFDocument.create();
+                    for (let i = 0; i < orderedFiles.length; i++) {
+                        showProgress("Building PDF", `Adding image ${i+1} of ${orderedFiles.length}...`); await yieldToMain();
+                        const file = orderedFiles[i];
+                        const arrayBuffer = await file.arrayBuffer();
+                        let embeddedImage = file.type === 'image/png' ? await pdfDoc.embedPng(arrayBuffer) : await pdfDoc.embedJpg(arrayBuffer);
+                        const page = pdfDoc.addPage([embeddedImage.width, embeddedImage.height]);
+                        page.drawImage(embeddedImage, { x: 0, y: 0, width: embeddedImage.width, height: embeddedImage.height });
+                    }
+                    const pdfBytes = await pdfDoc.save();
+                    triggerDownload(new Blob([pdfBytes], { type: 'application/pdf' }), `combined_${Date.now()}.pdf`);
+
+                } else if (currentTool === 'pdf-to-png' || currentTool === 'pdf-to-jpg') {
                     const scale = parseFloat(document.getElementById('renderScale').value) || 2.0;
                     const format = currentTool === 'pdf-to-png' ? 'image/png' : 'image/jpeg';
                     const ext = currentTool === 'pdf-to-png' ? 'png' : 'jpg';
                     const maxWidth = parseInt(document.getElementById('resizeWidth').value);
-
                     let totalRendered = 0;
 
                     for (let fIdx = 0; fIdx < selectedFiles.length; fIdx++) {
                         const file = selectedFiles[fIdx];
-                        const arrayBuffer = await file.arrayBuffer();
-                        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                        const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
                         const targetPages = parsePageRange(document.getElementById('pdfPageRange').value, pdf.numPages);
-                        const pdfBaseName = file.name.replace(/\.[^/.]+$/, "");
+                        const baseName = file.name.replace(/\.[^/.]+$/, "");
 
                         for (let pageNum of targetPages) {
-                            showProgress("Rendering Pages", `PDF ${fIdx+1} - Page ${pageNum}/${pdf.numPages}`);
-                            await yieldToMain(); // Yield to update UI
-
+                            showProgress("Rendering", `PDF ${fIdx+1} - Page ${pageNum}/${pdf.numPages}`); await yieldToMain();
                             const page = await pdf.getPage(pageNum);
                             const viewport = page.getViewport({ scale });
                             let canvas = document.createElement('canvas');
-                            let ctx = canvas.getContext('2d');
-                            canvas.width = viewport.width;
-                            canvas.height = viewport.height;
+                            canvas.width = viewport.width; canvas.height = viewport.height;
+                            await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
 
-                            // Render PDF to Canvas
-                            await page.render({ canvasContext: ctx, viewport }).promise;
-
-                            // Apply Rotate/Crop
                             canvas = getProcessedCanvas(canvas);
 
-                            // Apply Resize
                             if (maxWidth && maxWidth < canvas.width) {
                                 const resScale = maxWidth / canvas.width;
-                                const resizedCanvas = document.createElement('canvas');
-                                resizedCanvas.width = maxWidth;
-                                resizedCanvas.height = canvas.height * resScale;
-                                resizedCanvas.getContext('2d').drawImage(canvas, 0, 0, resizedCanvas.width, resizedCanvas.height);
-                                canvas = resizedCanvas;
+                                const rCanvas = document.createElement('canvas');
+                                rCanvas.width = maxWidth; rCanvas.height = canvas.height * resScale;
+                                rCanvas.getContext('2d').drawImage(canvas, 0, 0, rCanvas.width, rCanvas.height);
+                                canvas = rCanvas;
                             }
-
-                            // Apply Watermark
                             applyWatermark(canvas);
-
                             const blob = await new Promise(res => canvas.toBlob(res, format, 0.9));
                             totalRendered++;
 
                             if (selectedFiles.length === 1 && targetPages.length === 1) {
-                                triggerDownload(blob, `${pdfBaseName}_page_${pageNum}.${ext}`);
-                                hideProgress();
-                                return;
-                            } else {
-                                zip.file(`${pdfBaseName}_page_${pageNum}.${ext}`, blob);
-                            }
+                                triggerDownload(blob, `${baseName}_p${pageNum}.${ext}`); hideProgress(); return;
+                            } else zip.file(`${baseName}_p${pageNum}.${ext}`, blob);
                         }
                     }
                     if (totalRendered > 1) {
-                        showProgress("Zipping Files", "Creating final download archive...");
-                        await yieldToMain();
-                        const zipBlob = await zip.generateAsync({ type: 'blob' });
-                        triggerDownload(zipBlob, `converted_images_${Date.now()}.zip`);
+                        showProgress("Zipping", "Creating archive..."); await yieldToMain();
+                        triggerDownload(await zip.generateAsync({ type: 'blob' }), `converted_${Date.now()}.zip`);
                     }
 
                 } else if (currentTool === 'heic-to-jpg') {
                     for (let i = 0; i < selectedFiles.length; i++) {
-                        showProgress("Converting HEIC", `File ${i+1} of ${selectedFiles.length}`);
-                        await yieldToMain();
-                        
+                        showProgress("Converting HEIC", `File ${i+1} of ${selectedFiles.length}`); await yieldToMain();
                         const file = selectedFiles[i];
                         const outBlob = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.9 });
                         const finalBlob = Array.isArray(outBlob) ? outBlob[0] : outBlob;
                         
-                        // To apply crop/rotate to HEIC, we'd need to draw it to canvas first.
-                        // For simplicity and speed, if crop/rotate is used on HEIC, we handle it:
                         if (cropper || currentRotation !== 0) {
-                            const img = new Image();
-                            img.src = URL.createObjectURL(finalBlob);
+                            const img = new Image(); img.src = URL.createObjectURL(finalBlob);
                             await new Promise(r => img.onload = r);
                             const canvas = document.createElement('canvas');
                             canvas.width = img.width; canvas.height = img.height;
                             canvas.getContext('2d').drawImage(img, 0, 0);
                             const processed = getProcessedCanvas(canvas);
                             applyWatermark(processed);
-                            const processedBlob = await new Promise(res => processed.toBlob(res, 'image/jpeg', 0.9));
-                            zip.file(`${file.name.replace(/\.[^/.]+$/, "")}.jpg`, processedBlob);
+                            zip.file(`${file.name.replace(/\.[^/.]+$/, "")}.jpg`, await new Promise(res => processed.toBlob(res, 'image/jpeg', 0.9)));
                         } else {
                             zip.file(`${file.name.replace(/\.[^/.]+$/, "")}.jpg`, finalBlob);
                         }
                     }
                     if (selectedFiles.length === 1 && !cropper && currentRotation === 0) {
-                        // Quick download if single file and no edits
-                        const firstFile = zip.file(Object.keys(zip.files)[0]);
-                        const finalBlob = await firstFile.async("blob");
-                        triggerDownload(finalBlob, Object.keys(zip.files)[0]);
+                        triggerDownload(await zip.file(Object.keys(zip.files)[0]).async("blob"), Object.keys(zip.files)[0]);
                     } else {
-                        showProgress("Zipping Files", "Creating archive...");
-                        await yieldToMain();
-                        const zipBlob = await zip.generateAsync({ type: 'blob' });
-                        triggerDownload(zipBlob, `heic_converted_${Date.now()}.zip`);
+                        showProgress("Zipping", "Creating archive..."); await yieldToMain();
+                        triggerDownload(await zip.generateAsync({ type: 'blob' }), `heic_converted_${Date.now()}.zip`);
                     }
-
-                } else if (currentTool === 'jpg-to-pdf') {
-                    showProgress("Building PDF", "Merging images...");
-                    await yieldToMain();
-
-                    // Get Ordered Files from Sortable UI
-                    let orderedFiles = [];
-                    const DOMnodes = Array.from(batchPreviewGrid.children);
-                    DOMnodes.forEach(node => {
-                        const originalIndex = parseInt(node.dataset.index);
-                        orderedFiles.push(selectedFiles[originalIndex]);
-                    });
-
-                    const pdfDoc = await PDFLib.PDFDocument.create();
-                    for (let i = 0; i < orderedFiles.length; i++) {
-                        showProgress("Building PDF", `Adding image ${i+1} of ${orderedFiles.length}...`);
-                        await yieldToMain();
-
-                        const file = orderedFiles[i];
-                        const arrayBuffer = await file.arrayBuffer();
-                        let embeddedImage;
-                        
-                        // Compress/Handle formats via canvas if needed, but pdf-lib handles JPG/PNG directly well.
-                        if (file.type === 'image/png') {
-                            embeddedImage = await pdfDoc.embedPng(arrayBuffer);
-                        } else {
-                            embeddedImage = await pdfDoc.embedJpg(arrayBuffer);
-                        }
-                        const page = pdfDoc.addPage([embeddedImage.width, embeddedImage.height]);
-                        page.drawImage(embeddedImage, {
-                            x: 0, y: 0, width: embeddedImage.width, height: embeddedImage.height,
-                        });
-                    }
-                    
-                    showProgress("Finalizing", "Saving PDF Document...");
-                    await yieldToMain();
-                    const pdfBytes = await pdfDoc.save();
-                    const pdfBlob = new Blob([pdfBytes], { type: 'application/pdf' });
-                    triggerDownload(pdfBlob, `combined_document_${Date.now()}.pdf`);
                 }
             } catch (err) {
-                console.error(err);
-                alert("An error occurred: " + err.message);
-            } finally {
-                hideProgress();
-            }
+                console.error(err); alert("Error: " + err.message);
+            } finally { hideProgress(); }
         });
     </script>
 </body>
