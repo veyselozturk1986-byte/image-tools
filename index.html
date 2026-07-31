@@ -11,7 +11,6 @@
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4444769373675024" crossorigin="anonymous"></script>
 
     <!-- Cropper.js CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
@@ -20,6 +19,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <!-- HEIC & PDF-LIB Libraries for Full Functionality -->
+    <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.4.0/dist/pdf-lib.min.js"></script>
 </head>
 
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans">
@@ -233,7 +235,7 @@
                 mainDesc.textContent = "Convert Apple HEIC photos to standard JPG images instantly.";
                 dropText.textContent = "Click to select HEIC files or drag & drop";
                 dropSubText.textContent = "Select HEIC image files (.heic)";
-                fileInput.accept = ".heic";
+                fileInput.accept = ".heic,.HEIC";
                 fileInput.multiple = true;
                 pdfRangeGroup.style.display = 'none';
                 watermarkContainer.style.display = 'block';
@@ -321,6 +323,13 @@
                     await page.render({ canvasContext: ctx, viewport }).promise;
 
                     imagePreview.src = canvas.toDataURL('image/png');
+                    imagePreview.classList.remove('hidden');
+                    nonImagePreview.classList.add('hidden');
+                } else if (currentTool === 'heic-to-jpg') {
+                    // Convert first HEIC to blob/preview via heic2any
+                    const convertedBlob = await heic2any({ blob: firstFile, toType: 'image/jpeg', quality: 0.8 });
+                    const url = URL.createObjectURL(Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob);
+                    imagePreview.src = url;
                     imagePreview.classList.remove('hidden');
                     nonImagePreview.classList.add('hidden');
                 } else {
@@ -425,7 +434,6 @@
                     const scale = parseFloat(renderScaleSelect.value) || 2.0;
                     const format = currentTool === 'pdf-to-png' ? 'image/png' : 'image/jpeg';
                     const ext = currentTool === 'pdf-to-png' ? 'png' : 'jpg';
-                    let totalImages = 0;
 
                     for (let fIdx = 0; fIdx < selectedFiles.length; fIdx++) {
                         const file = selectedFiles[fIdx];
@@ -458,7 +466,6 @@
                             applyWatermarkToCanvas(canvas);
 
                             const blob = await new Promise(res => canvas.toBlob(res, format, 0.9));
-                            totalImages++;
 
                             if (selectedFiles.length === 1 && targetPages.length === 1) {
                                 triggerDownload(blob, `${pdfBaseName}_page_${pageNum}.${ext}`);
@@ -472,9 +479,42 @@
                     const zipBlob = await zip.generateAsync({ type: 'blob' });
                     triggerDownload(zipBlob, `converted_images_${Date.now()}.zip`);
 
-                } else if (currentTool === 'heic-to-jpg' || currentTool === 'jpg-to-pdf') {
-                    // Placeholder for standard image/PDF conversion workflow
-                    alert("Processing completed successfully.");
+                } else if (currentTool === 'heic-to-jpg') {
+                    for (let file of selectedFiles) {
+                        const outBlob = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.9 });
+                        const finalBlob = Array.isArray(outBlob) ? outBlob[0] : outBlob;
+                        const baseName = file.name.replace(/\.[^/.]+$/, "");
+                        if (selectedFiles.length === 1) {
+                            triggerDownload(finalBlob, `${baseName}.jpg`);
+                        } else {
+                            zip.file(`${baseName}.jpg`, finalBlob);
+                        }
+                    }
+                    if (selectedFiles.length > 1) {
+                        const zipBlob = await zip.generateAsync({ type: 'blob' });
+                        triggerDownload(zipBlob, `heic_images_${Date.now()}.zip`);
+                    }
+                } else if (currentTool === 'jpg-to-pdf') {
+                    const pdfDoc = await PDFLib.PDFDocument.create();
+                    for (let file of selectedFiles) {
+                        const arrayBuffer = await file.arrayBuffer();
+                        let embeddedImage;
+                        if (file.type === 'image/png') {
+                            embeddedImage = await pdfDoc.embedPng(arrayBuffer);
+                        } else {
+                            embeddedImage = await pdfDoc.embedJpg(arrayBuffer);
+                        }
+                        const page = pdfDoc.addPage([embeddedImage.width, embeddedImage.height]);
+                        page.drawImage(embeddedImage, {
+                            x: 0,
+                            y: 0,
+                            width: embeddedImage.width,
+                            height: embeddedImage.height,
+                        });
+                    }
+                    const pdfBytes = await pdfDoc.save();
+                    const pdfBlob = new Blob([pdfBytes], { type: 'application/pdf' });
+                    triggerDownload(pdfBlob, `combined_document_${Date.now()}.pdf`);
                 }
             } catch (err) {
                 console.error(err);
