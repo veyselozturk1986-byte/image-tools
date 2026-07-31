@@ -202,7 +202,7 @@
                     <!-- Color Palette Box -->
                     <div id="paletteResultBox" class="hidden w-full h-full flex flex-col items-center justify-center space-y-3 p-2">
                         <p class="text-xs text-slate-300 font-semibold">Extracted Dominant Colors:</p>
-                        <div id="paletteContainerGrid" class="flex flex-wrap gap-3 justify-center"></div>
+                        <div id="paletteContainerGrid" class="flex flex-wrap gap-4 justify-center"></div>
                     </div>
 
                     <!-- Signature Pad Box -->
@@ -1364,11 +1364,20 @@
                             if(grid) {
                                 grid.innerHTML = '';
                                 uniqueColors.forEach(col => {
+                                    const wrapper = document.createElement('div');
+                                    wrapper.className = 'flex flex-col items-center gap-1';
+
                                     const box = document.createElement('div');
-                                    box.className = 'w-12 h-16 rounded-lg shadow flex flex-col items-center justify-end pb-1 text-[9px] font-mono text-white';
+                                    box.className = 'w-12 h-14 rounded-lg shadow border border-slate-700/25';
                                     box.style.backgroundColor = col;
-                                    box.textContent = col;
-                                    grid.appendChild(box);
+
+                                    const label = document.createElement('span');
+                                    label.className = 'text-[9px] font-mono text-slate-600 dark:text-slate-300';
+                                    label.textContent = col;
+
+                                    wrapper.appendChild(box);
+                                    wrapper.appendChild(label);
+                                    grid.appendChild(wrapper);
                                 });
                             }
                             showToast(translations[currentLang].successPalette);
@@ -1641,7 +1650,7 @@
                 }
 
                 if (currentTool === 'color-palette') {
-                    const colors = Array.from(document.querySelectorAll('#paletteContainerGrid div')).map(d => d.textContent);
+                    const colors = Array.from(document.querySelectorAll('#paletteContainerGrid span')).map(d => d.textContent);
                     const blob = new Blob([JSON.stringify(colors, null, 2)], { type: 'application/json' });
                     triggerDownloadWithShare(blob, `color_palette_${Date.now()}.json`);
                     showToast(translations[currentLang].successPalette);
