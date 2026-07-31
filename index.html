@@ -119,6 +119,7 @@
                 </select>
                 <!-- Language Selector -->
                 <select id="langSelect" class="bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold px-3 py-2 border-0 focus:outline-none cursor-pointer">
+                    <option value="tr">Türkçe</option>
                     <option value="en">English</option>
                     <option value="zh">中文</option>
                     <option value="de">Deutsch</option>
@@ -430,8 +431,8 @@
                     <h3 data-i18n="faq4Title" class="font-bold text-slate-800 dark:text-slate-200 mb-1">How can you verify this yourself (Zero Network Proof)?</h3>
                     <p data-i18n="faq4Desc" class="leading-relaxed opacity-90 mb-3">You don't just have to take our word for it. You can inspect and prove this right now:</p>
                     <ul class="list-disc pl-5 space-y-2 opacity-90">
-                        <li id="verifyStep1"><strong>Network Inspector Test:</strong> Press <kbd class="bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded font-mono text-xs">F12</kbd> to open browser Developer Tools, go to the <strong>Network</strong> tab, and convert any file. You will observe zero outbound file upload requests.</li>
-                        <li id="verifyStep2"><strong>Offline Mode Test:</strong> Completely disconnect your computer from Wi-Fi or internet. PrivacyConvert will continue to convert and process your files without interruption.</li>
+                        <li id="verifyStep1" data-i18n="verifyStep1"><strong>Network Inspector Test:</strong> Press <kbd class="bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded font-mono text-xs">F12</kbd> to open browser Developer Tools, go to the <strong>Network</strong> tab, and convert any file. You will observe zero outbound file upload requests.</li>
+                        <li id="verifyStep2" data-i18n="verifyStep2"><strong>Offline Mode Test:</strong> Completely disconnect your computer from Wi-Fi or internet. PrivacyConvert will continue to convert and process your files without interruption.</li>
                     </ul>
                 </div>
             </div>
@@ -473,8 +474,87 @@
         }
         updateLiveCounter(0);
 
-        // Comprehensive 6 Languages Translation Map
+        // Comprehensive Translation Map (Including Turkish)
         const translations = {
+            tr: {
+                overlayTitle: "Dosyalarınızı yerel olarak işlemek için istediğiniz yere bırakın!",
+                progressTitle: "Yerel olarak işleniyor...",
+                secTitle: "%100 Yerel ve Güvenli İşleme Garantisi",
+                secDesc: "Tüm dönüşümler tarayıcınızda çalışır. Uzak sunucuya sıfır bayt yüklenir.",
+                blockedCloudData: "Engellenen Bulut Verisi",
+                mbSafe: "MB Güvende",
+                dropText: "Göz atmak için tıklayın veya dosyaları buraya sürükleyin",
+                dropSubText: "Tekli veya toplu işleme desteği (Listeyi yeniden sıralamak için sürükleyin!)",
+                convertBtn: "Dönüştür ve İndir",
+                reset: "Sıfırla",
+                catPdf: "📄 PDF Araçları", catImage: "🖼️ Resim Araçları", catDev: "💻 Metin & Geliştirici", catSec: "🔐 Güvenlik & Araçlar",
+                recentActivity: "🕒 Son Yerel Etkinlik", clear: "Temizle", advancedSettings: "⚙️ Gelişmiş Ayarlar",
+                renderQuality: "Oluşturma Kalitesi:", outputInfo: "Çıktı Bilgisi:", 
+                searchPlaceholder: "22 güvenli araçta ara (Ctrl+K)...",
+                cmdPlaceholder: "Bir araç adı yazın...",
+                shortcutsTitle: "Klavye Kısayolları",
+                shortcutCmd: "Komut Paleti",
+                shortcutReset: "Çalışma Alanını Sıfırla",
+                shortcutConvert: "Dönüştür ve İndir",
+                copy: "📋 Kopyala",
+                generateAnother: "🔄 Başka Üret",
+                output: "Çıktı:",
+                comparisonOutput: "Karşılaştırma Çıktısı:",
+                setPdfPass: "PDF Şifresi Belirle:",
+                pdfPassPlaceholder: "Güvenli şifre girin",
+                targetFileSize: "Hedef Dosya Boyutu (Maks. MB):",
+                targetWebFormat: "Hedef Web Formatı:",
+                pageRange: "Sayfa Aralığı (örn. 1, 3-5 veya 'all'):",
+                jsonPlaceholder: "Ham JSON'ı buraya yapıştırın...",
+                mdPlaceholder: "Markdown'ı buraya yazın (# Başlık)...",
+                urlPlaceholder: "Kodlamak/çözmek için metni buraya yapıştırın...",
+                qrPlaceholder: "QR Kod için URL veya metin girin...",
+                diffOrigPlaceholder: "Orijinal metin...",
+                diffModPlaceholder: "Değiştirilmiş metin...",
+                resultPlaceholder: "Sonuç burada görünecektir...",
+                passLen: "Uzunluk:",
+                passSym: "Semboller",
+                passNum: "Rakamlar",
+                passUp: "Büyük Harf",
+                qualityStd: "Standart (150 DPI)",
+                qualityHigh: "Yüksek Kalite (200 DPI)",
+                qualityUltra: "Ultra HD (300 DPI)",
+                faqMainTitle: "Sık Sorulan Sorular ve Güvenlik Mimarisi",
+                faq1Title: "PrivacyConvert dosyaları sunucu olmadan nasıl işler?",
+                faq1Desc: "PrivacyConvert, gelişmiş istemci tarafı tarayıcı teknolojilerini (WebAssembly, PDF.js, Canvas API) kullanır. Bir dosyayı seçtiğinizde veya bıraktığınızda, tarayıcınızın kendi CPU ve belleği dönüşümü yerel olarak gerçekleştirir.",
+                faq2Title: "Dosyalarım cihazımdan hiç ayrılıyor mu?",
+                faq2Desc: "Asla. Dosyalarınızı işleyen bir sunucu olmadığından, hassas belgeleriniz, PDF'leriniz ve görselleriniz asla internete veya uzak bulut depolamaya gitmez. %100 yerel makinenizde kalır.",
+                faq3Title: "Bu yaklaşım neden geleneksel çevrimiçi dönüştürücülerden daha güvenlidir?",
+                faq3Desc: "Geleneksel çevrimiçi dönüştürücüler, hassas dosyalarınızı uzak sunucularına yüklemenizi gerektirir ve gizlilik riskleri oluşturur. PrivacyConvert bu riski tamamen ortadan kaldırır.",
+                faq4Title: "Bunu kendiniz nasıl doğrulayabilirsiniz (Sıfır Ağ Kanıtı)?",
+                faq4Desc: "Sadece sözümüze güvenmek zorunda değilsiniz. Bunu hemen inceleyebilir ve kanıtlayabilirsiniz:",
+                verifyStep1: "<strong>Ağ Denetçisi Testi:</strong> Tarayıcı Geliştirici Araçlarını açmak için <kbd class='bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded font-mono text-xs'>F12</kbd> tuşuna basın, <strong>Network (Ağ)</strong> sekmesine gidin ve herhangi bir dosyayı dönüştürün. Sıfır giden dosya yükleme isteği göreceksiniz.",
+                verifyStep2: "<strong>Çevrimdışı Mod Testi:</strong> Bilgisayarınızın Wi-Fi veya internet bağlantısını tamamen kesin. PrivacyConvert dosyalarınızı kesintisiz olarak dönüştürmeye ve işlemeye devam edecektir.",
+                tools: {
+                    'pdf-to-png': { label: 'PDF - PNG', desc: 'PDF sayfalarını doğrudan tarayıcınızda PNG görüntülerine dönüştürün. Hızlı, ücretsiz ve tamamen gizli.' },
+                    'pdf-to-jpg': { label: 'PDF - JPG', desc: 'PDF sayfalarını doğrudan tarayıcınızda JPG görüntülerine dönüştürün. Hızlı, ücretsiz ve tamamen gizli.' },
+                    'merge-pdf': { label: 'PDF Birleştir', desc: 'Birden fazla PDF belgesini yüklemeden tarayıcınızda güvenle birleştirin.' },
+                    'split-pdf': { label: 'PDF Böl', desc: 'Bir PDF dosyasından belirli sayfaları yerel olarak çıkarın.' },
+                    'jpg-to-pdf': { label: 'JPG - PDF', desc: 'Görselleri tek bir PDF belgesinde güvenle dönüştürün.' },
+                    'compress-image': { label: 'Resim Sıkıştır', desc: 'Kalitesini korurken resim dosya boyutlarını küçültün.' },
+                    'heic-to-jpg': { label: 'HEIC - JPG', desc: 'Apple HEIC fotoğraflarını standart JPG formatına dönüştürün.' },
+                    'webp-converter': { label: 'WebP Dönüştürücü', desc: 'Görselleri modern WebP veya AVIF formatlarına dönüştürün.' },
+                    'exif-remover': { label: 'EXIF Kaldırıcı', desc: 'GPS koordinatlarını, kamera modellerini ve özel meta verileri anında temizleyin.' },
+                    'extract-pdf-img': { label: 'PDF Görsellerini Çıkar', desc: 'PDF belgelerinden gömülü görselleri çıkarın.' },
+                    'redact-tool': { label: 'Sansürle / Gizle', desc: 'Görsellerinizdeki hassas bilgileri güvenle siyahla kapatın.' },
+                    'json-tool': { label: 'JSON Biçimlendirici', desc: 'Ham JSON verilerini biçimlendirin, doğrulayın ve güzelleştirin.' },
+                    'base64-tool': { label: 'Base64 Aracı', desc: 'Base64 metin dizelerini kolayca kodlayın veya çözün.' },
+                    'url-tool': { label: 'URL Aracı', desc: 'URL dizelerini güvenle kodlayın veya çözün.' },
+                    'diff-tool': { label: 'Metin Farkı (Diff)', desc: 'İki metin bloğunu satır satır karşılaştırın.' },
+                    'md-tool': { label: 'Markdown Önizleme', desc: 'HTML olarak oluşturulmuş Markdown içeriğini önizleyin.' },
+                    'password-gen': { label: 'Şifre Üretici', desc: 'Güvenli, rastgele şifreler oluşturun.' },
+                    'encrypt-pdf': { label: 'PDF Şifrele', desc: 'AES ile PDF dosyalarınıza şifre koruması ekleyin.' },
+                    'hash-calc': { label: 'Dosya Hash', desc: 'SHA-256 sağlama toplamı hash değerlerini hesaplayın.' },
+                    'uuid-gen': { label: 'UUID Üretici', desc: 'Benzersiz tanımlayıcılar (UUID v4) oluşturun.' },
+                    'qr-tool': { label: 'QR Kod Üretici', desc: 'Yerel olarak yüksek çözünürlüklü QR kodları oluşturun.' },
+                    'ocr-reader': { label: 'OCR Metin Okuyucu', desc: 'Yerel yapay zeka (Tesseract) kullanarak resimlerden metin çıkarın.' }
+                }
+            },
             en: {
                 overlayTitle: "Drop your files anywhere to process locally!",
                 progressTitle: "Processing Locally...",
@@ -527,8 +607,8 @@
                 faq3Desc: "Traditional online converters require you to upload your sensitive files to their remote servers, posing major data breach and privacy risks. PrivacyConvert eliminates this risk entirely.",
                 faq4Title: "How can you verify this yourself (Zero Network Proof)?",
                 faq4Desc: "You don't just have to take our word for it. You can inspect and prove this right now:",
-                verifyStep1: "Network Inspector Test: Press F12 to open browser Developer Tools, go to the Network tab, and convert any file. You will observe zero outbound file upload requests.",
-                verifyStep2: "Offline Mode Test: Completely disconnect your computer from Wi-Fi or internet. PrivacyConvert will continue to convert and process your files without interruption.",
+                verifyStep1: "<strong>Network Inspector Test:</strong> Press <kbd class='bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded font-mono text-xs'>F12</kbd> to open browser Developer Tools, go to the <strong>Network</strong> tab, and convert any file. You will observe zero outbound file upload requests.",
+                verifyStep2: "<strong>Offline Mode Test:</strong> Completely disconnect your computer from Wi-Fi or internet. PrivacyConvert will continue to convert and process your files without interruption.",
                 tools: {
                     'pdf-to-png': { label: 'PDF to PNG', desc: 'Extract PDF pages into PNG images directly in your browser. Fast, free, and completely private.' },
                     'pdf-to-jpg': { label: 'PDF to JPG', desc: 'Extract PDF pages into JPG images directly in your browser. Fast, free, and completely private.' },
@@ -606,8 +686,8 @@
                 faq3Desc: "传统的在线转换器要求您将敏感文件上传到其远程服务器，存在重大数据泄露和隐私风险。PrivacyConvert 完全消除了这种风险。",
                 faq4Title: "您如何亲自验证这一点（零网络证明）？",
                 faq4Desc: "您不必只听信我们的话。您可以立即通过以下两种简单方法进行检查：",
-                verifyStep1: "网络检查器测试：按 F12 打开浏览器开发者工具，转到“网络 (Network)”选项卡并转换任何文件。您将观察到零出站文件上传请求。",
-                verifyStep2: "离线模式测试：完全断开计算机的 Wi-Fi 或互联网连接。PrivacyConvert 将继续无中断地转换和处理您的文件。",
+                verifyStep1: "<strong>网络检查器测试：</strong> 按 F12 打开浏览器开发者工具，转到“网络 (Network)”选项卡并转换任何文件。您将观察到零出站文件上传请求。",
+                verifyStep2: "<strong>离线模式测试：</strong> 完全断开计算机的 Wi-Fi 或互联网连接。PrivacyConvert 将继续无中断地转换和处理您的文件。",
                 tools: {
                     'pdf-to-png': { label: 'PDF 转 PNG', desc: '直接在浏览器中将 PDF 页面提取为 PNG 图像。快速、免费且完全隐私。' },
                     'pdf-to-jpg': { label: 'PDF 转 JPG', desc: '直接在浏览器中将 PDF 页面提取为 JPG 图像。快速、免费且完全隐私。' },
@@ -685,8 +765,8 @@
                 faq3Desc: "Herkömmliche Online-Konverter erfordern das Hochladen sensibler Dateien auf externe Server, was Datenschutzrisiken birgt. PrivacyConvert eliminiert dieses Risiko vollständig.",
                 faq4Title: "Wie können Sie dies selbst überprüfen (Null-Netzwerk-Nachweis)?",
                 faq4Desc: "Sie müssen sich nicht nur auf unser Wort verlassen. Sie können es jetzt selbst überprüfen:",
-                verifyStep1: "Netzwerk-Inspector-Test: Drücken Sie F12, öffnen Sie die Entwicklertools, gehen Sie zum Reiter Netzwerk und konvertieren Sie eine Datei. Sie werden null ausgehende Datei-Upload-Anfragen sehen.",
-                verifyStep2: "Offline-Modus-Test: Trennen Sie Ihren Computer komplett von WLAN oder Internet. PrivacyConvert funktioniert ohne Unterbrechung weiter.",
+                verifyStep1: "<strong>Netzwerk-Inspector-Test:</strong> Drücken Sie F12, öffnen Sie die Entwicklertools, gehen Sie zum Reiter Netzwerk und konvertieren Sie eine Datei. Sie werden null ausgehende Datei-Upload-Anfragen sehen.",
+                verifyStep2: "<strong>Offline-Modus-Test:</strong> Trennen Sie Ihren Computer komplett von WLAN oder Internet. PrivacyConvert funktioniert ohne Unterbrechung weiter.",
                 tools: {
                     'pdf-to-png': { label: 'PDF in PNG', desc: 'PDF-Seiten direkt im Browser in PNG-Bilder extrahieren.' },
                     'pdf-to-jpg': { label: 'PDF in JPG', desc: 'PDF-Seiten direkt im Browser in JPG-Bilder extrahieren.' },
@@ -764,8 +844,8 @@
                 faq3Desc: "Les convertisseurs traditionnels nécessitent le téléchargement de vos fichiers sensibles sur leurs serveurs distants, posant des risques de violation de données. PrivacyConvert élimine complètement ce risque.",
                 faq4Title: "Comment pouvez-vous le vérifier vous-même (Preuve de réseau zéro) ?",
                 faq4Desc: "Vous n'avez pas à nous croire sur parole. Vous pouvez l'inspecter et le prouver dès maintenant :",
-                verifyStep1: "Test de l'inspecteur réseau : Appuyez sur F12 pour ouvrir les outils de développement, allez dans l'onglet Réseau et convertissez n'importe quel fichier. Vous observerez zéro requête de téléchargement sortante.",
-                verifyStep2: "Test du mode hors ligne : Déconnectez complètement votre ordinateur du Wi-Fi ou d'Internet. PrivacyConvert continuera à convertir et traiter vos fichiers sans interruption.",
+                verifyStep1: "<strong>Test de l'inspecteur réseau :</strong> Appuyez sur F12 pour ouvrir les outils de développement, allez dans l'onglet Réseau et convertissez n'importe quel fichier. Vous observerez zéro requête de téléchargement sortante.",
+                verifyStep2: "<strong>Test du mode hors ligne :</strong> Déconnectez complètement votre ordinateur du Wi-Fi ou d'Internet. PrivacyConvert continuera à convertir et traiter vos fichiers sans interruption.",
                 tools: {
                     'pdf-to-png': { label: 'PDF en PNG', desc: 'Extraire des pages PDF en images PNG directement dans votre navigateur.' },
                     'pdf-to-jpg': { label: 'PDF en JPG', desc: 'Extraire des pages PDF en images JPG directement dans votre navigateur.' },
@@ -843,8 +923,8 @@
                 faq3Desc: "Los conversores tradicionales requieren que suba sus archivos a servidores remotos, planteando riesgos de violación de datos. PrivacyConvert elimina este riesgo por completo.",
                 faq4Title: "¿Cómo puede verificar esto usted mismo (Prueba de red cero)?",
                 faq4Desc: "No tiene que confiar ciegamente en nuestra palabra. Puede inspeccionar y comprobarlo ahora mismo:",
-                verifyStep1: "Prueba de Inspector de Red: Presione F12 para abrir las Herramientas de Desarrollador, vaya a la pestaña Red y convierta cualquier archivo. Observará cero solicitudes salientes de carga de archivos.",
-                verifyStep2: "Prueba de Modo Sin Conexión: Desconecte completamente su computadora del Wi-Fi o internet. PrivacyConvert continuará convirtiendo y procesando sus archivos sin interrupción.",
+                verifyStep1: "<strong>Prueba de Inspector de Red:</strong> Presione F12 para abrir las Herramientas de Desarrollador, vaya a la pestaña Red y convierta cualquier archivo. Observará cero solicitudes salientes de carga de archivos.",
+                verifyStep2: "<strong>Prueba de Modo Sin Conexión:</strong> Desconecte completamente su computadora del Wi-Fi o internet. PrivacyConvert continuará convirtiendo y procesando sus archivos sin interrupción.",
                 tools: {
                     'pdf-to-png': { label: 'PDF a PNG', desc: 'Extraiga páginas de PDF en imágenes PNG directamente en su navegador.' },
                     'pdf-to-jpg': { label: 'PDF a JPG', desc: 'Extraiga páginas de PDF en imágenes JPG directamente en su navegador.' },
@@ -856,7 +936,7 @@
                     'webp-converter': { label: 'Convertidor WebP', desc: 'Convierta imágenes a WebP o AVIF.' },
                     'exif-remover': { label: 'Limpiador EXIF', desc: 'Elimine coordenadas GPS y metadatos privados al instante.' },
                     'extract-pdf-img': { label: 'Extraer Imágenes PDF', desc: 'Extraiga imágenes incrustadas de documentos PDF.' },
-                    'redact-tool': { label: 'Ocultar Imagen', desc: 'Oculte información confidencial de forma segura.' },
+                    'redact-tool': { label: 'Ocultar Imagen', desc: 'Ocultar información confidencial de forma segura.' },
                     'json-tool': { label: 'Formateador JSON', desc: 'Formatez y valide datos JSON.' },
                     'base64-tool': { label: 'Herramienta Base64', desc: 'Codifique o decodifique cadenas Base64.' },
                     'url-tool': { label: 'Herramienta URL', desc: 'Codifique o decodifique cadenas URL.' },
@@ -922,8 +1002,8 @@
                 faq3Desc: "تتطلب المحولات التقليدية رفع ملفاتك الحساسة إلى خوادمهم البعيدة، مما يمثل مخاطر كبيرة على الخصوصية. تقضي PrivacyConvert على هذا الخطر تماماً.",
                 faq4Title: "كيف يمكنك التحقق من ذلك بنفسك (إثبات انعدام حركة مرور الشبكة)؟",
                 faq4Desc: "ليس عليك فقط أن تصدق كلامنا. يمكنك فحص وإثبات ذلك بنفسك الآن:",
-                verifyStep1: "اختبار فاحص الشبكة: اضغط على F12 لفتح أدوات المطور، وانتقل إلى تبويب Network، وقم بتحويل أي ملف. ستلاحظ تماماً عدم إرسال أي طلبات رفع ملفات خارجية.",
-                verifyStep2: "اختبار وضع عدم الاتصال: قم بفصل جهاز الكمبيوتر الخاص بك تماماً عن الواي فاي أو الإنترنت. ستستمر PrivacyConvert في تحويل ومعالجة ملفاتك دون أي انقطاع.",
+                verifyStep1: "<strong>اختبار فاحص الشبكة:</strong> اضغط على F12 لفتح أدوات المطور، وانتقل إلى تبويب Network، وقم بتحويل أي ملف. ستلاحظ تماماً عدم إرسال أي طلبات رفع ملفات خارجية.",
+                verifyStep2: "<strong>اختبار وضع عدم الاتصال:</strong> قم بفصل جهاز الكمبيوتر الخاص بك تماماً عن الواي فاي أو الإنترنت. ستستمر PrivacyConvert في تحويل ومعالجة ملفاتك دون أي انقطاع.",
                 tools: {
                     'pdf-to-png': { label: 'PDF إلى PNG', desc: 'استخراج صفحات PDF إلى صور PNG مباشرة في متصفحك.' },
                     'pdf-to-jpg': { label: 'PDF إلى JPG', desc: 'استخراج صفحات PDF إلى صور JPG مباشرة في متصفحك.' },
@@ -951,7 +1031,7 @@
             }
         };
 
-        let currentLang = localStorage.getItem('privacyConvert_lang') || 'en';
+        let currentLang = localStorage.getItem('privacyConvert_lang') || 'tr';
         const langSelect = document.getElementById('langSelect');
         langSelect.value = currentLang;
         let currentTool = 'pdf-to-png';
@@ -963,12 +1043,12 @@
             localStorage.setItem('privacyConvert_lang', lang);
             document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
             
-            const t = translations[lang] || translations['en'];
+            const t = translations[lang] || translations['tr'];
 
             // Robust data-i18n UI translation engine
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
-                if (t[key]) el.textContent = t[key];
+                if (t[key]) el.innerHTML = t[key];
             });
 
             document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
@@ -976,23 +1056,19 @@
                 if (t[key]) el.placeholder = t[key];
             });
 
-            // Update active tool input placeholder if active
             const mainInput = document.getElementById('mainInputField');
             if (currentTool === 'json-tool') mainInput.placeholder = t.jsonPlaceholder;
             else if (currentTool === 'md-tool') mainInput.placeholder = t.mdPlaceholder;
             else if (currentTool === 'base64-tool' || currentTool === 'url-tool') mainInput.placeholder = t.urlPlaceholder;
             else if (currentTool === 'qr-tool') mainInput.placeholder = t.qrPlaceholder;
 
-            // Password generator length label prefix update
             const passLenLabel = document.getElementById('passLengthLabel');
             if (passLenLabel) {
                 passLenLabel.childNodes[0].nodeValue = `${t.passLen} `;
             }
 
-            // Update Live Counter text immediately on language switch
             updateLiveCounter(0);
 
-            // Update tool selection sidebar labels
             Object.keys(t.tools).forEach(key => {
                 const btn = document.getElementById(`tab-${key}`);
                 if (btn) {
@@ -1009,7 +1085,7 @@
         langSelect.addEventListener('change', (e) => applyLanguage(e.target.value));
 
         function updateUIMeta(tool) {
-            const t = translations[currentLang] || translations['en'];
+            const t = translations[currentLang] || translations['tr'];
             const meta = t.tools[tool];
             if(!meta) return;
             
@@ -1088,7 +1164,7 @@
 
         function renderCmdList(query) {
             cmdResultsList.innerHTML = '';
-            const t = translations[currentLang] || translations['en'];
+            const t = translations[currentLang] || translations['tr'];
             Object.keys(t.tools).forEach(key => {
                 const item = t.tools[key];
                 if(item.label.toLowerCase().includes(query) || item.desc.toLowerCase().includes(query)) {
@@ -1152,7 +1228,7 @@
         clearBtn.addEventListener('click', resetApp);
 
         function switchTool(tool, saveState = true) {
-            const t = translations[currentLang] || translations['en'];
+            const t = translations[currentLang] || translations['tr'];
             if (!t.tools[tool]) tool = 'pdf-to-png';
             currentTool = tool;
             resetApp();
@@ -1473,7 +1549,6 @@
             showToast("History cleared");
         }
 
-        // UNIFIED CONVERSION ENGINE (22 TOOLS)
         const convertBtn = document.getElementById('convertBtn');
         convertBtn.addEventListener('click', async () => {
             if (currentTool === 'password-gen' || currentTool === 'uuid-gen') { window.copyGenerated(); return; }
