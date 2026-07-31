@@ -133,55 +133,97 @@
             <input type="text" id="toolSearchInput" placeholder="Search tools (Ctrl+K)..." class="w-full pl-11 pr-4 rtl:pl-4 rtl:pr-11 py-3.5 text-sm bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm focus:outline-none focus:border-indigo-500 dark:text-white transition-all">
         </div>
 
-        <!-- Categorized Converter Navigation -->
-        <div id="toolsNavContainer" class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <!-- Categorized Converter Navigation (Redesigned with Prominent Card Style) -->
+        <div id="toolsNavContainer" class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
             
             <!-- Category: PDF -->
-            <div class="space-y-3 tool-category" data-cat="pdf">
-                <h3 id="catPdf" class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-2 border-b border-slate-200 dark:border-slate-700 pb-2">📄 PDF Tools</h3>
+            <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3 tool-category" data-cat="pdf">
+                <h3 id="catPdf" class="text-xs font-extrabold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">📄 PDF Tools</h3>
                 <div class="flex flex-col gap-2">
-                    <button onclick="switchTool('pdf-to-png')" id="tab-pdf-to-png" class="tool-tab w-full text-left rtl:text-right px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">PDF to PNG</button>
-                    <button onclick="switchTool('pdf-to-jpg')" id="tab-pdf-to-jpg" class="tool-tab w-full text-left rtl:text-right px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">PDF to JPG</button>
-                    <button onclick="switchTool('merge-pdf')" id="tab-merge-pdf" class="tool-tab w-full text-left rtl:text-right px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">Merge PDF</button>
-                    <button onclick="switchTool('split-pdf')" id="tab-split-pdf" class="tool-tab w-full text-left rtl:text-right px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">Split PDF</button>
-                    <button onclick="switchTool('jpg-to-pdf')" id="tab-jpg-to-pdf" class="tool-tab w-full text-left rtl:text-right px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">JPG to PDF</button>
+                    <button onclick="switchTool('pdf-to-png')" id="tab-pdf-to-png" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                        <span class="text-base shrink-0">🖼️</span> <span class="truncate">PDF to PNG</span>
+                    </button>
+                    <button onclick="switchTool('pdf-to-jpg')" id="tab-pdf-to-jpg" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                        <span class="text-base shrink-0">🌄</span> <span class="truncate">PDF to JPG</span>
+                    </button>
+                    <button onclick="switchTool('merge-pdf')" id="tab-merge-pdf" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                        <span class="text-base shrink-0">📑</span> <span class="truncate">Merge PDF</span>
+                    </button>
+                    <button onclick="switchTool('split-pdf')" id="tab-split-pdf" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                        <span class="text-base shrink-0">✂️</span> <span class="truncate">Split PDF</span>
+                    </button>
+                    <button onclick="switchTool('jpg-to-pdf')" id="tab-jpg-to-pdf" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                        <span class="text-base shrink-0">📁</span> <span class="truncate">JPG to PDF</span>
+                    </button>
                 </div>
             </div>
 
             <!-- Category: Image -->
-            <div class="space-y-3 tool-category" data-cat="image">
-                <h3 id="catImage" class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-2 border-b border-slate-200 dark:border-slate-700 pb-2">🖼️ Image Tools</h3>
+            <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3 tool-category" data-cat="image">
+                <h3 id="catImage" class="text-xs font-extrabold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">🖼️ Image Tools</h3>
                 <div class="flex flex-col gap-2">
-                    <button onclick="switchTool('compress-image')" id="tab-compress-image" class="tool-tab w-full text-left rtl:text-right px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">Compress Image</button>
-                    <button onclick="switchTool('heic-to-jpg')" id="tab-heic-to-jpg" class="tool-tab w-full text-left rtl:text-right px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">HEIC to JPG</button>
-                    <button onclick="switchTool('webp-converter')" id="tab-webp-converter" class="tool-tab w-full text-left rtl:text-right px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">WebP / AVIF Converter</button>
-                    <button onclick="switchTool('extract-pdf-img')" id="tab-extract-pdf-img" class="tool-tab w-full text-left rtl:text-right px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">Extract PDF Images</button>
-                    <button onclick="switchTool('redact-tool')" id="tab-redact-tool" class="tool-tab w-full text-left rtl:text-right px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">Redact / Censor</button>
+                    <button onclick="switchTool('compress-image')" id="tab-compress-image" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                        <span class="text-base shrink-0">🗜️</span> <span class="truncate">Compress Image</span>
+                    </button>
+                    <button onclick="switchTool('heic-to-jpg')" id="tab-heic-to-jpg" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                        <span class="text-base shrink-0">🍏</span> <span class="truncate">HEIC to JPG</span>
+                    </button>
+                    <button onclick="switchTool('webp-converter')" id="tab-webp-converter" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                        <span class="text-base shrink-0">🌐</span> <span class="truncate">WebP Converter</span>
+                    </button>
+                    <button onclick="switchTool('extract-pdf-img')" id="tab-extract-pdf-img" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                        <span class="text-base shrink-0">🔍</span> <span class="truncate">Extract PDF Images</span>
+                    </button>
+                    <button onclick="switchTool('redact-tool')" id="tab-redact-tool" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                        <span class="text-base shrink-0">🕶️</span> <span class="truncate">Redact / Censor</span>
+                    </button>
                 </div>
             </div>
 
             <!-- Category: Dev & Text -->
-            <div class="space-y-3 tool-category" data-cat="dev">
-                <h3 id="catDev" class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-2 border-b border-slate-200 dark:border-slate-700 pb-2">💻 Text & Dev</h3>
+            <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3 tool-category" data-cat="dev">
+                <h3 id="catDev" class="text-xs font-extrabold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">💻 Text & Dev</h3>
                 <div class="flex flex-col gap-2">
-                    <button onclick="switchTool('json-tool')" id="tab-json-tool" class="tool-tab w-full text-left rtl:text-right px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">JSON Formatter</button>
-                    <button onclick="switchTool('base64-tool')" id="tab-base64-tool" class="tool-tab w-full text-left rtl:text-right px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">Base64 Tool</button>
-                    <button onclick="switchTool('url-tool')" id="tab-url-tool" class="tool-tab w-full text-left rtl:text-right px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">URL Tool</button>
-                    <button onclick="switchTool('diff-tool')" id="tab-diff-tool" class="tool-tab w-full text-left rtl:text-right px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">Text Diff Checker</button>
-                    <button onclick="switchTool('md-tool')" id="tab-md-tool" class="tool-tab w-full text-left rtl:text-right px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">Markdown Preview</button>
+                    <button onclick="switchTool('json-tool')" id="tab-json-tool" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                        <span class="text-base shrink-0">{}</span> <span class="truncate">JSON Formatter</span>
+                    </button>
+                    <button onclick="switchTool('base64-tool')" id="tab-base64-tool" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                        <span class="text-base shrink-0">🔤</span> <span class="truncate">Base64 Tool</span>
+                    </button>
+                    <button onclick="switchTool('url-tool')" id="tab-url-tool" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                        <span class="text-base shrink-0">🔗</span> <span class="truncate">URL Tool</span>
+                    </button>
+                    <button onclick="switchTool('diff-tool')" id="tab-diff-tool" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                        <span class="text-base shrink-0">⚖️</span> <span class="truncate">Text Diff Checker</span>
+                    </button>
+                    <button onclick="switchTool('md-tool')" id="tab-md-tool" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                        <span class="text-base shrink-0">📝</span> <span class="truncate">Markdown Preview</span>
+                    </button>
                 </div>
             </div>
 
             <!-- Category: Security & Utils -->
-            <div class="space-y-3 tool-category" data-cat="security">
-                <h3 id="catSec" class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-2 border-b border-slate-200 dark:border-slate-700 pb-2">🔐 Security & Utils</h3>
+            <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3 tool-category" data-cat="security">
+                <h3 id="catSec" class="text-xs font-extrabold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">🔐 Security & Utils</h3>
                 <div class="flex flex-col gap-2">
-                    <button onclick="switchTool('password-gen')" id="tab-password-gen" class="tool-tab w-full text-left rtl:text-right px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">Password Generator</button>
-                    <button onclick="switchTool('encrypt-pdf')" id="tab-encrypt-pdf" class="tool-tab w-full text-left rtl:text-right px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">Encrypt PDF</button>
-                    <button onclick="switchTool('hash-calc')" id="tab-hash-calc" class="tool-tab w-full text-left rtl:text-right px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">File Checksum Hash</button>
-                    <button onclick="switchTool('uuid-gen')" id="tab-uuid-gen" class="tool-tab w-full text-left rtl:text-right px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">UUID Generator</button>
-                    <button onclick="switchTool('qr-tool')" id="tab-qr-tool" class="tool-tab w-full text-left rtl:text-right px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">QR Code Generator</button>
-                    <button onclick="switchTool('ocr-reader')" id="tab-ocr-reader" class="tool-tab w-full text-left rtl:text-right px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm">OCR Text Reader</button>
+                    <button onclick="switchTool('password-gen')" id="tab-password-gen" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                        <span class="text-base shrink-0">🔑</span> <span class="truncate">Password Generator</span>
+                    </button>
+                    <button onclick="switchTool('encrypt-pdf')" id="tab-encrypt-pdf" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                        <span class="text-base shrink-0">🔒</span> <span class="truncate">Encrypt PDF</span>
+                    </button>
+                    <button onclick="switchTool('hash-calc')" id="tab-hash-calc" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                        <span class="text-base shrink-0">🛡️</span> <span class="truncate">File Checksum Hash</span>
+                    </button>
+                    <button onclick="switchTool('uuid-gen')" id="tab-uuid-gen" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                        <span class="text-base shrink-0">🆔</span> <span class="truncate">UUID Generator</span>
+                    </button>
+                    <button onclick="switchTool('qr-tool')" id="tab-qr-tool" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                        <span class="text-base shrink-0">📱</span> <span class="truncate">QR Code Generator</span>
+                    </button>
+                    <button onclick="switchTool('ocr-reader')" id="tab-ocr-reader" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow">
+                        <span class="text-base shrink-0">👁️</span> <span class="truncate">OCR Text Reader</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -365,7 +407,6 @@
     <script>
         try { if (typeof pdfjsLib !== 'undefined') pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; } catch(e) {}
 
-        // Complete Localized Translations Dictionary (EN, ES, AR) including Verification Proofs
         const translations = {
             en: {
                 secTitle: "100% Local & Secure Processing Guarantee",
@@ -565,10 +606,14 @@
             document.getElementById('verifyStep1').innerHTML = `<strong>${t.verifyStep1.split(':')[0]}:</strong>${t.verifyStep1.split(':')[1]}`;
             document.getElementById('verifyStep2').innerHTML = `<strong>${t.verifyStep2.split(':')[0]}:</strong>${t.verifyStep2.split(':')[1]}`;
 
-            // Update all tool tab buttons labels
+            // Update all tool tab buttons labels (preserving inner icon spans)
             Object.keys(t.tools).forEach(key => {
                 const btn = document.getElementById(`tab-${key}`);
-                if (btn) btn.textContent = t.tools[key].label;
+                if (btn) {
+                    const spanIcon = btn.querySelector('span');
+                    const iconEmoji = spanIcon ? spanIcon.outerHTML : '';
+                    btn.innerHTML = `${iconEmoji} <span class="truncate">${t.tools[key].label}</span>`;
+                }
             });
 
             updateUIMeta(currentTool);
@@ -623,7 +668,7 @@
             const query = e.target.value.toLowerCase().trim();
             document.querySelectorAll('.tool-tab').forEach(tab => {
                 const text = tab.textContent.toLowerCase();
-                tab.style.display = text.includes(query) ? 'block' : 'none';
+                tab.style.display = text.includes(query) ? 'flex' : 'none';
             });
             document.querySelectorAll('.tool-category').forEach(cat => {
                 const hasVisible = Array.from(cat.querySelectorAll('.tool-tab')).some(t => t.style.display !== 'none');
@@ -736,9 +781,9 @@
 
             document.querySelectorAll('.tool-tab').forEach(btn => {
                 if (btn.id === `tab-${tool}`) {
-                    btn.className = "tool-tab w-full text-left rtl:text-right px-4 py-2.5 text-sm font-bold rounded-xl transition-all shadow-md bg-indigo-600 text-white transform scale-105";
+                    btn.className = "tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-bold rounded-2xl transition-all shadow-md bg-indigo-600 text-white transform scale-[1.02]";
                 } else {
-                    btn.className = "tool-tab w-full text-left rtl:text-right px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700";
+                    btn.className = "tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow";
                 }
             });
 
