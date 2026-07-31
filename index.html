@@ -36,13 +36,11 @@
                 ⚡ PrivacyConvert
             </a>
             <div class="flex items-center gap-4">
-                <!-- Navigasyon Linkleri (SEO) -->
                 <nav class="hidden md:flex text-sm text-slate-600 gap-4 font-medium">
                     <a href="pdf-to-jpg/index.html" class="hover:text-indigo-600 transition">PDF to JPG</a>
                     <a href="heic-to-jpg/index.html" class="hover:text-indigo-600 transition">HEIC to JPG</a>
                     <a href="jpg-to-pdf/index.html" class="hover:text-indigo-600 transition">JPG to PDF</a>
                 </nav>
-                <!-- Güven Rozeti -->
                 <span class="hidden sm:inline-flex bg-emerald-100 text-emerald-800 text-xs px-3 py-1 rounded-full font-medium items-center gap-1">
                     🔒 100% In-Browser
                 </span>
@@ -53,7 +51,7 @@
     <!-- Ana İçerik Konteyneri -->
     <main class="flex-grow max-w-4xl mx-auto w-full px-4 py-8">
 
-        <!-- Top AdSpace Placeholder (AdSense) -->
+        <!-- Top AdSpace Placeholder -->
         <div class="w-full mb-8">
             <div class="bg-slate-100 border border-dashed border-slate-300 rounded-lg p-3 text-center text-xs text-slate-400">
                 <span>Advertisement</span>
@@ -100,7 +98,7 @@
                     </select>
                 </div>
 
-                <!-- Sıkıştırma ve Kalite Ayarı (Slider) -->
+                <!-- Sıkıştırma ve Kalite Ayarı -->
                 <div id="qualityOption" class="space-y-2 pt-2 border-t border-slate-100">
                     <div class="flex justify-between items-center text-xs font-medium text-slate-600">
                         <span>Image Quality & Compression:</span>
@@ -125,7 +123,7 @@
             </div>
         </div>
 
-        <!-- 🔥 Popüler Araç Kartları (Internal Linking) -->
+        <!-- Popular Dedicated Converters -->
         <section class="mt-16">
             <h2 class="text-2xl font-bold text-slate-900 mb-6 text-center">Popular Dedicated Converters</h2>
             <div class="grid sm:grid-cols-3 gap-6">
@@ -149,7 +147,7 @@
             </div>
         </section>
 
-        <!-- SEO & AdSense Metin İçerikleri -->
+        <!-- FAQ & Privacy Section -->
         <section class="mt-16 bg-white p-8 rounded-2xl border border-slate-200 space-y-6 text-slate-700 leading-relaxed text-sm">
             <h2 class="text-xl font-bold text-slate-900">Frequently Asked Questions (FAQ)</h2>
             
@@ -174,7 +172,7 @@
             <p>At <strong>PrivacyConvert</strong>, user privacy is our top priority. We do not collect, store, or transmit any images or personal data you process through our website. All conversion tasks take place client-side.</p>
         </section>
 
-        <!-- Bottom AdSpace Placeholder (AdSense) -->
+        <!-- Bottom AdSpace Placeholder -->
         <div class="w-full mt-8">
             <div class="bg-slate-100 border border-dashed border-slate-300 rounded-lg p-3 text-center text-xs text-slate-400">
                 <span>Advertisement</span>
@@ -213,6 +211,7 @@
         const qualityVal = document.getElementById('qualityVal');
 
         let selectedFiles = [];
+        let currentObjectUrl = null;
 
         // Kalite Slider Ayarı
         qualityRange.addEventListener('input', (e) => {
@@ -238,19 +237,37 @@
             handleFiles(e.dataTransfer.files);
         });
 
-        function handleFiles(files) {
+        async function handleFiles(files) {
             if (!files.length) return;
             selectedFiles = Array.from(files);
             
+            // Eski belleği temizle
+            if (currentObjectUrl) {
+                URL.revokeObjectURL(currentObjectUrl);
+                currentObjectUrl = null;
+            }
+
             if (selectedFiles.length === 1) {
                 const file = selectedFiles[0];
                 fileNameDisplay.textContent = file.name;
                 fileSizeDisplay.textContent = `${(file.size / 1024).toFixed(1)} KB`;
 
-                // Önizleme Oluşturma Mantığı
-                if (file.type.startsWith('image/')) {
-                    const imgUrl = URL.createObjectURL(file);
-                    previewThumbnail.innerHTML = `<img src="${imgUrl}" class="w-full h-full object-cover">`;
+                // HEIC uzantısı kontrolü
+                const isHeic = file.name.match(/\.(heic|heif)$/i);
+
+                if (file.type.startsWith('image/') || isHeic) {
+                    previewThumbnail.innerHTML = `<span class="text-xs text-slate-400">Loading...</span>`;
+                    try {
+                        let renderableBlob = file;
+                        if (isHeic && typeof heic2any === 'function') {
+                            const converted = await heic2any({ blob: file, toType: 'image/png' });
+                            renderableBlob = Array.isArray(converted) ? converted[0] : converted;
+                        }
+                        currentObjectUrl = URL.createObjectURL(renderableBlob);
+                        previewThumbnail.innerHTML = `<img src="${currentObjectUrl}" class="w-full h-full object-cover">`;
+                    } catch (e) {
+                        previewThumbnail.innerHTML = `<span class="text-2xl">🖼️</span>`;
+                    }
                 } else if (file.type === 'application/pdf') {
                     previewThumbnail.innerHTML = `<span class="text-2xl">📄</span>`;
                 } else {
@@ -285,7 +302,7 @@
                 }
             } catch (err) {
                 console.error(err);
-                alert("An error occurred during conversion.");
+                alert("An error occurred during conversion: " + (err.message || err));
             } finally {
                 hideStatus();
             }
@@ -300,12 +317,19 @@
             const ext = outputFormat === 'png' ? 'png' : 'jpg';
 
             for (let i = 1; i <= pdf.numPages; i++) {
+                showStatus(`Processing page ${i} of ${pdf.numPages}...`);
                 const page = await pdf.getPage(i);
                 const viewport = page.getViewport({ scale: 2.0 });
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
                 canvas.height = viewport.height;
                 canvas.width = viewport.width;
+
+                // PNG harici formatlarda arka planı beyaza boya (saydamlık siyah olmasın)
+                if (outputFormat !== 'png') {
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                }
 
                 await page.render({ canvasContext: ctx, viewport }).promise;
 
@@ -319,6 +343,7 @@
             }
 
             if (pdf.numPages > 1) {
+                showStatus("Generating ZIP file...");
                 const zipBlob = await zip.generateAsync({ type: 'blob' });
                 triggerDownload(zipBlob, `${file.name.replace(/\.pdf$/i, '')}_images.zip`);
             }
@@ -327,45 +352,94 @@
         // Görsel -> PDF Motoru
         async function processImagesToPdf(files) {
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+            let doc = null;
 
             for (let i = 0; i < files.length; i++) {
-                const imgUrl = URL.createObjectURL(files[i]);
+                showStatus(`Adding image ${i + 1} of ${files.length} to PDF...`);
+                let file = files[i];
+
+                // HEIC Desteği
+                if (file.name.match(/\.(heic|heif)$/i) && typeof heic2any === 'function') {
+                    const converted = await heic2any({ blob: file, toType: 'image/png' });
+                    file = Array.isArray(converted) ? converted[0] : converted;
+                }
+
+                const imgUrl = URL.createObjectURL(file);
                 const img = new Image();
                 img.src = imgUrl;
-                await new Promise(res => img.onload = res);
+                await new Promise((res, rej) => {
+                    img.onload = res;
+                    img.onerror = rej;
+                });
 
-                const pdfWidth = doc.internal.pageSize.getWidth();
-                const pdfHeight = (img.height * pdfWidth) / img.width;
+                const orientation = img.width > img.height ? 'l' : 'p';
+                
+                if (i === 0) {
+                    doc = new jsPDF({ orientation, unit: 'px', format: [img.width, img.height] });
+                } else {
+                    doc.addPage([img.width, img.height], orientation);
+                }
 
-                if (i > 0) doc.addPage();
-                doc.addImage(img, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+                doc.addImage(img, 'JPEG', 0, 0, img.width, img.height);
                 URL.revokeObjectURL(imgUrl);
             }
 
             doc.save('privacyconvert_document.pdf');
         }
 
-        // Görsel -> Görsel Motoru
+        // Görsel -> Görsel Motoru (ZIP Destekli)
         async function processStandardImages(files, format, quality) {
             const mimeType = `image/${format}`;
-            
-            for (const file of files) {
+            const zip = new JSZip();
+            const isSingle = files.length === 1;
+
+            for (let i = 0; i < files.length; i++) {
+                let file = files[i];
+                showStatus(`Converting image ${i + 1} of ${files.length}...`);
+
+                // HEIC Desteği
+                if (file.name.match(/\.(heic|heif)$/i) && typeof heic2any === 'function') {
+                    const converted = await heic2any({ blob: file, toType: 'image/png' });
+                    file = Array.isArray(converted) ? converted[0] : converted;
+                }
+
                 const imgUrl = URL.createObjectURL(file);
                 const img = new Image();
                 img.src = imgUrl;
-                await new Promise(res => img.onload = res);
+                await new Promise((res, rej) => {
+                    img.onload = res;
+                    img.onerror = rej;
+                });
 
                 const canvas = document.createElement('canvas');
                 canvas.width = img.width;
                 canvas.height = img.height;
                 const ctx = canvas.getContext('2d');
+
+                // PNG harici formatlarda arka planı beyaza boya
+                if (format !== 'png') {
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                }
+
                 ctx.drawImage(img, 0, 0);
 
                 const blob = await new Promise(res => canvas.toBlob(res, mimeType, quality));
-                const nameWithoutExt = file.name.substring(0, file.name.lastIndexOf('.'));
-                triggerDownload(blob, `${nameWithoutExt}.${format}`);
+                const nameWithoutExt = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
+
+                if (isSingle) {
+                    triggerDownload(blob, `${nameWithoutExt}.${format}`);
+                } else {
+                    zip.file(`${nameWithoutExt}.${format}`, blob);
+                }
+
                 URL.revokeObjectURL(imgUrl);
+            }
+
+            if (!isSingle) {
+                showStatus("Creating ZIP package...");
+                const zipBlob = await zip.generateAsync({ type: 'blob' });
+                triggerDownload(zipBlob, `converted_images_${Date.now()}.zip`);
             }
         }
 
