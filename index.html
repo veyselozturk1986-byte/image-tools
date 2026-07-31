@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr" class="light">
+<html lang="tr" dir="ltr" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- Dynamic SEO Meta Tags -->
-    <title id="pageTitle">PrivacyConvert - 100% Local Secure Tools</title>
-    <meta name="description" id="pageMetaDesc" content="Extract PDF pages, generate passwords, format JSON, and process images directly in your browser. 100% private.">
+    <title id="pageTitle">PrivacyConvert - %100 Yerel Güvenli Araçlar</title>
+    <meta name="description" id="pageMetaDesc" content="PDF sayfalarını çıkarın, şifre oluşturun, JSON biçimlendirin ve görselleri doğrudan tarayıcınızda işleyin. %100 gizli.">
     
     <!-- PWA Manifest & Theme Color -->
     <meta name="theme-color" content="#4f46e5">
@@ -65,15 +65,15 @@
     <!-- Global Drag & Drop Overlay -->
     <div id="globalDropOverlay" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex flex-col items-center justify-center text-white border-4 border-dashed border-indigo-400 m-4 rounded-3xl pointer-events-none transition-all">
         <svg class="w-20 h-20 text-indigo-400 animate-bounce mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
-        <h2 data-i18n="overlayTitle" class="text-3xl font-bold">Drop your files anywhere to process locally!</h2>
+        <h2 data-i18n="overlayTitle" class="text-3xl font-bold">Dosyalarınızı yerel olarak işlemek için buraya bırakın!</h2>
     </div>
 
     <!-- Progress Overlay Modal -->
     <div id="progressModal" class="hidden fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 z-40 flex items-center justify-center backdrop-blur-sm transition-opacity">
         <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-2xl w-80 text-center flex flex-col items-center border border-slate-200 dark:border-slate-700 animate-pulse">
             <div class="w-14 h-14 border-4 border-indigo-100 dark:border-slate-600 border-t-indigo-600 dark:border-t-indigo-400 rounded-full animate-spin mb-4"></div>
-            <h3 data-i18n="progressTitle" class="text-lg font-bold text-slate-800 dark:text-white mb-2">Processing Locally...</h3>
-            <p id="progressText" class="text-sm text-slate-500 dark:text-slate-400 font-medium">0 KB transferred to servers (100% Secure)</p>
+            <h3 data-i18n="progressTitle" class="text-lg font-bold text-slate-800 dark:text-white mb-2">Yerel Olarak İşleniyor...</h3>
+            <p id="progressText" class="text-sm text-slate-500 dark:text-slate-400 font-medium">Sunuculara 0 KB aktarıldı (%100 Güvenli)</p>
         </div>
     </div>
 
@@ -82,7 +82,7 @@
         <div class="bg-white dark:bg-slate-800 w-full max-w-lg rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col">
             <div class="p-4 border-b border-slate-100 dark:border-slate-700 flex items-center gap-3">
                 <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                <input type="text" id="cmdInput" data-i18n-placeholder="cmdPlaceholder" placeholder="Type a tool name..." class="w-full bg-transparent text-sm focus:outline-none dark:text-white">
+                <input type="text" id="cmdInput" data-i18n-placeholder="cmdPlaceholder" placeholder="Bir araç adı yazın..." class="w-full bg-transparent text-sm focus:outline-none dark:text-white">
                 <span class="text-[10px] bg-slate-100 dark:bg-slate-700 text-slate-500 px-2 py-1 rounded font-mono">ESC</span>
             </div>
             <div id="cmdResultsList" class="max-h-72 overflow-y-auto p-2 space-y-1"></div>
@@ -93,11 +93,11 @@
     <div id="shortcutsModal" class="hidden fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 z-50 flex items-center justify-center backdrop-blur-sm">
         <div class="bg-white dark:bg-slate-800 w-full max-w-md rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-700 relative">
             <button onclick="toggleShortcutsModal(false)" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600">✕</button>
-            <h3 data-i18n="shortcutsTitle" class="text-lg font-bold mb-4 text-slate-800 dark:text-white">Keyboard Shortcuts</h3>
+            <h3 data-i18n="shortcutsTitle" class="text-lg font-bold mb-4 text-slate-800 dark:text-white">Klavye Kısayolları</h3>
             <ul class="space-y-3 text-sm text-slate-600 dark:text-slate-300">
-                <li class="flex justify-between items-center bg-slate-50 dark:bg-slate-900 p-2.5 rounded-xl"><span data-i18n="shortcutCmd" class="font-medium">Command Palette</span><kbd class="bg-slate-200 dark:bg-slate-700 px-2 py-1 rounded font-mono text-xs">Ctrl + K</kbd></li>
-                <li class="flex justify-between items-center bg-slate-50 dark:bg-slate-900 p-2.5 rounded-xl"><span data-i18n="shortcutReset" class="font-medium">Reset Workspace</span><kbd class="bg-slate-200 dark:bg-slate-700 px-2 py-1 rounded font-mono text-xs">Esc</kbd></li>
-                <li class="flex justify-between items-center bg-slate-50 dark:bg-slate-900 p-2.5 rounded-xl"><span data-i18n="shortcutConvert" class="font-medium">Convert & Download</span><kbd class="bg-slate-200 dark:bg-slate-700 px-2 py-1 rounded font-mono text-xs">Ctrl + Enter</kbd></li>
+                <li class="flex justify-between items-center bg-slate-50 dark:bg-slate-900 p-2.5 rounded-xl"><span data-i18n="shortcutCmd" class="font-medium">Komut Paleti</span><kbd class="bg-slate-200 dark:bg-slate-700 px-2 py-1 rounded font-mono text-xs">Ctrl + K</kbd></li>
+                <li class="flex justify-between items-center bg-slate-50 dark:bg-slate-900 p-2.5 rounded-xl"><span data-i18n="shortcutReset" class="font-medium">Çalışma Alanını Sıfırla</span><kbd class="bg-slate-200 dark:bg-slate-700 px-2 py-1 rounded font-mono text-xs">Esc</kbd></li>
+                <li class="flex justify-between items-center bg-slate-50 dark:bg-slate-900 p-2.5 rounded-xl"><span data-i18n="shortcutConvert" class="font-medium">Dönüştür ve İndir</span><kbd class="bg-slate-200 dark:bg-slate-700 px-2 py-1 rounded font-mono text-xs">Ctrl + Enter</kbd></li>
             </ul>
         </div>
     </div>
@@ -128,7 +128,7 @@
                     <option value="ar">العربية</option>
                 </select>
                 <span class="hidden sm:inline-flex bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300 text-xs px-3 py-1.5 rounded-full font-bold items-center gap-1.5 shadow-sm border border-emerald-200 dark:border-emerald-800/50">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> 100% Local
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> %100 Yerel
                 </span>
                 <button onclick="toggleShortcutsModal(true)" class="p-2 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-xs font-bold transition-all" title="Keyboard Shortcuts">⌨️</button>
                 <button id="themeToggle" class="text-xl p-2 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 transition-all shadow-sm" title="Toggle Dark Mode">🌙</button>
@@ -142,10 +142,10 @@
         <!-- Title Section -->
         <div class="text-center mb-8">
             <h1 class="text-3xl sm:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-3">
-                <span id="mainTitlePrefix">Secure</span> <span id="mainTitleAccent" class="dynamic-text">PDF to PNG</span>
+                <span id="mainTitlePrefix">Güvenli</span> <span id="mainTitleAccent" class="dynamic-text">PDF - PNG</span>
             </h1>
             <p id="mainDesc" class="text-slate-500 dark:text-slate-400 text-sm sm:text-base max-w-2xl mx-auto font-medium">
-                Extract PDF pages into high-resolution PNG images directly in your browser. Fast, free, and completely private.
+                PDF sayfalarını doğrudan tarayıcınızda yüksek çözünürlüklü PNG görsellerine dönüştürün. Hızlı, ücretsiz ve tamamen gizli.
             </p>
         </div>
 
@@ -156,14 +156,14 @@
                     <svg class="w-7 h-7 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.966 11.966 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                 </div>
                 <div>
-                    <strong data-i18n="secTitle" class="block font-bold text-emerald-900 dark:text-emerald-300 text-base mb-1">100% Local & Secure Processing Guarantee</strong>
-                    <p data-i18n="secDesc" class="text-sm opacity-90 dark:opacity-80">All conversions run client-side. Zero bytes uploaded to any remote server.</p>
+                    <strong data-i18n="secTitle" class="block font-bold text-emerald-900 dark:text-emerald-300 text-base mb-1">%100 Yerel ve Güvenli İşleme Garantisi</strong>
+                    <p data-i18n="secDesc" class="text-sm opacity-90 dark:opacity-80">Tüm dönüşümler tarayıcınızda çalışır. Uzak sunucuya sıfır bayt yüklenir.</p>
                 </div>
             </div>
             <!-- Live Security Metric Counter -->
             <div class="bg-white/80 dark:bg-slate-900/80 px-4 py-2.5 rounded-xl border border-emerald-200 dark:border-emerald-800 text-center shrink-0 shadow-inner">
-                <span data-i18n="blockedCloudData" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Blocked Cloud Data</span>
-                <span id="liveCounterStat" class="text-base font-extrabold text-emerald-600 dark:text-emerald-400">0.0 MB Safe</span>
+                <span data-i18n="blockedCloudData" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Engellenen Bulut Verisi</span>
+                <span id="liveCounterStat" class="text-base font-extrabold text-emerald-600 dark:text-emerald-400">0.0 MB Güvende</span>
             </div>
         </div>
 
@@ -172,7 +172,7 @@
             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none rtl:left-auto rtl:right-4">
                 <svg class="h-5 w-5 text-slate-400 group-focus-within:text-indigo-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
             </div>
-            <input type="text" id="toolSearchInput" data-i18n-placeholder="searchPlaceholder" placeholder="Search 22 secure tools (Ctrl+K)..." class="w-full pl-11 pr-4 rtl:pl-4 rtl:pr-11 py-3.5 text-sm bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm focus:outline-none focus:border-indigo-500 dark:text-white transition-all">
+            <input type="text" id="toolSearchInput" data-i18n-placeholder="searchPlaceholder" placeholder="22 güvenli araçta ara (Ctrl+K)..." class="w-full pl-11 pr-4 rtl:pl-4 rtl:pr-11 py-3.5 text-sm bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm focus:outline-none focus:border-indigo-500 dark:text-white transition-all">
         </div>
 
         <!-- Categorized Converter Navigation (22 Tools) -->
@@ -180,94 +180,94 @@
             
             <!-- Category: PDF -->
             <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3 tool-category" data-cat="pdf">
-                <h3 data-i18n="catPdf" class="text-xs font-extrabold dynamic-text uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">📄 PDF Tools</h3>
+                <h3 data-i18n="catPdf" class="text-xs font-extrabold dynamic-text uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">📄 PDF Araçları</h3>
                 <div class="flex flex-col gap-2">
                     <button onclick="switchTool('pdf-to-png')" id="tab-pdf-to-png" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
-                        <span class="text-base shrink-0">🖼️</span> <span class="truncate">PDF to PNG</span>
+                        <span class="text-base shrink-0">🖼️</span> <span class="truncate">PDF - PNG</span>
                     </button>
                     <button onclick="switchTool('pdf-to-jpg')" id="tab-pdf-to-jpg" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
-                        <span class="text-base shrink-0">🌄</span> <span class="truncate">PDF to JPG</span>
+                        <span class="text-base shrink-0">🌄</span> <span class="truncate">PDF - JPG</span>
                     </button>
                     <button onclick="switchTool('merge-pdf')" id="tab-merge-pdf" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
-                        <span class="text-base shrink-0">📑</span> <span class="truncate">Merge PDF</span>
+                        <span class="text-base shrink-0">📑</span> <span class="truncate">PDF Birleştir</span>
                     </button>
                     <button onclick="switchTool('split-pdf')" id="tab-split-pdf" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
-                        <span class="text-base shrink-0">✂️</span> <span class="truncate">Split PDF</span>
+                        <span class="text-base shrink-0">✂️</span> <span class="truncate">PDF Böl</span>
                     </button>
                     <button onclick="switchTool('jpg-to-pdf')" id="tab-jpg-to-pdf" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
-                        <span class="text-base shrink-0">📁</span> <span class="truncate">JPG to PDF</span>
+                        <span class="text-base shrink-0">📁</span> <span class="truncate">JPG - PDF</span>
                     </button>
                 </div>
             </div>
 
             <!-- Category: Image -->
             <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3 tool-category" data-cat="image">
-                <h3 data-i18n="catImage" class="text-xs font-extrabold dynamic-text uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">🖼️ Image Tools</h3>
+                <h3 data-i18n="catImage" class="text-xs font-extrabold dynamic-text uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">🖼️ Resim Araçları</h3>
                 <div class="flex flex-col gap-2">
                     <button onclick="switchTool('compress-image')" id="tab-compress-image" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
-                        <span class="text-base shrink-0">🗜️</span> <span class="truncate">Compress Image</span>
+                        <span class="text-base shrink-0">🗜️</span> <span class="truncate">Resim Sıkıştır</span>
                     </button>
                     <button onclick="switchTool('heic-to-jpg')" id="tab-heic-to-jpg" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
-                        <span class="text-base shrink-0">🍏</span> <span class="truncate">HEIC to JPG</span>
+                        <span class="text-base shrink-0">🍏</span> <span class="truncate">HEIC - JPG</span>
                     </button>
                     <button onclick="switchTool('webp-converter')" id="tab-webp-converter" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
-                        <span class="text-base shrink-0">🌐</span> <span class="truncate">WebP Converter</span>
+                        <span class="text-base shrink-0">🌐</span> <span class="truncate">WebP Dönüştürücü</span>
                     </button>
                     <button onclick="switchTool('exif-remover')" id="tab-exif-remover" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
-                        <span class="text-base shrink-0">🧹</span> <span class="truncate">EXIF Metadata Remover</span>
+                        <span class="text-base shrink-0">🧹</span> <span class="truncate">EXIF Kaldırıcı</span>
                     </button>
                     <button onclick="switchTool('extract-pdf-img')" id="tab-extract-pdf-img" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
-                        <span class="text-base shrink-0">🔍</span> <span class="truncate">Extract PDF Images</span>
+                        <span class="text-base shrink-0">🔍</span> <span class="truncate">PDF Görsellerini Çıkar</span>
                     </button>
                     <button onclick="switchTool('redact-tool')" id="tab-redact-tool" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
-                        <span class="text-base shrink-0">🕶️</span> <span class="truncate">Redact / Censor</span>
+                        <span class="text-base shrink-0">🕶️</span> <span class="truncate">Sansürle / Gizle</span>
                     </button>
                 </div>
             </div>
 
             <!-- Category: Dev & Text -->
             <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3 tool-category" data-cat="dev">
-                <h3 data-i18n="catDev" class="text-xs font-extrabold dynamic-text uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">💻 Text & Dev</h3>
+                <h3 data-i18n="catDev" class="text-xs font-extrabold dynamic-text uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">💻 Metin & Geliştirici</h3>
                 <div class="flex flex-col gap-2">
                     <button onclick="switchTool('json-tool')" id="tab-json-tool" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
-                        <span class="text-base shrink-0">{}</span> <span class="truncate">JSON Formatter</span>
+                        <span class="text-base shrink-0">{}</span> <span class="truncate">JSON Biçimlendirici</span>
                     </button>
                     <button onclick="switchTool('base64-tool')" id="tab-base64-tool" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
-                        <span class="text-base shrink-0">🔤</span> <span class="truncate">Base64 Tool</span>
+                        <span class="text-base shrink-0">🔤</span> <span class="truncate">Base64 Aracı</span>
                     </button>
                     <button onclick="switchTool('url-tool')" id="tab-url-tool" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
-                        <span class="text-base shrink-0">🔗</span> <span class="truncate">URL Tool</span>
+                        <span class="text-base shrink-0">🔗</span> <span class="truncate">URL Aracı</span>
                     </button>
                     <button onclick="switchTool('diff-tool')" id="tab-diff-tool" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
-                        <span class="text-base shrink-0">⚖️</span> <span class="truncate">Text Diff Checker</span>
+                        <span class="text-base shrink-0">⚖️</span> <span class="truncate">Metin Farkı (Diff)</span>
                     </button>
                     <button onclick="switchTool('md-tool')" id="tab-md-tool" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
-                        <span class="text-base shrink-0">📝</span> <span class="truncate">Markdown Preview</span>
+                        <span class="text-base shrink-0">📝</span> <span class="truncate">Markdown Önizleme</span>
                     </button>
                 </div>
             </div>
 
             <!-- Category: Security & Utils -->
             <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3 tool-category" data-cat="security">
-                <h3 data-i18n="catSec" class="text-xs font-extrabold dynamic-text uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">🔐 Security & Utils</h3>
+                <h3 data-i18n="catSec" class="text-xs font-extrabold dynamic-text uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">🔐 Güvenlik & Araçlar</h3>
                 <div class="flex flex-col gap-2">
                     <button onclick="switchTool('password-gen')" id="tab-password-gen" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
-                        <span class="text-base shrink-0">🔑</span> <span class="truncate">Password Generator</span>
+                        <span class="text-base shrink-0">🔑</span> <span class="truncate">Şifre Üretici</span>
                     </button>
                     <button onclick="switchTool('encrypt-pdf')" id="tab-encrypt-pdf" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
-                        <span class="text-base shrink-0">🔒</span> <span class="truncate">Encrypt PDF</span>
+                        <span class="text-base shrink-0">🔒</span> <span class="truncate">PDF Şifrele</span>
                     </button>
                     <button onclick="switchTool('hash-calc')" id="tab-hash-calc" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
-                        <span class="text-base shrink-0">🛡️</span> <span class="truncate">File Checksum Hash</span>
+                        <span class="text-base shrink-0">🛡️</span> <span class="truncate">Dosya Hash</span>
                     </button>
                     <button onclick="switchTool('uuid-gen')" id="tab-uuid-gen" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
-                        <span class="text-base shrink-0">🆔</span> <span class="truncate">UUID Generator</span>
+                        <span class="text-base shrink-0">🆔</span> <span class="truncate">UUID Üretici</span>
                     </button>
                     <button onclick="switchTool('qr-tool')" id="tab-qr-tool" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
-                        <span class="text-base shrink-0">📱</span> <span class="truncate">QR Code Generator</span>
+                        <span class="text-base shrink-0">📱</span> <span class="truncate">QR Kod Üretici</span>
                     </button>
                     <button onclick="switchTool('ocr-reader')" id="tab-ocr-reader" class="tool-tab w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500 hover:shadow">
-                        <span class="text-base shrink-0">👁️</span> <span class="truncate">OCR Text Reader</span>
+                        <span class="text-base shrink-0">👁️</span> <span class="truncate">OCR Metin Okuyucu</span>
                     </button>
                 </div>
             </div>
@@ -278,7 +278,7 @@
             
             <!-- Clear Button -->
             <button id="clearBtn" data-i18n="reset" class="hidden absolute top-6 right-6 rtl:right-auto rtl:left-6 text-xs font-bold text-red-500 dark:text-red-400 hover:text-red-700 bg-red-50 dark:bg-red-900/30 px-3 py-2 rounded-lg transition-all flex items-center gap-1.5 z-10">
-                Reset
+                Sıfırla
             </button>
 
             <!-- Drag & Drop Area -->
@@ -286,8 +286,8 @@
                 <div class="bg-indigo-100 dark:bg-slate-700 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
                     <svg class="w-8 h-8 dynamic-text" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
                 </div>
-                <p data-i18n="dropText" class="text-slate-800 dark:text-slate-200 font-bold text-lg">Click to browse or drag files here</p>
-                <p data-i18n="dropSubText" class="text-sm text-slate-500 dark:text-slate-400 mt-2">Support for single or batch processing (Drag to reorder list items below!)</p>
+                <p data-i18n="dropText" class="text-slate-800 dark:text-slate-200 font-bold text-lg">Göz atmak için tıklayın veya dosyaları buraya sürükleyin</p>
+                <p data-i18n="dropSubText" class="text-sm text-slate-500 dark:text-slate-400 mt-2">Tekli veya toplu işleme desteği (Listeyi yeniden sıralamak için sürükleyin!)</p>
             </div>
             <input type="file" id="fileInput" class="hidden" />
 
@@ -306,14 +306,14 @@
                     <div id="textDataBoxes" class="w-full h-full flex flex-col gap-4">
                         <div id="genericTextBox" class="hidden w-full flex flex-col gap-2">
                             <div class="flex justify-between items-center px-1">
-                                <span data-i18n="output" class="text-xs font-bold text-slate-500 uppercase">Output:</span>
-                                <button onclick="copyGenericText()" data-i18n="copy" class="text-xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-lg font-semibold">📋 Copy</button>
+                                <span data-i18n="output" class="text-xs font-bold text-slate-500 uppercase">Çıktı:</span>
+                                <button onclick="copyGenericText()" data-i18n="copy" class="text-xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-lg font-semibold">📋 Kopyala</button>
                             </div>
-                            <textarea id="genericTextArea" data-i18n-placeholder="resultPlaceholder" class="w-full h-48 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 text-sm p-4 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none resize-none font-mono shadow-inner" placeholder="Result will appear here..."></textarea>
+                            <textarea id="genericTextArea" data-i18n-placeholder="resultPlaceholder" class="w-full h-48 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 text-sm p-4 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none resize-none font-mono shadow-inner" placeholder="Sonuç burada görünecektir..."></textarea>
                         </div>
 
                         <div id="diffResultBox" class="hidden w-full flex flex-col space-y-2">
-                            <span data-i18n="comparisonOutput" class="text-xs font-bold text-slate-500 uppercase px-1">Comparison Output:</span>
+                            <span data-i18n="comparisonOutput" class="text-xs font-bold text-slate-500 uppercase px-1">Karşılaştırma Çıktısı:</span>
                             <div id="diffOutputContainer" class="w-full min-h-[160px] bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-mono text-sm p-4 rounded-xl border border-slate-200 dark:border-slate-700 whitespace-pre-wrap overflow-y-auto max-h-64"></div>
                         </div>
 
@@ -325,31 +325,31 @@
                         <div id="generatorResultBox" class="hidden w-full flex flex-col items-center justify-center py-8 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 gap-4">
                             <div class="w-full max-w-md flex items-center gap-2 px-4">
                                 <input type="text" id="generatedDisplay" readonly class="w-full p-3 bg-white dark:bg-slate-800 dynamic-text font-mono font-bold text-center rounded-xl border border-slate-200 dark:border-slate-700 text-lg">
-                                <button onclick="copyGenerated()" data-i18n="copy" class="px-4 py-3 dynamic-bg hover:opacity-90 text-white font-bold rounded-xl shadow-sm">Copy</button>
+                                <button onclick="copyGenerated()" data-i18n="copy" class="px-4 py-3 dynamic-bg hover:opacity-90 text-white font-bold rounded-xl shadow-sm">Kopyala</button>
                             </div>
-                            <button id="genAnotherBtn" data-i18n="generateAnother" class="text-sm font-semibold text-slate-500 hover:text-slate-700 dark:text-slate-400">🔄 Generate Another</button>
+                            <button id="genAnotherBtn" data-i18n="generateAnother" class="text-sm font-semibold text-slate-500 hover:text-slate-700 dark:text-slate-400">🔄 Başka Üret</button>
                         </div>
 
                         <div id="primaryInputsArea" class="w-full flex flex-col gap-4">
                             <div id="textInputGroup" class="hidden">
-                                <textarea id="mainInputField" class="w-full h-32 p-4 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 dark:text-white focus:outline-none resize-none shadow-sm" placeholder="Paste data here..."></textarea>
+                                <textarea id="mainInputField" class="w-full h-32 p-4 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 dark:text-white focus:outline-none resize-none shadow-sm" placeholder="Veriyi buraya yapıştırın..."></textarea>
                             </div>
                             
                             <div id="passwordOptionsGroup" class="hidden bg-white dark:bg-slate-800 p-4 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm">
                                 <div class="mb-4">
-                                    <label id="passLengthLabel" class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 flex justify-between">Length: <span id="passLenVal" class="dynamic-text">16</span></label>
+                                    <label id="passLengthLabel" class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 flex justify-between">Uzunluk: <span id="passLenVal" class="dynamic-text">16</span></label>
                                     <input type="range" id="passLength" min="8" max="64" value="16" class="w-full accent-indigo-600 cursor-pointer" oninput="document.getElementById('passLenVal').textContent=this.value; generateNewPassword();">
                                 </div>
                                 <div class="flex flex-wrap gap-4 text-sm font-semibold text-slate-700 dark:text-slate-300">
-                                    <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="passSymbols" checked class="w-4 h-4 rounded text-indigo-600" onchange="generateNewPassword()"> <span data-i18n="passSym">Symbols</span></label>
-                                    <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="passNumbers" checked class="w-4 h-4 rounded text-indigo-600" onchange="generateNewPassword()"> <span data-i18n="passNum">Numbers</span></label>
-                                    <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="passUppercase" checked class="w-4 h-4 rounded text-indigo-600" onchange="generateNewPassword()"> <span data-i18n="passUp">Uppercase</span></label>
+                                    <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="passSymbols" checked class="w-4 h-4 rounded text-indigo-600" onchange="generateNewPassword()"> <span data-i18n="passSym">Semboller</span></label>
+                                    <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="passNumbers" checked class="w-4 h-4 rounded text-indigo-600" onchange="generateNewPassword()"> <span data-i18n="passNum">Rakamlar</span></label>
+                                    <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="passUppercase" checked class="w-4 h-4 rounded text-indigo-600" onchange="generateNewPassword()"> <span data-i18n="passUp">Büyük Harf</span></label>
                                 </div>
                             </div>
 
                             <div id="diffInputGroup" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <textarea id="diffOriginal" data-i18n-placeholder="diffOrigPlaceholder" placeholder="Original text..." class="w-full h-32 p-3 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 dark:text-white focus:outline-none resize-none font-mono" oninput="processDiff()"></textarea>
-                                <textarea id="diffModified" data-i18n-placeholder="diffModPlaceholder" placeholder="Modified text..." class="w-full h-32 p-3 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 dark:text-white focus:outline-none resize-none font-mono" oninput="processDiff()"></textarea>
+                                <textarea id="diffOriginal" data-i18n-placeholder="diffOrigPlaceholder" placeholder="Orijinal metin..." class="w-full h-32 p-3 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 dark:text-white focus:outline-none resize-none font-mono" oninput="processDiff()"></textarea>
+                                <textarea id="diffModified" data-i18n-placeholder="diffModPlaceholder" placeholder="Değiştirilmiş metin..." class="w-full h-32 p-3 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 dark:text-white focus:outline-none resize-none font-mono" oninput="processDiff()"></textarea>
                             </div>
                         </div>
                     </div>
@@ -358,38 +358,38 @@
                 <!-- Advanced Settings Accordion -->
                 <div id="advancedAccordionWrapper" class="hidden w-full border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden bg-white dark:bg-slate-800 shadow-sm">
                     <button id="accordionToggleBtn" class="w-full flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors focus:outline-none">
-                        <div data-i18n="advancedSettings" class="flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-300">⚙️ Advanced Settings</div>
+                        <div data-i18n="advancedSettings" class="flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-300">⚙️ Gelişmiş Ayarlar</div>
                         <svg id="accordionChevron" class="w-5 h-5 text-slate-400 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                     </button>
                     
                     <div id="accordionContent" class="hidden p-5 border-t border-slate-200 dark:border-slate-700 space-y-4">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
                             <div id="qualityContainer">
-                                <label data-i18n="renderQuality" class="block text-xs font-bold text-slate-500 uppercase mb-2">Render Quality:</label>
+                                <label data-i18n="renderQuality" class="block text-xs font-bold text-slate-500 uppercase mb-2">Oluşturma Kalitesi:</label>
                                 <select id="renderScale" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-sm rounded-xl p-2.5 font-semibold">
-                                    <option value="1.5" data-i18n="qualityStd">Standard (150 DPI)</option>
-                                    <option value="2.0" data-i18n="qualityHigh" selected>High Quality (200 DPI)</option>
+                                    <option value="1.5" data-i18n="qualityStd">Standart (150 DPI)</option>
+                                    <option value="2.0" data-i18n="qualityHigh" selected>Yüksek Kalite (200 DPI)</option>
                                     <option value="3.0" data-i18n="qualityUltra">Ultra HD (300 DPI)</option>
                                 </select>
                             </div>
                             <div id="formatContainer">
-                                <label data-i18n="outputInfo" class="block text-xs font-bold text-slate-500 uppercase mb-2">Output Info:</label>
+                                <label data-i18n="outputInfo" class="block text-xs font-bold text-slate-500 uppercase mb-2">Çıktı Bilgisi:</label>
                                 <div id="outputFormatBadge" class="p-2.5 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-bold flex items-center justify-center gap-2">🖼️ PNG</div>
                             </div>
                         </div>
 
                         <div id="encryptOptionsGroup" class="hidden space-y-2">
-                            <label data-i18n="setPdfPass" class="block text-xs font-bold text-slate-500 uppercase">Set PDF Password:</label>
-                            <input type="password" id="pdfPassInput" data-i18n-placeholder="pdfPassPlaceholder" placeholder="Enter secure password" class="w-full p-2.5 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white">
+                            <label data-i18n="setPdfPass" class="block text-xs font-bold text-slate-500 uppercase">PDF Şifresi Belirle:</label>
+                            <input type="password" id="pdfPassInput" data-i18n-placeholder="pdfPassPlaceholder" placeholder="Güvenli şifre girin" class="w-full p-2.5 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white">
                         </div>
 
                         <div id="compressOptionsGroup" class="hidden space-y-2">
-                            <label data-i18n="targetFileSize" class="block text-xs font-bold text-slate-500 uppercase">Target File Size (Max MB):</label>
+                            <label data-i18n="targetFileSize" class="block text-xs font-bold text-slate-500 uppercase">Hedef Dosya Boyutu (Maks. MB):</label>
                             <input type="number" id="compressionLevel" value="1" step="0.5" min="0.1" class="w-full p-2.5 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white">
                         </div>
 
                         <div id="webpOptionsGroup" class="hidden space-y-2">
-                            <label data-i18n="targetWebFormat" class="block text-xs font-bold text-slate-500 uppercase">Target Web Format:</label>
+                            <label data-i18n="targetWebFormat" class="block text-xs font-bold text-slate-500 uppercase">Hedef Web Formatı:</label>
                             <select id="webpFormatSelect" class="w-full p-2.5 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white">
                                 <option value="image/webp">WebP (.webp)</option>
                                 <option value="image/avif">AVIF (.avif)</option>
@@ -397,7 +397,7 @@
                         </div>
 
                         <div id="pdfRangeGroup" class="hidden space-y-2">
-                            <label data-i18n="pageRange" class="block text-xs font-bold text-slate-500 uppercase">Page Range (e.g. 1, 3-5 or 'all'):</label>
+                            <label data-i18n="pageRange" class="block text-xs font-bold text-slate-500 uppercase">Sayfa Aralığı (örn. 1, 3-5 veya 'all'):</label>
                             <input type="text" id="pdfPageRange" value="all" class="w-full p-2.5 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white">
                         </div>
                     </div>
@@ -406,33 +406,33 @@
                 <!-- Convert Button -->
                 <button id="convertBtn" class="w-full dynamic-bg hover:opacity-90 text-white font-bold py-4 px-6 rounded-2xl shadow-lg transition-all active:scale-95 text-lg flex items-center justify-center gap-3">
                     <svg class="w-6 h-6 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                    <span id="convertBtnText" data-i18n="convertBtn">Convert & Download</span>
+                    <span id="convertBtnText" data-i18n="convertBtn">Dönüştür ve İndir</span>
                 </button>
             </div>
         </div>
 
         <!-- FAQ & Security Architecture Trust Section -->
         <div class="max-w-3xl mx-auto mt-12 bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 space-y-6 transition-colors duration-300">
-            <h2 data-i18n="faqMainTitle" class="text-xl font-extrabold text-slate-900 dark:text-white text-center mb-6">Frequently Asked Questions & Security Architecture</h2>
+            <h2 data-i18n="faqMainTitle" class="text-xl font-extrabold text-slate-900 dark:text-white text-center mb-6">Sık Sorulan Sorular ve Güvenlik Mimarisi</h2>
             <div class="space-y-4 text-sm text-slate-600 dark:text-slate-300">
                 <div class="border-b border-slate-100 dark:border-slate-700 pb-4">
-                    <h3 data-i18n="faq1Title" class="font-bold text-slate-800 dark:text-slate-200 mb-1">How does PrivacyConvert process files without a server?</h3>
-                    <p data-i18n="faq1Desc" class="leading-relaxed opacity-90">PrivacyConvert uses advanced client-side browser technologies (WebAssembly, PDF.js, Canvas API). When you select or drop a file, your browser's own CPU and memory handle the conversion locally.</p>
+                    <h3 data-i18n="faq1Title" class="font-bold text-slate-800 dark:text-slate-200 mb-1">PrivacyConvert dosyaları sunucu olmadan nasıl işler?</h3>
+                    <p data-i18n="faq1Desc" class="leading-relaxed opacity-90">PrivacyConvert, gelişmiş istemci tarafı tarayıcı teknolojilerini (WebAssembly, PDF.js, Canvas API) kullanır. Bir dosyayı seçtiğinizde veya bıraktığınızda, tarayıcınızın kendi CPU ve belleği dönüşümü yerel olarak gerçekleştirir.</p>
                 </div>
                 <div class="border-b border-slate-100 dark:border-slate-700 pb-4">
-                    <h3 data-i18n="faq2Title" class="font-bold text-slate-800 dark:text-slate-200 mb-1">Do my files ever leave my device?</h3>
-                    <p data-i18n="faq2Desc" class="leading-relaxed opacity-90">Never. Because there is no backend server processing your files, your sensitive documents, PDFs, and images never touch the internet or any remote cloud storage. They remain 100% on your local machine.</p>
+                    <h3 data-i18n="faq2Title" class="font-bold text-slate-800 dark:text-slate-200 mb-1">Dosyalarım cihazımdan hiç ayrılıyor mu?</h3>
+                    <p data-i18n="faq2Desc" class="leading-relaxed opacity-90">Asla. Dosyalarınızı işleyen bir sunucu olmadığından, hassas belgeleriniz, PDF'leriniz ve görselleriniz asla internete veya uzak bulut depolamaya gitmez. %100 yerel makinenizde kalır.</p>
                 </div>
                 <div class="border-b border-slate-100 dark:border-slate-700 pb-4">
-                    <h3 data-i18n="faq3Title" class="font-bold text-slate-800 dark:text-slate-200 mb-1">Why is this approach safer than traditional online converters?</h3>
-                    <p data-i18n="faq3Desc" class="leading-relaxed opacity-90">Traditional online converters require you to upload your sensitive files to their remote servers, posing major data breach and privacy risks. PrivacyConvert eliminates this risk entirely.</p>
+                    <h3 data-i18n="faq3Title" class="font-bold text-slate-800 dark:text-slate-200 mb-1">Bu yaklaşım neden geleneksel çevrimiçi dönüştürücülerden daha güvenlidir?</h3>
+                    <p data-i18n="faq3Desc" class="leading-relaxed opacity-90">Geleneksel çevrimiçi dönüştürücüler, hassas dosyalarınızı uzak sunucularına yüklemenizi gerektirir ve gizlilik riskleri oluşturur. PrivacyConvert bu riski tamamen ortadan kaldırır.</p>
                 </div>
                 <div>
-                    <h3 data-i18n="faq4Title" class="font-bold text-slate-800 dark:text-slate-200 mb-1">How can you verify this yourself (Zero Network Proof)?</h3>
-                    <p data-i18n="faq4Desc" class="leading-relaxed opacity-90 mb-3">You don't just have to take our word for it. You can inspect and prove this right now:</p>
+                    <h3 data-i18n="faq4Title" class="font-bold text-slate-800 dark:text-slate-200 mb-1">Bunu kendiniz nasıl doğrulayabilirsiniz (Sıfır Ağ Kanıtı)?</h3>
+                    <p data-i18n="faq4Desc" class="leading-relaxed opacity-90 mb-3">Sadece sözümüze güvenmek zorunda değilsiniz. Bunu hemen inceleyebilir ve kanıtlayabilirsiniz:</p>
                     <ul class="list-disc pl-5 space-y-2 opacity-90">
-                        <li id="verifyStep1" data-i18n="verifyStep1"><strong>Network Inspector Test:</strong> Press <kbd class="bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded font-mono text-xs">F12</kbd> to open browser Developer Tools, go to the <strong>Network</strong> tab, and convert any file. You will observe zero outbound file upload requests.</li>
-                        <li id="verifyStep2" data-i18n="verifyStep2"><strong>Offline Mode Test:</strong> Completely disconnect your computer from Wi-Fi or internet. PrivacyConvert will continue to convert and process your files without interruption.</li>
+                        <li id="verifyStep1" data-i18n="verifyStep1"><strong>Ağ Denetçisi Testi:</strong> Tarayıcı Geliştirici Araçlarını açmak için <kbd class="bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded font-mono text-xs">F12</kbd> tuşuna basın, <strong>Network (Ağ)</strong> sekmesine gidin ve herhangi bir dosyayı dönüştürün. Sıfır giden dosya yükleme isteği göreceksiniz.</li>
+                        <li id="verifyStep2" data-i18n="verifyStep2"><strong>Çevrimdışı Mod Testi:</strong> Bilgisayarınızın Wi-Fi veya internet bağlantısını tamamen kesin. PrivacyConvert dosyalarınızı kesintisiz olarak dönüştürmeye ve işlemeye devam edecektir.</li>
                     </ul>
                 </div>
             </div>
@@ -441,8 +441,8 @@
         <!-- Local History Section -->
         <div id="historyContainer" class="max-w-3xl mx-auto mt-8 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50">
-                <h3 data-i18n="recentActivity" class="text-sm font-bold text-slate-700 dark:text-slate-300">🕒 Recent Local Activity</h3>
-                <button onclick="clearHistory()" data-i18n="clear" id="clearHistoryBtn" class="text-xs font-semibold text-slate-400 hover:text-red-500">Clear</button>
+                <h3 data-i18n="recentActivity" class="text-sm font-bold text-slate-700 dark:text-slate-300">🕒 Son Yerel Etkinlik</h3>
+                <button onclick="clearHistory()" data-i18n="clear" id="clearHistoryBtn" class="text-xs font-semibold text-slate-400 hover:text-red-500">Temizle</button>
             </div>
             <ul id="historyList" class="divide-y divide-slate-100 dark:divide-slate-700/50"></ul>
         </div>
@@ -469,16 +469,16 @@
             totalSafeBytes += fileSize;
             localStorage.setItem('privacyConvert_safeBytes', totalSafeBytes);
             const mb = (totalSafeBytes / (1024 * 1024)).toFixed(2);
-            const t = translations[currentLang] || translations['en'];
-            document.getElementById('liveCounterStat').textContent = `${mb} ${t.mbSafe || 'MB Safe'}`;
+            const t = translations[currentLang] || translations['tr'];
+            document.getElementById('liveCounterStat').textContent = `${mb} ${t.mbSafe || 'MB Güvende'}`;
         }
         updateLiveCounter(0);
 
-        // Comprehensive Translation Map (Including Turkish)
+        // Comprehensive Translation Map (Turkish Default)
         const translations = {
             tr: {
-                overlayTitle: "Dosyalarınızı yerel olarak işlemek için istediğiniz yere bırakın!",
-                progressTitle: "Yerel olarak işleniyor...",
+                overlayTitle: "Dosyalarınızı yerel olarak işlemek için buraya bırakın!",
+                progressTitle: "Yerel Olarak İşleniyor...",
                 secTitle: "%100 Yerel ve Güvenli İşleme Garantisi",
                 secDesc: "Tüm dönüşümler tarayıcınızda çalışır. Uzak sunucuya sıfır bayt yüklenir.",
                 blockedCloudData: "Engellenen Bulut Verisi",
@@ -685,7 +685,7 @@
                 faq3Title: "为什么这种方法比传统的在线转换器更安全？",
                 faq3Desc: "传统的在线转换器要求您将敏感文件上传到其远程服务器，存在重大数据泄露和隐私风险。PrivacyConvert 完全消除了这种风险。",
                 faq4Title: "您如何亲自验证这一点（零网络证明）？",
-                faq4Desc: "您不必只听信我们的话。您可以立即通过以下两种简单方法进行检查：",
+                faq4Desc: "您不必只听信我们的话。您可以立即通过以下两项简单检查来证明：",
                 verifyStep1: "<strong>网络检查器测试：</strong> 按 F12 打开浏览器开发者工具，转到“网络 (Network)”选项卡并转换任何文件。您将观察到零出站文件上传请求。",
                 verifyStep2: "<strong>离线模式测试：</strong> 完全断开计算机的 Wi-Fi 或互联网连接。PrivacyConvert 将继续无中断地转换和处理您的文件。",
                 tools: {
@@ -1031,7 +1031,10 @@
             }
         };
 
+        // Eğer daha önce kaydedilmiş bir dil yoksa veya eski 'en' takılı kaldıysa 'tr' yap
         let currentLang = localStorage.getItem('privacyConvert_lang') || 'tr';
+        if (!translations[currentLang]) currentLang = 'tr';
+        
         const langSelect = document.getElementById('langSelect');
         langSelect.value = currentLang;
         let currentTool = 'pdf-to-png';
@@ -1045,7 +1048,6 @@
             
             const t = translations[lang] || translations['tr'];
 
-            // Robust data-i18n UI translation engine
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (t[key]) el.innerHTML = t[key];
@@ -1223,7 +1225,7 @@
                 const el = document.getElementById(id);
                 if(el) el.classList.add('hidden');
             });
-            document.getElementById('convertBtnText').textContent = translations[currentLang]?.convertBtn || "Convert & Download";
+            document.getElementById('convertBtnText').textContent = translations[currentLang]?.convertBtn || "Dönüştür ve İndir";
         }
         clearBtn.addEventListener('click', resetApp);
 
@@ -1401,14 +1403,14 @@
             clearBtn.classList.remove('hidden');
             
             renderFileList();
-            showToast(`${files.length} file(s) loaded securely.`);
+            showToast(`${files.length} dosya güvenle yüklendi.`);
             
             let totalBytes = Array.from(files).reduce((acc, f) => acc + f.size, 0);
             updateLiveCounter(totalBytes);
 
             if(currentTool === 'hash-calc' || currentTool === 'ocr-reader') {
                 document.getElementById('genericTextBox').classList.remove('hidden');
-                document.getElementById('genericTextArea').value = `Ready to process: ${selectedFiles[0].name}`;
+                document.getElementById('genericTextArea').value = `İşleme hazır: ${selectedFiles[0].name}`;
             }
         }
 
@@ -1474,7 +1476,7 @@
             const output = document.getElementById('genericTextArea');
             if(!input) { output.value = ""; return; }
             try { output.value = JSON.stringify(JSON.parse(input), null, 2); } 
-            catch (err) { output.value = "Invalid JSON Syntax:\n" + err.message; }
+            catch (err) { output.value = "Geçersiz JSON Sözdizimi:\n" + err.message; }
         }
 
         function processDiff() {
@@ -1515,15 +1517,15 @@
             document.getElementById('generatedDisplay').value = uuid;
         }
 
-        window.copyGenericText = () => { document.getElementById('genericTextArea').select(); document.execCommand('copy'); showToast("Copied to clipboard!"); }
-        window.copyGenerated = () => { document.getElementById('generatedDisplay').select(); document.execCommand('copy'); showToast("Copied to clipboard!"); }
+        window.copyGenericText = () => { document.getElementById('genericTextArea').select(); document.execCommand('copy'); showToast("Panoya kopyalandı!"); }
+        window.copyGenerated = () => { document.getElementById('generatedDisplay').select(); document.execCommand('copy'); showToast("Panoya kopyalandı!"); }
 
         function renderHistory() {
             const list = document.getElementById('historyList');
             let history = JSON.parse(localStorage.getItem('privacyConvert_history')) || [];
             list.innerHTML = '';
             if (history.length === 0) {
-                list.innerHTML = `<li class="p-4 text-sm text-slate-500 text-center">No recent activity found.</li>`;
+                list.innerHTML = `<li class="p-4 text-sm text-slate-500 text-center">Yakın zamanda etkinlik bulunamadı.</li>`;
                 return;
             }
             history.forEach(item => {
@@ -1546,50 +1548,50 @@
         window.clearHistory = () => {
             localStorage.removeItem('privacyConvert_history');
             renderHistory();
-            showToast("History cleared");
+            showToast("Geçmiş temizlendi");
         }
 
         const convertBtn = document.getElementById('convertBtn');
         convertBtn.addEventListener('click', async () => {
             if (currentTool === 'password-gen' || currentTool === 'uuid-gen') { window.copyGenerated(); return; }
-            if (currentTool === 'json-tool') { processJson(); addHistory("Formatted JSON String"); showToast("JSON Formatted!"); return; }
+            if (currentTool === 'json-tool') { processJson(); addHistory("JSON Biçimlendirildi"); showToast("JSON Biçimlendirildi!"); return; }
             if (currentTool === 'md-tool') {
                 const input = document.getElementById('mainInputField').value.trim();
                 const output = document.getElementById('genericTextArea');
                 output.value = typeof marked !== 'undefined' ? marked.parse(input) : input;
                 document.getElementById('genericTextBox').classList.remove('hidden');
-                addHistory("Rendered Markdown to HTML");
-                showToast("Markdown converted to HTML!");
+                addHistory("Markdown HTML'e Çevrildi");
+                showToast("Markdown HTML'e dönüştürüldü!");
                 return;
             }
             if (currentTool === 'qr-tool') {
                 const input = document.getElementById('mainInputField').value.trim();
-                if(!input) { showToast("Enter URL/Text first", "error"); return; }
+                if(!input) { showToast("Önce URL/Metin girin", "error"); return; }
                 const display = document.getElementById('qrcodeDisplay');
                 display.innerHTML = '';
                 if(typeof QRCode !== 'undefined') {
                     new QRCode(display, { text: input, width: 200, height: 200 });
                     document.getElementById('qrTextDisplay').textContent = input;
-                    addHistory("Generated QR Code");
-                    showToast("QR Code Generated!");
+                    addHistory("QR Kod Oluşturuldu");
+                    showToast("QR Kod Oluşturuldu!");
                 }
                 return;
             }
             if (currentTool === 'base64-tool' || currentTool === 'url-tool') {
                 const input = document.getElementById('mainInputField').value.trim();
                 const output = document.getElementById('genericTextArea');
-                if(!input) { showToast("Enter text first", "error"); return; }
+                if(!input) { showToast("Önce metin girin", "error"); return; }
                 
                 if (currentTool === 'base64-tool') {
                     try { 
                         const isB64 = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/.test(input);
-                        if(isB64 && input.length % 4 === 0) { output.value = atob(input); showToast("Decoded Base64"); addHistory("Decoded Base64 String"); } 
-                        else { output.value = btoa(input); showToast("Encoded Base64"); addHistory("Encoded Base64 String");}
-                    } catch(e) { output.value = btoa(input); showToast("Encoded Base64"); addHistory("Encoded Base64 String"); }
+                        if(isB64 && input.length % 4 === 0) { output.value = atob(input); showToast("Base64 Çözüldü"); addHistory("Base64 Çözüldü"); } 
+                        else { output.value = btoa(input); showToast("Base64 Kodlandı"); addHistory("Base64 Kodlandı");}
+                    } catch(e) { output.value = btoa(input); showToast("Base64 Kodlandı"); addHistory("Base64 Kodlandı"); }
                 } else {
-                    if (input.includes('%')) { try { output.value = decodeURIComponent(input); addHistory("Decoded URL");} catch(e) { output.value = encodeURIComponent(input); } } 
-                    else { output.value = encodeURIComponent(input); addHistory("Encoded URL");}
-                    showToast("Processed URL string");
+                    if (input.includes('%')) { try { output.value = decodeURIComponent(input); addHistory("URL Çözüldü");} catch(e) { output.value = encodeURIComponent(input); } } 
+                    else { output.value = encodeURIComponent(input); addHistory("URL Kodlandı");}
+                    showToast("URL işlendi");
                 }
                 document.getElementById('genericTextBox').classList.remove('hidden');
                 return;
@@ -1597,15 +1599,15 @@
             if (currentTool === 'diff-tool') {
                 processDiff();
                 const diffTxt = document.getElementById('diffOutputContainer').innerText;
-                downloadBlob(new Blob([diffTxt], { type: 'text/plain;charset=utf-8' }), 'text_diff_result.txt');
-                addHistory("Exported Text Diff comparison");
-                showToast("Diff result downloaded!");
+                downloadBlob(new Blob([diffTxt], { type: 'text/plain;charset=utf-8' }), 'metin_farki_sonucu.txt');
+                addHistory("Metin Farkı karşılaştırması dışa aktarıldı");
+                showToast("Fark sonucu indirildi!");
                 return;
             }
 
             const nonFileTools = ['json-tool', 'base64-tool', 'url-tool', 'diff-tool', 'md-tool', 'password-gen', 'uuid-gen', 'qr-tool'];
             if (selectedFiles.length === 0 && !nonFileTools.includes(currentTool)) {
-                showToast("Please add files first", "error");
+                showToast("Lütfen önce dosya ekleyin", "error");
                 dropZone.classList.add('border-red-500', 'bg-red-50');
                 setTimeout(() => dropZone.classList.remove('border-red-500', 'bg-red-50'), 500);
                 return;
@@ -1635,17 +1637,17 @@
                         const blob = await new Promise(resolve => canvas.toBlob(resolve, mime, 0.92));
 
                         if (pdf.numPages === 1) {
-                            downloadBlob(blob, `${file.name.replace(/\.[^/.]+$/, "")}_page1.${ext}`);
+                            downloadBlob(blob, `${file.name.replace(/\.[^/.]+$/, "")}_sayfa1.${ext}`);
                         } else {
-                            zip.file(`page_${i}.${ext}`, blob);
+                            zip.file(`sayfa_${i}.${ext}`, blob);
                         }
                     }
 
                     if (pdf.numPages > 1) {
                         const zipBlob = await zip.generateAsync({ type: "blob" });
-                        downloadBlob(zipBlob, `${file.name.replace(/\.[^/.]+$/, "")}_pages.zip`);
+                        downloadBlob(zipBlob, `${file.name.replace(/\.[^/.]+$/, "")}_sayfalar.zip`);
                     }
-                    addHistory(`Converted PDF (${pdf.numPages} pgs) to ${ext.toUpperCase()}`);
+                    addHistory(`PDF (${pdf.numPages} sayfa) ${ext.toUpperCase()}'ye dönüştürüldü`);
                 }
                 else if (currentTool === 'jpg-to-pdf') {
                     const pdfDoc = await PDFLib.PDFDocument.create();
@@ -1656,8 +1658,8 @@
                         page.drawImage(img, { x: 0, y: 0, width: img.width, height: img.height });
                     }
                     const pdfBytes = await pdfDoc.save();
-                    downloadBlob(new Blob([pdfBytes], { type: 'application/pdf' }), 'converted_images.pdf');
-                    addHistory(`Combined ${selectedFiles.length} images into PDF`);
+                    downloadBlob(new Blob([pdfBytes], { type: 'application/pdf' }), 'donusturulen_gorseller.pdf');
+                    addHistory(`${selectedFiles.length} görsel PDF'e birleştirildi`);
                 }
                 else if (currentTool === 'merge-pdf') {
                     const mergedPdf = await PDFLib.PDFDocument.create();
@@ -1668,8 +1670,8 @@
                         copiedPages.forEach((page) => mergedPdf.addPage(page));
                     }
                     const pdfBytes = await mergedPdf.save();
-                    downloadBlob(new Blob([pdfBytes], { type: 'application/pdf' }), 'merged_document.pdf');
-                    addHistory(`Merged ${selectedFiles.length} PDF files`);
+                    downloadBlob(new Blob([pdfBytes], { type: 'application/pdf' }), 'birlesmis_belge.pdf');
+                    addHistory(`${selectedFiles.length} PDF dosyası birleştirildi`);
                 }
                 else if (currentTool === 'split-pdf') {
                     const file = selectedFiles[0];
@@ -1682,10 +1684,10 @@
                         const [copiedPage] = await newDoc.copyPages(pdf, [i]);
                         newDoc.addPage(copiedPage);
                         const newBytes = await newDoc.save();
-                        zip.file(`page_${i + 1}.pdf`, new Blob([newBytes], { type: 'application/pdf' }));
+                        zip.file(`sayfa_${i + 1}.pdf`, new Blob([newBytes], { type: 'application/pdf' }));
                     }
-                    downloadBlob(await zip.generateAsync({ type: "blob" }), `${file.name.replace(/\.[^/.]+$/, "")}_split.zip`);
-                    addHistory(`Split PDF into ${pdf.getPageCount()} pages`);
+                    downloadBlob(await zip.generateAsync({ type: "blob" }), `${file.name.replace(/\.[^/.]+$/, "")}_bolunmus.zip`);
+                    addHistory(`PDF ${pdf.getPageCount()} sayfaya bölündü`);
                 }
                 else if (currentTool === 'compress-image') {
                     const targetMB = parseFloat(document.getElementById('compressionLevel')?.value) || 1.0;
@@ -1696,15 +1698,15 @@
                             compressed = await imageCompression(file, { maxSizeMB: targetMB, maxWidthOrHeight: 1920, useWebWorker: true });
                         }
                         if (selectedFiles.length === 1) {
-                            downloadBlob(compressed, `compressed_${file.name}`);
+                            downloadBlob(compressed, `sikistirilmis_${file.name}`);
                         } else {
-                            zip.file(`compressed_${file.name}`, compressed);
+                            zip.file(`sikistirilmis_${file.name}`, compressed);
                         }
                     }
                     if (selectedFiles.length > 1) {
-                        downloadBlob(await zip.generateAsync({ type: "blob" }), "compressed_images.zip");
+                        downloadBlob(await zip.generateAsync({ type: "blob" }), "sikistirilmis_gorseller.zip");
                     }
-                    addHistory(`Compressed ${selectedFiles.length} image(s)`);
+                    addHistory(`${selectedFiles.length} görsel sıkıştırıldı`);
                 }
                 else if (currentTool === 'heic-to-jpg') {
                     const zip = new JSZip();
@@ -1723,9 +1725,9 @@
                         }
                     }
                     if (selectedFiles.length > 1) {
-                        downloadBlob(await zip.generateAsync({ type: "blob" }), "converted_jpgs.zip");
+                        downloadBlob(await zip.generateAsync({ type: "blob" }), "donusturulen_jpgler.zip");
                     }
-                    addHistory(`Converted ${selectedFiles.length} HEIC file(s) to JPG`);
+                    addHistory(`${selectedFiles.length} HEIC dosyası JPG'ye dönüştürüldü`);
                 }
                 else if (currentTool === 'webp-converter') {
                     const format = document.getElementById('webpFormatSelect')?.value || 'image/webp';
@@ -1748,9 +1750,9 @@
                         }
                     }
                     if (selectedFiles.length > 1) {
-                        downloadBlob(await zip.generateAsync({ type: "blob" }), `converted_${ext}s.zip`);
+                        downloadBlob(await zip.generateAsync({ type: "blob" }), `donusturulen_${ext}ler.zip`);
                     }
-                    addHistory(`Converted ${selectedFiles.length} images to ${ext.toUpperCase()}`);
+                    addHistory(`${selectedFiles.length} görsel ${ext.toUpperCase()}'ye dönüştürüldü`);
                 }
                 else if (currentTool === 'exif-remover') {
                     const zip = new JSZip();
@@ -1763,16 +1765,16 @@
                         
                         const cleanBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.95));
                         if (selectedFiles.length === 1) {
-                            downloadBlob(cleanBlob, `clean_exif_${file.name}`);
+                            downloadBlob(cleanBlob, `temiz_exif_${file.name}`);
                         } else {
-                            zip.file(`clean_exif_${file.name}`, cleanBlob);
+                            zip.file(`temiz_exif_${file.name}`, cleanBlob);
                         }
                     }
                     if (selectedFiles.length > 1) {
-                        downloadBlob(await zip.generateAsync({ type: "blob" }), "clean_exif_images.zip");
+                        downloadBlob(await zip.generateAsync({ type: "blob" }), "temiz_exif_gorseller.zip");
                     }
-                    addHistory(`Stripped EXIF metadata from ${selectedFiles.length} image(s)`);
-                    showToast("EXIF metadata successfully scrubbed!");
+                    addHistory(`${selectedFiles.length} görselden EXIF verileri silindi`);
+                    showToast("EXIF meta verileri başarıyla temizlendi!");
                 }
                 else if (currentTool === 'extract-pdf-img') {
                     const file = selectedFiles[0];
@@ -1787,10 +1789,10 @@
                         canvas.height = viewport.height; canvas.width = viewport.width;
                         await page.render({ canvasContext: ctx, viewport: viewport }).promise;
                         const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png', 0.9));
-                        zip.file(`page_${i}_snapshot.png`, blob);
+                        zip.file(`sayfa_${i}_goruntu.png`, blob);
                     }
-                    downloadBlob(await zip.generateAsync({ type: "blob" }), `${file.name.replace(/\.[^/.]+$/, "")}_extracted_images.zip`);
-                    addHistory(`Extracted images from PDF`);
+                    downloadBlob(await zip.generateAsync({ type: "blob" }), `${file.name.replace(/\.[^/.]+$/, "")}_cikarilan_gorseller.zip`);
+                    addHistory("PDF'ten görseller çıkarıldı");
                 }
                 else if (currentTool === 'redact-tool') {
                     const zip = new JSZip();
@@ -1804,22 +1806,22 @@
                         ctx.fillRect(40, canvas.height / 2 - 40, canvas.width - 80, 80);
                         ctx.fillStyle = 'white';
                         ctx.font = 'bold 24px sans-serif';
-                        ctx.fillText('[REDACTED SECURELY]', 60, canvas.height / 2 + 8);
+                        ctx.fillText('[GİZLENDİ]', 60, canvas.height / 2 + 8);
                         const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png', 0.95));
                         if (selectedFiles.length === 1) {
-                            downloadBlob(blob, `redacted_${file.name}`);
+                            downloadBlob(blob, `sansurlu_${file.name}`);
                         } else {
-                            zip.file(`redacted_${file.name}`, blob);
+                            zip.file(`sansurlu_${file.name}`, blob);
                         }
                     }
                     if (selectedFiles.length > 1) {
-                        downloadBlob(await zip.generateAsync({ type: "blob" }), "redacted_images.zip");
+                        downloadBlob(await zip.generateAsync({ type: "blob" }), "sansurlu_gorseller.zip");
                     }
-                    addHistory(`Redacted ${selectedFiles.length} image(s)`);
+                    addHistory(`${selectedFiles.length} görsel sansürlendi`);
                 }
                 else if (currentTool === 'encrypt-pdf') {
                     const file = selectedFiles[0];
-                    const password = document.getElementById('pdfPassInput')?.value || 'SecurePass123';
+                    const password = document.getElementById('pdfPassInput')?.value || 'GuvenliSifre123';
                     const fileBytes = await file.arrayBuffer();
 
                     const enc = new TextEncoder();
@@ -1847,35 +1849,35 @@
                     combined.set(new Uint8Array(encryptedContent), salt.length + iv.length);
 
                     const encryptedBlob = new Blob([combined], { type: 'application/octet-stream' });
-                    downloadBlob(encryptedBlob, `encrypted_${file.name}.enc`);
-                    addHistory(`Encrypted PDF ${file.name} with AES-GCM`);
-                    showToast("PDF securely encrypted and downloaded!");
+                    downloadBlob(encryptedBlob, `sifrelenmis_${file.name}.enc`);
+                    addHistory(`PDF AES-GCM ile şifrelendi: ${file.name}`);
+                    showToast("PDF güvenle şifrelendi ve indirildi!");
                 }
                 else if (currentTool === 'hash-calc') {
                     const buffer = await selectedFiles[0].arrayBuffer();
                     const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
                     const hashHex = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
                     
-                    const outputText = `File: ${selectedFiles[0].name}\nSize: ${selectedFiles[0].size} bytes\nSHA-256 Checksum:\n${hashHex}`;
+                    const outputText = `Dosya: ${selectedFiles[0].name}\nBoyut: ${selectedFiles[0].size} bayt\nSHA-256 Sağlama Toplamı:\n${hashHex}`;
                     document.getElementById('genericTextBox').classList.remove('hidden');
                     document.getElementById('genericTextArea').value = outputText;
                     downloadBlob(new Blob([outputText], { type: 'text/plain;charset=utf-8' }), `${selectedFiles[0].name}_hash.txt`);
-                    addHistory(`Calculated SHA-256 for ${selectedFiles[0].name}`);
+                    addHistory(`${selectedFiles[0].name} için SHA-256 hesaplandı`);
                 }
                 else if (currentTool === 'ocr-reader') {
                     if (typeof Tesseract !== 'undefined') {
-                        const result = await Tesseract.recognize(selectedFiles[0], 'eng');
+                        const result = await Tesseract.recognize(selectedFiles[0], 'tur');
                         const text = result.data.text;
                         document.getElementById('genericTextBox').classList.remove('hidden');
                         document.getElementById('genericTextArea').value = text;
                         downloadBlob(new Blob([text], { type: 'text/plain;charset=utf-8' }), `${selectedFiles[0].name}_ocr.txt`);
-                        addHistory(`Extracted OCR text from ${selectedFiles[0].name}`);
+                        addHistory(`${selectedFiles[0].name} üzerinden OCR metni çıkarıldı`);
                     }
                 }
-                if(currentTool !== 'encrypt-pdf' && currentTool !== 'exif-remover') showToast("Process completed & File downloaded!");
+                if(currentTool !== 'encrypt-pdf' && currentTool !== 'exif-remover') showToast("İşlem tamamlandı ve dosya indirildi!");
             } catch(e) {
                 console.error(e);
-                showToast("Error processing file: " + e.message, "error");
+                showToast("Dosya işlenirken hata oluştu: " + e.message, "error");
             } finally {
                 modal.classList.add('hidden');
             }
