@@ -4,308 +4,336 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- SEO Optimization Meta Tags -->
     <title>Convert PDF to JPG Online - 100% Free & Private | PrivacyConvert</title>
-    <meta name="description" content="Convert PDF pages into high-quality JPG images directly in your browser. 100% private, fast, and free. No file uploads, no size limits.">
-    <meta name="keywords" content="pdf to jpg, convert pdf to image, pdf to jpeg, offline pdf converter, secure pdf converter, convert pdf pages to jpg">
+    <meta name="description" content="Convert PDF pages to high-quality JPG images directly in your browser. Features live preview, page range selection (1, 3-5), rotation, and watermarking. No server uploads.">
+    <meta name="keywords" content="pdf to jpg, convert pdf to image, extract pdf pages, online pdf converter, private pdf to jpg">
     <meta name="author" content="PrivacyConvert">
 
     <!-- Canonical URL -->
     <link rel="canonical" href="https://yourdomain.com/pdf-to-jpg/index.html" />
 
-    <!-- Open Graph (Social Media) -->
-    <meta property="og:title" content="Convert PDF to JPG Privately in Your Browser">
-    <meta property="og:description" content="Extract pages from your PDF files into crisp JPG images locally. Zero server uploads.">
-    <meta property="og:type" content="website">
-
-    <!-- Tailwind CSS & Google AdSense -->
+    <!-- Tailwind CSS & Ads -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4444769373675024" crossorigin="anonymous"></script>
 
-    <!-- PDF & DÖNÜŞTÜRÜCÜ KÜTÜPHANELERİ -->
+    <!-- Cropper.js CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
+
+    <!-- Kütüphaneler -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/heic2any/0.0.4/heic2any.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
-    <!-- Schema.org Structured Data (Google SEO Rich Snippets) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "SoftwareApplication",
-      "name": "PrivacyConvert - PDF to JPG Converter",
+      "name": "PrivacyConvert - PDF to JPG",
       "operatingSystem": "All",
       "applicationCategory": "UtilitiesApplication",
-      "offers": {
-        "@type": "Offer",
-        "price": "0.00",
-        "priceCurrency": "USD"
-      },
-      "description": "Convert PDF documents to JPG images locally inside your web browser. No uploads required."
+      "offers": { "@type": "Offer", "price": "0.00", "priceCurrency": "USD" },
+      "description": "Convert PDF pages to JPG images in browser with page range and watermark tools."
     }
     </script>
 </head>
 
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans">
 
-    <!-- Header / Navbar -->
+    <!-- Header -->
     <header class="bg-white border-b border-slate-200 py-4 px-6 shadow-sm">
-        <div class="max-w-4xl mx-auto flex justify-between items-center">
+        <div class="max-w-5xl mx-auto flex justify-between items-center">
             <a href="../index.html" class="text-xl font-bold text-indigo-600 flex items-center gap-2 hover:opacity-90 transition">
                 ⚡ PrivacyConvert
             </a>
             <div class="flex items-center gap-4">
                 <nav class="hidden md:flex text-sm text-slate-600 gap-4 font-medium">
-                    <a href="../pdf-to-jpg/index.html" class="text-indigo-600 font-semibold">PDF to JPG</a>
+                    <a href="../pdf-to-jpg/index.html" class="text-indigo-600 font-bold">PDF to JPG</a>
                     <a href="../heic-to-jpg/index.html" class="hover:text-indigo-600 transition">HEIC to JPG</a>
                     <a href="../jpg-to-pdf/index.html" class="hover:text-indigo-600 transition">JPG to PDF</a>
+                    <a href="../png-to-jpg/index.html" class="hover:text-indigo-600 transition">PNG to JPG</a>
                 </nav>
-                <span class="hidden sm:inline-flex bg-emerald-100 text-emerald-800 text-xs px-3 py-1 rounded-full font-medium items-center gap-1">
-                    🔒 100% Local Processing
+                <span class="bg-emerald-100 text-emerald-800 text-xs px-3 py-1 rounded-full font-medium">
+                    🔒 100% Client-Side
                 </span>
             </div>
         </div>
     </header>
 
-    <!-- Ana İçerik Konteyneri -->
-    <main class="flex-grow max-w-4xl mx-auto w-full px-4 py-8">
+    <main class="flex-grow max-w-5xl mx-auto w-full px-4 py-8">
 
-        <!-- Top AdSpace Placeholder -->
+        <!-- AdSpace -->
         <div class="w-full mb-8">
             <div class="bg-slate-100 border border-dashed border-slate-300 rounded-lg p-3 text-center text-xs text-slate-400">
                 <span>Advertisement</span>
             </div>
         </div>
 
-        <!-- H1 Başlık ve Açıklama (SEO İçin Özelleştirilmiş) -->
         <div class="text-center mb-8">
             <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-                Convert <span class="text-indigo-600">PDF to JPG</span> Online
+                Convert <span class="text-indigo-600">PDF to JPG</span> Images
             </h1>
             <p class="text-slate-500 text-sm sm:text-base mt-2 max-w-xl mx-auto">
-                Extract all pages of your PDF file into high-quality JPG images instantly. Your document never leaves your device.
+                Extract pages from your PDF file into high-quality JPG photos. Select page ranges, rotate, and add custom watermarks privately.
             </p>
         </div>
 
-        <!-- PrivacyConvert Ana Dönüştürücü Kartı -->
-        <div class="max-w-xl mx-auto p-6 bg-white rounded-2xl shadow-lg border border-slate-100">
+        <!-- Dönüştürücü Kartı -->
+        <div class="max-w-2xl mx-auto p-6 bg-white rounded-2xl shadow-lg border border-slate-100">
             
-            <!-- Sürükle-Bırak Yükleme Alanı -->
             <div id="dropZone" class="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center cursor-pointer hover:border-indigo-500 hover:bg-slate-50 transition-all">
                 <svg class="w-12 h-12 mx-auto text-slate-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
                 </svg>
-                <p class="text-slate-600 font-medium">Click to select PDF or drag & drop</p>
-                <p class="text-xs text-slate-400 mt-1">Select your .PDF file (100% Client-Side Conversion)</p>
+                <p class="text-slate-700 font-semibold">Select PDF file or drag & drop</p>
+                <p class="text-xs text-slate-400 mt-1">Select your PDF document (Processed 100% locally)</p>
             </div>
 
-            <!-- Dosya Seçici (PDF Varsayılan Filtreli) -->
-            <input type="file" id="fileInput" accept=".pdf,application/pdf" class="hidden" />
+            <input type="file" id="fileInput" accept=".pdf" class="hidden" />
 
-            <!-- Dosya Bilgisi ve Ayarlar Alanı -->
             <div id="actionArea" class="mt-6 hidden space-y-5">
                 
-                <!-- Canlı Dosya Önizleme -->
-                <div id="previewContainer" class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center gap-4">
-                    <div id="previewThumbnail" class="w-16 h-16 bg-slate-200 rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0 text-slate-400 text-xs font-bold">
-                        📄
-                    </div>
-                    <div class="overflow-hidden flex-grow">
-                        <p class="text-sm font-semibold text-slate-800 truncate" id="fileName">No file selected</p>
-                        <p class="text-xs text-slate-400 mt-0.5" id="fileSize">Ready for processing</p>
+                <!-- Canlı Önizleme -->
+                <div id="previewWrapper" class="p-4 bg-slate-900 rounded-xl border border-slate-800 flex flex-col items-center justify-center min-h-[200px] max-h-[380px] overflow-hidden">
+                    <img id="imagePreview" class="max-w-full max-h-[320px] object-contain rounded hidden" alt="PDF First Page Preview" />
+                    <div id="nonImagePreview" class="text-center text-slate-300 py-8 hidden">
+                        <span class="text-4xl block">📄</span>
+                        <p class="text-sm font-medium mt-2" id="fileName">PDF Loaded</p>
                     </div>
                 </div>
 
-                <!-- Format Seçimi (Varsayılan: JPG) -->
-                <div class="flex items-center justify-between gap-4">
-                    <label for="targetFormat" class="text-sm font-medium text-slate-700">Convert to:</label>
-                    <select id="targetFormat" class="bg-white border border-slate-300 text-slate-800 text-sm rounded-lg p-2.5 focus:ring-indigo-500 focus:border-indigo-500 font-medium cursor-pointer">
-                        <option value="jpg" selected>JPG (Image)</option>
-                        <option value="png">PNG (Image)</option>
-                        <option value="webp">WEBP (Image)</option>
-                    </select>
-                </div>
-
-                <!-- Kalite Ayarı -->
-                <div id="qualityOption" class="space-y-2 pt-2 border-t border-slate-100">
-                    <div class="flex justify-between items-center text-xs font-medium text-slate-600">
-                        <span>Image Quality & Resolution:</span>
-                        <span id="qualityVal" class="font-bold text-indigo-600">85%</span>
+                <!-- 🛠️ DÜZENLEME SEÇENEKLERİ -->
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-4">
+                    <h3 class="text-xs font-bold text-slate-600 uppercase tracking-wider">🛠️ PDF Extraction Options</h3>
+                    
+                    <div class="flex items-center gap-2">
+                        <button type="button" id="rotateRightBtn" class="px-3 py-1.5 bg-white border border-slate-300 hover:bg-slate-100 text-xs font-semibold rounded-lg text-slate-700 transition flex items-center gap-1 shadow-sm">
+                            🔄 Rotate Pages 90°
+                        </button>
                     </div>
-                    <input type="range" id="qualityRange" min="30" max="100" value="85" step="5" class="w-full accent-indigo-600 cursor-pointer">
+
+                    <!-- Sayfa Aralığı Girme -->
+                    <div class="bg-indigo-50/50 p-3 rounded-lg border border-indigo-100">
+                        <label for="pdfPageRange" class="block text-xs font-semibold text-indigo-950 mb-1">
+                            📄 PDF Page Range to Extract:
+                        </label>
+                        <input type="text" id="pdfPageRange" placeholder="e.g. 1, 3-5 or 'all'" value="all" class="w-full p-2 text-xs border border-indigo-200 rounded-lg focus:ring-indigo-500 bg-white">
+                        <p class="text-[11px] text-slate-500 mt-1">Examples: <code>all</code> (all pages), <code>1, 3-5</code> (pages 1, 3, 4, 5).</p>
+                    </div>
+
+                    <!-- Watermark & Resize -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-200 text-xs">
+                        <div>
+                            <label for="resizeWidth" class="block font-medium text-slate-700 mb-1">Max Width (px):</label>
+                            <input type="number" id="resizeWidth" placeholder="Original Size" class="w-full p-2 border border-slate-300 rounded-lg bg-white">
+                        </div>
+                        <div>
+                            <label for="watermarkText" class="block font-medium text-slate-700 mb-1">Watermark Text:</label>
+                            <input type="text" id="watermarkText" placeholder="e.g. Confidential" class="w-full p-2 border border-slate-300 rounded-lg bg-white">
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Dönüştür Butonu -->
-                <button id="convertBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3.5 px-4 rounded-xl transition-all shadow-md active:scale-95">
-                    Convert PDF to JPG Now
+                <!-- Kalite -->
+                <div class="flex justify-between items-center text-xs font-medium text-slate-600 pt-2">
+                    <span>JPG Image Quality:</span>
+                    <span id="qualityVal" class="font-bold text-indigo-600">85%</span>
+                </div>
+                <input type="range" id="qualityRange" min="30" max="100" value="85" step="5" class="w-full accent-indigo-600 cursor-pointer">
+
+                <button id="convertBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3.5 px-4 rounded-xl shadow-md transition-all active:scale-95">
+                    Extract & Download JPG Images
                 </button>
             </div>
 
-            <!-- Durum Bildirimi -->
-            <div id="statusText" class="mt-4 text-center text-sm font-medium text-indigo-600 hidden">
-                Processing PDF pages...
+            <div id="statusText" class="mt-4 text-center text-sm font-semibold text-indigo-600 hidden">
+                Processing PDF...
             </div>
         </div>
-
-        <!-- How it Works (SEO Odaklı Adımlar) -->
-        <section class="mt-16 bg-white p-8 rounded-2xl border border-slate-200">
-            <h2 class="text-xl font-bold text-slate-900 mb-6 text-center">How to Convert PDF to JPG Online</h2>
-            <div class="grid sm:grid-cols-3 gap-6 text-center">
-                <div class="space-y-2">
-                    <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center font-bold mx-auto text-lg">1</div>
-                    <h3 class="font-semibold text-slate-800">Select PDF File</h3>
-                    <p class="text-xs text-slate-500">Upload your PDF document by clicking or dropping it into the box above.</p>
-                </div>
-                <div class="space-y-2">
-                    <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center font-bold mx-auto text-lg">2</div>
-                    <h3 class="font-semibold text-slate-800">Adjust Quality</h3>
-                    <p class="text-xs text-slate-500">Choose your preferred image quality and compression ratio.</p>
-                </div>
-                <div class="space-y-2">
-                    <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center font-bold mx-auto text-lg">3</div>
-                    <h3 class="font-semibold text-slate-800">Download JPGs</h3>
-                    <p class="text-xs text-slate-500">Get single images or a combined ZIP archive instantly with zero waiting time.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- FAQ & SEO Content -->
-        <section class="mt-12 bg-white p-8 rounded-2xl border border-slate-200 space-y-6 text-slate-700 leading-relaxed text-sm">
-            <h2 class="text-xl font-bold text-slate-900">Why Use PrivacyConvert for PDF to JPG?</h2>
-            
-            <div class="space-y-4">
-                <div>
-                    <h3 class="font-semibold text-slate-800">🔒 100% Offline & Private</h3>
-                    <p class="text-slate-600 mt-1">Unlike other converters, your confidential PDF files are transformed locally using HTML5 Web APIs. Nothing is sent to an external server or stored online.</p>
-                </div>
-
-                <div>
-                    <h3 class="font-semibold text-slate-800">⚡ Multi-Page ZIP Output</h3>
-                    <p class="text-slate-600 mt-1">If your PDF contains multiple pages, our tool automatically extracts each page into an individual JPG and packages them neatly into a single ZIP download.</p>
-                </div>
-
-                <div>
-                    <h3 class="font-semibold text-slate-800">🚀 No File Size Limits</h3>
-                    <p class="text-slate-600 mt-1">Since the conversion runs on your device's browser, there are no artificial file size caps or queue delays.</p>
-                </div>
-            </div>
-        </section>
-
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200 py-8 text-center text-xs text-slate-500">
-        <div class="max-w-4xl mx-auto px-4 space-y-3">
-            <div class="flex justify-center gap-6 font-medium text-slate-600">
-                <a href="../pdf-to-jpg/index.html" class="hover:text-indigo-600">PDF to JPG</a>
+    <footer class="bg-white border-t border-slate-200 py-8 text-center text-xs text-slate-500 mt-12">
+        <div class="max-w-5xl mx-auto px-4 space-y-3">
+            <div class="flex justify-center flex-wrap gap-6 font-medium text-slate-600">
+                <a href="../pdf-to-jpg/index.html" class="hover:text-indigo-600 font-bold">PDF to JPG</a>
                 <a href="../heic-to-jpg/index.html" class="hover:text-indigo-600">HEIC to JPG</a>
                 <a href="../jpg-to-pdf/index.html" class="hover:text-indigo-600">JPG to PDF</a>
                 <a href="../png-to-jpg/index.html" class="hover:text-indigo-600">PNG to JPG</a>
+                <a href="../webp-to-jpg/index.html" class="hover:text-indigo-600">WEBP to JPG</a>
+                <a href="../pdf-to-png/index.html" class="hover:text-indigo-600">PDF to PNG</a>
             </div>
             <p>© 2026 PrivacyConvert — 100% Client-Side PDF Processing.</p>
         </div>
     </footer>
 
-    <!-- JavaScript Mantığı -->
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
         const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('fileInput');
         const actionArea = document.getElementById('actionArea');
+        const imagePreview = document.getElementById('imagePreview');
+        const nonImagePreview = document.getElementById('nonImagePreview');
         const fileNameDisplay = document.getElementById('fileName');
-        const fileSizeDisplay = document.getElementById('fileSize');
-        const previewThumbnail = document.getElementById('previewThumbnail');
-        const targetFormat = document.getElementById('targetFormat');
         const convertBtn = document.getElementById('convertBtn');
         const statusText = document.getElementById('statusText');
         const qualityRange = document.getElementById('qualityRange');
         const qualityVal = document.getElementById('qualityVal');
+        const rotateRightBtn = document.getElementById('rotateRightBtn');
+        const pdfPageRange = document.getElementById('pdfPageRange');
+        const resizeWidthInput = document.getElementById('resizeWidth');
+        const watermarkInput = document.getElementById('watermarkText');
 
-        let selectedFiles = [];
+        let currentFile = null;
+        let currentRotation = 0;
 
-        qualityRange.addEventListener('input', (e) => {
-            qualityVal.textContent = `${e.target.value}%`;
-        });
-
+        qualityRange.addEventListener('input', (e) => qualityVal.textContent = `${e.target.value}%`);
         dropZone.addEventListener('click', () => fileInput.click());
-        fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+        fileInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
 
-        dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropZone.classList.add('border-indigo-500', 'bg-slate-50');
-        });
-
-        dropZone.addEventListener('dragleave', () => {
-            dropZone.classList.remove('border-indigo-500', 'bg-slate-50');
-        });
-
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('border-indigo-500'); });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('border-indigo-500'));
         dropZone.addEventListener('drop', (e) => {
             e.preventDefault();
-            dropZone.classList.remove('border-indigo-500', 'bg-slate-50');
-            handleFiles(e.dataTransfer.files);
+            dropZone.classList.remove('border-indigo-500');
+            if(e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
         });
 
-        async function handleFiles(files) {
-            if (!files.length) return;
-            selectedFiles = Array.from(files);
-            const file = selectedFiles[0];
-            
-            fileNameDisplay.textContent = file.name;
-            fileSizeDisplay.textContent = `${(file.size / 1024).toFixed(1)} KB`;
-            previewThumbnail.innerHTML = `<span class="text-2xl">📄</span>`;
-            
+        async function handleFile(file) {
+            if (!file || !file.name.toLowerCase().endsWith('.pdf')) {
+                alert("Please select a valid PDF file.");
+                return;
+            }
+            currentFile = file;
+            currentRotation = 0;
+            imagePreview.style.transform = 'none';
             actionArea.classList.remove('hidden');
-        }
 
-        convertBtn.addEventListener('click', async () => {
-            if (!selectedFiles.length) return;
-
-            const format = targetFormat.value;
-            const quality = parseFloat(qualityRange.value) / 100;
-            const file = selectedFiles[0];
-
-            showStatus("Rendering PDF pages... Please wait.");
-
+            showStatus("Loading PDF preview...");
             try {
                 const arrayBuffer = await file.arrayBuffer();
                 const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                const page = await pdf.getPage(1);
+                
+                const viewport = page.getViewport({ scale: 1.2 });
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.height = viewport.height; canvas.width = viewport.width;
+                ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+                await page.render({ canvasContext: ctx, viewport }).promise;
+
+                imagePreview.src = canvas.toDataURL('image/jpeg');
+                imagePreview.classList.remove('hidden');
+                nonImagePreview.classList.add('hidden');
+            } catch (err) {
+                console.error(err);
+                imagePreview.classList.add('hidden');
+                nonImagePreview.classList.remove('hidden');
+                fileNameDisplay.textContent = file.name;
+            } finally {
+                hideStatus();
+            }
+        }
+
+        rotateRightBtn.addEventListener('click', () => {
+            currentRotation = (currentRotation + 90) % 360;
+            imagePreview.style.transform = `rotate(${currentRotation}deg)`;
+        });
+
+        function parsePageRange(rangeStr, totalPages) {
+            if (!rangeStr || rangeStr.trim() === '' || rangeStr.trim().toLowerCase() === 'all') {
+                return Array.from({ length: totalPages }, (_, i) => i + 1);
+            }
+            const pages = new Set();
+            const parts = rangeStr.split(',');
+            for (let part of parts) {
+                part = part.trim();
+                if (part.includes('-')) {
+                    const [start, end] = part.split('-').map(n => parseInt(n.trim(), 10));
+                    if (!isNaN(start) && !isNaN(end)) {
+                        for (let i = Math.max(1, start); i <= Math.min(totalPages, end); i++) pages.add(i);
+                    }
+                } else {
+                    const num = parseInt(part, 10);
+                    if (!isNaN(num) && num >= 1 && num <= totalPages) pages.add(num);
+                }
+            }
+            return Array.from(pages).sort((a, b) => a - b);
+        }
+
+        convertBtn.addEventListener('click', async () => {
+            if (!currentFile) return;
+            const quality = parseFloat(qualityRange.value) / 100;
+            showStatus("Processing PDF pages...");
+
+            try {
+                const arrayBuffer = await currentFile.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                const targetPages = parsePageRange(pdfPageRange.value, pdf.numPages);
                 const zip = new JSZip();
-                const mimeType = format === 'png' ? 'image/png' : 'image/jpeg';
-                const ext = format === 'png' ? 'png' : 'jpg';
 
-                for (let i = 1; i <= pdf.numPages; i++) {
-                    showStatus(`Processing page ${i} of ${pdf.numPages}...`);
-                    const page = await pdf.getPage(i);
+                if (targetPages.length === 0) {
+                    alert("No valid pages selected!");
+                    return;
+                }
+
+                for (let index = 0; index < targetPages.length; index++) {
+                    const pageNum = targetPages[index];
+                    showStatus(`Rendering PDF page ${pageNum} (${index + 1}/${targetPages.length})...`);
+
+                    const page = await pdf.getPage(pageNum);
                     const viewport = page.getViewport({ scale: 2.0 });
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    canvas.height = viewport.height;
-                    canvas.width = viewport.width;
+                    let canvas = document.createElement('canvas');
+                    let ctx = canvas.getContext('2d');
+                    canvas.height = viewport.height; canvas.width = viewport.width;
 
-                    if (format !== 'png') {
-                        ctx.fillStyle = '#FFFFFF';
-                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    await page.render({ canvasContext: ctx, viewport }).promise;
+
+                    // Döndürme
+                    if (currentRotation % 360 !== 0) {
+                        const rotCanvas = document.createElement('canvas');
+                        if (currentRotation % 180 !== 0) {
+                            rotCanvas.width = canvas.height; rotCanvas.height = canvas.width;
+                        } else {
+                            rotCanvas.width = canvas.width; rotCanvas.height = canvas.height;
+                        }
+                        const rCtx = rotCanvas.getContext('2d');
+                        rCtx.translate(rotCanvas.width / 2, rotCanvas.height / 2);
+                        rCtx.rotate((currentRotation * Math.PI) / 180);
+                        rCtx.drawImage(canvas, -canvas.width / 2, -canvas.height / 2);
+                        canvas = rotCanvas;
                     }
 
-                    await page.render({ canvasContext: ctx, viewport }).promise;
-                    const blob = await new Promise(res => canvas.toBlob(res, mimeType, quality));
+                    // Watermark
+                    const watermark = watermarkInput.value.trim();
+                    if (watermark) {
+                        const wCtx = canvas.getContext('2d');
+                        const fontSize = Math.max(18, Math.floor(canvas.width / 22));
+                        wCtx.font = `bold ${fontSize}px sans-serif`;
+                        wCtx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                        wCtx.shadowColor = 'rgba(0,0,0,0.6)';
+                        wCtx.shadowBlur = 6;
+                        wCtx.textAlign = 'right';
+                        wCtx.fillText(watermark, canvas.width - 25, canvas.height - 25);
+                    }
 
-                    if (pdf.numPages === 1) {
-                        triggerDownload(blob, `${file.name.replace(/\.pdf$/i, '')}.${ext}`);
+                    const blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', quality));
+                    if (targetPages.length === 1) {
+                        triggerDownload(blob, `${currentFile.name.replace(/\.pdf$/i, '')}_page_${pageNum}.jpg`);
                     } else {
-                        zip.file(`page-${i}.${ext}`, blob);
+                        zip.file(`page-${pageNum}.jpg`, blob);
                     }
                 }
 
-                if (pdf.numPages > 1) {
-                    showStatus("Packaging pages into ZIP...");
+                if (targetPages.length > 1) {
+                    showStatus("Creating ZIP file...");
                     const zipBlob = await zip.generateAsync({ type: 'blob' });
-                    triggerDownload(zipBlob, `${file.name.replace(/\.pdf$/i, '')}_images.zip`);
+                    triggerDownload(zipBlob, `${currentFile.name.replace(/\.pdf$/i, '')}_pages.zip`);
                 }
             } catch (err) {
                 console.error(err);
-                alert("An error occurred during conversion: " + err.message);
+                alert("Error: " + err.message);
             } finally {
                 hideStatus();
             }
@@ -318,20 +346,19 @@
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            setTimeout(() => URL.revokeObjectURL(link.href), 1000);
         }
 
         function showStatus(text) {
             statusText.textContent = text;
             statusText.classList.remove('hidden');
             convertBtn.disabled = true;
-            convertBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            convertBtn.classList.add('opacity-50');
         }
 
         function hideStatus() {
             statusText.classList.add('hidden');
             convertBtn.disabled = false;
-            convertBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            convertBtn.classList.remove('opacity-50');
         }
     </script>
 </body>
