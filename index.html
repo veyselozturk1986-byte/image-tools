@@ -32,7 +32,7 @@
     <!-- Cropper.js CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
 
-    <!-- Core Lightweight Libraries (Heavy libs like PDF.js & Tesseract loaded via Lazy Loading on demand) -->
+    <!-- Core Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
@@ -134,6 +134,7 @@
             <div id="favoritesListGrid" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3"></div>
         </div>
 
+        <!-- Interactive Privacy Dashboard Widget -->
         <div class="max-w-3xl mx-auto mb-10 p-5 bg-emerald-50/80 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/50 rounded-2xl text-slate-800 dark:text-emerald-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm backdrop-blur-sm">
             <div class="flex items-center gap-4">
                 <div class="bg-emerald-100 dark:bg-emerald-800/50 p-3 rounded-full shrink-0 shadow-inner">
@@ -178,6 +179,10 @@
                     <div class="flex items-center gap-1">
                         <button onclick="PrivacyConvert.tools.switchTool('split-pdf')" id="tab-split-pdf" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">✂️</span> <span class="truncate">Dividir PDF</span></button>
                         <button onclick="PrivacyConvert.ui.toggleFavorite('split-pdf')" id="fav-split-pdf" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition" title="Favorito">⭐</button>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <button onclick="PrivacyConvert.tools.switchTool('pdf-watermark')" id="tab-pdf-watermark" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">💧</span> <span class="truncate">Filigranas PDF</span></button>
+                        <button onclick="PrivacyConvert.ui.toggleFavorite('pdf-watermark')" id="fav-pdf-watermark" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition" title="Favorito">⭐</button>
                     </div>
                     <div class="flex items-center gap-1">
                         <button onclick="PrivacyConvert.tools.switchTool('jpg-to-pdf')" id="tab-jpg-to-pdf" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">📁</span> <span class="truncate">JPG a PDF</span></button>
@@ -245,6 +250,10 @@
                         <button onclick="PrivacyConvert.tools.switchTool('md-tool')" id="tab-md-tool" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">📝</span> <span class="truncate">Vista previa Markdown</span></button>
                         <button onclick="PrivacyConvert.ui.toggleFavorite('md-tool')" id="fav-md-tool" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition" title="Favorito">⭐</button>
                     </div>
+                    <div class="flex items-center gap-1">
+                        <button onclick="PrivacyConvert.tools.switchTool('batch-rename')" id="tab-batch-rename" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🏷️</span> <span class="truncate">Renombrado Lotes</span></button>
+                        <button onclick="PrivacyConvert.ui.toggleFavorite('batch-rename')" id="fav-batch-rename" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition" title="Favorito">⭐</button>
+                    </div>
                 </div>
             </div>
 
@@ -280,6 +289,10 @@
                         <button onclick="PrivacyConvert.tools.switchTool('ocr-reader')" id="tab-ocr-reader" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">👁️</span> <span class="truncate">Lector de texto OCR</span></button>
                         <button onclick="PrivacyConvert.ui.toggleFavorite('ocr-reader')" id="fav-ocr-reader" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition" title="Favorito">⭐</button>
                     </div>
+                    <div class="flex items-center gap-1">
+                        <button onclick="PrivacyConvert.tools.switchTool('video-frames')" id="tab-video-frames" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🎞️</span> <span class="truncate">Extractor Video Frames</span></button>
+                        <button onclick="PrivacyConvert.ui.toggleFavorite('video-frames')" id="fav-video-frames" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition" title="Favorito">⭐</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -292,7 +305,7 @@
                     <svg class="w-8 h-8 dynamic-text" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
                 </div>
                 <p data-i18n="dropText" class="text-slate-800 dark:text-slate-200 font-bold text-lg">Haz clic para buscar o arrastra archivos aquí</p>
-                <p data-i18n="dropSubText" class="text-sm text-slate-500 dark:text-slate-400 mt-2">Soporte para procesamiento único o por lotes (¡Arrastra para reordenar los elementos de la lista!)</p>
+                <p data-i18n="dropSubText" class="text-sm text-slate-500 dark:text-slate-400 mt-2">Soporte inteligente (¡Reconocimiento automático de formato y reordenamiento de lista!)</p>
             </div>
             <input type="file" id="fileInput" class="hidden" />
 
@@ -381,6 +394,16 @@
                             </div>
                         </div>
 
+                        <div id="watermarkOptionsGroup" class="hidden space-y-2">
+                            <label data-i18n="watermarkTextLabel" class="block text-xs font-bold text-slate-500 uppercase">Texto del Filigrana (Watermark):</label>
+                            <input type="text" id="watermarkTextInput" value="CONFIDENCIAL" class="w-full p-2.5 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white">
+                        </div>
+
+                        <div id="renameOptionsGroup" class="hidden space-y-2">
+                            <label data-i18n="renamePrefixLabel" class="block text-xs font-bold text-slate-500 uppercase">Prefijo de renombrado:</label>
+                            <input type="text" id="renamePrefixInput" value="archivo_" class="w-full p-2.5 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white">
+                        </div>
+
                         <div id="encryptOptionsGroup" class="hidden space-y-2">
                             <label data-i18n="setPdfPass" class="block text-xs font-bold text-slate-500 uppercase">Establecer contraseña de PDF:</label>
                             <input type="password" id="pdfPassInput" data-i18n-placeholder="pdfPassPlaceholder" placeholder="Introduce una contraseña segura" class="w-full p-2.5 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white">
@@ -426,7 +449,7 @@
                 </div>
                 <div class="border-b border-slate-100 dark:border-slate-700 pb-4">
                     <h3 data-i18n="faq3Title" class="font-bold text-slate-800 dark:text-slate-200 mb-1">¿Por qué este enfoque es más seguro que los convertidores en línea tradicionales?</h3>
-                    <p data-i18n="faq3Desc" class="leading-relaxed opacity-90">Los convertidores en línea tradicionales requieren que subas tus archivos confidenciales a seus servidores remotos, lo que plantea importantes riesgos de privacidad. PrivacyConvert elimina este riesgo por completo.</p>
+                    <p data-i18n="faq3Desc" class="leading-relaxed opacity-90">Los convertidores en línea tradicionales requieren que subas tus archivos confidenciales a sus servidores remotos, lo que plantea importantes riesgos de privacidad. PrivacyConvert elimina este riesgo por completo.</p>
                 </div>
                 <div>
                     <h3 data-i18n="faq4Title" class="font-bold text-slate-800 dark:text-slate-200 mb-1">¿Cómo puedes verificar esto tú mismo (Prueba de red cero)?</h3>
@@ -468,7 +491,7 @@
                         progressTitle: "Procesando localmente...", progressText: "0 KB subidos a servidores (100% Seguro)",
                         secTitle: "Garantía de procesamiento 100% local y seguro", secDesc: "Todas las conversiones se ejecutan en tu navegador. Cero bytes subidos a servidores remotos.",
                         blockedCloudData: "Datos en la nube bloqueados", mbSafe: "MB Seguros", localBadge: "100% Local",
-                        dropText: "Haz clic para buscar o arrastra archivos aquí", dropSubText: "Soporte para procesamiento único o por lotes (¡Arrastra para reordenar los elementos de la lista!)",
+                        dropText: "Haz clic para buscar o arrastra archivos aquí", dropSubText: "Soporte inteligente (¡Reconocimiento automático de formato y reordenamiento de lista!)",
                         convertBtn: "Convertir y descargar", reset: "Restablecer", favoritesTitle: "⭐ Herramientas Favoritas",
                         catPdf: "📄 Herramientas PDF", catImage: "🖼️ Herramientas de imagen", catDev: "💻 Texto y desarrollo", catSec: "🔐 Seguridad y utilidades",
                         recentActivity: "🕒 Actividad local reciente", clear: "Borrar", advancedSettings: "⚙️ Configuración avanzada",
@@ -479,6 +502,7 @@
                         setPdfPass: "Establecer contraseña de PDF:", pdfPassPlaceholder: "Introduce una contraseña segura",
                         targetFileSize: "Tamaño de archivo objetivo (Máx. MB):", targetWebFormat: "Formato web objetivo:",
                         pageRange: "Rango de páginas (ej. 1, 3-5 o 'all'):", jsonPlaceholder: "Pega el JSON sin formato aquí...",
+                        watermarkTextLabel: "Texto del Filigrana (Watermark):", renamePrefixLabel: "Prefijo de renombrado:",
                         mdPlaceholder: "Escribe Markdown aquí (# Encabezado)...", urlPlaceholder: "Pega la cadena aquí para codificar/decodificar...",
                         qrPlaceholder: "Introduce URL o texto para el código QR...", diffOrigPlaceholder: "Texto original...", diffModPlaceholder: "Texto modificado...",
                         resultPlaceholder: "El resultado aparecerá aquí...", passLen: "Longitud:", passSym: "Símbolos", passNum: "Números", passUp: "Mayúsculas",
@@ -509,6 +533,7 @@
                             'pdf-to-jpg': { label: 'PDF a JPG', desc: 'Extrae páginas de PDF a imágenes JPG directamente en tu navegador. Rápido, gratis y totalmente privado.' },
                             'merge-pdf': { label: 'Unir PDF', desc: 'Combina múltiples documentos PDF de forma segura en tu navegador sin subir nada.' },
                             'split-pdf': { label: 'Dividir PDF', desc: 'Extrae páginas específicas de un archivo PDF localmente.' },
+                            'pdf-watermark': { label: 'Filigranas PDF', desc: 'Añade marcas de agua o texto semi-transparente a tus documentos PDF de forma segura.' },
                             'jpg-to-pdf': { label: 'JPG a PDF', desc: 'Convierte imágenes en un único documento PDF de forma segura.' },
                             'compress-image': { label: 'Comprimir Imagen', desc: 'Reduce el tamaño de las imágenes manteniendo la calidad.' },
                             'heic-to-jpg': { label: 'HEIC a JPG', desc: 'Convierte fotos HEIC de Apple al formato estándar JPG.' },
@@ -522,13 +547,15 @@
                             'url-tool': { label: 'Herramienta URL', desc: 'Codifica o decodifica cadenas de URL de forma segura.' },
                             'diff-tool': { label: 'Diferencia de Texto (Diff)', desc: 'Compara dos bloques de texto línea por línea.' },
                             'md-tool': { label: 'Vista previa Markdown', desc: 'Previsualiza contenido Markdown renderizado como HTML.' },
+                            'batch-rename': { label: 'Renombrado Lotes', desc: 'Renombra múltiples archivos de forma masiva y estructurada localmente.' },
                             'password-gen': { label: 'Generador de contraseñas', desc: 'Genera contraseñas seguras y aleatorias.' },
                             'crypto-note': { label: 'Nota Cifrada (Hash)', desc: 'Cifra notas seguras en el navegador para compartir mediante hash.' },
                             'encrypt-pdf': { label: 'Cifrar PDF', desc: 'Añade protección por contraseña a tus archivos PDF con AES.' },
                             'hash-calc': { label: 'Hash de archivo', desc: 'Calcula hashes de suma de comprobación SHA-256.' },
                             'uuid-gen': { label: 'Generador UUID', desc: 'Genera identificadores únicos (UUID v4).' },
                             'qr-tool': { label: 'Generador código QR', desc: 'Genera códigos QR de alta resolución localmente.' },
-                            'ocr-reader': { label: 'Lector de texto OCR', desc: 'Extrae texto de imágenes usando IA local (Tesseract).' }
+                            'ocr-reader': { label: 'Lector de texto OCR', desc: 'Extrae texto de imágenes usando IA local (Tesseract).' },
+                            'video-frames': { label: 'Extractor Video Frames', desc: 'Extrae fotogramas clave de archivos de video en el navegador.' }
                         }
                     },
                     en: {
@@ -537,7 +564,7 @@
                         progressTitle: "Processing Locally...", progressText: "0 KB uploaded to servers (100% Secure)",
                         secTitle: "100% Local & Secure Processing Guarantee", secDesc: "All conversions run client-side. Zero bytes uploaded to any remote server.",
                         blockedCloudData: "Blocked Cloud Data", mbSafe: "MB Safe", localBadge: "100% Local",
-                        dropText: "Click to browse or drag files here", dropSubText: "Support for single or batch processing (Drag to reorder list items below!)",
+                        dropText: "Click to browse or drag files here", dropSubText: "Smart support (Auto-format recognition & item reordering!)",
                         convertBtn: "Convert & Download", reset: "Reset", favoritesTitle: "⭐ Favorite Tools",
                         catPdf: "📄 PDF Tools", catImage: "🖼️ Image Tools", catDev: "💻 Text & Dev", catSec: "🔐 Security & Utils",
                         recentActivity: "🕒 Recent Local Activity", clear: "Clear", advancedSettings: "⚙️ Advanced Settings",
@@ -548,6 +575,7 @@
                         setPdfPass: "Set PDF Password:", pdfPassPlaceholder: "Enter secure password",
                         targetFileSize: "Target File Size (Max MB):", targetWebFormat: "Target Web Format:",
                         pageRange: "Page Range (e.g. 1, 3-5 or 'all'):", jsonPlaceholder: "Paste raw JSON here...",
+                        watermarkTextLabel: "Watermark Text:", renamePrefixLabel: "Batch Prefix:",
                         mdPlaceholder: "Type Markdown here (# Heading)...", urlPlaceholder: "Paste string here to encode/decode...",
                         qrPlaceholder: "Enter URL or text for QR Code...", diffOrigPlaceholder: "Original text...", diffModPlaceholder: "Modified text...",
                         resultPlaceholder: "Result will appear here...", passLen: "Length:", passSym: "Symbols", passNum: "Numbers", passUp: "Uppercase",
@@ -578,6 +606,7 @@
                             'pdf-to-jpg': { label: 'PDF to JPG', desc: 'Extract PDF pages into JPG images directly in your browser. Fast, free, and completely private.' },
                             'merge-pdf': { label: 'Merge PDF', desc: 'Combine multiple PDF documents securely in your browser without uploading.' },
                             'split-pdf': { label: 'Split PDF', desc: 'Extract specific pages from a PDF file locally.' },
+                            'pdf-watermark': { label: 'PDF Watermark', desc: 'Add semi-transparent text watermarks to your PDF documents securely.' },
                             'jpg-to-pdf': { label: 'JPG to PDF', desc: 'Convert images into a single PDF document securely.' },
                             'compress-image': { label: 'Compress Image', desc: 'Shrink image file sizes while maintaining quality.' },
                             'heic-to-jpg': { label: 'HEIC to JPG', desc: 'Convert Apple HEIC photos to standard JPG format.' },
@@ -591,13 +620,15 @@
                             'url-tool': { label: 'URL Tool', desc: 'Encode or decode URL strings securely.' },
                             'diff-tool': { label: 'Text Diff', desc: 'Compare two text blocks line by line.' },
                             'md-tool': { label: 'Markdown Preview', desc: 'Preview Markdown content rendered as HTML.' },
+                            'batch-rename': { label: 'Batch Rename', desc: 'Rename multiple files in bulk locally.' },
                             'password-gen': { label: 'Password Generator', desc: 'Generate secure, randomized passwords.' },
                             'crypto-note': { label: 'Encrypted Note', desc: 'Encrypt secure notes locally for hash-based sharing.' },
                             'encrypt-pdf': { label: 'Encrypt PDF', desc: 'Add password protection to your PDF files with AES.' },
                             'hash-calc': { label: 'File Hash', desc: 'Calculate SHA-256 checksum hashes.' },
                             'uuid-gen': { label: 'UUID Generator', desc: 'Generate unique identifiers (UUID v4).' },
                             'qr-tool': { label: 'QR Code Generator', desc: 'Generate high-resolution QR codes locally.' },
-                            'ocr-reader': { label: 'OCR Text Reader', desc: 'Extract text from images using local AI (Tesseract).' }
+                            'ocr-reader': { label: 'OCR Text Reader', desc: 'Extract text from images using local AI (Tesseract).' },
+                            'video-frames': { label: 'Video Frame Extractor', desc: 'Extract key frames from video files locally.' }
                         }
                     },
                     ar: {
@@ -606,7 +637,7 @@
                         progressTitle: "جاري المعالجة محلياً...", progressText: "تم رفع 0 كيلوبايت إلى الخوادم (آمن 100%)",
                         secTitle: "ضمان معالجة محلية وآمنة بنسبة 100%", secDesc: "تعمل جميع التحويلات في متصفحك. صفر بايت يتم تحميله إلى أي خادم بعيد.",
                         blockedCloudData: "بيانات سحابية محظورة", mbSafe: "ميجابايت آمنة", localBadge: "محلي 100%",
-                        dropText: "انقر للاستعراض أو اسحب الملفات هنا", dropSubText: "دعم المعالجة الفردية أو المجمعة (اسحب لإعادة ترتيب عناصر القائمة أدناه!)",
+                        dropText: "انقر للاستعراض أو اسحب الملفات هنا", dropSubText: "دعم ذكي (التعرف التلقائي على الصيغة وترتيب العناصر!)",
                         convertBtn: "تحويل وتنزيل", reset: "إعادة ضبط", favoritesTitle: "⭐ الأدوات المفضلة",
                         catPdf: "📄 أدوات PDF", catImage: "🖼️ أدوات الصور", catDev: "💻 النصوص والمطورين", catSec: "🔐 الأمان والأدوات",
                         recentActivity: "🕒 النشاط المحلي الأخير", clear: "مسح", advancedSettings: "⚙️ إعدادات متقدمة",
@@ -617,6 +648,7 @@
                         setPdfPass: "تعيين كلمة مرور PDF:", pdfPassPlaceholder: "أدخل كلمة مرور آمنة",
                         targetFileSize: "حجم الملف المستهدف (بحد أقصى ميجابايت):", targetWebFormat: "تنسيق الويب المستهدف:",
                         pageRange: "نطاق الصفحات (مثل 1، 3-5 أو 'all'):", jsonPlaceholder: "الصق كود JSON الخام هنا...",
+                        watermarkTextLabel: "نص العلامة المائية:", renamePrefixLabel: "بادئة التسمية المجمعة:",
                         mdPlaceholder: "اكتب نص Markdown هنا (# عنوان)...", urlPlaceholder: "الصق النص هنا للتشفير/فك التشفير...",
                         qrPlaceholder: "أدخل رابط أو نص لرمز الاستجابة السريعة (QR)...", diffOrigPlaceholder: "النص الأصلي...", diffModPlaceholder: "النص المعدل...",
                         resultPlaceholder: "ستظهر النتيجة هنا...", passLen: "الطول:", passSym: "الرموز", passNum: "الأرقام", passUp: "حروف كبيرة",
@@ -647,6 +679,7 @@
                             'pdf-to-jpg': { label: 'PDF إلى JPG', desc: 'استخراج صفحة PDF إلى صور JPG مباشرة في متصفحك. سريع، مجاني، وآمن تماماً.' },
                             'merge-pdf': { label: 'دمج PDF', desc: 'جمع مستندات PDF متعددة بأمان في متصفحك دون رفعها.' },
                             'split-pdf': { label: 'تقسيم PDF', desc: 'استخراج صفحات محددة من ملف PDF محلياً.' },
+                            'pdf-watermark': { label: 'علامة مائية PDF', desc: 'إضافة علامات مائية نصية semi-transparent لملفات PDF بأمان.' },
                             'jpg-to-pdf': { label: 'JPG إلى PDF', desc: 'تحويل الصور إلى مستند PDF واحد بأمان.' },
                             'compress-image': { label: 'ضغط الصور', desc: 'تقليل حجم ملفات الصور مع الحفاظ على الجودة.' },
                             'heic-to-jpg': { label: 'HEIC إلى JPG', desc: 'تحويل صور أبل HEIC إلى تنسيق JPG القياسي.' },
@@ -660,13 +693,15 @@
                             'url-tool': { label: 'أداة الرابط (URL)', desc: 'ترميز أو فك ترميز سلاسل الروابط بأمان.' },
                             'diff-tool': { label: 'مقارنة النصوص (Diff)', desc: 'مقارنة كتلتين نصيتين سطر بسطر.' },
                             'md-tool': { label: 'معاينة Markdown', desc: 'معاينة محتوى Markdown المُعرّض كـ HTML.' },
+                            'batch-rename': { label: 'إعادة تسمية مجمعة', desc: 'إعادة تسمية عدة ملفات دفعة واحدة محلياً.' },
                             'password-gen': { label: 'مولد كلمات المرور', desc: 'إنشاء كلمات مرور آمنة وعشوائية.' },
                             'crypto-note': { label: 'ملاحظة مشفرة', desc: 'تشفير الملاحظات بلآمان محلياً لمشاركتها عبر Hash.' },
                             'encrypt-pdf': { label: 'تشفير PDF', desc: 'إضافة حماية بكلمة مرور لملفات PDF باستخدام AES.' },
                             'hash-calc': { label: 'تجزئة الملف (Hash)', desc: 'حساب قيم التجزئة SHA-256.' },
                             'uuid-gen': { label: 'مولد المعرفات (UUID)', desc: 'إنشاء معرفات فريدة (UUID v4).' },
                             'qr-tool': { label: 'مولد رمز الاستجابة السريعة', desc: 'إنشاء رموز QR عالية الدقة محلياً.' },
-                            'ocr-reader': { label: 'قارئ النصوص OCR', desc: 'استخراج النص من الصور باستخدام الذكاء الاصطناعي المحلي (Tesseract).' }
+                            'ocr-reader': { label: 'قارئ النصوص OCR', desc: 'استخراج النص من الصور باستخدام الذكاء الاصطناعي المحلي (Tesseract).' },
+                            'video-frames': { label: 'استخراج فريمات الفيديو', desc: 'استخراج صور ثابتة من مقاطع الفيديو محلياً.' }
                         }
                     }
                 },
@@ -745,6 +780,20 @@
                         toast.classList.add('translate-y-2', 'opacity-0');
                         setTimeout(() => toast.remove(), 300);
                     }, 3000);
+                },
+                playSuccessChime() {
+                    try {
+                        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+                        osc.frequency.setValueAtTime(880, ctx.currentTime + 0.08); // A5
+                        gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+                        osc.connect(gain); gain.connect(ctx.destination);
+                        osc.start(); osc.stop(ctx.currentTime + 0.3);
+                    } catch(e) {}
                 },
                 updateLiveCounter(fileSize = 0) {
                     PrivacyConvert.state.totalSafeBytes += fileSize;
@@ -862,7 +911,7 @@
                         }
                     });
 
-                    ['encryptOptionsGroup', 'compressOptionsGroup', 'webpOptionsGroup', 'pdfRangeGroup', 'qualityContainer'].forEach(id => {
+                    ['encryptOptionsGroup', 'compressOptionsGroup', 'webpOptionsGroup', 'pdfRangeGroup', 'qualityContainer', 'watermarkOptionsGroup', 'renameOptionsGroup'].forEach(id => {
                         const el = document.getElementById(id);
                         if(el) el.classList.add('hidden');
                     });
@@ -887,6 +936,10 @@
                         case 'split-pdf':
                             fileInput.accept = ".pdf"; fileInput.multiple = (tool === 'merge-pdf');
                             formatText = "📄 PDF"; showAdvanced = false; break;
+                        case 'pdf-watermark':
+                            fileInput.accept = ".pdf"; fileInput.multiple = false;
+                            document.getElementById('watermarkOptionsGroup').classList.remove('hidden');
+                            formatText = "💧 Watermark"; break;
                         case 'jpg-to-pdf':
                             fileInput.accept = "image/png,image/jpeg"; fileInput.multiple = true;
                             formatText = "📄 PDF"; showAdvanced = false; break;
@@ -911,6 +964,13 @@
                             fileInput.accept = ".pdf"; fileInput.multiple = false;
                             document.getElementById('encryptOptionsGroup').classList.remove('hidden');
                             formatText = "🔒 " + (t.outEncrypted || "Encrypted"); break;
+                        case 'batch-rename':
+                            fileInput.accept = "*/*"; fileInput.multiple = true;
+                            document.getElementById('renameOptionsGroup').classList.remove('hidden');
+                            formatText = "🏷️ Batch"; break;
+                        case 'video-frames':
+                            fileInput.accept = "video/*"; fileInput.multiple = false;
+                            showAdvanced = false; formatText = "🎞️ Frames"; break;
                         case 'redact-tool': case 'extract-pdf-img':
                             fileInput.accept = "image/*,.pdf"; fileInput.multiple = true; showAdvanced = false; break;
                         case 'hash-calc': case 'ocr-reader':
@@ -1016,7 +1076,17 @@
                     if(files.length === 0) return;
                     const t = PrivacyConvert.i18n.translations[PrivacyConvert.state.lang];
                     
-                    // Smart Validation based on tool accept filter
+                    // Smart Drop Routing: Auto-switch tool based on dropped file extension if appropriate
+                    const firstFile = files[0];
+                    const fname = firstFile.name.toLowerCase();
+                    if (fname.endsWith('.pdf') && !['pdf-to-png', 'pdf-to-jpg', 'merge-pdf', 'split-pdf', 'pdf-watermark', 'encrypt-pdf', 'extract-pdf-img'].includes(PrivacyConvert.state.tool)) {
+                        PrivacyConvert.tools.switchTool('pdf-to-png', true);
+                    } else if ((fname.endsWith('.mp4') || fname.endsWith('.webm') || fname.endsWith('.mov')) && PrivacyConvert.state.tool !== 'video-frames') {
+                        PrivacyConvert.tools.switchTool('video-frames', true);
+                    } else if ((fname.endsWith('.jpg') || fname.endsWith('.jpeg') || fname.endsWith('.png')) && ['pdf-to-png', 'pdf-to-jpg', 'merge-pdf'].includes(PrivacyConvert.state.tool)) {
+                        PrivacyConvert.tools.switchTool('compress-image', true);
+                    }
+
                     if (fileInput.accept && fileInput.accept !== '*/*') {
                         const acceptedTypes = fileInput.accept.split(',').map(s => s.trim());
                         for (let file of files) {
@@ -1048,7 +1118,7 @@
                     let totalBytes = Array.from(files).reduce((acc, f) => acc + f.size, 0);
                     PrivacyConvert.ui.updateLiveCounter(totalBytes);
 
-                    if(PrivacyConvert.state.tool === 'hash-calc' || PrivacyConvert.state.tool === 'ocr-reader' || PrivacyConvert.state.tool === 'exif-inspector') {
+                    if(['hash-calc', 'ocr-reader', 'exif-inspector'].includes(PrivacyConvert.state.tool)) {
                         document.getElementById('genericTextBox').classList.remove('hidden');
                         document.getElementById('genericTextArea').value = `${PrivacyConvert.state.files[0].name} (${(PrivacyConvert.state.files[0].size/1024).toFixed(1)} KB)`;
                     }
@@ -1160,7 +1230,7 @@
             }
         };
 
-        // Lazy Loading Helper for Heavy Libraries (PDF.js / Tesseract)
+        // Lazy Loader Helper
         const LazyLoader = {
             loaded: {},
             loadScript(src) {
@@ -1183,6 +1253,14 @@
                 await this.loadScript('https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js');
             }
         };
+
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            const swCode = `self.addEventListener('install', e => e.waitUntil(self.skipWaiting())); self.addEventListener('activate', e => e.waitUntil(self.clients.claim())); self.addEventListener('fetch', e => e.respondWith(fetch(e.request).catch(() => caches.match(e.request))));`;
+            const blob = new Blob([swCode], { type: 'text/javascript' });
+            const swUrl = URL.createObjectURL(blob);
+            navigator.serviceWorker.register(swUrl).catch(err => console.log('PWA SW error:', err));
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             const savedAccent = localStorage.getItem('privacyConvert_accent') || 'indigo';
@@ -1306,7 +1384,7 @@
             convertBtn.addEventListener('click', async () => {
                 const t = PrivacyConvert.i18n.translations[PrivacyConvert.state.lang];
                 if (PrivacyConvert.state.tool === 'password-gen' || PrivacyConvert.state.tool === 'uuid-gen') { PrivacyConvert.ui.copyGenerated(); return; }
-                if (PrivacyConvert.state.tool === 'json-tool') { PrivacyConvert.tools.processJson(); PrivacyConvert.ui.addHistory(PrivacyConvert.state.tool); PrivacyConvert.ui.showToast(t.toasts.jsonFormatted); return; }
+                if (PrivacyConvert.state.tool === 'json-tool') { PrivacyConvert.tools.processJson(); PrivacyConvert.ui.addHistory(PrivacyConvert.state.tool); PrivacyConvert.ui.showToast(t.toasts.jsonFormatted); PrivacyConvert.ui.playSuccessChime(); return; }
                 if (PrivacyConvert.state.tool === 'md-tool') {
                     const input = document.getElementById('mainInputField').value.trim();
                     const output = document.getElementById('genericTextArea');
@@ -1314,6 +1392,7 @@
                     document.getElementById('genericTextBox').classList.remove('hidden');
                     PrivacyConvert.ui.addHistory(PrivacyConvert.state.tool);
                     PrivacyConvert.ui.showToast(t.toasts.mdConverted);
+                    PrivacyConvert.ui.playSuccessChime();
                     return;
                 }
                 if (PrivacyConvert.state.tool === 'qr-tool') {
@@ -1326,6 +1405,7 @@
                         document.getElementById('qrTextDisplay').textContent = input;
                         PrivacyConvert.ui.addHistory(PrivacyConvert.state.tool);
                         PrivacyConvert.ui.showToast(t.toasts.qrCreated);
+                        PrivacyConvert.ui.playSuccessChime();
                     }
                     return;
                 }
@@ -1351,6 +1431,7 @@
                         document.getElementById('genericTextBox').classList.remove('hidden');
                         PrivacyConvert.ui.showToast(t.toasts.copied);
                         PrivacyConvert.ui.addHistory(PrivacyConvert.state.tool);
+                        PrivacyConvert.ui.playSuccessChime();
                     } catch(err) {
                         PrivacyConvert.ui.showToast(t.toasts.errorOccurred + err.message, "error");
                     }
@@ -1373,6 +1454,7 @@
                         PrivacyConvert.ui.showToast(t.toasts.urlProcessed);
                     }
                     document.getElementById('genericTextBox').classList.remove('hidden');
+                    PrivacyConvert.ui.playSuccessChime();
                     return;
                 }
                 if (PrivacyConvert.state.tool === 'diff-tool') {
@@ -1381,6 +1463,7 @@
                     PrivacyConvert.tools.downloadBlob(new Blob([diffTxt], { type: 'text/plain;charset=utf-8' }), 'diff_result.txt');
                     PrivacyConvert.ui.addHistory(PrivacyConvert.state.tool);
                     PrivacyConvert.ui.showToast(t.toasts.diffDownloaded);
+                    PrivacyConvert.ui.playSuccessChime();
                     return;
                 }
 
@@ -1430,6 +1513,69 @@
                             const zipBlob = await zip.generateAsync({ type: "blob" });
                             PrivacyConvert.tools.downloadBlob(zipBlob, `${file.name.replace(/\.[^/.]+$/, "")}_pages.zip`);
                         }
+                        PrivacyConvert.ui.addHistory(currentTool);
+                    }
+                    else if (currentTool === 'pdf-watermark') {
+                        const file = selectedFiles[0];
+                        const wmText = document.getElementById('watermarkTextInput')?.value || 'CONFIDENTIAL';
+                        const arrayBuffer = await file.arrayBuffer();
+                        const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
+                        const pages = pdfDoc.getPages();
+                        
+                        pages.forEach(page => {
+                            const { width, height } = page.getSize();
+                            page.drawText(wmText, {
+                                x: width / 4,
+                                y: height / 2,
+                                size: 50,
+                                color: PDFLib.rgb(0.7, 0.7, 0.7),
+                                opacity: 0.3,
+                                rotate: PDFLib.degrees(45),
+                            });
+                        });
+                        const pdfBytes = await pdfDoc.save();
+                        PrivacyConvert.tools.downloadBlob(new Blob([pdfBytes], { type: 'application/pdf' }), `watermarked_${file.name}`);
+                        PrivacyConvert.ui.addHistory(currentTool);
+                    }
+                    else if (currentTool === 'batch-rename') {
+                        const prefix = document.getElementById('renamePrefixInput')?.value || 'file_';
+                        const zip = new JSZip();
+                        selectedFiles.forEach((file, index) => {
+                            const ext = file.name.split('.').pop();
+                            const newName = `${prefix}${(index+1).toString().padStart(3, '0')}.${ext}`;
+                            if (selectedFiles.length === 1) {
+                                PrivacyConvert.tools.downloadBlob(file, newName);
+                            } else {
+                                zip.file(newName, file);
+                            }
+                        });
+                        if (selectedFiles.length > 1) {
+                            PrivacyConvert.tools.downloadBlob(await zip.generateAsync({ type: "blob" }), "renamed_files.zip");
+                        }
+                        PrivacyConvert.ui.addHistory(currentTool);
+                    }
+                    else if (currentTool === 'video-frames') {
+                        const file = selectedFiles[0];
+                        const video = document.createElement('video');
+                        video.src = URL.createObjectURL(file);
+                        video.muted = true;
+                        await new Promise(r => video.onloadedmetadata = r);
+                        
+                        const zip = new JSZip();
+                        const canvas = document.createElement('canvas');
+                        canvas.width = video.videoWidth || 640;
+                        canvas.height = video.videoHeight || 360;
+                        const ctx = canvas.getContext('2d');
+                        
+                        const duration = Math.min(video.duration, 10); // cap to 10s
+                        for (let t = 0; t <= duration; t += 2) {
+                            video.currentTime = t;
+                            await new Promise(r => video.onseeked = r);
+                            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                            const blob = await new Promise(res => canvas.toBlob(res, 'image/png', 0.9));
+                            zip.file(`frame_${t}s.png`, blob);
+                        }
+                        PrivacyConvert.tools.downloadBlob(await zip.generateAsync({ type: "blob" }), `${file.name.replace(/\.[^/.]+$/, "")}_frames.zip`);
                         PrivacyConvert.ui.addHistory(currentTool);
                     }
                     else if (currentTool === 'jpg-to-pdf') {
@@ -1675,7 +1821,10 @@
                             PrivacyConvert.ui.addHistory(currentTool);
                         }
                     }
-                    if(currentTool !== 'encrypt-pdf' && currentTool !== 'exif-remover' && currentTool !== 'exif-inspector') PrivacyConvert.ui.showToast(t.toasts.processCompleted);
+                    if(currentTool !== 'encrypt-pdf' && currentTool !== 'exif-remover' && currentTool !== 'exif-inspector') {
+                        PrivacyConvert.ui.showToast(t.toasts.processCompleted);
+                        PrivacyConvert.ui.playSuccessChime();
+                    }
                 } catch(e) {
                     console.error(e);
                     PrivacyConvert.ui.showToast(t.toasts.errorOccurred + e.message, "error");
