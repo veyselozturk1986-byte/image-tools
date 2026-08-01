@@ -98,6 +98,7 @@
                 ⚡ PrivacyConvert
             </a>
             <div class="flex items-center gap-2 sm:gap-3">
+                <button id="pwaInstallBtn" class="hidden bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-3 py-2 rounded-xl font-bold items-center gap-1.5 transition shadow-sm">📱 <span data-i18n="installApp">Instalar App</span></button>
                 <a href="https://github.com" target="_blank" class="inline-flex bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs px-2.5 py-2 rounded-xl font-bold items-center gap-1.5 transition">
                     ⭐ <span data-i18n="githubBadge">GitHub Açık Kaynak</span>
                 </a>
@@ -111,6 +112,9 @@
                 <select id="langSelect" class="bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold px-2.5 py-2 border-0 focus:outline-none cursor-pointer">
                     <option value="es">Español</option>
                     <option value="en">English</option>
+                    <option value="tr">Türkçe</option>
+                    <option value="de">Deutsch</option>
+                    <option value="fr">Français</option>
                     <option value="ar">العربية</option>
                 </select>
                 <button onclick="PrivacyConvert.ui.toggleShortcutsModal(true)" class="p-2 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-xs font-bold transition-all">⌨️</button>
@@ -231,8 +235,9 @@
                 <div id="previewWrapper" class="w-full relative">
                     <div id="fileListContainer" class="hidden w-full max-h-64 overflow-y-auto space-y-2 pr-2 custom-scrollbar"></div>
                     <div id="imagePreviewBox" class="hidden w-full flex flex-col items-center bg-slate-900 rounded-2xl overflow-hidden border border-slate-700 p-2 gap-2">
-                         <div class="relative w-full flex justify-center max-h-[300px] overflow-hidden rounded-xl">
+                         <div id="canvasContainer" class="relative w-full flex justify-center max-h-[300px] overflow-hidden rounded-xl cursor-crosshair">
                              <img id="imagePreview" class="max-w-full max-h-[300px] object-contain transition-all duration-300" alt="File Preview" />
+                             <canvas id="redactCanvas" class="absolute inset-0 w-full h-full pointer-events-none hidden"></canvas>
                              <div id="comparisonSliderOverlay" class="hidden absolute inset-0 w-full h-full flex justify-center overflow-hidden slider-clip pointer-events-none bg-slate-950/40">
                                  <img id="imagePreviewAfter" class="max-w-full max-h-[300px] object-contain" alt="After Preview" />
                              </div>
@@ -353,10 +358,15 @@
                     </div>
                 </div>
 
-                <button id="convertBtn" class="w-full dynamic-bg hover:opacity-90 text-white font-bold py-4 px-6 rounded-2xl shadow-lg transition-all active:scale-95 text-lg flex items-center justify-center gap-3">
-                    <svg class="w-6 h-6 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                    <span id="convertBtnText" data-i18n="convertBtn">Convertir y descargar</span>
-                </button>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <button id="convertBtn" class="flex-grow dynamic-bg hover:opacity-90 text-white font-bold py-4 px-6 rounded-2xl shadow-lg transition-all active:scale-95 text-lg flex items-center justify-center gap-3">
+                        <svg class="w-6 h-6 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        <span id="convertBtnText" data-i18n="convertBtn">Convertir y descargar</span>
+                    </button>
+                    <button id="nativeSaveBtn" onclick="PrivacyConvert.tools.nativeSave()" class="hidden bg-slate-800 hover:bg-slate-900 text-white font-bold py-4 px-6 rounded-2xl shadow-lg transition-all text-sm flex items-center justify-center gap-2 shrink-0">
+                        💾 <span data-i18n="nativeSave">Guardar Nativo</span>
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -373,7 +383,7 @@
                 </div>
                 <div class="border-b border-slate-100 dark:border-slate-700 pb-4">
                     <h3 data-i18n="faq3Title" class="font-bold text-slate-800 dark:text-slate-200 mb-1">¿Por qué este enfoque es más seguro que los convertidores en línea tradicionales?</h3>
-                    <p data-i18n="faq3Desc" class="leading-relaxed opacity-90">Los convertidores en línea tradicionales requieren que subas tus archivos confidenciales a seus servidores remotos, lo que plantea importantes riesgos de privacidad. PrivacyConvert elimina este riesgo por completo.</p>
+                    <p data-i18n="faq3Desc" class="leading-relaxed opacity-90">Los convertidores en línea tradicionales requieren que subas tus archivos confidenciales a sus servidores remotos, lo que plantea importantes riesgos de privacidad. PrivacyConvert elimina este riesgo por completo.</p>
                 </div>
                 <div>
                     <h3 data-i18n="faq4Title" class="font-bold text-slate-800 dark:text-slate-200 mb-1">¿Cómo puedes verificar esto tú mismo (Prueba de red cero)?</h3>
@@ -397,6 +407,14 @@
 
     <!-- NAMESPACE SCRIPT -->
     <script>
+        let deferredPrompt = null;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const btn = document.getElementById('pwaInstallBtn');
+            if (btn) btn.classList.remove('hidden');
+        });
+
         const PrivacyConvert = {
             state: {
                 lang: localStorage.getItem('privacyConvert_lang') || 'es',
@@ -404,7 +422,10 @@
                 files: [],
                 totalSafeBytes: parseFloat(localStorage.getItem('privacyConvert_safeBytes')) || 0,
                 sortableInstance: null,
-                favorites: JSON.parse(localStorage.getItem('privacyConvert_favorites')) || ['pdf-to-png', 'compress-image', 'password-gen']
+                favorites: JSON.parse(localStorage.getItem('privacyConvert_favorites')) || ['pdf-to-png', 'compress-image', 'password-gen'],
+                lastResultBlob: null,
+                lastResultName: 'output_file',
+                redactBoxes: []
             },
             
             i18n: {
@@ -416,7 +437,7 @@
                         secTitle: "Garantía de procesamiento 100% local y seguro", secDesc: "Todas las conversiones se ejecutan en tu navegador. Cero bytes subidos a servidores remotos.",
                         blockedCloudData: "Datos en la nube bloqueados", mbSafe: "MB Seguros", localBadge: "100% Local",
                         dropText: "Haz clic para buscar o arrastra archivos aquí", dropSubText: "Soporte inteligente (¡Reconocimiento automático de formato y reordenamiento de lista!)",
-                        convertBtn: "Convertir y descargar", reset: "Restablecer", favoritesTitle: "⭐ Herramientas Favoritas",
+                        convertBtn: "Convertir y descargar", nativeSave: "Guardar Nativo", installApp: "Instalar App", reset: "Restablecer", favoritesTitle: "⭐ Herramientas Favoritas",
                         catPdf: "📄 Herramientas PDF", catImage: "🖼️ Herramientas de imagen", catDev: "💻 Texto y desarrollo", catSec: "🔐 Seguridad y utilidades",
                         recentActivity: "🕒 Actividad local reciente", clear: "Borrar", advancedSettings: "⚙️ Configuración avanzada",
                         githubBadge: "GitHub Código Abierto", renderQuality: "Calidad de renderizado:", outputInfo: "Información de salida:", 
@@ -489,7 +510,7 @@
                         secTitle: "100% Local & Secure Processing Guarantee", secDesc: "All conversions run client-side. Zero bytes uploaded to any remote server.",
                         blockedCloudData: "Blocked Cloud Data", mbSafe: "MB Safe", localBadge: "100% Local",
                         dropText: "Click to browse or drag files here", dropSubText: "Smart support (Auto-format recognition & item reordering!)",
-                        convertBtn: "Convert & Download", reset: "Reset", favoritesTitle: "⭐ Favorite Tools",
+                        convertBtn: "Convert & Download", nativeSave: "Save Native", installApp: "Install App", reset: "Reset", favoritesTitle: "⭐ Favorite Tools",
                         catPdf: "📄 PDF Tools", catImage: "🖼️ Image Tools", catDev: "💻 Text & Dev", catSec: "🔐 Security & Utils",
                         recentActivity: "🕒 Recent Local Activity", clear: "Clear", advancedSettings: "⚙️ Advanced Settings",
                         githubBadge: "GitHub Open Source", renderQuality: "Render Quality:", outputInfo: "Output Info:", 
@@ -555,6 +576,226 @@
                             'video-frames': { label: 'Video Frame Extractor', desc: 'Extract key frames from video files locally.' }
                         }
                     },
+                    tr: {
+                        securePrefix: "Güvenli", outOptimized: "Optimize Edilmiş Görsel", outClean: "Temiz Görsel (EXIF Yok)", outEncrypted: "Şifrelenmiş PDF",
+                        fileStr: "Dosya", sizeStr: "Boyut", overlayTitle: "Dosyalarınızı yerel olarak işlemek için buraya bırakın!",
+                        progressTitle: "Yerel Olarak İşleniyor...", progressText: "Sunuculara 0 KB yüklendi (%100 Güvenli)",
+                        secTitle: "%100 Yerel ve Güvenli İşleme Garantisi", secDesc: "Tüm dönüşümler tarayıcınızda çalışır. Uzak sunucuya sıfır bayt yüklenir.",
+                        blockedCloudData: "Engellenen Bulut Verisi", mbSafe: "MB Güvende", localBadge: "%100 Yerel",
+                        dropText: "Dosya seçmek için tıklayın veya buraya sürükleyin", dropSubText: "Akıllı destek (Otomatik format tanıma ve sıra yönetimi!)",
+                        convertBtn: "Dönüştür ve İndir", nativeSave: "Yerel Kaydet", installApp: "Uygulamayı Kur", reset: "Sıfırla", favoritesTitle: "⭐ Favori Araçlar",
+                        catPdf: "📄 PDF Araçları", catImage: "🖼️ Görsel Araçları", catDev: "💻 Metin ve Geliştirici", catSec: "🔐 Güvenlik ve Araçlar",
+                        recentActivity: "🕒 Son Yerel Etkinlik", clear: "Temizle", advancedSettings: "⚙️ Gelişmiş Ayarlar",
+                        githubBadge: "GitHub Açık Kaynak", renderQuality: "Render Kalitesi:", outputInfo: "Çıktı Bilgisi:", 
+                        searchPlaceholder: "Güvenli araçlarda ara (Ctrl+K)...", cmdPlaceholder: "Bir araç adı yazın...",
+                        shortcutsTitle: "Klavye Kısayolları", shortcutCmd: "Komut Paleti", shortcutReset: "Çalışma Alanını Sıfırla", shortcutConvert: "Dönüştür ve İndir",
+                        copy: "📋 Kopyala", copyOnly: "Kopyala", generateAnother: "🔄 Başka Üret", output: "Çıktı:", comparisonOutput: "Karşılaştırma Çıktısı:",
+                        setPdfPass: "PDF Şifresi Belirle:", pdfPassPlaceholder: "Güvenli bir şifre girin",
+                        targetFileSize: "Hedef Dosya Boyutu (Maks. MB):", targetWebFormat: "Hedef Web Formatı:",
+                        pageRange: "Sayfa Aralığı (örn. 1, 3-5 veya 'all'):", jsonPlaceholder: "Ham JSON verisini buraya yapıştırın...",
+                        watermarkTextLabel: "Filigran Metni:", renamePrefixLabel: "Toplu Önek:",
+                        mdPlaceholder: "Markdown metnini buraya yazın (# Başlık)...", urlPlaceholder: "Kodlamak/çözmek için metni buraya yapıştırın...",
+                        qrPlaceholder: "QR Kod için URL veya metin girin...", diffOrigPlaceholder: "Orijinal metin...", diffModPlaceholder: "Değiştirilmiş metin...",
+                        resultPlaceholder: "Sonuç burada görünecek...", passLen: "Uzunluk:", passSym: "Semboller", passNum: "Rakamlar", passUp: "Büyük Harf",
+                        cryptoPassPlaceholder: "Notu şifrelemek/çözmek için şifre...", invalidFormat: "Bu araç için geçersiz dosya formatı.",
+                        qualityStd: "Standart (150 DPI)", qualityHigh: "Yüksek Kalite (200 DPI)", qualityUltra: "Ultra HD (300 DPI)",
+                        faqMainTitle: "Sık Sorulan Sorular ve Güvenlik Mimarisi",
+                        faq1Title: "PrivacyConvert dosyaları sunucusuz nasıl işler?",
+                        faq1Desc: "PrivacyConvert gelişmiş tarayıcı tabanlı istemci teknolojileri kullanır (WebAssembly, PDF.js, Canvas API). Bir dosya seçtiğinizde veya bıraktığınızda, dönüşümü kendi tarayıcınızın CPU ve belleği yerel olarak gerçekleştirir.",
+                        faq2Title: "Dosyalarım cihazımdan hiç ayrılır mı?",
+                        faq2Desc: "Asla. Dosyalarınızı işleyen bir arka plan sunucusu olmadığından, hassas belgeleriniz, PDF'leriniz ve görselleriniz asla internete veya uzak bulut depolamaya dokunmaz. %100 yerel makinenizde kalır.",
+                        faq3Title: "Bu yaklaşımlar geleneksel çevrimiçi dönüştürücülerden neden daha güvenlidir?",
+                        faq3Desc: "Geleneksel çevrimiçi dönüştürücüler, gizlilik riskleri oluşturacak şekilde hassas dosyalarınızı uzak sunucularına yüklemenizi gerektirir. PrivacyConvert bu riski tamamen ortadan kaldırır.",
+                        faq4Title: "Bunu kendiniz nasıl doğrulayabilirsiniz (Sıfır Ağ Kanıtı)?",
+                        faq4Desc: "Sadece bizim sözümüze güvenmek zorunda değilsiniz. Bunu hemen inceleyip kanıtlayabilirsiniz:",
+                        verifyStep1: "<strong>Ağ Denetleyicisi Testi:</strong> Geliştirici Araçlarını açmak için <kbd class='bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded font-mono text-xs'>F12</kbd> tuşuna basın, <strong>Ağ (Network)</strong> sekmesine gidin ve herhangi bir dosyayı dönüştürün. Sıfır giden dosya yükleme isteği göreceksiniz.",
+                        verifyStep2: "<strong>Çevrimdışı Mod Testi:</strong> Bilgisayarınızın internet bağlantısını tamamen kesin. PrivacyConvert dosyalarınızı kesintisiz olarak dönüştürmeye ve işlemeye devam edecektir.",
+                        toasts: {
+                            filesLoaded: "dosya güvenle yüklendi.", copied: "Panoya kopyalandı!", jsonFormatted: "JSON biçimlendirildi!",
+                            mdConverted: "Markdown HTML'e dönüştürüldü!", enterUrlText: "Önce URL/Metin girin", qrCreated: "QR Kod Oluşturuldu!",
+                            base64Decoded: "Base64 çözüldü", base64Encoded: "Base64 kodlandı", urlProcessed: "URL işlendi",
+                            diffDownloaded: "Fark sonucu indirildi!", pleaseAddFile: "Lütfen önce bir dosya ekleyin",
+                            exifCleaned: "EXIF meta verileri başarıyla temizlendi!", pdfEncrypted: "PDF güvenle şifrelendi ve indirildi!",
+                            processCompleted: "İşlem tamamlandı ve dosya indirildi!", errorOccurred: "Dosya işlenirken hata oluştu: ",
+                            historyCleared: "Geçmiş temizlendi", noActivity: "Yakın zamanda etkinlik bulunamadı."
+                        },
+                        tools: {
+                            'pdf-to-png': { label: 'PDF den PNG', desc: 'PDF sayfalarını doğrudan tarayıcınızda PNG görsellerine dönüştürün. Hızlı, ücretsiz ve tamamen özel.' },
+                            'pdf-to-jpg': { label: 'PDF den JPG', desc: 'PDF sayfalarını doğrudan tarayıcınızda JPG görsellerine dönüştürün. Hızlı, ücretsiz ve tamamen özel.' },
+                            'merge-pdf': { label: 'PDF Birleştir', desc: 'Birden fazla PDF belgesini yüklemeden tarayıcınızda güvenle birleştirin.' },
+                            'split-pdf': { label: 'PDF Böl', desc: 'Bir PDF dosyasından belirli sayfaları yerel olarak çıkarın.' },
+                            'pdf-watermark': { label: 'PDF Filigran', desc: 'PDF belgelerinize güvenli bir şekilde yarı şeffaf filigranlar ekleyin.' },
+                            'jpg-to-pdf': { label: 'JPG den PDF', desc: 'Görselleri tek bir PDF belgesine güvenle dönüştürün.' },
+                            'compress-image': { label: 'Görsel Sıkıştır', desc: 'Kaliteyi korurken görsel dosya boyutlarını küçültün.' },
+                            'heic-to-jpg': { label: 'HEIC den JPG', desc: 'Apple HEIC fotoğraflarını standart JPG formatına dönüştürün.' },
+                            'webp-converter': { label: 'WebP Dönüştürücü', desc: 'Görselleri modern WebP veya AVIF formatlarına dönüştürün.' },
+                            'exif-remover': { label: 'EXIF Kaldırıcı', desc: 'GPS konumlarını, kamera modellerini ve gizli meta verileri anında temizleyin.' },
+                            'exif-inspector': { label: 'EXIF Denetleyicisi', desc: 'Görsel teknik özelliklerini ve meta verilerini yerel olarak inceleyin.' },
+                            'extract-pdf-img': { label: 'PDF Görsellerini Çıkar', desc: 'PDF belgelerindeki gömülü görselleri çıkarın.' },
+                            'redact-tool': { label: 'Görsel Sansürle', desc: 'Görsellerinizdeki hassas bilgileri güvenle karartın.' },
+                            'json-tool': { label: 'JSON Biçimlendirici', desc: 'Ham JSON verilerini biçimlendirin, doğrulayın ve güzelleştirin.' },
+                            'base64-tool': { label: 'Base64 Aracı', desc: 'Base64 metin dizelerini kolayca kodlayın veya çözün.' },
+                            'url-tool': { label: 'URL Aracı', desc: 'URL dizelerini güvenli bir şekilde kodlayın veya çözün.' },
+                            'diff-tool': { label: 'Metin Farkı (Diff)', desc: 'İki metin bloğunu satır satır karşılaştırın.' },
+                            'md-tool': { label: 'Markdown Önizleme', desc: 'Markdown içeriğini HTML olarak önizleyin.' },
+                            'batch-rename': { label: 'Toplu Yeniden Adlandır', desc: 'Birden fazla dosyayı toplu olarak yerel düzeyde yeniden adlandırın.' },
+                            'password-gen': { label: 'Şifre Üreteci', desc: 'Güvenli ve rastgele şifreler oluşturun.' },
+                            'crypto-note': { label: 'Şifreli Not', desc: 'Hash tabanlı paylaşım için notları tarayıcıda şifreleyin.' },
+                            'encrypt-pdf': { label: 'PDF Şifrele', desc: 'AES ile PDF dosyalarınıza şifre koruması ekleyin.' },
+                            'hash-calc': { label: 'Dosya Hash', desc: 'SHA-256 sağlama toplamı hash değerlerini hesaplayın.' },
+                            'uuid-gen': { label: 'UUID Üreteci', desc: 'Benzersiz tanımlayıcılar (UUID v4) oluşturun.' },
+                            'qr-tool': { label: 'QR Kod Üreteci', desc: 'Yerel olarak yüksek çözünürlüklü QR kodları oluşturun.' },
+                            'ocr-reader': { label: 'OCR Metin Okuyucu', desc: 'Yerel yapay zeka kullanarak görsellerden metin çıkarın.' },
+                            'video-frames': { label: 'Video Kare Çıkarıcı', desc: 'Video dosyalarından kareleri yerel olarak çıkarın.' }
+                        }
+                    },
+                    de: {
+                        securePrefix: "Sicher", outOptimized: "Optimiertes Bild", outClean: "Sauberes Bild (Kein EXIF)", outEncrypted: "Verschlüsseltes PDF",
+                        fileStr: "Datei", sizeStr: "Größe", overlayTitle: "Dateien hier ablegen, um sie lokal zu verarbeiten!",
+                        progressTitle: "Lokale Verarbeitung...", progressText: "0 KB auf Server hochgeladen (100% Sicher)",
+                        secTitle: "100% lokale und sichere Verarbeitungsgarantie", secDesc: "Alle Konvertierungen laufen clientseitig. Null Bytes auf Remote-Server hochgeladen.",
+                        blockedCloudData: "Blockierte Cloud-Daten", mbSafe: "MB Sicher", localBadge: "100% Lokal",
+                        dropText: "Klicken zum Durchsuchen oder Dateien hierher ziehen", dropSubText: "Intelligente Unterstützung (Auto-Format & Reihenfolge!)",
+                        convertBtn: "Konvertieren & Herunterladen", nativeSave: "Nativ Speichern", installApp: "App Installieren", reset: "Zurücksetzen", favoritesTitle: "⭐ Favoriten",
+                        catPdf: "📄 PDF-Tools", catImage: "🖼️ Bild-Tools", catDev: "💻 Text & Dev", catSec: "🔐 Sicherheit & Utils",
+                        recentActivity: "🕒 Letzte lokale Aktivität", clear: "Löschen", advancedSettings: "⚙️ Erweiterte Einstellungen",
+                        githubBadge: "GitHub Open Source", renderQuality: "Render-Qualität:", outputInfo: "Ausgabe-Info:", 
+                        searchPlaceholder: "Sichere Tools suchen (Ctrl+K)...", cmdPlaceholder: "Tool-Namen eingeben...",
+                        shortcutsTitle: "Tastenkombinationen", shortcutCmd: "Befehlspalette", shortcutReset: "Arbeitsbereich zurücksetzen", shortcutConvert: "Konvertieren & Herunterladen",
+                        copy: "📋 Kopieren", copyOnly: "Kopieren", generateAnother: "🔄 Anderes generieren", output: "Ausgabe:", comparisonOutput: "Vergleichsausgabe:",
+                        setPdfPass: "PDF-Passwort festlegen:", pdfPassPlaceholder: "Sicheres Passwort eingeben",
+                        targetFileSize: "Ziel-Dateigröße (Max. MB):", targetWebFormat: "Ziel-Webformat:",
+                        pageRange: "Seitenbereich (z.B. 1, 3-5 oder 'all'):", jsonPlaceholder: "Rohes JSON hier einfügen...",
+                        watermarkTextLabel: "Wasserzeichen-Text:", renamePrefixLabel: "Batch-Präfix:",
+                        mdPlaceholder: "Markdown hier eingeben (# Überschrift)...", urlPlaceholder: "String zum Codieren/Decodieren einfügen...",
+                        qrPlaceholder: "URL oder Text für QR-Code eingeben...", diffOrigPlaceholder: "Originaltext...", diffModPlaceholder: "Modifizierter Text...",
+                        resultPlaceholder: "Ergebnis erscheint hier...", passLen: "Länge:", passSym: "Symbole", passNum: "Zahlen", passUp: "Großbuchstaben",
+                        cryptoPassPlaceholder: "Passwort zum Ver-/Entschlüsseln der Notiz...", invalidFormat: "Ungültiges Dateiformat für dieses Tool.",
+                        qualityStd: "Standard (150 DPI)", qualityHigh: "Hohe Qualität (200 DPI)", qualityUltra: "Ultra HD (300 DPI)",
+                        faqMainTitle: "Häufig gestellte Fragen & Sicherheitsarchitektur",
+                        faq1Title: "Wie verarbeitet PrivacyConvert Dateien ohne Server?",
+                        faq1Desc: "PrivacyConvert nutzt fortschrittliche Client-Browser-Technologien (WebAssembly, PDF.js, Canvas API). Wenn Sie eine Datei ablegen, verarbeiten CPU und Speicher Ihres Browsers alles lokal.",
+                        faq2Title: "Verlassen meine Dateien jemals mein Gerät?",
+                        faq2Desc: "Niemals. Da kein Backend-Server Ihre Dateien verarbeitet, berühren sensible Dokumente und PDFs niemals das Internet. Sie bleiben zu 100% auf Ihrem lokalen Computer.",
+                        faq3Title: "Warum ist dieser Ansatz sicherer als herkömmliche Online-Konverter?",
+                        faq3Desc: "Herkömmliche Konverter verlangen den Upload auf Remote-Server, was Datenschutzrisiken birgt. PrivacyConvert eliminiert dieses Risiko vollständig.",
+                        faq4Title: "Wie können Sie dies selbst verifizieren (Null-Netzwerk-Beweis)?",
+                        faq4Desc: "Sie müssen uns nicht blind vertrauen. Prüfen Sie es selbst:",
+                        verifyStep1: "<strong>Netzwerk-Inspektor-Test:</strong> Drücken Sie <kbd class='bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded font-mono text-xs'>F12</kbd> für Entwicklertools, gehen Sie zu <strong>Netzwerk</strong> und konvertieren Sie eine Datei. Sie werden null ausgehende Uploads sehen.",
+                        verifyStep2: "<strong>Offline-Modus-Test:</strong> Trennen Sie Ihren Computer vom Internet. PrivacyConvert funktioniert ohne Unterbrechung weiter.",
+                        toasts: {
+                            filesLoaded: "Dateien sicher geladen.", copied: "In die Zwischenablage kopiert!", jsonFormatted: "JSON formatiert!",
+                            mdConverted: "Markdown zu HTML konvertiert!", enterUrlText: "Erst URL/Text eingeben", qrCreated: "QR-Code erstellt!",
+                            base64Decoded: "Base64 decodiert", base64Encoded: "Base64 codiert", urlProcessed: "URL verarbeitet",
+                            diffDownloaded: "Diff-Ergebnis heruntergeladen!", pleaseAddFile: "Bitte zuerst eine Datei hinzufügen",
+                            exifCleaned: "EXIF-Metadaten erfolgreich entfernt!", pdfEncrypted: "PDF sicher verschlüsselt und heruntergeladen!",
+                            processCompleted: "Vorgang abgeschlossen und Datei heruntergeladen!", errorOccurred: "Fehler bei der Dateiverarbeitung: ",
+                            historyCleared: "Verlauf gelöscht", noActivity: "Keine kürzliche Aktivität gefunden."
+                        },
+                        tools: {
+                            'pdf-to-png': { label: 'PDF zu PNG', desc: 'PDF-Seiten direkt im Browser in PNG-Bbilder extrahieren. Schnell, kostenlos und privat.' },
+                            'pdf-to-jpg': { label: 'PDF zu JPG', desc: 'PDF-Seiten direkt im Browser in JPG-Bilder extrahieren. Schnell, kostenlos und privat.' },
+                            'merge-pdf': { label: 'PDF Zusammenführen', desc: 'Mehrere PDF-Dokumente sicher im Browser ohne Upload kombinieren.' },
+                            'split-pdf': { label: 'PDF Teilen', desc: 'Spezifische Seiten aus einer PDF-Datei lokal extrahieren.' },
+                            'pdf-watermark': { label: 'PDF Wasserzeichen', desc: 'Halbtransparente Textwasserzeichen sicher zu PDFs hinzufügen.' },
+                            'jpg-to-pdf': { label: 'JPG zu PDF', desc: 'Bilder sicher in ein einziges PDF-Dokument konvertieren.' },
+                            'compress-image': { label: 'Bild Komprimieren', desc: 'Dateigrößen von Bildern bei Beibehaltung der Qualität verringern.' },
+                            'heic-to-jpg': { label: 'HEIC zu JPG', desc: 'Apple HEIC-Fotos in das Standard-JPG-Format konvertieren.' },
+                            'webp-converter': { label: 'WebP Konverter', desc: 'Bilder in moderne WebP- oder AVIF-Formate konvertieren.' },
+                            'exif-remover': { label: 'EXIF Entferner', desc: 'GPS-Koordinaten, Kameramodelle und private Metadaten sofort löschen.' },
+                            'exif-inspector': { label: 'EXIF Inspektor', desc: 'Technische Eigenschaften und Metadaten von Bildern lokal prüfen.' },
+                            'extract-pdf-img': { label: 'PDF Bilder Extrahieren', desc: 'Eingebettete Bilder aus PDF-Dokumenten extrahieren.' },
+                            'redact-tool': { label: 'Bild Schwärzen', desc: 'Sensible Informationen in Ihren Bildern sicher schwärzen.' },
+                            'json-tool': { label: 'JSON Formatter', desc: 'Rohe JSON-Daten formatieren, validieren und verschönern.' },
+                            'base64-tool': { label: 'Base64 Tool', desc: 'Base64-Textstrings einfach codieren oder decodieren.' },
+                            'url-tool': { label: 'URL Tool', desc: 'URL-Strings sicher codieren oder decodieren.' },
+                            'diff-tool': { label: 'Text Diff', desc: 'Zwei Textblöcke Zeile für Zeile vergleichen.' },
+                            'md-tool': { label: 'Markdown Vorschau', desc: 'Markdown-Inhalt als gerendertes HTML anzeigen.' },
+                            'batch-rename': { label: 'Batch Umbenennen', desc: 'Mehrere Dateien lokal in großen Mengen umbenennen.' },
+                            'password-gen': { label: 'Passwortgenerator', desc: 'Sichere, zufällige Passwörter generieren.' },
+                            'crypto-note': { label: 'Verschlüsselte Notiz', desc: 'Sichere Notizen lokal für Hash-basiertes Teilen verschlüsseln.' },
+                            'encrypt-pdf': { label: 'PDF Verschlüsseln', desc: 'Passwortschutz mit AES zu Ihren PDF-Dateien hinzufügen.' },
+                            'hash-calc': { label: 'Dateihash', desc: 'SHA-256 Prüfsummen-Hashes berechnen.' },
+                            'uuid-gen': { label: 'UUID Generator', desc: 'Eindeutige Kennungen (UUID v4) generieren.' },
+                            'qr-tool': { label: 'QR-Code Generator', desc: 'Hochauflösende QR-Codes lokal generieren.' },
+                            'ocr-reader': { label: 'OCR Textleser', desc: 'Text aus Bildern mittels lokaler KI (Tesseract) extrahieren.' },
+                            'video-frames': { label: 'Video Frame Extraktor', desc: 'Schlüsselbilder aus Videodateien lokal extrahieren.' }
+                        }
+                    },
+                    fr: {
+                        securePrefix: "Sécurisé", outOptimized: "Image optimisée", outClean: "Image propre (Sans EXIF)", outEncrypted: "PDF chiffré",
+                        fileStr: "Fichier", sizeStr: "Taille", overlayTitle: "Dé posez vos fichiers ici pour un traitement local !",
+                        progressTitle: "Traitement local...", progressText: "0 Ko envoyés aux serveurs (100% Sécurisé)",
+                        secTitle: "Garantie de traitement 100% local et sécurisé", secDesc: "Toutes les conversions s'exécutent dans votre navigateur. Zéro octet envoyé à un serveur distant.",
+                        blockedCloudData: "Données cloud bloquées", mbSafe: "Mo Sécurisés", localBadge: "100% Local",
+                        dropText: "Cliquez pour parcourir ou glissez des fichiers ici", dropSubText: "Support intelligent (Reconnaissance automatique et réorganisation !)",
+                        convertBtn: "Convertir et Télécharger", nativeSave: "Enregistrer Natif", installApp: "Installer App", reset: "Réinitialiser", favoritesTitle: "⭐ Outils Favoris",
+                        catPdf: "📄 Outils PDF", catImage: "🖼️ Outils Image", catDev: "💻 Texte & Dev", catSec: "🔐 Sécurité & Utils",
+                        recentActivity: "🕒 Activité locale récente", clear: "Effacer", advancedSettings: "⚙️ Paramètres avancés",
+                        githubBadge: "GitHub Open Source", renderQuality: "Qualité de rendu :", outputInfo: "Info de sortie :", 
+                        searchPlaceholder: "Rechercher des outils (Ctrl+K)...", cmdPlaceholder: "Tapez le nom d'un outil...",
+                        shortcutsTitle: "Raccourcis clavier", shortcutCmd: "Palette de commandes", shortcutReset: "Réinitialiser l'espace", shortcutConvert: "Convertir & Télécharger",
+                        copy: "📋 Copier", copyOnly: "Copier", generateAnother: "🔄 Générer un autre", output: "Sortie :", comparisonOutput: "Sortie de comparaison :",
+                        setPdfPass: "Définir le mot de passe PDF :", pdfPassPlaceholder: "Entrez un mot de passe sécurisé",
+                        targetFileSize: "Taille de fichier cible (Max Mo) :", targetWebFormat: "Format Web cible :",
+                        pageRange: "Plage de pages (ex. 1, 3-5 ou 'all') :", jsonPlaceholder: "Collez le JSON brut ici...",
+                        watermarkTextLabel: "Texte du filigrane :", renamePrefixLabel: "Préfixe de lot :",
+                        mdPlaceholder: "Tapez le Markdown ici (# Titre)...", urlPlaceholder: "Collez la chaîne ici pour encoder/décoder...",
+                        qrPlaceholder: "Entrez l'URL ou le texte pour le QR Code...", diffOrigPlaceholder: "Texte original...", diffModPlaceholder: "Texte modifié...",
+                        resultPlaceholder: "Le résultat apparaîtra ici...", passLen: "Longueur :", passSym: "Symboles", passNum: "Nombres", passUp: "Majuscules",
+                        cryptoPassPlaceholder: "Mot de passe pour chiffrer/déchiffrer...", invalidFormat: "Format de fichier invalide pour cet outil.",
+                        qualityStd: "Standard (150 DPI)", qualityHigh: "Haute qualité (200 DPI)", qualityUltra: "Ultra HD (300 DPI)",
+                        faqMainTitle: "Foire aux questions & Architecture de sécurité",
+                        faq1Title: "Comment PrivacyConvert traite-t-il les fichiers sans serveur ?",
+                        faq1Desc: "PrivacyConvert utilise des technologies de navigateur de pointe (WebAssembly, PDF.js, Canvas API). Lorsque vous déposez un fichier, la CPU et la mémoire de votre navigateur gèrent la conversion localement.",
+                        faq2Title: "Mes fichiers quittent-ils mon appareil ?",
+                        faq2Desc: "Jamais. Aucun serveur backend ne traitant vos fichiers, vos documents et images ne touchent jamais Internet. Ils restent 100% sur votre machine.",
+                        faq3Title: "Pourquoi cette approche est-elle plus sûre ?",
+                        faq3Desc: "Les convertisseurs traditionnels nécessitent le téléchargement de vos fichiers sensibles sur des serveurs distants, créant des risques de fuite. PrivacyConvert élimine ce risque.",
+                        faq4Title: "Comment vérifier cela par vous-même (Preuve zéro réseau) ?",
+                        faq4Desc: "Vous pouvez l'inspecter et le prouver dès maintenant :",
+                        verifyTest: "Ouvrez F12 -> Réseau et convertissez un fichier. Vous observerez zéro requête réseau sortante.",
+                        verifyStep1: "<strong>Test de l'inspecteur réseau :</strong> Appuyez sur <kbd class='bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded font-mono text-xs'>F12</kbd> pour ouvrir les outils de développement, allez sur l'onglet <strong>Réseau (Network)</strong> et convertissez un fichier. Zéro requête sortante.",
+                        verifyStep2: "<strong>Test en mode hors ligne :</strong> Déconnectez complètement votre ordinateur d'Internet. PrivacyConvert continuera à convertir et traiter vos fichiers.",
+                        toasts: {
+                            filesLoaded: "fichiers chargés en toute sécurité.", copied: "Copié dans le presse-papier !", jsonFormatted: "JSON formaté !",
+                            mdConverted: "Markdown converti en HTML !", enterUrlText: "Entrez l'URL/le texte d'abord", qrCreated: "QR Code créé !",
+                            base64Decoded: "Base64 décodé", base64Encoded: "Base64 encodé", urlProcessed: "URL traitée",
+                            diffDownloaded: "Résultat des différences téléchargé !", pleaseAddFile: "Veuillez d'abord ajouter un fichier",
+                            exifCleaned: "Métadonnées EXIF nettoyées avec succès !", pdfEncrypted: "PDF chiffré et téléchargé en toute sécurité !",
+                            processCompleted: "Processus terminé et fichier téléchargé !", errorOccurred: "Erreur lors du traitement : ",
+                            historyCleared: "Historique effacé", noActivity: "Aucune activité récente trouvée."
+                        },
+                        tools: {
+                            'pdf-to-png': { label: 'PDF en PNG', desc: 'Extrayez les pages PDF en images PNG directement dans votre navigateur. Rapide, gratuit et privé.' },
+                            'pdf-to-jpg': { label: 'PDF en JPG', desc: 'Extrayez les pages PDF en images JPG directement dans votre navigateur. Rapide, gratuit et privé.' },
+                            'merge-pdf': { label: 'Fusionner PDF', desc: 'Combinez plusieurs documents PDF en toute sécurité sans téléchargement.' },
+                            'split-pdf': { label: 'Diviser PDF', desc: 'Extrayez des pages spécifiques d\'un fichier PDF localement.' },
+                            'pdf-watermark': { label: 'Filigrane PDF', desc: 'Ajoutez des filigranes textuels semi-transparents à vos PDF en toute sécurité.' },
+                            'jpg-to-pdf': { label: 'JPG en PDF', desc: 'Convertissez des images en un seul document PDF en toute sécurité.' },
+                            'compress-image': { label: 'Compresser Image', desc: 'Réduisez la taille des fichiers images tout en maintenant la qualité.' },
+                            'heic-to-jpg': { label: 'HEIC en JPG', desc: 'Convertissez des photos HEIC d\'Apple au format JPG standard.' },
+                            'webp-converter': { label: 'Convertisseur WebP', desc: 'Convertissez des images aux formats modernes WebP ou AVIF.' },
+                            'exif-remover': { label: 'Supprimer EXIF', desc: 'Supprimez les coordonnées GPS, modèles d\'appareils et métadonnées instantanément.' },
+                            'exif-inspector': { label: 'Inspecteur EXIF', desc: 'Inspectez les propriétés techniques et métadonnées des images localement.' },
+                            'extract-pdf-img': { label: 'Extraire Images PDF', desc: 'Extrayez les images intégrées des documents PDF.' },
+                            'redact-tool': { label: 'Censurer Image', desc: 'Masquez les informations sensibles en toute sécurité dans vos images.' },
+                            'json-tool': { label: 'Formateur JSON', desc: 'Formatez, validez et embellissez vos données JSON brutes.' },
+                            'base64-tool': { label: 'Outil Base64', desc: 'Encodez ou décodez des chaînes de texte Base64 facilement.' },
+                            'url-tool': { label: 'Outil URL', desc: 'Encodez ou décodez des chaînes URL en toute sécurité.' },
+                            'diff-tool': { label: 'Diff de Texte', desc: 'Comparez deux blocs de texte ligne par ligne.' },
+                            'md-tool': { label: 'Aperçu Markdown', desc: 'Prévisualisez le contenu Markdown rendu en HTML.' },
+                            'batch-rename': { label: 'Renommer en Lot', desc: 'Renommez plusieurs fichiers en masse localement.' },
+                            'password-gen': { label: 'Générateur de mots de passe', desc: 'Générez des mots de passe sécurisés et aléatoires.' },
+                            'crypto-note': { label: 'Note Chiffrée', desc: 'Chiffrez des notes sécurisées localement pour un partage par hachage.' },
+                            'encrypt-pdf': { label: 'Chiffrer PDF', desc: 'Protégez vos fichiers PDF par mot de passe avec AES.' },
+                            'hash-calc': { label: 'Hachage de Fichier', desc: 'Calculez les hachages de somme de contrôle SHA-256.' },
+                            'uuid-gen': { label: 'Générateur UUID', desc: 'Générez des identifiants uniques (UUID v4).' },
+                            'qr-tool': { label: 'Générateur de QR Code', desc: 'Générez des codes QR haute résolution localement.' },
+                            'ocr-reader': { label: 'Lecteur de texte OCR', desc: 'Extrayez du texte d\'images grâce à l\'IA locale (Tesseract).' },
+                            'video-frames': { label: 'Extracteur de Frames', desc: 'Extrayez des images clés de fichiers vidéo localement.' }
+                        }
+                    },
                     ar: {
                         securePrefix: "آمن", outOptimized: "صورة محسنة", outClean: "صورة نظيفة (بدون EXIF)", outEncrypted: "ملف PDF مشفر",
                         fileStr: "ملف", sizeStr: "الحجم", overlayTitle: "أفلت ملفاتك هنا لمعالجتها محلياً!",
@@ -562,7 +803,7 @@
                         secTitle: "ضمان معالجة محلية وآمنة بنسبة 100%", secDesc: "تعمل جميع التحويلات في متصفحك. صفر بايت يتم تحميله إلى أي خادم بعيد.",
                         blockedCloudData: "بيانات سحابية محظورة", mbSafe: "ميجابايت آمنة", localBadge: "محلي 100%",
                         dropText: "انقر للاستعراض أو اسحب الملفات هنا", dropSubText: "دعم ذكي (التعرف التلقائي على الصيغة وترتيب العناصر!)",
-                        convertBtn: "تحويل وتنزيل", reset: "إعادة ضبط", favoritesTitle: "⭐ الأدوات المفضلة",
+                        convertBtn: "تحويل وتنزيل", nativeSave: "حفظ محلي", installApp: "تثبيت التطبيق", reset: "إعادة ضبط", favoritesTitle: "⭐ الأدوات المفضلة",
                         catPdf: "📄 أدوات PDF", catImage: "🖼️ أدوات الصور", catDev: "💻 النصوص والمطورين", catSec: "🔐 الأمان والأدوات",
                         recentActivity: "🕒 النشاط المحلي الأخير", clear: "مسح", advancedSettings: "⚙️ إعدادات متقدمة",
                         githubBadge: "GitHub مصدر مفتوح", renderQuality: "جودة التصدير:", outputInfo: "معلومات المخرجات:", 
@@ -587,7 +828,7 @@
                         faq3Desc: "تتطلب المحولات التقليدية عبر الإنترنت تحميل ملفاتك الحساسة إلى خوادمهم البعيدة، مما يفرض مخاطر جسيمة على الخصوصية. يعمل PrivacyConvert على إزالة هذا الخطر تماماً.",
                         faq4Title: "كيف يمكنك التحقق من ذلك بنفسك (إثبات انعدام الشبكة)؟",
                         faq4Desc: "ليس عليك فقط أن تصدق كلامنا. يمكنك فحص وإثبات ذلك بنفسك الآن:",
-                        verifyStep1: "<strong>اختبار مراقب الشبكة:</strong> اضغط على <kbd class='bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded font-mono text-xs'>F12</kbd> لفتح أدوات مطوري المتصفح، وانتقل إلى علامة التتبويب <strong>شبكة (Network)</strong>، وحول أي ملف. سترى صفر طلبات رفع ملفات صادرة.",
+                        verifyStep1: "<strong>اختبار مراقب الشبكة:</strong> اضغط على <kbd class='bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded font-mono text-xs'>F12</kbd> لفتح أدوات مطوري المتصفح، وانتقل إلى علامة التبويب <strong>شبكة (Network)</strong>، وحول أي ملف. سترى صفر طلبات رفع ملفات صادرة.",
                         verifyStep2: "<strong>اختبار وضع عدم الاتصال:</strong> افصل حاسوبك تماماً عن شبكة الواي فاي أو الإنترنت. سيستمر PrivacyConvert في تحويل ومعالجة ملفاتك دون انقطاع.",
                         toasts: {
                             filesLoaded: "تم تحميل الملفات بأمان.", copied: "تم النسخ إلى الحافظة!", jsonFormatted: "تم تنسيق JSON!",
@@ -896,8 +1137,10 @@
                         case 'video-frames':
                             fileInput.accept = "video/*"; fileInput.multiple = false;
                             showAdvanced = false; formatText = "🎞️ Frames"; break;
-                        case 'redact-tool': case 'extract-pdf-img':
-                            fileInput.accept = "image/*,.pdf"; fileInput.multiple = true; showAdvanced = false; break;
+                        case 'redact-tool':
+                            fileInput.accept = "image/*"; fileInput.multiple = false; showAdvanced = false; formatText = "🕶️ Redact"; break;
+                        case 'extract-pdf-img':
+                            fileInput.accept = ".pdf"; fileInput.multiple = true; showAdvanced = false; formatText = "🔍 Images"; break;
                         case 'hash-calc': case 'ocr-reader':
                             fileInput.accept = "*/*"; fileInput.multiple = false; showAdvanced = false; break;
                         case 'json-tool':
@@ -965,13 +1208,17 @@
                 },
                 resetApp() {
                     PrivacyConvert.state.files = [];
+                    PrivacyConvert.state.lastResultBlob = null;
+                    PrivacyConvert.state.redactBoxes = [];
                     actionArea.classList.add('hidden');
                     dropZone.style.display = 'block';
                     clearBtn.classList.add('hidden');
+                    document.getElementById('nativeSaveBtn').classList.add('hidden');
                     fileInput.value = "";
                     fileListContainer.innerHTML = '';
                     document.getElementById('comparisonSliderOverlay').classList.add('hidden');
                     document.getElementById('compareRange').classList.add('hidden');
+                    document.getElementById('redactCanvas').classList.add('hidden');
                     if(PrivacyConvert.state.sortableInstance) { PrivacyConvert.state.sortableInstance.destroy(); PrivacyConvert.state.sortableInstance = null; }
                     
                     ['imagePreviewBox', 'genericTextBox', 'diffResultBox', 'qrResultBox', 'generatorResultBox', 'textInputGroup', 'cryptoNoteGroup', 'passwordOptionsGroup', 'diffInputGroup', 'advancedAccordionWrapper'].forEach(id => {
@@ -1038,9 +1285,9 @@
                     }
 
                     if(fileInput.multiple) {
-                        PrivacyConvert.state.files = [...PrivacyConvert.state.files, ...Array.from(files)];
+                        PrivacyConvert.state.files = [...PrivacyConvert.state.files, ...Array.from(files).map(f => ({ file: f, status: 'pending' }))];
                     } else {
-                        PrivacyConvert.state.files = [files[0]];
+                        PrivacyConvert.state.files = [{ file: files[0], status: 'pending' }];
                     }
                     
                     dropZone.style.display = 'none';
@@ -1055,7 +1302,7 @@
 
                     if(['hash-calc', 'ocr-reader', 'exif-inspector'].includes(PrivacyConvert.state.tool)) {
                         document.getElementById('genericTextBox').classList.remove('hidden');
-                        document.getElementById('genericTextArea').value = `${PrivacyConvert.state.files[0].name} (${(PrivacyConvert.state.files[0].size/1024).toFixed(1)} KB)`;
+                        document.getElementById('genericTextArea').value = `${PrivacyConvert.state.files[0].file.name} (${(PrivacyConvert.state.files[0].file.size/1024).toFixed(1)} KB)`;
                     }
                 },
                 renderFileList() {
@@ -1063,9 +1310,11 @@
                     if(PrivacyConvert.state.files.length === 0) { PrivacyConvert.tools.resetApp(); return; }
                     
                     fileListContainer.classList.remove('hidden');
-                    PrivacyConvert.state.files.forEach((file, index) => {
+                    PrivacyConvert.state.files.forEach((item, index) => {
+                        const file = item.file;
                         const isImg = file.type.startsWith('image/');
                         const sizeStr = (file.size / 1024).toFixed(1) + " KB";
+                        const statusBadge = item.status === 'done' ? '<span class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded font-bold">✓ Ok</span>' : (item.status === 'processing' ? '<span class="text-[10px] bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded font-bold animate-pulse">...</span>' : '<span class="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded font-bold">Queue</span>');
                         
                         const card = document.createElement('div');
                         card.className = "flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm cursor-grab active:cursor-grabbing group";
@@ -1077,7 +1326,7 @@
                                 </div>
                                 <div class="flex flex-col truncate">
                                     <span class="text-sm font-bold text-slate-700 dark:text-slate-300 truncate">${file.name}</span>
-                                    <span class="text-xs font-medium text-slate-500">${sizeStr}</span>
+                                    <div class="flex items-center gap-2"><span class="text-xs font-medium text-slate-500">${sizeStr}</span> ${statusBadge}</div>
                                 </div>
                             </div>
                             <button onclick="PrivacyConvert.tools.removeFile(${index})" class="text-slate-400 hover:text-red-500 p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors shrink-0">✕</button>
@@ -1098,15 +1347,19 @@
                     }
                     
                     const previewBox = document.getElementById('imagePreviewBox');
-                    if (PrivacyConvert.state.files.length === 1 && PrivacyConvert.state.files[0].type.startsWith('image/')) {
+                    if (PrivacyConvert.state.files.length === 1 && PrivacyConvert.state.files[0].file.type.startsWith('image/')) {
                         const reader = new FileReader();
                         reader.onload = e => { 
                             const src = e.target.result;
                             document.getElementById('imagePreview').src = src;
                             document.getElementById('imagePreviewAfter').src = src;
                             previewBox.classList.remove('hidden');
+                            
+                            if (PrivacyConvert.state.tool === 'redact-tool') {
+                                setupRedactCanvas();
+                            }
                         };
-                        reader.readAsDataURL(PrivacyConvert.state.files[0]);
+                        reader.readAsDataURL(PrivacyConvert.state.files[0].file);
                     } else {
                         previewBox.classList.add('hidden');
                     }
@@ -1158,14 +1411,73 @@
                     document.getElementById('generatedDisplay').value = uuid;
                 },
                 downloadBlob(blob, filename) {
+                    PrivacyConvert.state.lastResultBlob = blob;
+                    PrivacyConvert.state.lastResultName = filename;
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url; a.download = filename;
                     document.body.appendChild(a); a.click();
                     document.body.removeChild(a); URL.revokeObjectURL(url);
+                    
+                    if ('showSaveFilePicker' in window) {
+                        document.getElementById('nativeSaveBtn').classList.remove('hidden');
+                    }
+                },
+                async nativeSave() {
+                    if (!window.showSaveFilePicker || !PrivacyConvert.state.lastResultBlob) return;
+                    try {
+                        const handle = await window.showSaveFilePicker({ suggestedName: PrivacyConvert.state.lastResultName });
+                        const writable = await handle.createWritable();
+                        await writable.write(PrivacyConvert.state.lastResultBlob);
+                        await writable.close();
+                        PrivacyConvert.ui.showToast("¡Archivo guardado nativamente!");
+                    } catch (e) { console.log(e); }
                 }
             }
         };
+
+        function setupRedactCanvas() {
+            const canvas = document.getElementById('redactCanvas');
+            const img = document.getElementById('imagePreview');
+            canvas.classList.remove('hidden');
+            canvas.width = img.naturalWidth || 600;
+            canvas.height = img.naturalHeight || 400;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            let isDrawing = false;
+            let startX, startY;
+
+            canvas.onmousedown = (e) => {
+                isDrawing = true;
+                const rect = canvas.getBoundingClientRect();
+                startX = (e.clientX - rect.left) * (canvas.width / rect.width);
+                startY = (e.clientY - rect.top) * (canvas.height / rect.height);
+            };
+
+            canvas.onmousemove = (e) => {
+                if (!isDrawing) return;
+                const rect = canvas.getBoundingClientRect();
+                const currentX = (e.clientX - rect.left) * (canvas.width / rect.width);
+                const currentY = (e.clientY - rect.top) * (canvas.height / rect.height);
+                
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+                PrivacyConvert.state.redactBoxes.forEach(b => ctx.fillRect(b.x, b.y, b.w, b.h));
+                ctx.fillRect(startX, startY, currentX - startX, currentY - startY);
+            };
+
+            canvas.onmouseup = (e) => {
+                if (!isDrawing) return;
+                isDrawing = false;
+                const rect = canvas.getBoundingClientRect();
+                const endX = (e.clientX - rect.left) * (canvas.width / rect.width);
+                const endY = (e.clientY - rect.top) * (canvas.height / rect.height);
+                PrivacyConvert.state.redactBoxes.push({
+                    x: startX, y: startY, w: endX - startX, h: endY - startY
+                });
+            };
+        }
 
         const LazyLoader = {
             loaded: {},
@@ -1198,6 +1510,18 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            const pwaBtn = document.getElementById('pwaInstallBtn');
+            if (pwaBtn) {
+                pwaBtn.addEventListener('click', async () => {
+                    if (deferredPrompt) {
+                        deferredPrompt.prompt();
+                        const { outcome } = await deferredPrompt.userChoice;
+                        if (outcome === 'accepted') deferredPrompt = null;
+                        pwaBtn.classList.add('hidden');
+                    }
+                });
+            }
+
             const savedAccent = localStorage.getItem('privacyConvert_accent') || 'indigo';
             document.documentElement.style.setProperty('--accent-color', accentColors[savedAccent].primary);
             document.documentElement.style.setProperty('--accent-hover', accentColors[savedAccent].hover);
@@ -1417,9 +1741,12 @@
                     const currentTool = PrivacyConvert.state.tool;
                     const selectedFiles = PrivacyConvert.state.files;
 
+                    for (let item of selectedFiles) item.status = 'processing';
+                    PrivacyConvert.tools.renderFileList();
+
                     if (currentTool === 'pdf-to-png' || currentTool === 'pdf-to-jpg') {
                         await LazyLoader.loadPdfLib();
-                        const file = selectedFiles[0];
+                        const file = selectedFiles[0].file;
                         const arrayBuffer = await file.arrayBuffer();
                         const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
                         const scale = parseFloat(document.getElementById('renderScale').value) || 2.0;
@@ -1451,7 +1778,7 @@
                         PrivacyConvert.ui.addHistory(currentTool);
                     }
                     else if (currentTool === 'pdf-watermark') {
-                        const file = selectedFiles[0];
+                        const file = selectedFiles[0].file;
                         const wmText = document.getElementById('watermarkTextInput')?.value || 'CONFIDENTIAL';
                         const arrayBuffer = await file.arrayBuffer();
                         const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
@@ -1475,7 +1802,8 @@
                     else if (currentTool === 'batch-rename') {
                         const prefix = document.getElementById('renamePrefixInput')?.value || 'file_';
                         const zip = new JSZip();
-                        selectedFiles.forEach((file, index) => {
+                        selectedFiles.forEach((item, index) => {
+                            const file = item.file;
                             const ext = file.name.split('.').pop();
                             const newName = `${prefix}${(index+1).toString().padStart(3, '0')}.${ext}`;
                             if (selectedFiles.length === 1) {
@@ -1490,7 +1818,7 @@
                         PrivacyConvert.ui.addHistory(currentTool);
                     }
                     else if (currentTool === 'video-frames') {
-                        const file = selectedFiles[0];
+                        const file = selectedFiles[0].file;
                         const video = document.createElement('video');
                         video.src = URL.createObjectURL(file);
                         video.muted = true;
@@ -1515,7 +1843,8 @@
                     }
                     else if (currentTool === 'jpg-to-pdf') {
                         const pdfDoc = await PDFLib.PDFDocument.create();
-                        for (let file of selectedFiles) {
+                        for (let item of selectedFiles) {
+                            const file = item.file;
                             const imgBytes = await file.arrayBuffer();
                             let img = file.type === 'image/png' ? await pdfDoc.embedPng(imgBytes) : await pdfDoc.embedJpg(imgBytes);
                             const page = pdfDoc.addPage([img.width, img.height]);
@@ -1527,7 +1856,8 @@
                     }
                     else if (currentTool === 'merge-pdf') {
                         const mergedPdf = await PDFLib.PDFDocument.create();
-                        for (let file of selectedFiles) {
+                        for (let item of selectedFiles) {
+                            const file = item.file;
                             const bytes = await file.arrayBuffer();
                             const pdf = await PDFLib.PDFDocument.load(bytes);
                             const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
@@ -1539,7 +1869,7 @@
                     }
                     else if (currentTool === 'split-pdf') {
                         await LazyLoader.loadPdfLib();
-                        const file = selectedFiles[0];
+                        const file = selectedFiles[0].file;
                         const bytes = await file.arrayBuffer();
                         const pdf = await PDFLib.PDFDocument.load(bytes);
                         const zip = new JSZip();
@@ -1557,7 +1887,8 @@
                     else if (currentTool === 'compress-image') {
                         const targetMB = parseFloat(document.getElementById('compressionLevel')?.value) || 1.0;
                         const zip = new JSZip();
-                        for (let file of selectedFiles) {
+                        for (let item of selectedFiles) {
+                            const file = item.file;
                             let compressed = file;
                             if (typeof imageCompression !== 'undefined') {
                                 compressed = await imageCompression(file, { maxSizeMB: targetMB, maxWidthOrHeight: 1920, useWebWorker: true });
@@ -1579,7 +1910,8 @@
                     }
                     else if (currentTool === 'heic-to-jpg') {
                         const zip = new JSZip();
-                        for (let file of selectedFiles) {
+                        for (let item of selectedFiles) {
+                            const file = item.file;
                             let outBlob = file;
                             if (typeof heic2any !== 'undefined') {
                                 try {
@@ -1602,7 +1934,8 @@
                         const format = document.getElementById('webpFormatSelect')?.value || 'image/webp';
                         const ext = format === 'image/avif' ? 'avif' : 'webp';
                         const zip = new JSZip();
-                        for (let file of selectedFiles) {
+                        for (let item of selectedFiles) {
+                            const file = item.file;
                             const bitmap = await createImageBitmap(file);
                             const canvas = document.createElement('canvas');
                             canvas.width = bitmap.width; canvas.height = bitmap.height;
@@ -1625,7 +1958,8 @@
                     }
                     else if (currentTool === 'exif-remover') {
                         const zip = new JSZip();
-                        for (let file of selectedFiles) {
+                        for (let item of selectedFiles) {
+                            const file = item.file;
                             const bitmap = await createImageBitmap(file);
                             const canvas = document.createElement('canvas');
                             canvas.width = bitmap.width; canvas.height = bitmap.height;
@@ -1646,7 +1980,7 @@
                         PrivacyConvert.ui.showToast(t.toasts.exifCleaned);
                     }
                     else if (currentTool === 'exif-inspector') {
-                        const file = selectedFiles[0];
+                        const file = selectedFiles[0].file;
                         const bitmap = await createImageBitmap(file);
                         const infoText = `=== EXIF / Image Inspector ===\nFile Name: ${file.name}\nFile Size: ${(file.size/1024).toFixed(2)} KB\nFile Type: ${file.type}\nDimensions: ${bitmap.width} x ${bitmap.height} px\nColor Space: sRGB (Standard)\nGPS Location: Stripped / Not Present\nCamera Model: Local Client Verified`;
                         document.getElementById('genericTextBox').classList.remove('hidden');
@@ -1656,7 +1990,7 @@
                     }
                     else if (currentTool === 'extract-pdf-img') {
                         await LazyLoader.loadPdfLib();
-                        const file = selectedFiles[0];
+                        const file = selectedFiles[0].file;
                         const arrayBuffer = await file.arrayBuffer();
                         const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
                         const zip = new JSZip();
@@ -1674,39 +2008,35 @@
                         PrivacyConvert.ui.addHistory(currentTool);
                     }
                     else if (currentTool === 'redact-tool') {
-                        const zip = new JSZip();
-                        for (let file of selectedFiles) {
-                            const bitmap = await createImageBitmap(file);
-                            const canvas = document.createElement('canvas');
-                            canvas.width = bitmap.width; canvas.height = bitmap.height;
-                            const ctx = canvas.getContext('2d');
-                            ctx.drawImage(bitmap, 0, 0);
-                            ctx.fillStyle = 'black';
+                        const file = selectedFiles[0].file;
+                        const bitmap = await createImageBitmap(file);
+                        const canvas = document.createElement('canvas');
+                        canvas.width = bitmap.width; canvas.height = bitmap.height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(bitmap, 0, 0);
+                        
+                        ctx.fillStyle = 'black';
+                        PrivacyConvert.state.redactBoxes.forEach(b => {
+                            ctx.fillRect(b.x, b.y, b.w, b.h);
+                        });
+                        
+                        if (PrivacyConvert.state.redactBoxes.length === 0) {
                             ctx.fillRect(40, canvas.height / 2 - 40, canvas.width - 80, 80);
-                            ctx.fillStyle = 'white';
-                            ctx.font = 'bold 24px sans-serif';
-                            ctx.fillText('[REDACTED]', 60, canvas.height / 2 + 8);
-                            const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png', 0.95));
-                            if (selectedFiles.length === 1) {
-                                PrivacyConvert.tools.downloadBlob(blob, `redacted_${file.name}`);
-                                const afterUrl = URL.createObjectURL(blob);
-                                document.getElementById('imagePreviewAfter').src = afterUrl;
-                                document.getElementById('comparisonSliderOverlay').classList.remove('hidden');
-                                document.getElementById('compareRange').classList.remove('hidden');
-                            } else {
-                                zip.file(`redacted_${file.name}`, blob);
-                            }
                         }
-                        if (selectedFiles.length > 1) {
-                            PrivacyConvert.tools.downloadBlob(await zip.generateAsync({ type: "blob" }), "redacted_images.zip");
-                        }
+
+                        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png', 0.95));
+                        PrivacyConvert.tools.downloadBlob(blob, `redacted_${file.name}`);
+                        const afterUrl = URL.createObjectURL(blob);
+                        document.getElementById('imagePreviewAfter').src = afterUrl;
+                        document.getElementById('comparisonSliderOverlay').classList.remove('hidden');
+                        document.getElementById('compareRange').classList.remove('hidden');
                         PrivacyConvert.ui.addHistory(currentTool);
                     }
                     else if (currentTool === 'encrypt-pdf') {
                         if (!window.crypto || !window.crypto.subtle) {
                             throw new Error("Crypto API restricted in file:// protocol. Please run on localhost.");
                         }
-                        const file = selectedFiles[0];
+                        const file = selectedFiles[0].file;
                         const password = document.getElementById('pdfPassInput')?.value || 'SecurePass123';
                         const fileBytes = await file.arrayBuffer();
 
@@ -1743,27 +2073,31 @@
                         if (!window.crypto || !window.crypto.subtle) {
                             throw new Error("Crypto API restricted in file:// protocol. Please run on localhost.");
                         }
-                        const buffer = await selectedFiles[0].arrayBuffer();
+                        const buffer = await selectedFiles[0].file.arrayBuffer();
                         const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
                         const hashHex = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
                         
-                        const outputText = `${t.fileStr || 'File'}: ${selectedFiles[0].name}\n${t.sizeStr || 'Size'}: ${selectedFiles[0].size} bytes\nSHA-256 Checksum:\n${hashHex}`;
+                        const outputText = `${t.fileStr || 'File'}: ${selectedFiles[0].file.name}\n${t.sizeStr || 'Size'}: ${selectedFiles[0].file.size} bytes\nSHA-256 Checksum:\n${hashHex}`;
                         document.getElementById('genericTextBox').classList.remove('hidden');
                         document.getElementById('genericTextArea').value = outputText;
-                        PrivacyConvert.tools.downloadBlob(new Blob([outputText], { type: 'text/plain;charset=utf-8' }), `${selectedFiles[0].name}_hash.txt`);
+                        PrivacyConvert.tools.downloadBlob(new Blob([outputText], { type: 'text/plain;charset=utf-8' }), `${selectedFiles[0].file.name}_hash.txt`);
                         PrivacyConvert.ui.addHistory(currentTool);
                     }
                     else if (currentTool === 'ocr-reader') {
                         await LazyLoader.loadTesseract();
                         if (typeof Tesseract !== 'undefined') {
-                            const result = await Tesseract.recognize(selectedFiles[0], 'eng');
+                            const result = await Tesseract.recognize(selectedFiles[0].file, 'eng');
                             const text = result.data.text;
                             document.getElementById('genericTextBox').classList.remove('hidden');
                             document.getElementById('genericTextArea').value = text;
-                            PrivacyConvert.tools.downloadBlob(new Blob([text], { type: 'text/plain;charset=utf-8' }), `${selectedFiles[0].name}_ocr.txt`);
+                            PrivacyConvert.tools.downloadBlob(new Blob([text], { type: 'text/plain;charset=utf-8' }), `${selectedFiles[0].file.name}_ocr.txt`);
                             PrivacyConvert.ui.addHistory(currentTool);
                         }
                     }
+
+                    for (let item of selectedFiles) item.status = 'done';
+                    PrivacyConvert.tools.renderFileList();
+
                     if(currentTool !== 'encrypt-pdf' && currentTool !== 'exif-remover' && currentTool !== 'exif-inspector') {
                         PrivacyConvert.ui.showToast(t.toasts.processCompleted);
                         PrivacyConvert.ui.playSuccessChime();
