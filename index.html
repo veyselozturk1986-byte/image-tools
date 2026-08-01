@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="pageTitle">PrivacyConvert - 100% Local & Secure Tools</title>
-    <meta name="description" id="pageMetaDesc" content="Extract PDF pages, generate QR codes, format JSON, resize images, and process everything directly in your browser. 100% private.">
+    <title id="pageTitle">PrivacyConvert Pro - 100% Local & Secure Tools</title>
+    <meta name="description" id="pageMetaDesc" content="Merge PDFs, extract pages, compress images, generate passwords, encode text, and process everything directly in your browser. 100% private.">
     <meta name="theme-color" content="#4f46e5">
 
     <!-- Tailwind CSS -->
@@ -19,8 +19,9 @@
         tailwind.config = { darkMode: 'class' };
     </script>
 
-    <!-- Tüm İşlem Kütüphaneleri (PDF, ZIP, QR, Markdown) -->
+    <!-- Tüm İşlem Kütüphaneleri (PDF.js, PDF-Lib, JSZip, QR, Markdown) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -73,7 +74,6 @@
                 ⚡ PrivacyConvert Pro
             </a>
             <div class="flex items-center gap-2 sm:gap-3">
-                <!-- GitHub Açık Kaynak Rozeti -->
                 <a href="https://github.com" target="_blank" class="hidden sm:inline-flex bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs px-3 py-2 rounded-xl font-bold items-center gap-1.5 transition">
                     ⭐ <span data-i18n="githubBadge">Open Source (Verified)</span>
                 </a>
@@ -88,7 +88,7 @@
                     <option value="fr">Français</option>
                     <option value="ar">العربية</option>
                 </select>
-                <button id="themeToggle" class="text-xl p-2 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 transition-all shadow-sm">🌙</button>
+                <button id="themeToggle" onclick="PrivacyConvert.ui.toggleTheme()" class="text-xl p-2 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 transition-all shadow-sm">🌙</button>
             </div>
         </div>
     </header>
@@ -103,23 +103,32 @@
             </p>
         </div>
 
-        <!-- Araç Kategorileri ve Yeni Eklenen Araçlar -->
-        <div id="toolsNavContainer" class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            <!-- PDF & Medya -->
+        <!-- Araç Kategorileri Menüsü -->
+        <div id="toolsNavContainer" class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            <!-- PDF Araçları -->
             <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3">
-                <h3 data-i18n="catPdf" class="text-xs font-extrabold dynamic-text uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">📄 PDF & Media</h3>
+                <h3 data-i18n="catPdf" class="text-xs font-extrabold dynamic-text uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">📄 PDF Tools</h3>
                 <div class="flex flex-col gap-2">
                     <button onclick="PrivacyConvert.routing.navigate('pdf-to-png')" id="tab-pdf-to-png" class="tool-tab flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm border"><span class="text-base">🖼️</span> <span class="truncate" data-i18n="toolPdfPng">PDF to PNG</span></button>
-                    <button onclick="PrivacyConvert.routing.navigate('image-resizer')" id="tab-image-resizer" class="tool-tab flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm border"><span class="text-base">📐</span> <span class="truncate" data-i18n="toolResize">Image Resizer</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('pdf-merge')" id="tab-pdf-merge" class="tool-tab flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm border"><span class="text-base">📚</span> <span class="truncate" data-i18n="toolPdfMerge">PDF Merger</span></button>
                 </div>
             </div>
-            <!-- Geliştirici & Metin -->
+            <!-- Medya & Görsel -->
+            <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3">
+                <h3 data-i18n="catMedia" class="text-xs font-extrabold dynamic-text uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">🖼️ Media & Image</h3>
+                <div class="flex flex-col gap-2">
+                    <button onclick="PrivacyConvert.routing.navigate('image-resizer')" id="tab-image-resizer" class="tool-tab flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm border"><span class="text-base">📐</span> <span class="truncate" data-i18n="toolResize">Image Resizer</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('image-compressor')" id="tab-image-compressor" class="tool-tab flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm border"><span class="text-base">🗜️</span> <span class="truncate" data-i18n="toolCompress">Image Compressor</span></button>
+                </div>
+            </div>
+            <!-- Metin & Geliştirici -->
             <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3">
                 <h3 data-i18n="catDev" class="text-xs font-extrabold dynamic-text uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">💻 Text & Dev</h3>
                 <div class="flex flex-col gap-2">
                     <button onclick="PrivacyConvert.routing.navigate('json-tool')" id="tab-json-tool" class="tool-tab flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm border"><span class="text-base">{}</span> <span class="truncate" data-i18n="toolJson">JSON Formatter</span></button>
                     <button onclick="PrivacyConvert.routing.navigate('markdown-editor')" id="tab-markdown-editor" class="tool-tab flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm border"><span class="text-base">📝</span> <span class="truncate" data-i18n="toolMarkdown">Markdown Editor</span></button>
-                    <button onclick="PrivacyConvert.routing.navigate('word-counter')" id="tab-word-counter" class="tool-tab flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm border"><span class="text-base">📊</span> <span class="truncate" data-i18n="toolCounter">Word & Char Counter</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('word-counter')" id="tab-word-counter" class="tool-tab flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm border"><span class="text-base">📊</span> <span class="truncate" data-i18n="toolCounter">Word Counter</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('base64-tool')" id="tab-base64-tool" class="tool-tab flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm border"><span class="text-base">🔤</span> <span class="truncate" data-i18n="toolBase64">Base64 / URL</span></button>
                 </div>
             </div>
             <!-- Güvenlik & Üreteçler -->
@@ -127,7 +136,8 @@
                 <h3 data-i18n="catSec" class="text-xs font-extrabold dynamic-text uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">🔐 Security & Gen</h3>
                 <div class="flex flex-col gap-2">
                     <button onclick="PrivacyConvert.routing.navigate('uuid-gen')" id="tab-uuid-gen" class="tool-tab flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm border"><span class="text-base">🆔</span> <span class="truncate" data-i18n="toolUuid">UUID Generator</span></button>
-                    <button onclick="PrivacyConvert.routing.navigate('qr-gen')" id="tab-qr-gen" class="tool-tab flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm border"><span class="text-base">📷</span> <span class="truncate" data-i18n="toolQr">QR Code Generator</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('qr-gen')" id="tab-qr-gen" class="tool-tab flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm border"><span class="text-base">📷</span> <span class="truncate" data-i18n="toolQr">QR Generator</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('password-gen')" id="tab-password-gen" class="tool-tab flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm border"><span class="text-base">🔑</span> <span class="truncate" data-i18n="toolPassword">Password Gen</span></button>
                 </div>
             </div>
         </div>
@@ -149,7 +159,7 @@
             <div id="actionArea" class="mt-6 hidden flex-col gap-6">
                 <div id="fileListContainer" class="hidden w-full max-h-72 overflow-y-auto space-y-2 pr-2 custom-scrollbar"></div>
                 
-                <!-- Boyutlandırma için Ek Ayarlar -->
+                <!-- Boyutlandırma Ayarları -->
                 <div id="resizerOptions" class="hidden grid grid-cols-2 gap-4">
                     <div>
                         <label class="text-xs font-bold text-slate-500 mb-1 block" data-i18n="widthLabel">Width (px):</label>
@@ -161,19 +171,33 @@
                     </div>
                 </div>
 
+                <!-- Sıkıştırma Kalite Ayarı -->
+                <div id="compressorOptions" class="hidden flex flex-col gap-2">
+                    <label class="text-xs font-bold text-slate-500 uppercase" data-i18n="qualityLabel">Compression Quality:</label>
+                    <input type="range" id="compressQuality" min="0.1" max="0.9" step="0.1" value="0.7" class="w-full accent-indigo-600">
+                </div>
+
                 <div id="textInputGroup" class="hidden w-full">
                     <textarea id="mainInputField" class="w-full h-32 p-4 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white focus:outline-none resize-none shadow-inner" data-i18n-placeholder="pasteText"></textarea>
                 </div>
 
-                <!-- Markdown Önizleme Alanı -->
+                <!-- Markdown Önizleme -->
                 <div id="markdownPreviewArea" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4">
                     <textarea id="markdownInput" oninput="PrivacyConvert.engine.renderMarkdown()" class="w-full h-64 p-4 text-sm border rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white focus:outline-none resize-none font-mono" placeholder="# Type markdown here..."></textarea>
                     <div id="markdownOutput" class="w-full h-64 p-4 text-sm border rounded-xl bg-white dark:bg-slate-900 overflow-y-auto custom-scrollbar prose dark:prose-invert"></div>
                 </div>
 
-                <!-- QR Kod Çıktı Alanı -->
+                <!-- QR Çıktı -->
                 <div id="qrOutputArea" class="hidden flex flex-col items-center justify-center gap-4">
                     <div id="qrcodeContainer" class="bg-white p-4 rounded-2xl shadow-md"></div>
+                </div>
+
+                <!-- Base64 / URL İşlem Butonları -->
+                <div id="base64ActionButtons" class="hidden flex flex-wrap gap-2">
+                    <button onclick="PrivacyConvert.engine.base64Action('btoa')" class="text-xs bg-indigo-50 hover:bg-indigo-100 dark:bg-slate-700 dark:text-white px-3 py-2 rounded-xl font-bold transition">Encode Base64</button>
+                    <button onclick="PrivacyConvert.engine.base64Action('atob')" class="text-xs bg-indigo-50 hover:bg-indigo-100 dark:bg-slate-700 dark:text-white px-3 py-2 rounded-xl font-bold transition">Decode Base64</button>
+                    <button onclick="PrivacyConvert.engine.base64Action('encUrl')" class="text-xs bg-indigo-50 hover:bg-indigo-100 dark:bg-slate-700 dark:text-white px-3 py-2 rounded-xl font-bold transition">Encode URI</button>
+                    <button onclick="PrivacyConvert.engine.base64Action('decUrl')" class="text-xs bg-indigo-50 hover:bg-indigo-100 dark:bg-slate-700 dark:text-white px-3 py-2 rounded-xl font-bold transition">Decode URI</button>
                 </div>
 
                 <div id="genericTextBox" class="hidden w-full flex flex-col gap-2">
@@ -191,7 +215,7 @@
             </div>
         </div>
 
-        <!-- 🔒 NEDEN VERİ TUTMUYORUZ & NASIL DOĞRULARSINIZ? BÖLÜMÜ -->
+        <!-- 🔒 GÜVENLİK VE DOĞRULAMA REHBERİ -->
         <div class="max-w-3xl mx-auto bg-indigo-50 dark:bg-slate-800/80 border border-indigo-100 dark:border-slate-700 p-8 rounded-3xl shadow-sm mb-12">
             <h2 class="text-xl font-extrabold text-indigo-900 dark:text-indigo-300 mb-3 flex items-center gap-2">
                 🛡️ <span data-i18n="privacyProofTitle">Zero-Server Policy: How to Verify?</span>
@@ -210,7 +234,7 @@
             </div>
         </div>
 
-        <!-- ❓ SIKÇA SORULAN SORULAR (FAQ) AKORDEON DİZİNİ -->
+        <!-- ❓ SIKÇA SORULAN SORULAR (FAQ) -->
         <div class="max-w-3xl mx-auto mb-16 space-y-4">
             <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white text-center mb-6" data-i18n="faqHeading">Frequently Asked Questions</h2>
             
@@ -233,14 +257,14 @@
 
     <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-8 transition-colors duration-300 text-center">
         <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
-            <div>&copy; 2026 PrivacyConvert. 100% Client-Side Processing.</div>
+            <div>&copy; 2026 PrivacyConvert Pro. 100% Client-Side Processing.</div>
             <div class="flex gap-4">
                 <a href="https://github.com" target="_blank" class="hover:text-indigo-500 transition-colors" data-i18n="githubFooter">GitHub Open Source</a>
             </div>
         </div>
     </footer>
 
-    <!-- SİSTEM MİMARİSİ VE ÇEVİRİ MOTORU -->
+    <!-- ÇALIŞMA MOTORU VE YÖNETİM SİSTEMİ -->
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
 
@@ -275,13 +299,17 @@
 
             routing: {
                 metaData: {
-                    'pdf-to-png': { key: 'toolPdfPng', descKey: 'descPdfPng', type: 'file', accept: 'application/pdf' },
-                    'image-resizer': { key: 'toolResize', descKey: 'descResize', type: 'resizer', accept: 'image/*' },
+                    'pdf-to-png': { key: 'toolPdfPng', descKey: 'descPdfPng', type: 'file', accept: 'application/pdf', multiple: false },
+                    'pdf-merge': { key: 'toolPdfMerge', descKey: 'descPdfMerge', type: 'file', accept: 'application/pdf', multiple: true },
+                    'image-resizer': { key: 'toolResize', descKey: 'descResize', type: 'resizer', accept: 'image/*', multiple: false },
+                    'image-compressor': { key: 'toolCompress', descKey: 'descCompress', type: 'compressor', accept: 'image/*', multiple: false },
                     'json-tool': { key: 'toolJson', descKey: 'descJson', type: 'text' },
                     'markdown-editor': { key: 'toolMarkdown', descKey: 'descMarkdown', type: 'markdown' },
                     'word-counter': { key: 'toolCounter', descKey: 'descCounter', type: 'text' },
+                    'base64-tool': { key: 'toolBase64', descKey: 'descBase64', type: 'base64' },
                     'uuid-gen': { key: 'toolUuid', descKey: 'descUuid', type: 'action' },
-                    'qr-gen': { key: 'toolQr', descKey: 'descQr', type: 'qr' }
+                    'qr-gen': { key: 'toolQr', descKey: 'descQr', type: 'qr' },
+                    'password-gen': { key: 'toolPassword', descKey: 'descPassword', type: 'action' }
                 },
                 navigate(toolId) {
                     PrivacyConvert.state.tool = toolId;
@@ -302,6 +330,16 @@
             },
 
             ui: {
+                toggleTheme() {
+                    const html = document.documentElement;
+                    if (html.classList.contains('dark')) {
+                        html.classList.remove('dark');
+                        localStorage.setItem('privacyConvert_theme', 'light');
+                    } else {
+                        html.classList.add('dark');
+                        localStorage.setItem('privacyConvert_theme', 'dark');
+                    }
+                },
                 showToast(message, type = 'success') {
                     const container = document.getElementById('toastContainer');
                     const toast = document.createElement('div');
@@ -340,17 +378,21 @@
                     document.getElementById('actionArea').classList.add('hidden');
                     document.getElementById('textInputGroup').classList.add('hidden');
                     document.getElementById('resizerOptions').classList.add('hidden');
+                    document.getElementById('compressorOptions').classList.add('hidden');
                     document.getElementById('markdownPreviewArea').classList.add('hidden');
                     document.getElementById('qrOutputArea').classList.add('hidden');
+                    document.getElementById('base64ActionButtons').classList.add('hidden');
                     document.getElementById('genericTextBox').classList.add('hidden');
                     document.getElementById('convertBtn').classList.add('hidden');
 
                     const fileInput = document.getElementById('fileInput');
                     fileInput.accept = meta.accept || '*';
+                    fileInput.multiple = meta.multiple || false;
 
-                    if (meta.type === 'file' || meta.type === 'resizer') {
+                    if (meta.type === 'file' || meta.type === 'resizer' || meta.type === 'compressor') {
                         document.getElementById('dropZone').style.display = 'block';
                         if(meta.type === 'resizer') document.getElementById('resizerOptions').classList.remove('hidden');
+                        if(meta.type === 'compressor') document.getElementById('compressorOptions').classList.remove('hidden');
                     } else if (meta.type === 'text') {
                         document.getElementById('actionArea').classList.remove('hidden');
                         document.getElementById('textInputGroup').classList.remove('hidden');
@@ -364,6 +406,11 @@
                         document.getElementById('textInputGroup').classList.remove('hidden');
                         document.getElementById('qrOutputArea').classList.remove('hidden');
                         document.getElementById('convertBtn').classList.remove('hidden');
+                    } else if (meta.type === 'base64') {
+                        document.getElementById('actionArea').classList.remove('hidden');
+                        document.getElementById('textInputGroup').classList.remove('hidden');
+                        document.getElementById('base64ActionButtons').classList.remove('hidden');
+                        document.getElementById('genericTextBox').classList.remove('hidden');
                     } else if (meta.type === 'action') {
                         PrivacyConvert.engine.executeTool();
                     }
@@ -406,6 +453,17 @@
                     const val = document.getElementById('markdownInput').value;
                     document.getElementById('markdownOutput').innerHTML = marked.parse(val);
                 },
+                base64Action(type) {
+                    const val = document.getElementById('mainInputField').value;
+                    const out = document.getElementById('genericTextArea');
+                    try {
+                        if (type === 'btoa') out.value = btoa(val);
+                        else if (type === 'atob') out.value = atob(val);
+                        else if (type === 'encUrl') out.value = encodeURIComponent(val);
+                        else if (type === 'decUrl') out.value = decodeURIComponent(val);
+                        PrivacyConvert.ui.showToast('Processed successfully');
+                    } catch(e) { PrivacyConvert.ui.showToast('Invalid input data', 'error'); }
+                },
                 async executeTool() {
                     const tool = PrivacyConvert.state.tool;
                     
@@ -414,6 +472,20 @@
                         document.getElementById('genericTextBox').classList.remove('hidden');
                         document.getElementById('genericTextArea').value = crypto.randomUUID ? crypto.randomUUID() : 'x-x-x'.replace(/x/g, () => Math.floor(Math.random()*16).toString(16));
                         PrivacyConvert.ui.showToast('UUID Generated');
+                        return;
+                    }
+                    if (tool === 'password-gen') {
+                        document.getElementById('actionArea').classList.remove('hidden');
+                        document.getElementById('genericTextBox').classList.remove('hidden');
+                        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%^&*!";
+                        let pass = "";
+                        const array = new Uint32Array(16);
+                        crypto.getRandomValues(array);
+                        for (let i = 0; i < 16; i++) {
+                            pass += chars[array[i] % chars.length];
+                        }
+                        document.getElementById('genericTextArea').value = pass;
+                        PrivacyConvert.ui.showToast('Secure Password Generated');
                         return;
                     }
                     if (tool === 'word-counter') {
@@ -461,7 +533,6 @@
                                 canvas.width = w; canvas.height = h;
                                 const ctx = canvas.getContext('2d');
                                 ctx.drawImage(img, 0, 0, w, h);
-                                
                                 canvas.toBlob((blob) => {
                                     const link = document.createElement('a');
                                     link.href = URL.createObjectURL(blob);
@@ -476,17 +547,73 @@
                         reader.readAsDataURL(file);
                         return;
                     }
+                    if (tool === 'image-compressor') {
+                        if (PrivacyConvert.state.files.length === 0) return;
+                        const file = PrivacyConvert.state.files[0].file;
+                        const quality = parseFloat(document.getElementById('compressQuality').value) || 0.7;
+                        
+                        PrivacyConvert.ui.updateProgress(20, "Compressing image...");
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            const img = new Image();
+                            img.onload = function() {
+                                const canvas = document.createElement('canvas');
+                                canvas.width = img.width; canvas.height = img.height;
+                                const ctx = canvas.getContext('2d');
+                                ctx.drawImage(img, 0, 0);
+                                canvas.toBlob((blob) => {
+                                    const link = document.createElement('a');
+                                    link.href = URL.createObjectURL(blob);
+                                    link.download = `compressed_${file.name}`;
+                                    link.click();
+                                    PrivacyConvert.ui.updateProgress(100, "Done!");
+                                    PrivacyConvert.ui.showToast('Image compressed & downloaded');
+                                }, 'image/jpeg', quality);
+                            };
+                            img.src = event.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                        return;
+                    }
+                    if (tool === 'pdf-merge') {
+                        if (PrivacyConvert.state.files.length < 2) return PrivacyConvert.ui.showToast('Select at least 2 PDF files', 'warning');
+                        PrivacyConvert.ui.updateProgress(10, "Merging PDFs...");
+                        try {
+                            const { PDFDocument } = PDFLib;
+                            const mergedPdf = await PDFDocument.create();
+                            let count = 0;
+                            for (let item of PrivacyConvert.state.files) {
+                                count++;
+                                PrivacyConvert.ui.updateProgress(Math.floor((count / PrivacyConvert.state.files.length) * 80), `Merging file ${count}`);
+                                const arrayBuffer = await item.file.arrayBuffer();
+                                const pdf = await PDFDocument.load(arrayBuffer);
+                                const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                                pages.forEach(page => mergedPdf.addPage(page));
+                            }
+                            PrivacyConvert.ui.updateProgress(90, "Saving...");
+                            const pdfBytes = await mergedPdf.save();
+                            const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                            const link = document.createElement('a');
+                            link.href = URL.createObjectURL(blob);
+                            link.download = `merged_document.pdf`;
+                            link.click();
+                            PrivacyConvert.ui.updateProgress(100, "Done!");
+                            PrivacyConvert.ui.showToast('PDFs merged successfully!');
+                        } catch(e) {
+                            PrivacyConvert.ui.showToast('Error merging PDFs', 'error');
+                            PrivacyConvert.ui.updateProgress(100, "Error");
+                        }
+                        return;
+                    }
                     if (tool === 'pdf-to-png') {
                         if (PrivacyConvert.state.files.length === 0) return;
                         const file = PrivacyConvert.state.files[0].file;
                         PrivacyConvert.ui.updateProgress(5, "Reading PDF...");
-                        
                         try {
                             const arrayBuffer = await file.arrayBuffer();
                             const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
                             const zip = new JSZip();
                             const totalPages = pdf.numPages;
-                            
                             for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
                                 PrivacyConvert.ui.updateProgress(Math.floor((pageNum / totalPages) * 80) + 10, `Processing Page ${pageNum}/${totalPages}`);
                                 const page = await pdf.getPage(pageNum);
@@ -498,14 +625,12 @@
                                 const imgData = canvas.toDataURL("image/png").replace(/^data:image\/(png|jpg);base64,/, "");
                                 zip.file(`Page_${pageNum}.png`, imgData, {base64: true});
                             }
-                            
                             PrivacyConvert.ui.updateProgress(95, "Creating ZIP...");
                             const content = await zip.generateAsync({type:"blob"});
                             const link = document.createElement('a');
                             link.href = URL.createObjectURL(content);
                             link.download = `${file.name.replace('.pdf', '')}_Images.zip`;
                             link.click();
-                            
                             PrivacyConvert.ui.updateProgress(100, "Done!");
                             PrivacyConvert.ui.showToast('PDF extracted successfully!');
                         } catch (err) {
@@ -540,11 +665,11 @@
                         cookieTitle: "Privacy First:", cookieText: "We use local storage. All file processing happens locally in your browser.",
                         accept: "Accept", secureLabel: "Secure", dropText: "Click to browse or drag files here", dropSub: "Max file size: 50MB (Processed locally)",
                         btnReset: "Reset", btnCopy: "📋 Copy", btnProcess: "Process & Download",
-                        catPdf: "📄 PDF & Media", catDev: "💻 Text & Dev", catSec: "🔐 Security & Gen",
+                        catPdf: "📄 PDF Tools", catMedia: "🖼️ Media & Image", catDev: "💻 Text & Dev", catSec: "🔐 Security & Gen",
                         installApp: "Install App", githubBadge: "Open Source (Verified)", githubFooter: "GitHub Open Source",
-                        toolPdfPng: "PDF to PNG", toolResize: "Image Resizer", toolJson: "JSON Formatter", toolMarkdown: "Markdown Editor", toolCounter: "Word & Char Counter", toolUuid: "UUID Generator", toolQr: "QR Code Generator",
-                        descPdfPng: "Extract PDF pages to high-resolution PNG images. Download as ZIP.", descResize: "Resize images instantly inside your browser.", descJson: "Format, validate, and beautify your JSON data locally.", descMarkdown: "Write and preview Markdown documents in real-time.", descCounter: "Count words, characters, and paragraphs instantly.", descUuid: "Generate secure v4 UUIDs entirely offline.", descQr: "Create customizable QR codes instantly from text or URLs.",
-                        outputLabel: "Output:", pasteText: "Type or paste data here...", widthLabel: "Width (px):", heightLabel: "Height (px):",
+                        toolPdfPng: "PDF to PNG", toolPdfMerge: "PDF Merger", toolResize: "Image Resizer", toolCompress: "Image Compressor", toolJson: "JSON Formatter", toolMarkdown: "Markdown Editor", toolCounter: "Word Counter", toolBase64: "Base64 / URL", toolUuid: "UUID Generator", toolQr: "QR Generator", toolPassword: "Password Gen",
+                        descPdfPng: "Extract PDF pages to high-resolution PNG images. Download as ZIP.", descPdfMerge: "Combine multiple PDF documents into a single secure file.", descResize: "Resize images instantly inside your browser.", descCompress: "Reduce image file size with adjustable quality.", descJson: "Format, validate, and beautify your JSON data locally.", descMarkdown: "Write and preview Markdown documents in real-time.", descCounter: "Count words, characters, and paragraphs instantly.", descBase64: "Encode and decode Base64 strings or URLs securely.", descUuid: "Generate secure v4 UUIDs entirely offline.", descQr: "Create customizable QR codes instantly from text or URLs.", descPassword: "Generate high-entropy secure passwords locally.",
+                        outputLabel: "Output:", pasteText: "Type or paste data here...", widthLabel: "Width (px):", heightLabel: "Height (px):", qualityLabel: "Compression Quality:",
                         privacyProofTitle: "Zero-Server Policy: How to Verify?",
                         privacyProofText1: "PrivacyConvert operates entirely inside your browser sandbox using client-side JavaScript, WebAssembly, and local APIs. No files, passwords, or texts ever leave your device or get uploaded to any remote server.",
                         verifyHowTitle: "🔍 How can you verify this yourself?",
@@ -561,11 +686,11 @@
                         cookieTitle: "Privacidad primero:", cookieText: "Usamos almacenamiento local. Todo el procesamiento es local.",
                         accept: "Aceptar", secureLabel: "Seguro", dropText: "Haz clic o arrastra archivos aquí", dropSub: "Tamaño máximo: 50MB",
                         btnReset: "Reiniciar", btnCopy: "📋 Copiar", btnProcess: "Procesar y Descargar",
-                        catPdf: "📄 PDF y Medios", catDev: "💻 Texto y Dev", catSec: "🔐 Seguridad",
+                        catPdf: "📄 Herramientas PDF", catMedia: "🖼️ Medios e Imagen", catDev: "💻 Texto y Dev", catSec: "🔐 Seguridad",
                         installApp: "Instalar App", githubBadge: "Código Abierto", githubFooter: "GitHub",
-                        toolPdfPng: "PDF a PNG", toolResize: "Redimensionar Imagen", toolJson: "Formateador JSON", toolMarkdown: "Editor Markdown", toolCounter: "Contador de Palabras", toolUuid: "Generador UUID", toolQr: "Generador QR",
-                        descPdfPng: "Extrae páginas de PDF a imágenes PNG en ZIP.", descResize: "Cambia el tamaño de imágenes en tu navegador.", descJson: "Valida y formatea JSON localmente.", descMarkdown: "Editor Markdown en tiempo real.", descCounter: "Cuenta palabras y caracteres.", descUuid: "Genera UUIDs offline.", descQr: "Crea códigos QR personalizados.",
-                        outputLabel: "Resultado:", pasteText: "Escribe o pega datos aquí...", widthLabel: "Ancho (px):", heightLabel: "Alto (px):",
+                        toolPdfPng: "PDF a PNG", toolPdfMerge: "Unir PDF", toolResize: "Redimensionar", toolCompress: "Comprimir Imagen", toolJson: "Formateador JSON", toolMarkdown: "Editor Markdown", toolCounter: "Contador", toolBase64: "Base64 / URL", toolUuid: "Generador UUID", toolQr: "Generador QR", toolPassword: "Generador Claves",
+                        descPdfPng: "Extrae páginas de PDF a imágenes PNG en ZIP.", descPdfMerge: "Combina varios documentos PDF en uno solo.", descResize: "Cambia el tamaño de imágenes.", descCompress: "Reduce el tamaño de las imágenes.", descJson: "Valida y formatea JSON localmente.", descMarkdown: "Editor Markdown en tiempo real.", descCounter: "Cuenta palabras y caracteres.", descBase64: "Codifica y decodifica Base64 o URLs.", descUuid: "Genera UUIDs offline.", descQr: "Crea códigos QR.", descPassword: "Genera contraseñas seguras.",
+                        outputLabel: "Resultado:", pasteText: "Escribe o pega datos aquí...", widthLabel: "Ancho (px):", heightLabel: "Alto (px):", qualityLabel: "Calidad de compresión:",
                         privacyProofTitle: "Política de Cero Servidores: ¿Cómo verificarlo?",
                         privacyProofText1: "PrivacyConvert opera enteramente en tu navegador. Ningún archivo o texto sale de tu dispositivo.",
                         verifyHowTitle: "🔍 ¿Cómo puedes verificarlo tú mismo?",
@@ -582,11 +707,11 @@
                         cookieTitle: "隐私第一：", cookieText: "我们使用本地存储。所有文件均在本地处理。",
                         accept: "接受", secureLabel: "安全", dropText: "点击或拖放文件到此处", dropSub: "最大文件大小：50MB",
                         btnReset: "重置", btnCopy: "📋 复制", btnProcess: "处理并下载",
-                        catPdf: "📄 PDF 与媒体", catDev: "💻 文本与开发", catSec: "🔐 安全",
+                        catPdf: "📄 PDF 工具", catMedia: "🖼️ 媒体与图像", catDev: "💻 文本与开发", catSec: "🔐 安全",
                         installApp: "安装应用", githubBadge: "开源验证", githubFooter: "GitHub",
-                        toolPdfPng: "PDF 转 PNG", toolResize: "图像调整", toolJson: "JSON 格式化", toolMarkdown: "Markdown 编辑器", toolCounter: "字数统计", toolUuid: "UUID 生成", toolQr: "QR 码生成",
-                        descPdfPng: "提取 PDF 页面并打包为 ZIP。", descResize: "在浏览器中调整图像大小。", descJson: "本地验证和美化 JSON。", descMarkdown: "实时 Markdown 预览。", descCounter: "即时统计字数与字符数。", descUuid: "完全离线生成 UUID。", descQr: "从文本或网址创建自定义 QR 码。",
-                        outputLabel: "输出：", pasteText: "在此输入或粘贴数据...", widthLabel: "宽度 (px)：", heightLabel: "高度 (px)：",
+                        toolPdfPng: "PDF 转 PNG", toolPdfMerge: "PDF 合并", toolResize: "图像调整", toolCompress: "图像压缩", toolJson: "JSON 格式化", toolMarkdown: "Markdown 编辑器", toolCounter: "字数统计", toolBase64: "Base64 / URL", toolUuid: "UUID 生成", toolQr: "QR 码生成", toolPassword: "密码生成",
+                        descPdfPng: "提取 PDF 页面并打包为 ZIP。", descPdfMerge: "将多个 PDF 文档合并为一个安全文件。", descResize: "在浏览器中调整图像大小。", descCompress: "通过可调节质量减小图像文件大小。", descJson: "本地验证和美化 JSON。", descMarkdown: "实时 Markdown 预览。", descCounter: "即时统计字数与字符数。", descBase64: "安全编解码 Base64 字符串或 URL。", descUuid: "完全离线生成 UUID。", descQr: "从文本或网址创建自定义 QR 码。", descPassword: "本地生成高强度安全密码。",
+                        outputLabel: "输出：", pasteText: "在此输入或粘贴数据...", widthLabel: "宽度 (px)：", heightLabel: "高度 (px)：", qualityLabel: "压缩质量：",
                         privacyProofTitle: "零服务器政策：如何验证？",
                         privacyProofText1: "PrivacyConvert 完全在您的浏览器沙箱中运行，没有任何文件上传至远程服务器。",
                         verifyHowTitle: "🔍 如何亲自验证？",
@@ -603,11 +728,11 @@
                         cookieTitle: "Datenschutz zuerst:", cookieText: "Wir verwenden lokalen Speicher. Alles läuft lokal im Browser.",
                         accept: "Akzeptieren", secureLabel: "Sicher", dropText: "Dateien hierher ziehen", dropSub: "Max. Dateigröße: 50MB",
                         btnReset: "Zurücksetzen", btnCopy: "📋 Kopieren", btnProcess: "Verarbeiten & Herunterladen",
-                        catPdf: "📄 PDF & Medien", catDev: "💻 Text & Dev", catSec: "🔐 Sicherheit",
+                        catPdf: "📄 PDF-Werkzeuge", catMedia: "🖼️ Medien & Bild", catDev: "💻 Text & Dev", catSec: "🔐 Sicherheit",
                         installApp: "App installieren", githubBadge: "Open Source", githubFooter: "GitHub",
-                        toolPdfPng: "PDF zu PNG", toolResize: "Bildgröße ändern", toolJson: "JSON Formatierer", toolMarkdown: "Markdown Editor", toolCounter: "Wortzähler", toolUuid: "UUID Generator", toolQr: "QR-Code Generator",
-                        descPdfPng: "PDF-Seiten in PNG extrahieren.", descResize: "Bildgröße im Browser ändern.", descJson: "JSON lokal validieren.", descMarkdown: "Markdown Editor.", descCounter: "Wörter und Zeichen zählen.", descUuid: "UUIDs offline generieren.", descQr: "QR-Codes erstellen.",
-                        outputLabel: "Ausgabe:", pasteText: "Daten hier eingeben...", widthLabel: "Breite (px):", heightLabel: "Höhe (px):",
+                        toolPdfPng: "PDF zu PNG", toolPdfMerge: "PDF Zusammenfügen", toolResize: "Bildgröße ändern", toolCompress: "Bildkompressor", toolJson: "JSON Formatierer", toolMarkdown: "Markdown Editor", toolCounter: "Wortzähler", toolBase64: "Base64 / URL", toolUuid: "UUID Generator", toolQr: "QR-Code Generator", toolPassword: "Passwort Gen",
+                        descPdfPng: "PDF-Seiten in PNG extrahieren.", descPdfMerge: "Mehrere PDF-Dateien zusammenführen.", descResize: "Bildgröße im Browser ändern.", descCompress: "Dateigröße von Bildern reduzieren.", descJson: "JSON lokal validieren.", descMarkdown: "Markdown Editor.", descCounter: "Wörter und Zeichen zählen.", descBase64: "Base64 oder URLs kodieren/dekodieren.", descUuid: "UUIDs offline generieren.", descQr: "QR-Codes erstellen.", descPassword: "Sichere Passwörter generieren.",
+                        outputLabel: "Ausgabe:", pasteText: "Daten hier eingeben...", widthLabel: "Breite (px):", heightLabel: "Höhe (px):", qualityLabel: "Komprimierungsqualität:",
                         privacyProofTitle: "Null-Server-Richtlinie: Wie verifizieren?",
                         privacyProofText1: "PrivacyConvert läuft vollständig in Ihrem Browser. Keine Datei verlässt Ihr Gerät.",
                         verifyHowTitle: "🔍 Wie können Sie das überprüfen?",
@@ -624,11 +749,11 @@
                         cookieTitle: "Confidentialité :", cookieText: "Stockage local utilisé. Tout est traité dans le navigateur.",
                         accept: "Accepter", secureLabel: "Sécurisé", dropText: "Glissez vos fichiers ici", dropSub: "Taille max : 50Mo",
                         btnReset: "Réinitialiser", btnCopy: "📋 Copier", btnProcess: "Traiter et Télécharger",
-                        catPdf: "📄 PDF & Média", catDev: "💻 Texte & Dév", catSec: "🔐 Sécurité",
+                        catPdf: "📄 Outils PDF", catMedia: "🖼️ Média & Image", catDev: "💻 Texte & Dév", catSec: "🔐 Sécurité",
                         installApp: "Installer", githubBadge: "Open Source", githubFooter: "GitHub",
-                        toolPdfPng: "PDF en PNG", toolResize: "Redimensionner", toolJson: "Formateur JSON", toolMarkdown: "Éditeur Markdown", toolCounter: "Compteur de mots", toolUuid: "Générateur UUID", toolQr: "Générateur QR",
-                        descPdfPng: "Extraire des pages PDF en PNG.", descResize: "Redimensionner des images localement.", descJson: "Valider le JSON.", descMarkdown: "Éditeur Markdown.", descCounter: "Compter les mots.", descUuid: "Générer des UUIDs.", descQr: "Créer des codes QR.",
-                        outputLabel: "Sortie :", pasteText: "Tapez ou collez ici...", widthLabel: "Largeur (px) :", heightLabel: "Hauteur (px) :",
+                        toolPdfPng: "PDF en PNG", toolPdfMerge: "Fusionner PDF", toolResize: "Redimensionner", toolCompress: "Compresser Image", toolJson: "Formateur JSON", toolMarkdown: "Éditeur Markdown", toolCounter: "Compteur", toolBase64: "Base64 / URL", toolUuid: "Générateur UUID", toolQr: "Générateur QR", toolPassword: "Générateur MDP",
+                        descPdfPng: "Extraire des pages PDF en PNG.", descPdfMerge: "Combiner plusieurs fichiers PDF.", descResize: "Redimensionner des images localement.", descCompress: "Réduire la taille des images.", descJson: "Valider le JSON.", descMarkdown: "Éditeur Markdown.", descCounter: "Compter les mots.", descBase64: "Encoder/décoder Base64 ou URL.", descUuid: "Générer des UUIDs.", descQr: "Créer des codes QR.", descPassword: "Générer des mots de passe sécurisés.",
+                        outputLabel: "Sortie :", pasteText: "Tapez ou collez ici...", widthLabel: "Largeur (px) :", heightLabel: "Hauteur (px) :", qualityLabel: "Qualité de compression :",
                         privacyProofTitle: "Politique Zéro-Serveur : Comment vérifier ?",
                         privacyProofText1: "PrivacyConvert fonctionne entièrement dans votre navigateur. Aucun fichier ne quitte votre appareil.",
                         verifyHowTitle: "🔍 Comment vérifier par vous-même ?",
@@ -645,11 +770,11 @@
                         cookieTitle: "الخصوصية أولاً:", cookieText: "نحن نستخدم التخزين المحلي. المعالجة تتم في المتصفح.",
                         accept: "قبول", secureLabel: "آمن", dropText: "اسحب الملفات هنا", dropSub: "الحد الأقصى: 50 ميغابايت",
                         btnReset: "إعادة ضبط", btnCopy: "📋 نسخ", btnProcess: "معالجة وتحميل",
-                        catPdf: "📄 PDF والوسائط", catDev: "💻 النصوص والتطوير", catSec: "🔐 الأمان",
+                        catPdf: "📄 أدوات PDF", catMedia: "🖼️ الوسائط والصور", catDev: "💻 النصوص والتطوير", catSec: "🔐 الأمان",
                         installApp: "تثبيت", githubBadge: "مفتوح المصدر", githubFooter: "GitHub",
-                        toolPdfPng: "PDF إلى PNG", toolResize: "تغيير حجم الصورة", toolJson: "منسق JSON", toolMarkdown: "محرر Markdown", toolCounter: "عداد الكلمات", toolUuid: "مولد UUID", toolQr: "مولد QR",
-                        descPdfPng: "استخراج صفحات PDF إلى صور PNG.", descResize: "تغيير حجم الصور محلياً.", descJson: "تنسيق JSON محلياً.", descMarkdown: "محرر Markdown مباشر.", descCounter: "حساب الكلمات والأحرف.", descUuid: "توليد UUIDs بدون إنترنت.", descQr: "إنشاء رموز QR مخصصة.",
-                        outputLabel: "النتيجة:", pasteText: "اكتب أو الصق البيانات هنا...", widthLabel: "العرض (بكسل):", heightLabel: "الطول (بكسل):",
+                        toolPdfPng: "PDF إلى PNG", toolPdfMerge: "دمج PDF", toolResize: "تغيير الحجم", toolCompress: "ضغط الصور", toolJson: "منسق JSON", toolMarkdown: "محرر Markdown", toolCounter: "عداد الكلمات", toolBase64: "Base64 / URL", toolUuid: "مولد UUID", toolQr: "مولد QR", toolPassword: "مولد كلمات المرور",
+                        descPdfPng: "استخراج صفحات PDF إلى صور PNG.", descPdfMerge: "دمج عدة ملفات PDF في ملف واحد.", descResize: "تغيير حجم الصور محلياً.", descCompress: "تقليل حجم صورك مع التحكم بالدقة.", descJson: "تنسيق JSON محلياً.", descMarkdown: "محرر Markdown مباشر.", descCounter: "حساب الكلمات والأحرف.", descBase64: "تشفير وفك تشفير Base64 أو الروابط.", descUuid: "توليد UUIDs بدون إنترنت.", descQr: "إنشاء رموز QR مخصصة.", descPassword: "توليد كلمات مرور آمنة.",
+                        outputLabel: "النتيجة:", pasteText: "اكتب أو الصق البيانات هنا...", widthLabel: "العرض (بكسل):", heightLabel: "الطول (بكسل):", qualityLabel: "جودة الضغط:",
                         privacyProofTitle: "سياسة خادم الصفر: كيف تحقق من ذلك؟",
                         privacyProofText1: "يعمل PrivacyConvert بالكامل داخل متصفحك. لا توجد ملفات يتم إرسالها إلى أي خادم خارجي.",
                         verifyHowTitle: "🔍 كيف يمكنك التحقق بنفسك؟",
