@@ -48,6 +48,7 @@
         .dynamic-bg:hover { background-color: var(--accent-hover); }
         .dynamic-text { color: var(--accent-color); }
         .dynamic-border { border-color: var(--accent-color); }
+        .slider-clip { clip-path: inset(0 0 0 50%); }
     </style>
 </head>
 
@@ -97,6 +98,9 @@
                 ⚡ PrivacyConvert
             </a>
             <div class="flex items-center gap-3">
+                <a href="https://github.com" target="_blank" class="hidden sm:inline-flex bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs px-3 py-2 rounded-xl font-bold items-center gap-1.5 transition">
+                    ⭐ <span data-i18n="githubBadge">GitHub Açık Kaynak</span>
+                </a>
                 <select id="accentSelect" class="bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold px-2.5 py-2 border-0 focus:outline-none cursor-pointer">
                     <option value="indigo">🟣 Indigo</option>
                     <option value="emerald">🟢 Emerald</option>
@@ -109,9 +113,6 @@
                     <option value="en">English</option>
                     <option value="ar">العربية</option>
                 </select>
-                <span class="hidden sm:inline-flex bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300 text-xs px-3 py-1.5 rounded-full font-bold items-center gap-1.5 shadow-sm border border-emerald-200 dark:border-emerald-800/50">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="localBadge">100% Local</span>
-                </span>
                 <button onclick="PrivacyConvert.ui.toggleShortcutsModal(true)" class="p-2 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-xs font-bold transition-all">⌨️</button>
                 <button id="themeToggle" class="text-xl p-2 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 transition-all shadow-sm">🌙</button>
             </div>
@@ -128,13 +129,11 @@
             </p>
         </div>
 
-        <!-- Pinned / Favorites Section -->
         <div id="favoritesContainer" class="max-w-6xl mx-auto mb-8 hidden">
             <h3 data-i18n="favoritesTitle" class="text-xs font-extrabold dynamic-text uppercase tracking-wider mb-3 flex items-center gap-2">⭐ Herramientas Favoritas</h3>
             <div id="favoritesListGrid" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3"></div>
         </div>
 
-        <!-- Interactive Privacy Dashboard Widget -->
         <div class="max-w-3xl mx-auto mb-10 p-5 bg-emerald-50/80 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/50 rounded-2xl text-slate-800 dark:text-emerald-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm backdrop-blur-sm">
             <div class="flex items-center gap-4">
                 <div class="bg-emerald-100 dark:bg-emerald-800/50 p-3 rounded-full shrink-0 shadow-inner">
@@ -158,141 +157,56 @@
             <input type="text" id="toolSearchInput" data-i18n-placeholder="searchPlaceholder" placeholder="Buscar en herramientas seguras (Ctrl+K)..." class="w-full pl-11 pr-4 rtl:pl-4 rtl:pr-11 py-3.5 text-sm bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm focus:outline-none focus:border-indigo-500 dark:text-white transition-all">
         </div>
 
-        <!-- Categorized Tools Grid with Pin/Star Buttons -->
+        <!-- Categorized Tools Grid -->
         <div id="toolsNavContainer" class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            <!-- Category: PDF -->
             <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3 tool-category" data-cat="pdf">
                 <h3 data-i18n="catPdf" class="text-xs font-extrabold dynamic-text uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">📄 Herramientas PDF</h3>
                 <div class="flex flex-col gap-2">
-                    <div class="flex items-center gap-1">
-                        <button onclick="PrivacyConvert.tools.switchTool('pdf-to-png')" id="tab-pdf-to-png" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🖼️</span> <span class="truncate">PDF a PNG</span></button>
-                        <button onclick="PrivacyConvert.ui.toggleFavorite('pdf-to-png')" id="fav-pdf-to-png" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition" title="Favorito">⭐</button>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <button onclick="PrivacyConvert.tools.switchTool('pdf-to-jpg')" id="tab-pdf-to-jpg" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🌄</span> <span class="truncate">PDF a JPG</span></button>
-                        <button onclick="PrivacyConvert.ui.toggleFavorite('pdf-to-jpg')" id="fav-pdf-to-jpg" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition" title="Favorito">⭐</button>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <button onclick="PrivacyConvert.tools.switchTool('merge-pdf')" id="tab-merge-pdf" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">📑</span> <span class="truncate">Unir PDF</span></button>
-                        <button onclick="PrivacyConvert.ui.toggleFavorite('merge-pdf')" id="fav-merge-pdf" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition" title="Favorito">⭐</button>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <button onclick="PrivacyConvert.tools.switchTool('split-pdf')" id="tab-split-pdf" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">✂️</span> <span class="truncate">Dividir PDF</span></button>
-                        <button onclick="PrivacyConvert.ui.toggleFavorite('split-pdf')" id="fav-split-pdf" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition" title="Favorito">⭐</button>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <button onclick="PrivacyConvert.tools.switchTool('pdf-watermark')" id="tab-pdf-watermark" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">💧</span> <span class="truncate">Filigranas PDF</span></button>
-                        <button onclick="PrivacyConvert.ui.toggleFavorite('pdf-watermark')" id="fav-pdf-watermark" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition" title="Favorito">⭐</button>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <button onclick="PrivacyConvert.tools.switchTool('jpg-to-pdf')" id="tab-jpg-to-pdf" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">📁</span> <span class="truncate">JPG a PDF</span></button>
-                        <button onclick="PrivacyConvert.ui.toggleFavorite('jpg-to-pdf')" id="fav-jpg-to-pdf" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition" title="Favorito">⭐</button>
-                    </div>
+                    <div class="flex items-center gap-1"><button onclick="PrivacyConvert.tools.switchTool('pdf-to-png')" id="tab-pdf-to-png" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🖼️</span> <span class="truncate">PDF a PNG</span></button><button onclick="PrivacyConvert.ui.toggleFavorite('pdf-to-png')" id="fav-pdf-to-png" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition">⭐</button></div>
+                    <div class="flex items-center gap-1"><button onclick="PrivacyConvert.tools.switchTool('pdf-to-jpg')" id="tab-pdf-to-jpg" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🌄</span> <span class="truncate">PDF a JPG</span></button><button onclick="PrivacyConvert.ui.toggleFavorite('pdf-to-jpg')" id="fav-pdf-to-jpg" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition">⭐</button></div>
+                    <div class="flex items-center gap-1"><button onclick="PrivacyConvert.tools.switchTool('merge-pdf')" id="tab-merge-pdf" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">📑</span> <span class="truncate">Unir PDF</span></button><button onclick="PrivacyConvert.ui.toggleFavorite('merge-pdf')" id="fav-merge-pdf" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition">⭐</button></div>
+                    <div class="flex items-center gap-1"><button onclick="PrivacyConvert.tools.switchTool('split-pdf')" id="tab-split-pdf" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">✂️</span> <span class="truncate">Dividir PDF</span></button><button onclick="PrivacyConvert.ui.toggleFavorite('split-pdf')" id="fav-split-pdf" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition">⭐</button></div>
+                    <div class="flex items-center gap-1"><button onclick="PrivacyConvert.tools.switchTool('pdf-watermark')" id="tab-pdf-watermark" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">💧</span> <span class="truncate">Filigranas PDF</span></button><button onclick="PrivacyConvert.ui.toggleFavorite('pdf-watermark')" id="fav-pdf-watermark" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition">⭐</button></div>
+                    <div class="flex items-center gap-1"><button onclick="PrivacyConvert.tools.switchTool('jpg-to-pdf')" id="tab-jpg-to-pdf" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">📁</span> <span class="truncate">JPG a PDF</span></button><button onclick="PrivacyConvert.ui.toggleFavorite('jpg-to-pdf')" id="fav-jpg-to-pdf" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition">⭐</button></div>
                 </div>
             </div>
 
-            <!-- Category: Image -->
             <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3 tool-category" data-cat="image">
                 <h3 data-i18n="catImage" class="text-xs font-extrabold dynamic-text uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">🖼️ Herramientas de imagen</h3>
                 <div class="flex flex-col gap-2">
-                    <div class="flex items-center gap-1">
-                        <button onclick="PrivacyConvert.tools.switchTool('compress-image')" id="tab-compress-image" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🗜️</span> <span class="truncate">Comprimir Imagen</span></button>
-                        <button onclick="PrivacyConvert.ui.toggleFavorite('compress-image')" id="fav-compress-image" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition" title="Favorito">⭐</button>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <button onclick="PrivacyConvert.tools.switchTool('heic-to-jpg')" id="tab-heic-to-jpg" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🍏</span> <span class="truncate">HEIC a JPG</span></button>
-                        <button onclick="PrivacyConvert.ui.toggleFavorite('heic-to-jpg')" id="fav-heic-to-jpg" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition" title="Favorito">⭐</button>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <button onclick="PrivacyConvert.tools.switchTool('webp-converter')" id="tab-webp-converter" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🌐</span> <span class="truncate">Convertidor WebP</span></button>
-                        <button onclick="PrivacyConvert.ui.toggleFavorite('webp-converter')" id="fav-webp-converter" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition" title="Favorito">⭐</button>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <button onclick="PrivacyConvert.tools.switchTool('exif-remover')" id="tab-exif-remover" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🧹</span> <span class="truncate">Eliminar EXIF</span></button>
-                        <button onclick="PrivacyConvert.ui.toggleFavorite('exif-remover')" id="fav-exif-remover" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition" title="Favorito">⭐</button>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <button onclick="PrivacyConvert.tools.switchTool('exif-inspector')" id="tab-exif-inspector" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">📊</span> <span class="truncate">Inspector EXIF</span></button>
-                        <button onclick="PrivacyConvert.ui.toggleFavorite('exif-inspector')" id="fav-exif-inspector" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition" title="Favorito">⭐</button>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <button onclick="PrivacyConvert.tools.switchTool('extract-pdf-img')" id="tab-extract-pdf-img" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🔍</span> <span class="truncate">Extraer Imágenes de PDF</span></button>
-                        <button onclick="PrivacyConvert.ui.toggleFavorite('extract-pdf-img')" id="fav-extract-pdf-img" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition" title="Favorito">⭐</button>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <button onclick="PrivacyConvert.tools.switchTool('redact-tool')" id="tab-redact-tool" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🕶️</span> <span class="truncate">Censurar Imagen</span></button>
-                        <button onclick="PrivacyConvert.ui.toggleFavorite('redact-tool')" id="fav-redact-tool" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition" title="Favorito">⭐</button>
-                    </div>
+                    <div class="flex items-center gap-1"><button onclick="PrivacyConvert.tools.switchTool('compress-image')" id="tab-compress-image" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🗜️</span> <span class="truncate">Comprimir Imagen</span></button><button onclick="PrivacyConvert.ui.toggleFavorite('compress-image')" id="fav-compress-image" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition">⭐</button></div>
+                    <div class="flex items-center gap-1"><button onclick="PrivacyConvert.tools.switchTool('heic-to-jpg')" id="tab-heic-to-jpg" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🍏</span> <span class="truncate">HEIC a JPG</span></button><button onclick="PrivacyConvert.ui.toggleFavorite('heic-to-jpg')" id="fav-heic-to-jpg" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition">⭐</button></div>
+                    <div class="flex items-center gap-1"><button onclick="PrivacyConvert.tools.switchTool('webp-converter')" id="tab-webp-converter" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🌐</span> <span class="truncate">Convertidor WebP</span></button><button onclick="PrivacyConvert.ui.toggleFavorite('webp-converter')" id="fav-webp-converter" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition">⭐</button></div>
+                    <div class="flex items-center gap-1"><button onclick="PrivacyConvert.tools.switchTool('exif-remover')" id="tab-exif-remover" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🧹</span> <span class="truncate">Eliminar EXIF</span></button><button onclick="PrivacyConvert.ui.toggleFavorite('exif-remover')" id="fav-exif-remover" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition">⭐</button></div>
+                    <div class="flex items-center gap-1"><button onclick="PrivacyConvert.tools.switchTool('exif-inspector')" id="tab-exif-inspector" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">📊</span> <span class="truncate">Inspector EXIF</span></button><button onclick="PrivacyConvert.ui.toggleFavorite('exif-inspector')" id="fav-exif-inspector" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition">⭐</button></div>
+                    <div class="flex items-center gap-1"><button onclick="PrivacyConvert.tools.switchTool('extract-pdf-img')" id="tab-extract-pdf-img" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🔍</span> <span class="truncate">Extraer Imágenes de PDF</span></button><button onclick="PrivacyConvert.ui.toggleFavorite('extract-pdf-img')" id="fav-extract-pdf-img" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition">⭐</button></div>
+                    <div class="flex items-center gap-1"><button onclick="PrivacyConvert.tools.switchTool('redact-tool')" id="tab-redact-tool" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🕶️</span> <span class="truncate">Censurar Imagen</span></button><button onclick="PrivacyConvert.ui.toggleFavorite('redact-tool')" id="fav-redact-tool" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition">⭐</button></div>
                 </div>
             </div>
 
-            <!-- Category: Dev & Text -->
             <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3 tool-category" data-cat="dev">
                 <h3 data-i18n="catDev" class="text-xs font-extrabold dynamic-text uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">💻 Texto y desarrollo</h3>
                 <div class="flex flex-col gap-2">
-                    <div class="flex items-center gap-1">
-                        <button onclick="PrivacyConvert.tools.switchTool('json-tool')" id="tab-json-tool" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">{}</span> <span class="truncate">Formateador JSON</span></button>
-                        <button onclick="PrivacyConvert.ui.toggleFavorite('json-tool')" id="fav-json-tool" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition" title="Favorito">⭐</button>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <button onclick="PrivacyConvert.tools.switchTool('base64-tool')" id="tab-base64-tool" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🔤</span> <span class="truncate">Herramienta Base64</span></button>
-                        <button onclick="PrivacyConvert.ui.toggleFavorite('base64-tool')" id="fav-base64-tool" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition" title="Favorito">⭐</button>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <button onclick="PrivacyConvert.tools.switchTool('url-tool')" id="tab-url-tool" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🔗</span> <span class="truncate">Herramienta URL</span></button>
-                        <button onclick="PrivacyConvert.ui.toggleFavorite('url-tool')" id="fav-url-tool" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition" title="Favorito">⭐</button>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <button onclick="PrivacyConvert.tools.switchTool('diff-tool')" id="tab-diff-tool" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">⚖️</span> <span class="truncate">Diferencia de Texto (Diff)</span></button>
-                        <button onclick="PrivacyConvert.ui.toggleFavorite('diff-tool')" id="fav-diff-tool" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition" title="Favorito">⭐</button>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <button onclick="PrivacyConvert.tools.switchTool('md-tool')" id="tab-md-tool" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">📝</span> <span class="truncate">Vista previa Markdown</span></button>
-                        <button onclick="PrivacyConvert.ui.toggleFavorite('md-tool')" id="fav-md-tool" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition" title="Favorito">⭐</button>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <button onclick="PrivacyConvert.tools.switchTool('batch-rename')" id="tab-batch-rename" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🏷️</span> <span class="truncate">Renombrado Lotes</span></button>
-                        <button onclick="PrivacyConvert.ui.toggleFavorite('batch-rename')" id="fav-batch-rename" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition" title="Favorito">⭐</button>
-                    </div>
+                    <div class="flex items-center gap-1"><button onclick="PrivacyConvert.tools.switchTool('json-tool')" id="tab-json-tool" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">{}</span> <span class="truncate">Formateador JSON</span></button><button onclick="PrivacyConvert.ui.toggleFavorite('json-tool')" id="fav-json-tool" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition">⭐</button></div>
+                    <div class="flex items-center gap-1"><button onclick="PrivacyConvert.tools.switchTool('base64-tool')" id="tab-base64-tool" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🔤</span> <span class="truncate">Herramienta Base64</span></button><button onclick="PrivacyConvert.ui.toggleFavorite('base64-tool')" id="fav-base64-tool" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition">⭐</button></div>
+                    <div class="flex items-center gap-1"><button onclick="PrivacyConvert.tools.switchTool('url-tool')" id="tab-url-tool" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🔗</span> <span class="truncate">Herramienta URL</span></button><button onclick="PrivacyConvert.ui.toggleFavorite('url-tool')" id="fav-url-tool" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition">⭐</button></div>
+                    <div class="flex items-center gap-1"><button onclick="PrivacyConvert.tools.switchTool('diff-tool')" id="tab-diff-tool" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">⚖️</span> <span class="truncate">Diferencia de Texto (Diff)</span></button><button onclick="PrivacyConvert.ui.toggleFavorite('diff-tool')" id="fav-diff-tool" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition">⭐</button></div>
+                    <div class="flex items-center gap-1"><button onclick="PrivacyConvert.tools.switchTool('md-tool')" id="tab-md-tool" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">📝</span> <span class="truncate">Vista previa Markdown</span></button><button onclick="PrivacyConvert.ui.toggleFavorite('md-tool')" id="fav-md-tool" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition">⭐</button></div>
+                    <div class="flex items-center gap-1"><button onclick="PrivacyConvert.tools.switchTool('batch-rename')" id="tab-batch-rename" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🏷️</span> <span class="truncate">Renombrado Lotes</span></button><button onclick="PrivacyConvert.ui.toggleFavorite('batch-rename')" id="fav-batch-rename" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition">⭐</button></div>
                 </div>
             </div>
 
-            <!-- Category: Security & Utils -->
             <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3 tool-category" data-cat="security">
                 <h3 data-i18n="catSec" class="text-xs font-extrabold dynamic-text uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">🔐 Seguridad y utilidades</h3>
                 <div class="flex flex-col gap-2">
-                    <div class="flex items-center gap-1">
-                        <button onclick="PrivacyConvert.tools.switchTool('password-gen')" id="tab-password-gen" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🔑</span> <span class="truncate">Generador de contraseñas</span></button>
-                        <button onclick="PrivacyConvert.ui.toggleFavorite('password-gen')" id="fav-password-gen" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition" title="Favorito">⭐</button>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <button onclick="PrivacyConvert.tools.switchTool('crypto-note')" id="tab-crypto-note" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">✉️</span> <span class="truncate">Nota Cifrada (Hash)</span></button>
-                        <button onclick="PrivacyConvert.ui.toggleFavorite('crypto-note')" id="fav-crypto-note" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition" title="Favorito">⭐</button>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <button onclick="PrivacyConvert.tools.switchTool('encrypt-pdf')" id="tab-encrypt-pdf" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🔒</span> <span class="truncate">Cifrar PDF</span></button>
-                        <button onclick="PrivacyConvert.ui.toggleFavorite('encrypt-pdf')" id="fav-encrypt-pdf" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition" title="Favorito">⭐</button>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <button onclick="PrivacyConvert.tools.switchTool('hash-calc')" id="tab-hash-calc" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🛡️</span> <span class="truncate">Hash de archivo</span></button>
-                        <button onclick="PrivacyConvert.ui.toggleFavorite('hash-calc')" id="fav-hash-calc" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition" title="Favorito">⭐</button>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <button onclick="PrivacyConvert.tools.switchTool('uuid-gen')" id="tab-uuid-gen" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🆔</span> <span class="truncate">Generador UUID</span></button>
-                        <button onclick="PrivacyConvert.ui.toggleFavorite('uuid-gen')" id="fav-uuid-gen" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition" title="Favorito">⭐</button>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <button onclick="PrivacyConvert.tools.switchTool('qr-tool')" id="tab-qr-tool" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">📱</span> <span class="truncate">Generador código QR</span></button>
-                        <button onclick="PrivacyConvert.ui.toggleFavorite('qr-tool')" id="fav-qr-tool" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition" title="Favorito">⭐</button>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <button onclick="PrivacyConvert.tools.switchTool('ocr-reader')" id="tab-ocr-reader" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">👁️</span> <span class="truncate">Lector de texto OCR</span></button>
-                        <button onclick="PrivacyConvert.ui.toggleFavorite('ocr-reader')" id="fav-ocr-reader" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition" title="Favorito">⭐</button>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <button onclick="PrivacyConvert.tools.switchTool('video-frames')" id="tab-video-frames" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🎞️</span> <span class="truncate">Extractor Video Frames</span></button>
-                        <button onclick="PrivacyConvert.ui.toggleFavorite('video-frames')" id="fav-video-frames" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition" title="Favorito">⭐</button>
-                    </div>
+                    <div class="flex items-center gap-1"><button onclick="PrivacyConvert.tools.switchTool('password-gen')" id="tab-password-gen" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🔑</span> <span class="truncate">Generador de contraseñas</span></button><button onclick="PrivacyConvert.ui.toggleFavorite('password-gen')" id="fav-password-gen" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition">⭐</button></div>
+                    <div class="flex items-center gap-1"><button onclick="PrivacyConvert.tools.switchTool('crypto-note')" id="tab-crypto-note" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">✉️</span> <span class="truncate">Nota Cifrada (Hash)</span></button><button onclick="PrivacyConvert.ui.toggleFavorite('crypto-note')" id="fav-crypto-note" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition">⭐</button></div>
+                    <div class="flex items-center gap-1"><button onclick="PrivacyConvert.tools.switchTool('encrypt-pdf')" id="tab-encrypt-pdf" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🔒</span> <span class="truncate">Cifrar PDF</span></button><button onclick="PrivacyConvert.ui.toggleFavorite('encrypt-pdf')" id="fav-encrypt-pdf" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition">⭐</button></div>
+                    <div class="flex items-center gap-1"><button onclick="PrivacyConvert.tools.switchTool('hash-calc')" id="tab-hash-calc" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🛡️</span> <span class="truncate">Hash de archivo</span></button><button onclick="PrivacyConvert.ui.toggleFavorite('hash-calc')" id="fav-hash-calc" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition">⭐</button></div>
+                    <div class="flex items-center gap-1"><button onclick="PrivacyConvert.tools.switchTool('uuid-gen')" id="tab-uuid-gen" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🆔</span> <span class="truncate">Generador UUID</span></button><button onclick="PrivacyConvert.ui.toggleFavorite('uuid-gen')" id="fav-uuid-gen" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition">⭐</button></div>
+                    <div class="flex items-center gap-1"><button onclick="PrivacyConvert.tools.switchTool('qr-tool')" id="tab-qr-tool" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">📱</span> <span class="truncate">Generador código QR</span></button><button onclick="PrivacyConvert.ui.toggleFavorite('qr-tool')" id="fav-qr-tool" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition">⭐</button></div>
+                    <div class="flex items-center gap-1"><button onclick="PrivacyConvert.tools.switchTool('ocr-reader')" id="tab-ocr-reader" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">👁️</span> <span class="truncate">Lector de texto OCR</span></button><button onclick="PrivacyConvert.ui.toggleFavorite('ocr-reader')" id="fav-ocr-reader" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition">⭐</button></div>
+                    <div class="flex items-center gap-1"><button onclick="PrivacyConvert.tools.switchTool('video-frames')" id="tab-video-frames" class="tool-tab flex-grow flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🎞️</span> <span class="truncate">Extractor Video Frames</span></button><button onclick="PrivacyConvert.ui.toggleFavorite('video-frames')" id="fav-video-frames" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 text-slate-300 hover:text-amber-400 transition">⭐</button></div>
                 </div>
             </div>
         </div>
@@ -306,14 +220,24 @@
                 </div>
                 <p data-i18n="dropText" class="text-slate-800 dark:text-slate-200 font-bold text-lg">Haz clic para buscar o arrastra archivos aquí</p>
                 <p data-i18n="dropSubText" class="text-sm text-slate-500 dark:text-slate-400 mt-2">Soporte inteligente (¡Reconocimiento automático de formato y reordenamiento de lista!)</p>
+                <div class="mt-4 flex justify-center gap-2">
+                    <button type="button" onclick="event.stopPropagation(); PrivacyConvert.tools.simulateCloudPick('Google Drive')" class="text-xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 px-3 py-1.5 rounded-lg font-semibold flex items-center gap-1">📁 Google Drive</button>
+                    <button type="button" onclick="event.stopPropagation(); PrivacyConvert.tools.simulateCloudPick('Dropbox')" class="text-xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 px-3 py-1.5 rounded-lg font-semibold flex items-center gap-1">📦 Dropbox</button>
+                </div>
             </div>
             <input type="file" id="fileInput" class="hidden" />
 
             <div id="actionArea" class="mt-6 hidden flex-col gap-6">
                 <div id="previewWrapper" class="w-full relative">
                     <div id="fileListContainer" class="hidden w-full max-h-64 overflow-y-auto space-y-2 pr-2 custom-scrollbar"></div>
-                    <div id="imagePreviewBox" class="hidden w-full flex justify-center bg-slate-900 rounded-2xl overflow-hidden border border-slate-700 p-2">
-                         <img id="imagePreview" class="max-w-full max-h-[300px] object-contain rounded-xl transition-all duration-300" alt="File Preview" />
+                    <div id="imagePreviewBox" class="hidden w-full flex flex-col items-center bg-slate-900 rounded-2xl overflow-hidden border border-slate-700 p-2 gap-2">
+                         <div class="relative w-full flex justify-center max-h-[300px] overflow-hidden rounded-xl">
+                             <img id="imagePreview" class="max-w-full max-h-[300px] object-contain transition-all duration-300" alt="File Preview" />
+                             <div id="comparisonSliderOverlay" class="hidden absolute inset-0 w-full h-full flex justify-center overflow-hidden slider-clip pointer-events-none bg-slate-950/40">
+                                 <img id="imagePreviewAfter" class="max-w-full max-h-[300px] object-contain" alt="After Preview" />
+                             </div>
+                         </div>
+                         <input type="range" id="compareRange" min="0" max="100" value="50" class="hidden w-full accent-indigo-500 cursor-pointer" oninput="document.getElementById('imagePreviewAfter').style.clipPath = `inset(0 0 0 ${this.value}%)`;">
                     </div>
                     
                     <div id="textDataBoxes" class="w-full h-full flex flex-col gap-4">
@@ -471,7 +395,7 @@
         </div>
     </main>
 
-    <!-- NAMESPACE SCRIPT WITH ALL FEATURES INTEGRATED -->
+    <!-- NAMESPACE SCRIPT -->
     <script>
         const PrivacyConvert = {
             state: {
@@ -495,7 +419,7 @@
                         convertBtn: "Convertir y descargar", reset: "Restablecer", favoritesTitle: "⭐ Herramientas Favoritas",
                         catPdf: "📄 Herramientas PDF", catImage: "🖼️ Herramientas de imagen", catDev: "💻 Texto y desarrollo", catSec: "🔐 Seguridad y utilidades",
                         recentActivity: "🕒 Actividad local reciente", clear: "Borrar", advancedSettings: "⚙️ Configuración avanzada",
-                        renderQuality: "Calidad de renderizado:", outputInfo: "Información de salida:", 
+                        githubBadge: "GitHub Açık Kaynak", renderQuality: "Calidad de renderizado:", outputInfo: "Información de salida:", 
                         searchPlaceholder: "Buscar en herramientas seguras (Ctrl+K)...", cmdPlaceholder: "Escribe el nombre de una herramienta...",
                         shortcutsTitle: "Atajos de teclado", shortcutCmd: "Paleta de comandos", shortcutReset: "Restablecer espacio", shortcutConvert: "Convertir y descargar",
                         copy: "📋 Copiar", copyOnly: "Copiar", generateAnother: "🔄 Generar otro", output: "Salida:", comparisonOutput: "Salida de comparación:",
@@ -568,7 +492,7 @@
                         convertBtn: "Convert & Download", reset: "Reset", favoritesTitle: "⭐ Favorite Tools",
                         catPdf: "📄 PDF Tools", catImage: "🖼️ Image Tools", catDev: "💻 Text & Dev", catSec: "🔐 Security & Utils",
                         recentActivity: "🕒 Recent Local Activity", clear: "Clear", advancedSettings: "⚙️ Advanced Settings",
-                        renderQuality: "Render Quality:", outputInfo: "Output Info:", 
+                        githubBadge: "GitHub Open Source", renderQuality: "Render Quality:", outputInfo: "Output Info:", 
                         searchPlaceholder: "Search secure tools (Ctrl+K)...", cmdPlaceholder: "Type a tool name...",
                         shortcutsTitle: "Keyboard Shortcuts", shortcutCmd: "Command Palette", shortcutReset: "Reset Workspace", shortcutConvert: "Convert & Download",
                         copy: "📋 Copy", copyOnly: "Copy", generateAnother: "🔄 Generate Another", output: "Output:", comparisonOutput: "Comparison Output:",
@@ -641,7 +565,7 @@
                         convertBtn: "تحويل وتنزيل", reset: "إعادة ضبط", favoritesTitle: "⭐ الأدوات المفضلة",
                         catPdf: "📄 أدوات PDF", catImage: "🖼️ أدوات الصور", catDev: "💻 النصوص والمطورين", catSec: "🔐 الأمان والأدوات",
                         recentActivity: "🕒 النشاط المحلي الأخير", clear: "مسح", advancedSettings: "⚙️ إعدادات متقدمة",
-                        renderQuality: "جودة التصدير:", outputInfo: "معلومات المخرجات:", 
+                        githubBadge: "GitHub مفتوح Source", renderQuality: "جودة التصدير:", outputInfo: "معلومات المخرجات:", 
                         searchPlaceholder: "البحث في الأدوات الآمنة (Ctrl+K)...", cmdPlaceholder: "اكتب اسم الأداة...",
                         shortcutsTitle: "اختصارات لوحة المفاتيح", shortcutCmd: "لوحة الأوامر", shortcutReset: "إعادة ضبط مساحة العمل", shortcutConvert: "تحويل وتنزيل",
                         copy: "📋 نسخ", copyOnly: "نسخ", generateAnother: "🔄 إنشاء آخر", output: "النتيجة:", comparisonOutput: "نتيجة المقارنة:",
@@ -787,8 +711,8 @@
                         const osc = ctx.createOscillator();
                         const gain = ctx.createGain();
                         osc.type = 'sine';
-                        osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
-                        osc.frequency.setValueAtTime(880, ctx.currentTime + 0.08); // A5
+                        osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+                        osc.frequency.setValueAtTime(880, ctx.currentTime + 0.08);
                         gain.gain.setValueAtTime(0.15, ctx.currentTime);
                         gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
                         osc.connect(gain); gain.connect(ctx.destination);
@@ -900,6 +824,7 @@
 
                     if (saveState) {
                         window.location.hash = tool;
+                        history.pushState(null, null, `#${tool}`);
                         localStorage.setItem('privacyConvert_lastTool', tool);
                     }
 
@@ -1045,6 +970,8 @@
                     clearBtn.classList.add('hidden');
                     fileInput.value = "";
                     fileListContainer.innerHTML = '';
+                    document.getElementById('comparisonSliderOverlay').classList.add('hidden');
+                    document.getElementById('compareRange').classList.add('hidden');
                     if(PrivacyConvert.state.sortableInstance) { PrivacyConvert.state.sortableInstance.destroy(); PrivacyConvert.state.sortableInstance = null; }
                     
                     ['imagePreviewBox', 'genericTextBox', 'diffResultBox', 'qrResultBox', 'generatorResultBox', 'textInputGroup', 'cryptoNoteGroup', 'passwordOptionsGroup', 'diffInputGroup', 'advancedAccordionWrapper'].forEach(id => {
@@ -1072,11 +999,20 @@
                     const mainDesc = document.getElementById('mainDesc');
                     if(mainDesc) mainDesc.textContent = meta.desc;
                 },
+                simulateCloudPick(provider) {
+                    const t = PrivacyConvert.i18n.translations[PrivacyConvert.state.lang];
+                    PrivacyConvert.ui.showToast(`Conectando con ${provider} (Simulación Segura)...`);
+                    setTimeout(() => {
+                        // Create dummy file for demo
+                        const dummyBlob = new Blob(["PrivacyConvert Cloud Demo"], { type: "text/plain" });
+                        const dummyFile = new File([dummyBlob], `sample_cloud_file.txt`, { type: "text/plain" });
+                        PrivacyConvert.tools.handleFiles([dummyFile]);
+                    }, 800);
+                },
                 handleFiles(files) {
                     if(files.length === 0) return;
                     const t = PrivacyConvert.i18n.translations[PrivacyConvert.state.lang];
                     
-                    // Smart Drop Routing: Auto-switch tool based on dropped file extension if appropriate
                     const firstFile = files[0];
                     const fname = firstFile.name.toLowerCase();
                     if (fname.endsWith('.pdf') && !['pdf-to-png', 'pdf-to-jpg', 'merge-pdf', 'split-pdf', 'pdf-watermark', 'encrypt-pdf', 'extract-pdf-img'].includes(PrivacyConvert.state.tool)) {
@@ -1166,7 +1102,9 @@
                     if (PrivacyConvert.state.files.length === 1 && PrivacyConvert.state.files[0].type.startsWith('image/')) {
                         const reader = new FileReader();
                         reader.onload = e => { 
-                            document.getElementById('imagePreview').src = e.target.result; 
+                            const src = e.target.result;
+                            document.getElementById('imagePreview').src = src;
+                            document.getElementById('imagePreviewAfter').src = src;
                             previewBox.classList.remove('hidden');
                         };
                         reader.readAsDataURL(PrivacyConvert.state.files[0]);
@@ -1230,7 +1168,6 @@
             }
         };
 
-        // Lazy Loader Helper
         const LazyLoader = {
             loaded: {},
             loadScript(src) {
@@ -1254,7 +1191,6 @@
             }
         };
 
-        // PWA Service Worker Registration
         if ('serviceWorker' in navigator) {
             const swCode = `self.addEventListener('install', e => e.waitUntil(self.skipWaiting())); self.addEventListener('activate', e => e.waitUntil(self.clients.claim())); self.addEventListener('fetch', e => e.respondWith(fetch(e.request).catch(() => caches.match(e.request))));`;
             const blob = new Blob([swCode], { type: 'text/javascript' });
@@ -1567,7 +1503,7 @@
                         canvas.height = video.videoHeight || 360;
                         const ctx = canvas.getContext('2d');
                         
-                        const duration = Math.min(video.duration, 10); // cap to 10s
+                        const duration = Math.min(video.duration, 10);
                         for (let t = 0; t <= duration; t += 2) {
                             video.currentTime = t;
                             await new Promise(r => video.onseeked = r);
@@ -1629,6 +1565,10 @@
                             }
                             if (selectedFiles.length === 1) {
                                 PrivacyConvert.tools.downloadBlob(compressed, `compressed_${file.name}`);
+                                const afterUrl = URL.createObjectURL(compressed);
+                                document.getElementById('imagePreviewAfter').src = afterUrl;
+                                document.getElementById('comparisonSliderOverlay').classList.remove('hidden');
+                                document.getElementById('compareRange').classList.remove('hidden');
                             } else {
                                 zip.file(`compressed_${file.name}`, compressed);
                             }
@@ -1750,6 +1690,10 @@
                             const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png', 0.95));
                             if (selectedFiles.length === 1) {
                                 PrivacyConvert.tools.downloadBlob(blob, `redacted_${file.name}`);
+                                const afterUrl = URL.createObjectURL(blob);
+                                document.getElementById('imagePreviewAfter').src = afterUrl;
+                                document.getElementById('comparisonSliderOverlay').classList.remove('hidden');
+                                document.getElementById('compareRange').classList.remove('hidden');
                             } else {
                                 zip.file(`redacted_${file.name}`, blob);
                             }
