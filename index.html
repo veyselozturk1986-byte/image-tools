@@ -81,7 +81,6 @@
             </div>
             <p class="text-xs text-slate-600 dark:text-slate-300" data-i18n="proModalDesc">Unlock unlimited batch processing, cryptographic audit certificates, E2EE cloud sync, and P2P priority nodes.</p>
             
-            <!-- HİBRİT ÖDEME KANALLARI -->
             <div class="flex flex-col gap-2.5">
                 <a href="https://www.paytr.com/odeme/guvenli/sizin-linkiniz" target="_blank" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-center shadow-md text-xs transition flex items-center justify-center gap-2">
                     🇹🇷 <span data-i18n="payTrBtn">PayTR / Kredi Kartı ile Öde (TL)</span>
@@ -368,7 +367,11 @@
 
     <!-- ÇALIŞMA MOTORU VE YÖNETİM SİSTEMİ -->
     <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+        try {
+            if (typeof pdfjsLib !== 'undefined') {
+                pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+            }
+        } catch(e) {}
 
         const PrivacyConvert = {
             state: {
@@ -685,8 +688,14 @@
                                 offset += buffer.byteLength;
                             }
 
-                            if (useBlobFallback) { blobChunks.push(processedBuffer); }
-                            else { await writableStream.write(processedBuffer); }
+                            if (useBlobFallback) {
+                                blobChunks.push(processedBuffer);
+                                if (blobChunks.length > 50) {
+                                    await new Promise(r => setTimeout(r, 10)); // Memory yield safeguard
+                                }
+                            } else {
+                                await writableStream.write(processedBuffer);
+                            }
 
                             const percent = Math.min(100, Math.round((offset / fileSize) * 100));
                             PrivacyConvert.ui.updateProgress(percent, `Processing stream... ${percent}%`);
@@ -1248,10 +1257,10 @@
                             const buf = await file.arrayBuffer();
                             const loadingTask = pdfjsLib.getDocument({ data: buf });
                             const pdfDoc = await loadingTask.promise;
-                            const numPages = pdfDoc.numPages;
+                            const numPages = Math.min(pdfDoc.numPages, 10); // Sayfa sınırı güvenliği
                             const zip = new JSZip();
 
-                            for (let i = 1; i <= Math.min(numPages, 10); i++) {
+                            for (let i = 1; i <= numPages; i++) {
                                 const page = await pdfDoc.getPage(i);
                                 const viewport = page.getViewport({ scale: 1.5 });
                                 const canvas = document.createElement('canvas');
@@ -1379,7 +1388,7 @@
                         toolMarket: "Mercado de Reglas Locales", toolZkp: "Pruebas de Conocimiento Cero", toolLora: "Fine-Tuning LoRA Local", toolLocalRag: "Búsqueda RAG con IA Local",
                         toolDiff: "Motor de Diferencias Contractuales", toolCross: "Cumplimiento Multi-Marco", toolTimestamp: "Anclaje OpenTimestamps", toolCustody: "Cadena de Custodia",
                         toolContract: "Analizador de Riesgo de Contrato", toolPdfPng: "Conversor PDF a PNG", toolPdfMerge: "Unidor de PDF", toolPii: "Redacción PII por Lotes",
-                        toolVisual: "Redacción Visual (Rostro/Sello)", toolMetaScrubber: "Limpiador EXIF y Metadatos", toolOcr: "Extracción OCR (Worker)", toolOcr: "Extracción OCR (Worker)", toolP2p: "Compartir Archivos P2P",
+                        toolVisual: "Redacción Visual (Rostro/Sello)", toolMetaScrubber: "Limpiador EXIF y Metadatos", toolOcr: "Extracción OCR (Worker)", toolP2p: "Compartir Archivos P2P",
                         encryptModeBtn: "Cifrar Archivo/Texto", decryptModeBtn: "Descifrar Archivo/Texto", passPlaceholder: "Ingrese contraseña maestra...", pasteText: "Ingrese texto aquí...",
                         outputLabel: "Salida del Sistema / Registros:", compareBtn: "Comparar y Diferenciar", pasteSecondaryText: "Texto secundario para comparar...", cmdPlaceholder: "Buscar herramientas...",
                         faqTitle: "Preguntas Frecuentes y Privacidad",
@@ -1480,7 +1489,7 @@
                         outputLabel: "مخرجات النظام / السجلات:", compareBtn: "مقارنة وإيجاد الفروق", pasteSecondaryText: "نص ثانوي للمقارنة...", cmdPlaceholder: "البحث عن الأدوات...",
                         faqTitle: "الأسئلة الشائعة وسياسة الخصوصية",
                         faq1Q: "هل تتم مشاركة بياناتي مع خوادم خارجية؟", faq1A: "لا. يعمل النظام بالكامل محلياً في متصفحك.",
-                        faq2Q: "ما هي معايير الامتثال المدعومة؟", faq2A: "متوافق مع GDPR و HIPAA و CCPA.",
+                        faq2Q: " ما هي معايير الامتثال المدعومة؟", faq2A: "متوافق مع GDPR و HIPAA و CCPA.",
                         faq3Q: "كيف يتم التعامل مع الملفات الكبيرة؟", faq3A: "عبر تقنية التدفق (Streams API) لمنع امتلاء الذاكرة.",
                         faq4Q: "هل يمكنني استخدام التطبيق بدون إنترنت؟", faq4A: "نعم، يعمل بشكل معزول تماماً (Air-Gapped).",
                         proBtn: "احصل على Pro", proModalTitle: "💎 الترقية إلى Sovereign Pro", proModalDesc: "افتح ميزات المعالجة الجماعية غير المحدودة وشهادات التدقيق.", activateKeyBtn: "تفعيل ترخيص Pro",
