@@ -782,8 +782,8 @@
             const prefix = document.getElementById('mainTitlePrefix');
             const accent = document.getElementById('mainTitleAccent');
             
-            prefix.textContent = (t.securePrefix || "Güvenli") + " ";
-            accent.textContent = meta.label;
+            if(prefix) prefix.textContent = (t.securePrefix || "Güvenli") + " ";
+            if(accent) accent.textContent = meta.label;
             
             const mainDesc = document.getElementById('mainDesc');
             if(mainDesc) mainDesc.textContent = meta.desc;
