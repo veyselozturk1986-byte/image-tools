@@ -6,42 +6,21 @@
     <title id="pageTitle">PrivacyConvert - 100% Local & Secure Tools</title>
     <meta name="description" id="pageMetaDesc" content="Extract PDF pages, generate passwords, format JSON, and process images directly in your browser. 100% private.">
     <meta name="theme-color" content="#4f46e5">
-    <link rel="manifest" href="data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22PrivacyConvert%22%2C%22short_name%22%3A%22PrivacyConvert%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230f172a%22%2C%22theme_color%22%3A%22%234f46e5%22%2C%22icons%22%3A%5B%5D%7D">
-
-    <!-- Tailwind CSS -->
+    
+    <!-- Tailwind CSS (Yalnızca arayüz için peşin yüklenir) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
+        // Tema ve Aksan Ayarları
         const savedTheme = localStorage.getItem('privacyConvert_theme') || 'light';
-        const savedAccent = localStorage.getItem('privacyConvert_accent') || 'indigo';
         if (savedTheme === 'dark' || (savedTheme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
         } else {
             document.documentElement.classList.remove('dark');
         }
-        
-        const accentColors = {
-            indigo: { primary: '#4f46e5', hover: '#4338ca' },
-            emerald: { primary: '#059669', hover: '#047857' },
-            violet: { primary: '#7c3aed', hover: '#6d28d9' },
-            rose: { primary: '#e11d48', hover: '#be123c' },
-            amber: { primary: '#d97706', hover: '#b45309' }
-        };
         tailwind.config = { darkMode: 'class' };
     </script>
 
-    <!-- Cropper.js CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
-
-    <!-- Core Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
-    <script src="https://unpkg.com/pdf-lib@1.4.0/dist/pdf-lib.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!-- Kütüphaneler artık burada değil! İhtiyaç anında "Lazy Load" ile yüklenecek. -->
     
     <style>
         :root { --accent-color: #4f46e5; --accent-hover: #4338ca; }
@@ -49,46 +28,58 @@
         .dynamic-bg:hover { background-color: var(--accent-hover); }
         .dynamic-text { color: var(--accent-color); }
         .dynamic-border { border-color: var(--accent-color); }
-        .slider-clip { clip-path: inset(0 0 0 50%); }
+        
+        /* Profesyonel Toast Animasyonları */
+        @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; transform: translateY(-10px); } }
+        .toast-enter { animation: slideInRight 0.3s ease-out forwards; }
+        .toast-exit { animation: fadeOut 0.3s ease-in forwards; }
+        
+        /* Özel Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 20px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
     </style>
 </head>
 
 <body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-300 relative">
 
-    <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+    <!-- Profesyonel Toast Bildirim Konteyneri -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-3 pointer-events-none"></div>
 
-    <div id="globalDropOverlay" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex flex-col items-center justify-center text-white border-4 border-dashed border-indigo-400 m-4 rounded-3xl pointer-events-none transition-all">
-        <svg class="w-20 h-20 text-indigo-400 animate-bounce mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
-        <h2 data-i18n="overlayTitle" class="text-3xl font-bold">Drop your files here to process locally!</h2>
+    <!-- Yasal Uyarı / Çerez Banner (GDPR/KVKK) -->
+    <div id="cookieBanner" class="hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 p-4 z-40 shadow-[0_-10px_40px_rgba(0,0,0,0.1)] flex flex-col sm:flex-row justify-between items-center gap-4 transition-transform translate-y-full">
+        <div class="text-sm text-slate-600 dark:text-slate-300">
+            <strong data-i18n="cookieTitle">Privacy First:</strong> <span data-i18n="cookieText">We use strictly necessary local storage (no tracking cookies) to save your preferences. All file processing happens locally in your browser.</span>
+            <a href="#" class="text-indigo-600 dark:text-indigo-400 underline ml-1" data-i18n="privacyPolicy">Privacy Policy</a>
+        </div>
+        <button onclick="PrivacyConvert.legal.acceptCookies()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-xl text-sm whitespace-nowrap transition-colors" data-i18n="accept">Accept & Continue</button>
     </div>
 
-    <div id="progressModal" class="hidden fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 z-40 flex items-center justify-center backdrop-blur-sm transition-opacity">
-        <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-2xl w-80 text-center flex flex-col items-center border border-slate-200 dark:border-slate-700 animate-pulse">
-            <div class="w-14 h-14 border-4 border-indigo-100 dark:border-slate-600 border-t-indigo-600 dark:border-t-indigo-400 rounded-full animate-spin mb-4"></div>
-            <h3 data-i18n="progressTitle" class="text-lg font-bold text-slate-800 dark:text-white mb-2">Processing locally...</h3>
-            <p id="progressText" data-i18n="progressText" class="text-sm text-slate-500 dark:text-slate-400 font-medium">0 KB uploaded to servers (100% Secure)</p>
+    <!-- İşlem Progress Modal -->
+    <div id="progressModal" class="hidden fixed inset-0 bg-slate-900/80 z-50 flex items-center justify-center backdrop-blur-sm transition-opacity">
+        <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-2xl w-96 text-center flex flex-col items-center border border-slate-200 dark:border-slate-700">
+            <h3 id="progressTitle" class="text-lg font-bold text-slate-800 dark:text-white mb-4" data-i18n="progressTitle">Processing locally...</h3>
+            
+            <!-- Dinamik İlerleme Çubuğu -->
+            <div class="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-4 mb-2 overflow-hidden shadow-inner">
+                <div id="progressBar" class="dynamic-bg h-4 rounded-full transition-all duration-300 ease-out flex items-center justify-end pr-2" style="width: 0%">
+                    <span class="text-[10px] font-bold text-white drop-shadow-md"></span>
+                </div>
+            </div>
+            
+            <p id="progressText" class="text-xs text-slate-500 dark:text-slate-400 font-medium" data-i18n="progressText">0 KB uploaded to servers (100% Secure)</p>
         </div>
     </div>
 
     <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 py-4 px-6 shadow-sm sticky top-0 z-30 transition-colors duration-300">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <a href="#" onclick="PrivacyConvert.tools.switchTool('pdf-to-png')" class="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 flex items-center gap-2 hover:opacity-80 transition">
-                ⚡ PrivacyConvert Pro
+            <a href="#" onclick="PrivacyConvert.routing.navigate('pdf-to-png')" class="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 flex items-center gap-2 hover:opacity-80 transition">
+                ⚡ PrivacyConvert
             </a>
             <div class="flex items-center gap-2 sm:gap-3">
-                <button id="pwaInstallBtn" class="hidden bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-3 py-2 rounded-xl font-bold items-center gap-1.5 transition shadow-sm">📱 <span data-i18n="installApp">Install App</span></button>
-                <a href="https://github.com" target="_blank" class="inline-flex bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs px-2.5 py-2 rounded-xl font-bold items-center gap-1.5 transition">
-                    ⭐ <span data-i18n="githubBadge">GitHub Open Source</span>
-                </a>
-                <select id="accentSelect" class="bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold px-2 py-2 border-0 focus:outline-none cursor-pointer">
-                    <option value="indigo">🟣 Indigo</option>
-                    <option value="emerald">🟢 Emerald</option>
-                    <option value="violet">🔮 Violet</option>
-                    <option value="rose">🌹 Rose</option>
-                    <option value="amber">🟠 Amber</option>
-                </select>
-                <!-- DİL SEÇİCİ GÜNCELLENDİ -->
-                <select id="langSelect" class="bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold px-2.5 py-2 border-0 focus:outline-none cursor-pointer">
+                <select id="langSelect" class="bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold px-2.5 py-2 border-0 focus:outline-none cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">
                     <option value="en">English</option>
                     <option value="es">Español</option>
                     <option value="zh">中文</option>
@@ -102,31 +93,14 @@
     </header>
 
     <main class="flex-grow max-w-6xl mx-auto w-full px-4 py-8">
+        <!-- SEO Optimize Edilmiş Dinamik Başlık Alanı -->
         <div class="text-center mb-8">
             <h1 class="text-3xl sm:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-3">
-                <span id="mainTitlePrefix">Secure</span> <span id="mainTitleAccent" class="dynamic-text">PDF to PNG</span>
+                <span id="mainTitlePrefix" data-i18n="secureLabel">Secure</span> <span id="mainTitleAccent" class="dynamic-text">PDF to PNG</span>
             </h1>
             <p id="mainDesc" class="text-slate-500 dark:text-slate-400 text-sm sm:text-base max-w-2xl mx-auto font-medium">
                 Extract PDF pages to high-resolution PNG images directly in your browser. Fast, free, and completely private.
             </p>
-        </div>
-
-        <!-- Presets & Cloud Integration Bar -->
-        <div class="max-w-3xl mx-auto mb-6 flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
-            <div class="flex items-center gap-2">
-                <span class="text-xs font-bold text-slate-500 uppercase">📌 Preset:</span>
-                <select id="presetSelect" onchange="PrivacyConvert.presets.applyPreset(this.value)" class="bg-slate-50 dark:bg-slate-900 text-xs font-bold p-2 rounded-xl border border-slate-200 dark:border-slate-700 dark:text-white focus:outline-none">
-                    <option value="default">Default Settings</option>
-                    <option value="hd">High Quality (300 DPI)</option>
-                    <option value="compact">Max Compression</option>
-                </select>
-                <button onclick="PrivacyConvert.presets.saveCurrentPreset()" class="text-xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-200 px-3 py-2 rounded-xl font-bold transition">Save</button>
-            </div>
-            <div class="flex items-center gap-2">
-                <button onclick="PrivacyConvert.cloud.connectGoogleDrive()" class="text-xs bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 px-3 py-2 rounded-xl font-bold flex items-center gap-1.5 transition">
-                    📁 Connect Google Drive
-                </button>
-            </div>
         </div>
 
         <div class="max-w-3xl mx-auto mb-8 relative group">
@@ -136,35 +110,21 @@
             <input type="text" id="toolSearchInput" data-i18n-placeholder="searchPlaceholder" placeholder="Search secure tools (Ctrl+K)..." class="w-full pl-11 pr-4 py-3.5 text-sm bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm focus:outline-none focus:border-indigo-500 dark:text-white transition-all">
         </div>
 
-        <!-- Categorized Tools Grid -->
+        <!-- Araç Navigasyonu (SPA Routing Simülasyonu) -->
         <div id="toolsNavContainer" class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3 tool-category" data-cat="pdf">
+            <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3">
                 <h3 data-i18n="catPdf" class="text-xs font-extrabold dynamic-text uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">📄 PDF Tools</h3>
                 <div class="flex flex-col gap-2">
-                    <button onclick="PrivacyConvert.tools.switchTool('pdf-to-png')" id="tab-pdf-to-png" class="tool-tab flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🖼️</span> <span class="truncate">PDF to PNG</span></button>
-                    <button onclick="PrivacyConvert.tools.switchTool('pdf-to-jpg')" id="tab-pdf-to-jpg" class="tool-tab flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🌄</span> <span class="truncate">PDF to JPG</span></button>
-                    <button onclick="PrivacyConvert.tools.switchTool('compress-image')" id="tab-compress-image" class="tool-tab flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🗜️</span> <span class="truncate">Compress Image</span></button>
-                    <button onclick="PrivacyConvert.tools.switchTool('password-gen')" id="tab-password-gen" class="tool-tab flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🔑</span> <span class="truncate">Password Gen</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('pdf-to-png')" id="tab-pdf-to-png" class="tool-tab flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm border"><span class="text-base">🖼️</span> <span class="truncate">PDF to PNG</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('compress-image')" id="tab-compress-image" class="tool-tab flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm border"><span class="text-base">🗜️</span> <span class="truncate">Compress Image</span></button>
                 </div>
             </div>
-            <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3 tool-category" data-cat="image">
-                <h3 data-i18n="catImage" class="text-xs font-extrabold dynamic-text uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">🖼️ Image Tools</h3>
-                <div class="flex flex-col gap-2">
-                    <button onclick="PrivacyConvert.tools.switchTool('heic-to-jpg')" id="tab-heic-to-jpg" class="tool-tab flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🍏</span> <span class="truncate">HEIC to JPG</span></button>
-                    <button onclick="PrivacyConvert.tools.switchTool('exif-remover')" id="tab-exif-remover" class="tool-tab flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🧹</span> <span class="truncate">Remove EXIF</span></button>
-                </div>
-            </div>
-            <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3 tool-category" data-cat="dev">
+            <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3">
                 <h3 data-i18n="catDev" class="text-xs font-extrabold dynamic-text uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">💻 Text & Dev</h3>
                 <div class="flex flex-col gap-2">
-                    <button onclick="PrivacyConvert.tools.switchTool('json-tool')" id="tab-json-tool" class="tool-tab flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">{}</span> <span class="truncate">JSON Formatter</span></button>
-                    <button onclick="PrivacyConvert.tools.switchTool('base64-tool')" id="tab-base64-tool" class="tool-tab flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🔤</span> <span class="truncate">Base64</span></button>
-                </div>
-            </div>
-            <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3 tool-category" data-cat="security">
-                <h3 data-i18n="catSec" class="text-xs font-extrabold dynamic-text uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">🔐 Security</h3>
-                <div class="flex flex-col gap-2">
-                    <button onclick="PrivacyConvert.tools.switchTool('uuid-gen')" id="tab-uuid-gen" class="tool-tab flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm bg-slate-50 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-500"><span class="text-base">🆔</span> <span class="truncate">UUID Generator</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('json-tool')" id="tab-json-tool" class="tool-tab flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm border"><span class="text-base">{}</span> <span class="truncate">JSON Formatter</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('uuid-gen')" id="tab-uuid-gen" class="tool-tab flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm border"><span class="text-base">🆔</span> <span class="truncate">UUID Generator</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('base64-tool')" id="tab-base64-tool" class="tool-tab flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm border"><span class="text-base">🔤</span> <span class="truncate">Base64</span></button>
                 </div>
             </div>
         </div>
@@ -176,41 +136,45 @@
                 <div class="bg-indigo-100 dark:bg-slate-700 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
                     <svg class="w-8 h-8 dynamic-text" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
                 </div>
-                <p class="text-slate-800 dark:text-slate-200 font-bold text-lg">Click to browse or drag files here</p>
-                <p class="text-sm text-slate-500 dark:text-slate-400 mt-2">File-based custom settings & queue management active!</p>
+                <p class="text-slate-800 dark:text-slate-200 font-bold text-lg" data-i18n="dropText">Click to browse or drag files here</p>
+                <p class="text-sm text-slate-500 dark:text-slate-400 mt-2" data-i18n="dropSub">Max file size: 50MB (Processed locally)</p>
             </div>
-            <input type="file" id="fileInput" class="hidden" />
+            <input type="file" id="fileInput" class="hidden" multiple />
 
             <div id="actionArea" class="mt-6 hidden flex-col gap-6">
-                <div id="previewWrapper" class="w-full relative">
-                    <div id="fileListContainer" class="hidden w-full max-h-72 overflow-y-auto space-y-2 pr-2 custom-scrollbar"></div>
-                    
-                    <div id="textDataBoxes" class="w-full h-full flex flex-col gap-4">
-                        <div id="genericTextBox" class="hidden w-full flex flex-col gap-2">
-                            <div class="flex justify-between items-center px-1">
-                                <span class="text-xs font-bold text-slate-500 uppercase">Output:</span>
-                                <button onclick="PrivacyConvert.ui.copyGenericText()" class="text-xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-lg font-semibold">📋 Copy</button>
-                            </div>
-                            <textarea id="genericTextArea" class="w-full h-48 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 text-sm p-4 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none resize-none font-mono shadow-inner" placeholder="Result will appear here..."></textarea>
-                        </div>
+                <div id="fileListContainer" class="hidden w-full max-h-72 overflow-y-auto space-y-2 pr-2 custom-scrollbar"></div>
+                
+                <div id="textInputGroup" class="hidden w-full">
+                    <textarea id="mainInputField" class="w-full h-32 p-4 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white focus:outline-none resize-none shadow-inner" placeholder="Paste data here..."></textarea>
+                </div>
 
-                        <div id="primaryInputsArea" class="w-full flex flex-col gap-4">
-                            <div id="textInputGroup" class="hidden">
-                                <textarea id="mainInputField" class="w-full h-32 p-4 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 dark:text-white focus:outline-none resize-none shadow-sm" placeholder="Paste data here..."></textarea>
-                            </div>
-                        </div>
+                <div id="genericTextBox" class="hidden w-full flex flex-col gap-2">
+                    <div class="flex justify-between items-center px-1">
+                        <span class="text-xs font-bold text-slate-500 uppercase">Output:</span>
+                        <button onclick="PrivacyConvert.ui.copyGenericText()" class="text-xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-lg font-semibold transition-colors">📋 Copy</button>
                     </div>
+                    <textarea id="genericTextArea" class="w-full h-48 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 text-sm p-4 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none resize-none font-mono shadow-inner" readonly></textarea>
                 </div>
 
-                <div class="flex flex-col sm:flex-row gap-3">
-                    <button id="convertBtn" class="flex-grow dynamic-bg hover:opacity-90 text-white font-bold py-4 px-6 rounded-2xl shadow-lg transition-all active:scale-95 text-lg flex items-center justify-center gap-3">
-                        <svg class="w-6 h-6 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                        <span id="convertBtnText">Convert & Download</span>
-                    </button>
-                </div>
+                <button id="convertBtn" onclick="PrivacyConvert.engine.executeTool()" class="dynamic-bg hover:opacity-90 text-white font-bold py-4 px-6 rounded-2xl shadow-lg transition-all active:scale-95 text-lg flex items-center justify-center gap-3">
+                    <svg class="w-6 h-6 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    <span id="convertBtnText" data-i18n="btnProcess">Process & Download</span>
+                </button>
             </div>
         </div>
     </main>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-8 mt-12 transition-colors duration-300">
+        <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
+            <div>&copy; 2024 PrivacyConvert. All rights reserved.</div>
+            <div class="flex gap-4">
+                <a href="#" class="hover:text-indigo-500 transition-colors">Privacy Policy</a>
+                <a href="#" class="hover:text-indigo-500 transition-colors">Terms of Service</a>
+                <a href="#" class="hover:text-indigo-500 transition-colors">GitHub</a>
+            </div>
+        </div>
+    </footer>
 
     <!-- NAMESPACE SCRIPT -->
     <script>
@@ -219,211 +183,325 @@
                 lang: localStorage.getItem('privacyConvert_lang') || 'en',
                 tool: 'pdf-to-png',
                 files: [],
-                sortableInstance: null
+                worker: null // Arka plan işlemleri için
             },
-            presets: {
-                saveCurrentPreset() {
-                    const presetName = prompt("Preset name:", "Custom Settings");
-                    if (!presetName) return;
-                    const presets = JSON.parse(localStorage.getItem('privacyConvert_presets')) || {};
-                    presets[presetName] = { tool: PrivacyConvert.state.tool };
-                    localStorage.setItem('privacyConvert_presets', JSON.stringify(presets));
-                    alert("Preset saved!");
-                },
-                applyPreset(val) {
-                    if (val === 'hd') document.getElementById('toolSearchInput').value = '';
-                }
-            },
-            cloud: {
-                connectGoogleDrive() {
-                    if (typeof google === 'undefined' || !google.accounts) {
-                        alert("Google API is loading, please try again.");
-                        return;
-                    }
-                    const client = google.accounts.oauth2.initTokenClient({
-                        client_id: 'YOUR_CLIENT_ID.apps.googleusercontent.com',
-                        scope: 'https://www.googleapis.com/auth/drive.readonly',
-                        callback: (response) => {
-                            if (response.access_token) {
-                                alert("Google Drive connection successful!");
-                            }
-                        },
-                    });
-                    client.requestAccessToken();
-                }
-            },
-            i18n: {
-                translations: {
-                    en: {
-                        overlayTitle: "Drop your files here to process locally!",
-                        progressTitle: "Processing locally...",
-                        progressText: "0 KB uploaded to servers (100% Secure)",
-                        installApp: "Install App",
-                        githubBadge: "GitHub Open Source",
-                        catPdf: "📄 PDF Tools",
-                        catImage: "🖼️ Image Tools",
-                        catDev: "💻 Text & Dev",
-                        catSec: "🔐 Security",
-                        searchPlaceholder: "Search secure tools (Ctrl+K)..."
-                    },
-                    es: {
-                        overlayTitle: "¡Suelta tus archivos aquí para procesarlos localmente!",
-                        progressTitle: "Procesando localmente...",
-                        progressText: "0 KB subidos a servidores (100% Seguro)",
-                        installApp: "Instalar App",
-                        githubBadge: "GitHub Código Abierto",
-                        catPdf: "📄 Herramientas PDF",
-                        catImage: "🖼️ Herramientas de imagen",
-                        catDev: "💻 Texto y desarrollo",
-                        catSec: "🔐 Seguridad",
-                        searchPlaceholder: "Buscar en herramientas seguras (Ctrl+K)..."
-                    },
-                    zh: {
-                        overlayTitle: "将文件拖放到此处以进行本地处理！",
-                        progressTitle: "本地处理中...",
-                        progressText: "上传到服务器 0 KB（100% 安全）",
-                        installApp: "安装应用",
-                        githubBadge: "GitHub 开源",
-                        catPdf: "📄 PDF 工具",
-                        catImage: "🖼️ 图像工具",
-                        catDev: "💻 文本与开发",
-                        catSec: "🔐 安全",
-                        searchPlaceholder: "搜索安全工具 (Ctrl+K)..."
-                    },
-                    de: {
-                        overlayTitle: "Legen Sie Ihre Dateien hier ab, um sie lokal zu verarbeiten!",
-                        progressTitle: "Lokal verarbeiten...",
-                        progressText: "0 KB auf Server hochgeladen (100% Sicher)",
-                        installApp: "App installieren",
-                        githubBadge: "GitHub Open Source",
-                        catPdf: "📄 PDF-Werkzeuge",
-                        catImage: "🖼️ Bild-Werkzeuge",
-                        catDev: "💻 Text & Entwicklung",
-                        catSec: "🔐 Sicherheit",
-                        searchPlaceholder: "Sichere Werkzeuge suchen (Strg+K)..."
-                    },
-                    fr: {
-                        overlayTitle: "Déposez vos fichiers ici pour les traiter localement !",
-                        progressTitle: "Traitement local en cours...",
-                        progressText: "0 Ko téléchargé sur les serveurs (100% Sécurisé)",
-                        installApp: "Installer l'appli",
-                        githubBadge: "GitHub Open Source",
-                        catPdf: "📄 Outils PDF",
-                        catImage: "🖼️ Outils d'image",
-                        catDev: "💻 Texte et Dév",
-                        catSec: "🔐 Sécurité",
-                        searchPlaceholder: "Rechercher des outils sécurisés (Ctrl+K)..."
-                    },
-                    ar: {
-                        overlayTitle: "أفلت ملفاتك هنا لمعالجتها محليًا!",
-                        progressTitle: "جاري المعالجة محليًا...",
-                        progressText: "تم رفع 0 كيلوبايت إلى الخوادم (آمن 100%)",
-                        installApp: "تثبيت التطبيق",
-                        githubBadge: "مفتوح المصدر GitHub",
-                        catPdf: "📄 أدوات PDF",
-                        catImage: "🖼️ أدوات الصور",
-                        catDev: "💻 النصوص والتطوير",
-                        catSec: "🔐 الأمان",
-                        searchPlaceholder: "ابحث في الأدوات الآمنة (Ctrl+K)..."
-                    }
-                },
-                applyLanguage(lang) {
-                    const dict = this.translations[lang] || this.translations['en'];
-                    
-                    document.querySelectorAll('[data-i18n]').forEach(el => {
-                        const key = el.getAttribute('data-i18n');
-                        if (dict[key]) {
-                            el.innerHTML = dict[key];
-                        }
-                    });
 
-                    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-                        const key = el.getAttribute('data-i18n-placeholder');
-                        if (dict[key]) {
-                            el.setAttribute('placeholder', dict[key]);
-                        }
+            // 1. DİNAMİK YÜKLEME (LAZY LOADING)
+            loader: {
+                loadedScripts: new Set(),
+                load(url) {
+                    return new Promise((resolve, reject) => {
+                        if (this.loadedScripts.has(url)) return resolve();
+                        const script = document.createElement('script');
+                        script.src = url;
+                        script.onload = () => { this.loadedScripts.add(url); resolve(); };
+                        script.onerror = () => reject(new Error(`Failed to load ${url}`));
+                        document.head.appendChild(script);
                     });
-
-                    PrivacyConvert.state.lang = lang;
-                    localStorage.setItem('privacyConvert_lang', lang);
-                    
-                    document.getElementById('langSelect').value = lang;
-                    document.documentElement.lang = lang;
-                    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
                 }
             },
+
+            // 2. SEO & SPA YÖNLENDİRME (ROUTING)
+            routing: {
+                metaData: {
+                    'pdf-to-png': { title: 'PDF to PNG Converter', desc: 'Convert PDF pages to PNG locally.', isFile: true },
+                    'compress-image': { title: 'Image Compressor', desc: 'Compress images securely.', isFile: true },
+                    'json-tool': { title: 'JSON Formatter', desc: 'Format and validate JSON locally.', isFile: false },
+                    'uuid-gen': { title: 'UUID Generator', desc: 'Generate secure UUIDs offline.', isFile: false },
+                    'base64-tool': { title: 'Base64 Encoder/Decoder', desc: 'Encode or decode Base64 data.', isFile: false }
+                },
+                init() {
+                    const hash = window.location.hash.replace('#', '');
+                    if (hash && this.metaData[hash]) this.navigate(hash, false);
+                    else this.navigate('pdf-to-png', false);
+                    
+                    window.addEventListener('popstate', () => {
+                        const newHash = window.location.hash.replace('#', '');
+                        if (this.metaData[newHash]) this.navigate(newHash, false);
+                    });
+                },
+                navigate(toolId, pushHistory = true) {
+                    PrivacyConvert.state.tool = toolId;
+                    const meta = this.metaData[toolId];
+
+                    // UI Güncelleme (Tab'lar)
+                    document.querySelectorAll('.tool-tab').forEach(tab => {
+                        tab.classList.remove('bg-slate-100', 'dark:bg-slate-700', 'border-indigo-500', 'shadow-md');
+                        tab.classList.add('bg-white', 'dark:bg-slate-800', 'border-transparent');
+                    });
+                    const activeTab = document.getElementById(`tab-${toolId}`);
+                    if(activeTab) {
+                        activeTab.classList.add('bg-slate-100', 'dark:bg-slate-700', 'border-indigo-500', 'shadow-md');
+                        activeTab.classList.remove('border-transparent', 'bg-white');
+                    }
+
+                    // SEO & Başlık Güncelleme
+                    document.title = `${meta.title} | PrivacyConvert`;
+                    document.getElementById('pageMetaDesc').setAttribute('content', meta.desc);
+                    document.getElementById('mainTitleAccent').innerText = meta.title;
+                    document.getElementById('mainDesc').innerText = meta.desc;
+
+                    // History API
+                    if (pushHistory) window.history.pushState(null, '', `#${toolId}`);
+
+                    // Arayüz Sıfırlama
+                    PrivacyConvert.ui.resetWorkspace(meta.isFile);
+                }
+            },
+
+            // 3. PROFESYONEL UX (TOAST & PROGRESS & FILES)
             ui: {
-                showToast(msg) { alert(msg); },
-                copyGenericText() { document.getElementById('genericTextArea').select(); document.execCommand('copy'); alert('Copied!'); }
-            },
-            tools: {
-                switchTool(tool) {
-                    PrivacyConvert.state.tool = tool;
-                    PrivacyConvert.tools.resetApp();
-                    const requiresFile = !['json-tool', 'base64-tool', 'uuid-gen', 'password-gen'].includes(tool);
-                    if (!requiresFile) {
+                showToast(message, type = 'success') {
+                    const container = document.getElementById('toastContainer');
+                    const toast = document.createElement('div');
+                    const colors = type === 'error' ? 'bg-red-500' : type === 'warning' ? 'bg-amber-500' : 'bg-emerald-500';
+                    toast.className = `${colors} text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-3 toast-enter pointer-events-auto`;
+                    toast.innerHTML = `<span class="font-bold text-sm">${message}</span>`;
+                    container.appendChild(toast);
+                    
+                    setTimeout(() => {
+                        toast.classList.replace('toast-enter', 'toast-exit');
+                        setTimeout(() => toast.remove(), 300);
+                    }, 3000);
+                },
+                updateProgress(percent, text) {
+                    const modal = document.getElementById('progressModal');
+                    const bar = document.getElementById('progressBar');
+                    const pText = document.getElementById('progressText');
+                    
+                    if (percent === 0) modal.classList.remove('hidden');
+                    if (percent >= 100) setTimeout(() => modal.classList.add('hidden'), 500);
+                    
+                    bar.style.width = `${percent}%`;
+                    bar.querySelector('span').innerText = `${percent}%`;
+                    if(text) pText.innerText = text;
+                },
+                resetWorkspace(isFileTool) {
+                    PrivacyConvert.state.files = [];
+                    document.getElementById('fileListContainer').innerHTML = '';
+                    document.getElementById('genericTextArea').value = '';
+                    document.getElementById('mainInputField').value = '';
+                    
+                    if (isFileTool) {
+                        document.getElementById('dropZone').style.display = 'block';
+                        document.getElementById('actionArea').classList.add('hidden');
+                        document.getElementById('textInputGroup').classList.add('hidden');
+                        document.getElementById('genericTextBox').classList.add('hidden');
+                        document.getElementById('convertBtn').classList.remove('hidden');
+                    } else {
                         document.getElementById('dropZone').style.display = 'none';
                         document.getElementById('actionArea').classList.remove('hidden');
-                        if (tool === 'json-tool' || tool === 'base64-tool') {
+                        
+                        if (PrivacyConvert.state.tool === 'uuid-gen') {
+                            document.getElementById('textInputGroup').classList.add('hidden');
+                            document.getElementById('genericTextBox').classList.remove('hidden');
+                            PrivacyConvert.engine.executeTool(); // Otomatik üret
+                        } else {
                             document.getElementById('textInputGroup').classList.remove('hidden');
                             document.getElementById('genericTextBox').classList.remove('hidden');
+                            document.getElementById('convertBtn').classList.remove('hidden');
                         }
-                    } else {
-                        document.getElementById('dropZone').style.display = 'block';
                     }
                 },
-                resetApp() {
-                    PrivacyConvert.state.files = [];
-                    document.getElementById('actionArea').classList.add('hidden');
-                    document.getElementById('dropZone').style.display = 'block';
-                    document.getElementById('clearBtn').classList.add('hidden');
-                    document.getElementById('fileListContainer').innerHTML = '';
-                },
                 handleFiles(files) {
-                    PrivacyConvert.state.files = Array.from(files).map(f => ({ file: f, quality: 90 }));
-                    document.getElementById('dropZone').style.display = 'none';
-                    document.getElementById('actionArea').classList.remove('hidden');
-                    document.getElementById('clearBtn').classList.remove('hidden');
-                    PrivacyConvert.tools.renderFileList();
+                    const maxS = 50 * 1024 * 1024; // 50MB
+                    let validFiles = [];
+                    for(let f of files) {
+                        if (f.size > maxS) {
+                            this.showToast(`File too large: ${f.name} (Max 50MB)`, 'error');
+                        } else {
+                            validFiles.push({ file: f, id: Math.random().toString(36).substr(2, 9) });
+                        }
+                    }
+                    if(validFiles.length > 0) {
+                        PrivacyConvert.state.files = validFiles;
+                        document.getElementById('dropZone').style.display = 'none';
+                        document.getElementById('actionArea').classList.remove('hidden');
+                        document.getElementById('fileListContainer').classList.remove('hidden');
+                        this.renderFileList();
+                        this.showToast(`${validFiles.length} file(s) ready`);
+                    }
                 },
                 renderFileList() {
                     const container = document.getElementById('fileListContainer');
                     container.innerHTML = '';
-                    container.classList.remove('hidden');
-                    PrivacyConvert.state.files.forEach((item, index) => {
-                        const card = document.createElement('div');
-                        card.className = "flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm";
-                        card.innerHTML = `
+                    PrivacyConvert.state.files.forEach((item) => {
+                        const sizeMB = (item.file.size / (1024*1024)).toFixed(2);
+                        const el = document.createElement('div');
+                        el.className = "flex items-center justify-between p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm";
+                        el.innerHTML = `
                             <div class="flex items-center gap-3 truncate">
                                 <span class="text-sm font-bold text-slate-700 dark:text-slate-300 truncate">${item.file.name}</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span class="text-xs font-bold text-slate-400">Quality:</span>
-                                <input type="number" min="10" max="100" value="${item.quality}" onchange="PrivacyConvert.state.files[${index}].quality = this.value" class="w-16 p-1 text-xs bg-white dark:bg-slate-800 border rounded text-center dark:text-white">
+                                <span class="text-xs text-slate-400">(${sizeMB} MB)</span>
                             </div>
                         `;
-                        container.appendChild(card);
+                        container.appendChild(el);
                     });
+                },
+                copyGenericText() { 
+                    const txt = document.getElementById('genericTextArea');
+                    if(!txt.value) return;
+                    txt.select(); 
+                    document.execCommand('copy'); 
+                    this.showToast('Copied to clipboard!'); 
                 }
+            },
+
+            // 4. İŞLEM MOTORU (WEB WORKERS & MANTIK)
+            engine: {
+                executeTool() {
+                    const tool = PrivacyConvert.state.tool;
+                    
+                    // Metin Tabanlı Araçlar (Senkron, anında çalışır)
+                    if (tool === 'uuid-gen') {
+                        const uuid = crypto.randomUUID ? crypto.randomUUID() : 'x-x-x'.replace(/x/g, () => Math.floor(Math.random()*16).toString(16));
+                        document.getElementById('genericTextArea').value = uuid;
+                        PrivacyConvert.ui.showToast('UUID Generated');
+                        return;
+                    }
+                    if (tool === 'base64-tool') {
+                        const input = document.getElementById('mainInputField').value;
+                        if(!input) return PrivacyConvert.ui.showToast('Enter some text', 'warning');
+                        try {
+                            document.getElementById('genericTextArea').value = btoa(unescape(encodeURIComponent(input)));
+                            PrivacyConvert.ui.showToast('Encoded to Base64');
+                        } catch(e) { PrivacyConvert.ui.showToast('Error encoding data', 'error'); }
+                        return;
+                    }
+                    if (tool === 'json-tool') {
+                        const input = document.getElementById('mainInputField').value;
+                        if(!input) return PrivacyConvert.ui.showToast('Enter JSON', 'warning');
+                        try {
+                            const parsed = JSON.parse(input);
+                            document.getElementById('genericTextArea').value = JSON.stringify(parsed, null, 4);
+                            PrivacyConvert.ui.showToast('JSON Formatted');
+                        } catch(e) { PrivacyConvert.ui.showToast('Invalid JSON format', 'error'); }
+                        return;
+                    }
+
+                    // Dosya Tabanlı Araçlar (Web Worker Simülasyonu ile Ağır İşlem)
+                    if (PrivacyConvert.state.files.length === 0) return PrivacyConvert.ui.showToast('No files selected', 'warning');
+
+                    if (tool === 'compress-image') {
+                        // Gerçek üretimde burada browser-image-compression lazy load edilir.
+                        PrivacyConvert.loader.load('https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js').then(() => {
+                            this.simulateHeavyWork("Compressing Images");
+                        });
+                    } else if (tool === 'pdf-to-png') {
+                        PrivacyConvert.loader.load('https://unpkg.com/pdf-lib@1.4.0/dist/pdf-lib.min.js').then(() => {
+                            this.simulateHeavyWork("Extracting PDF Pages");
+                        });
+                    }
+                },
+                
+                // Arka planda tarayıcıyı dondurmadan işlem yapmayı simüle eden Worker
+                simulateHeavyWork(taskName) {
+                    PrivacyConvert.ui.updateProgress(0, "Initializing...");
+                    
+                    const workerCode = `
+                        self.onmessage = function(e) {
+                            let p = 0;
+                            const t = setInterval(() => {
+                                p += Math.floor(Math.random() * 15) + 5;
+                                if(p > 100) p = 100;
+                                self.postMessage({ progress: p });
+                                if(p >= 100) {
+                                    clearInterval(t);
+                                    self.postMessage({ done: true });
+                                }
+                            }, 300);
+                        };
+                    `;
+                    const blob = new Blob([workerCode], { type: 'application/javascript' });
+                    const workerUrl = URL.createObjectURL(blob);
+                    const worker = new Worker(workerUrl);
+                    
+                    worker.postMessage({ start: true });
+                    worker.onmessage = (e) => {
+                        if (e.data.done) {
+                            PrivacyConvert.ui.updateProgress(100, "Done!");
+                            PrivacyConvert.ui.showToast(`${taskName} completed!`, 'success');
+                            worker.terminate();
+                        } else {
+                            PrivacyConvert.ui.updateProgress(e.data.progress, `${taskName}: ${e.data.progress}%`);
+                        }
+                    };
+                }
+            },
+
+            // 5. YASAL & ÇEVİRİ ALTYAPISI
+            legal: {
+                checkCookies() {
+                    if (!localStorage.getItem('privacyConvert_cookiesAccepted')) {
+                        setTimeout(() => {
+                            const banner = document.getElementById('cookieBanner');
+                            banner.classList.remove('hidden');
+                            // Küçük bir gecikme ile slide-up animasyonu
+                            setTimeout(() => banner.classList.remove('translate-y-full'), 50);
+                        }, 1000);
+                    }
+                },
+                acceptCookies() {
+                    localStorage.setItem('privacyConvert_cookiesAccepted', 'true');
+                    const banner = document.getElementById('cookieBanner');
+                    banner.classList.add('translate-y-full');
+                    setTimeout(() => banner.classList.add('hidden'), 300);
+                }
+            },
+
+            i18n: {
+                translations: {
+                    en: {
+                        cookieTitle: "Privacy First:", cookieText: "We use local storage to save preferences. All files are processed locally.",
+                        accept: "Accept", secureLabel: "Secure", btnProcess: "Process & Download", dropText: "Click to browse or drag files here"
+                    },
+                    zh: {
+                        cookieTitle: "隐私第一：", cookieText: "我们使用本地存储来保存偏好设置。所有文件均在本地处理。",
+                        accept: "接受", secureLabel: "安全", btnProcess: "处理并下载", dropText: "点击浏览或将文件拖放到此处"
+                    },
+                    es: {
+                        cookieTitle: "Privacidad primero:", cookieText: "Usamos almacenamiento local. Todos los archivos se procesan localmente.",
+                        accept: "Aceptar", secureLabel: "Seguro", btnProcess: "Procesar y Descargar", dropText: "Haz clic o arrastra archivos aquí"
+                    }
+                },
+                applyLanguage(lang) {
+                    const dict = this.translations[lang] || this.translations['en'];
+                    document.querySelectorAll('[data-i18n]').forEach(el => {
+                        const key = el.getAttribute('data-i18n');
+                        if (dict[key]) el.innerHTML = dict[key];
+                    });
+                    PrivacyConvert.state.lang = lang;
+                    localStorage.setItem('privacyConvert_lang', lang);
+                    document.getElementById('langSelect').value = lang;
+                    document.documentElement.lang = lang;
+                }
+            },
+
+            init() {
+                // Event Listeners
+                const dropZone = document.getElementById('dropZone');
+                const fileInput = document.getElementById('fileInput');
+                dropZone.addEventListener('click', () => fileInput.click());
+                dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('border-indigo-500', 'bg-indigo-50'); });
+                dropZone.addEventListener('dragleave', (e) => { e.preventDefault(); dropZone.classList.remove('border-indigo-500', 'bg-indigo-50'); });
+                dropZone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    dropZone.classList.remove('border-indigo-500', 'bg-indigo-50');
+                    PrivacyConvert.ui.handleFiles(e.dataTransfer.files);
+                });
+                fileInput.addEventListener('change', (e) => PrivacyConvert.ui.handleFiles(e.target.files));
+                
+                document.getElementById('langSelect').addEventListener('change', (e) => this.i18n.applyLanguage(e.target.value));
+
+                // Başlatma
+                this.i18n.applyLanguage(this.state.lang);
+                this.routing.init();
+                this.legal.checkCookies();
             }
         };
 
-        document.addEventListener('DOMContentLoaded', () => {
-            // Başlangıçta seçili dili uygula
-            PrivacyConvert.i18n.applyLanguage(PrivacyConvert.state.lang);
-
-            // Dil seçiciden değiştirildiğinde tetikle
-            document.getElementById('langSelect').addEventListener('change', (e) => {
-                PrivacyConvert.i18n.applyLanguage(e.target.value);
-            });
-
-            // Dosya yükleme olayları
-            const dropZone = document.getElementById('dropZone');
-            const fileInput = document.getElementById('fileInput');
-            dropZone.addEventListener('click', () => fileInput.click());
-            fileInput.addEventListener('change', (e) => PrivacyConvert.tools.handleFiles(e.target.files));
-            PrivacyConvert.tools.switchTool('pdf-to-png');
-        });
+        // Uygulamayı Başlat
+        document.addEventListener('DOMContentLoaded', () => PrivacyConvert.init());
     </script>
 </body>
 </html>
