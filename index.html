@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- 🛡️ ENTERPRISE SECURITY: Content Security Policy (CSP) -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; worker-src 'self' blob:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; worker-src 'self' blob:; connect-src 'self' https:;">
     
     <title id="pageTitle">PrivacyConvert Sovereign Enterprise OS - Ultimate Air-Gapped Suite</title>
     <meta name="description" id="pageMetaDesc" content="Enterprise sovereign compliance: WebAuthn, Live PII Shield, E2EE Cloud Sync, Auditor Certificates, White-Label Branding, and ZK-SNARKs.">
@@ -245,6 +245,9 @@
             <div class="p-6 sm:p-8 bg-white dark:bg-slate-800 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-700 relative">
                 <button id="clearBtn" onclick="PrivacyConvert.ui.resetWorkspace()" class="hidden absolute top-6 right-6 text-xs font-bold text-red-500 bg-red-50 px-3 py-2 rounded-lg" data-i18n="btnReset">Reset</button>
 
+                <!-- Özel İnteraktif Alanlar (Visual Redact & Steganography & P2P) -->
+                <div id="interactiveWorkspaceContainer" class="hidden mb-4"></div>
+
                 <div id="dropZone" class="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-2xl p-10 text-center cursor-pointer hover:border-indigo-500 transition mt-2">
                     <p class="text-slate-800 dark:text-slate-200 font-bold text-lg" data-i18n="dropText">Click to browse or drag files here (Memory-Safe Stream)</p>
                 </div>
@@ -327,7 +330,8 @@
                 cryptoMode: 'encrypt',
                 db: null,
                 splitScreenActive: false,
-                objectUrls: new Set()
+                objectUrls: new Set(),
+                webrtc: { pc: null, dc: null }
             },
 
             registerObjectUrl(url) {
@@ -345,7 +349,11 @@
             async initDB() {
                 return new Promise((resolve) => {
                     const req = indexedDB.open('PrivacyConvertEnterpriseDB', 1);
-                    req.onupgradeneeded = (e) => e.target.result.createObjectStore('cache');
+                    req.onupgradeneeded = (e) => {
+                        const db = e.target.result;
+                        if (!db.objectStoreNames.contains('cache')) db.createObjectStore('cache');
+                        if (!db.objectStoreNames.contains('vault')) db.createObjectStore('vault', { keyPath: 'id', autoIncrement: true });
+                    };
                     req.onsuccess = (e) => { this.state.db = e.target.result; resolve(this.state.db); };
                     req.onerror = () => resolve(null);
                 });
@@ -395,6 +403,137 @@
                     const key = await this.deriveKey(password, salt);
                     const decrypted = await window.crypto.subtle.decrypt({ name: "AES-GCM", iv: iv }, key, encrypted);
                     return decrypted;
+                }
+            },
+
+            // 1. STEGANOGRAPHY CORE (LSB Pixel Encoding)
+            steganographyCore: {
+                hide(imgElement, secretText) {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = imgElement.width;
+                    canvas.height = imgElement.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(imgElement, 0, 0);
+                    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    const data = imgData.data;
+
+                    const encoder = new TextEncoder();
+                    const textBytes = encoder.encode(secretText + "\0"); // Null terminator
+                    if (textBytes.length * 8 > data.length) throw new Error("Image too small for this secret text!");
+
+                    let byteIndex = 0;
+                    let bitIndex = 0;
+
+                    for (let i = 0; i < data.length; i += 4) {
+                        if (byteIndex < textBytes.length) {
+                            let currentByte = textBytes[byteIndex];
+                            let bit = (currentByte >> (7 - bitIndex)) & 1;
+                            data[i] = (data[i] & ~1) | bit; // Modify Red channel LSB
+                            bitIndex++;
+                            if (bitIndex === 8) {
+                                bitIndex = 0;
+                                byteIndex++;
+                            }
+                        } else {
+                            break;
+                        }
+                    }
+                    ctx.putImageData(imgData, 0, 0);
+                    return canvas.toDataURL('image/png');
+                },
+                extract(imgElement) {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = imgElement.width;
+                    canvas.height = imgElement.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(imgElement, 0, 0);
+                    const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+
+                    let bytes = [];
+                    let currentByte = 0;
+                    let bitIndex = 0;
+
+                    for (let i = 0; i < data.length; i += 4) {
+                        let bit = data[i] & 1;
+                        currentByte = (currentByte << 1) | bit;
+                        bitIndex++;
+                        if (bitIndex === 8) {
+                            if (currentByte === 0) break; // Null terminator
+                            bytes.push(currentByte);
+                            currentByte = 0;
+                            bitIndex = 0;
+                        }
+                    }
+                    return new TextDecoder().decode(new Uint8Array(bytes));
+                }
+            },
+
+            // 2. P2P WEBRTC CORE (Air-Gapped DataChannel)
+            p2pCore: {
+                initPeer() {
+                    const pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+                    PrivacyConvert.state.webrtc.pc = pc;
+                    return pc;
+                },
+                async createOffer() {
+                    const pc = this.initPeer();
+                    const dc = pc.createDataChannel("secure-file-transfer");
+                    PrivacyConvert.state.webrtc.dc = dc;
+                    this.setupDataChannel(dc);
+
+                    const offer = await pc.createOffer();
+                    await pc.setLocalDescription(offer);
+                    return new Promise((resolve) => {
+                        pc.onicecandidate = (e) => {
+                            if (!e.candidate) resolve(btoa(JSON.stringify(pc.localDescription)));
+                        };
+                    });
+                },
+                async answerOffer(offerBase64) {
+                    const pc = this.initPeer();
+                    pc.ondatachannel = (e) => {
+                        PrivacyConvert.state.webrtc.dc = e.channel;
+                        this.setupDataChannel(e.channel);
+                    };
+                    const offerDesc = JSON.parse(atob(offerBase64));
+                    await pc.setRemoteDescription(offerDesc);
+                    const answer = await pc.createAnswer();
+                    await pc.setLocalDescription(answer);
+                    return new Promise((resolve) => {
+                        pc.onicecandidate = (e) => {
+                            if (!e.candidate) resolve(btoa(JSON.stringify(pc.localDescription)));
+                        };
+                    });
+                },
+                async acceptAnswer(answerBase64) {
+                    const pc = PrivacyConvert.state.webrtc.pc;
+                    const answerDesc = JSON.parse(atob(answerBase64));
+                    await pc.setRemoteDescription(answerDesc);
+                },
+                setupDataChannel(dc) {
+                    dc.onopen = () => PrivacyConvert.ui.showToast('P2P DataChannel Connected Securely!');
+                    dc.onmessage = (e) => {
+                        if (typeof e.data === 'string') {
+                            PrivacyConvert.ui.showToast(`Received message: ${e.data}`);
+                        } else {
+                            const blob = new Blob([e.data]);
+                            const url = URL.createObjectURL(blob);
+                            PrivacyConvert.registerObjectUrl(url);
+                            const link = document.createElement('a');
+                            link.href = url;
+                            link.download = `p2p_received_${Date.now()}`;
+                            link.click();
+                            PrivacyConvert.ui.showToast('P2P File received and downloaded!');
+                        }
+                    };
+                },
+                sendFile(file) {
+                    const dc = PrivacyConvert.state.webrtc.dc;
+                    if(!dc || dc.readyState !== 'open') return PrivacyConvert.ui.showToast('P2P Channel not connected!', 'error');
+                    file.arrayBuffer().then(buf => {
+                        dc.send(buf);
+                        PrivacyConvert.ui.showToast('File sent successfully via WebRTC!');
+                    });
                 }
             },
 
@@ -532,9 +671,9 @@
                     'cloud-sync': { type: 'action', title: 'E2EE Cloud Sync' },
                     'audit-certificate': { type: 'text', title: 'Auditor PDF Certificate' },
                     'white-label': { type: 'text', title: 'White-Label Branding' },
-                    'webauthn-vault': { type: 'action', title: 'WebAuthn Passkey Vault' },
-                    'steganography': { type: 'file', accept: 'image/*', title: 'Image Steganography' },
-                    'self-destruct': { type: 'crypto', title: 'Self-Destructing Artifacts' },
+                    'webauthn-vault': { type: 'vault', title: 'WebAuthn Passkey Vault' },
+                    'steganography': { type: 'interactive-stega', accept: 'image/*', title: 'Image Steganography' },
+                    'self-destruct': { type: 'vault', title: 'Self-Destructing Artifacts' },
                     'encrypt-tool': { type: 'crypto', title: 'AES-256 Hardware Encryptor' },
                     'template-market': { type: 'text', title: 'Local Rule Marketplace' },
                     'zkp-validator': { type: 'text', title: 'Zero-Knowledge Proofs' },
@@ -548,10 +687,10 @@
                     'pdf-to-png': { type: 'file', accept: 'application/pdf', title: 'PDF to PNG Converter' },
                     'pdf-merge': { type: 'file', accept: 'application/pdf', multiple: true, title: 'PDF Merger' },
                     'pii-redactor': { type: 'text', title: 'Batch PII Redaction' },
-                    'visual-redact': { type: 'file', accept: 'image/*', title: 'Visual Redaction' },
+                    'visual-redact': { type: 'interactive-redact', accept: 'image/*', title: 'Visual Redaction' },
                     'meta-scrubber': { type: 'file', multiple: true, title: 'EXIF & Meta Scrubber' },
                     'ocr-tool': { type: 'ocr', accept: 'image/*', title: 'OCR Text Extract (Worker)' },
-                    'p2p-share': { type: 'file', multiple: true, title: 'P2P File Share' }
+                    'p2p-share': { type: 'interactive-p2p', title: 'P2P File Share' }
                 },
                 navigate(toolId) {
                     PrivacyConvert.state.tool = toolId;
@@ -607,12 +746,14 @@
                     document.getElementById('cryptoOptions').classList.add('hidden');
                     document.getElementById('genericTextBox').classList.add('hidden');
                     document.getElementById('clearBtn').classList.add('hidden');
+                    document.getElementById('interactiveWorkspaceContainer').classList.add('hidden');
+                    document.getElementById('interactiveWorkspaceContainer').innerHTML = '';
 
                     const fileInput = document.getElementById('fileInput');
                     fileInput.accept = meta.accept || '*';
                     fileInput.multiple = meta.multiple || false;
 
-                    if (['file', 'crypto', 'ocr'].includes(meta.type)) {
+                    if (['file', 'crypto', 'ocr', 'interactive-redact', 'interactive-stega'].includes(meta.type)) {
                         document.getElementById('dropZone').style.display = 'block';
                         if(meta.type === 'crypto') document.getElementById('cryptoOptions').classList.remove('hidden');
                     } else if (meta.type === 'text') {
@@ -621,7 +762,43 @@
                         document.getElementById('genericTextBox').classList.remove('hidden');
                     } else if (meta.type === 'action') {
                         PrivacyConvert.engine.executeTool();
+                    } else if (meta.type === 'vault') {
+                        PrivacyConvert.ui.renderVaultUI();
+                    } else if (meta.type === 'interactive-p2p') {
+                        PrivacyConvert.ui.renderP2PUI();
                     }
+                },
+                renderVaultUI() {
+                    const container = document.getElementById('interactiveWorkspaceContainer');
+                    container.classList.remove('hidden');
+                    container.innerHTML = `
+                        <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3">
+                            <h4 class="font-bold text-xs uppercase text-slate-500">IndexedDB Secure Vault & Notes</h4>
+                            <input type="text" id="vaultTitle" placeholder="Note Title / Key..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white">
+                            <textarea id="vaultContent" placeholder="Secure Note / Secret Content..." class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"></textarea>
+                            <button onclick="PrivacyConvert.engine.saveVaultNote()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl shadow">Save to Encrypted Vault</button>
+                            <div id="vaultList" class="space-y-2 mt-4 max-h-48 overflow-y-auto"></div>
+                        </div>
+                    `;
+                    PrivacyConvert.engine.loadVaultNotes();
+                },
+                renderP2PUI() {
+                    const container = document.getElementById('interactiveWorkspaceContainer');
+                    container.classList.remove('hidden');
+                    container.innerHTML = `
+                        <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3 text-xs">
+                            <h4 class="font-bold uppercase text-slate-500">WebRTC P2P Air-Gapped Share</h4>
+                            <div class="flex gap-2">
+                                <button onclick="PrivacyConvert.engine.p2pStartHost()" class="flex-1 py-2 dynamic-bg text-white font-bold rounded-xl">1. Host (Generate Offer)</button>
+                                <button onclick="PrivacyConvert.engine.p2pJoinHost()" class="flex-1 py-2 bg-slate-200 dark:bg-slate-700 font-bold rounded-xl">2. Join (Accept Offer)</button>
+                            </div>
+                            <textarea id="p2pSignalingBox" placeholder="Signaling handshake text..." class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl dark:text-white font-mono"></textarea>
+                            <div id="p2pSendSection" class="hidden space-y-2">
+                                <input type="file" id="p2pFileSend" class="w-full text-xs">
+                                <button onclick="PrivacyConvert.engine.p2pSendFile()" class="w-full py-2 bg-emerald-600 text-white font-bold rounded-xl">Send File Securely</button>
+                            </div>
+                        </div>
+                    `;
                 },
                 handleFiles(files) {
                     let validFiles = Array.from(files).map(f => ({ file: f, status: 'Ready' }));
@@ -631,8 +808,73 @@
                         document.getElementById('actionArea').classList.remove('hidden');
                         document.getElementById('clearBtn').classList.add('hidden');
                         this.renderQueue();
+
+                        if (PrivacyConvert.state.tool === 'visual-redact') {
+                            PrivacyConvert.ui.initInteractiveRedaction(validFiles[0].file);
+                        } else if (PrivacyConvert.state.tool === 'steganography') {
+                            PrivacyConvert.ui.initInteractiveStega(validFiles[0].file);
+                        }
+
                         this.showToast(`${validFiles.length} file(s) loaded into sandbox`);
                     }
+                },
+                initInteractiveRedaction(file) {
+                    const container = document.getElementById('interactiveWorkspaceContainer');
+                    container.classList.remove('hidden');
+                    const url = URL.createObjectURL(file);
+                    PrivacyConvert.registerObjectUrl(url);
+                    container.innerHTML = `
+                        <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border flex flex-col items-center gap-3">
+                            <span class="text-xs font-bold text-slate-500 uppercase">Click & Drag on image to Blackout / Redact Sensitive Areas</span>
+                            <canvas id="redactCanvas" class="max-w-full border rounded-xl shadow cursor-crosshair"></canvas>
+                            <button onclick="PrivacyConvert.engine.downloadRedactedImage()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl shadow">Download Redacted Image</button>
+                        </div>
+                    `;
+                    const canvas = document.getElementById('redactCanvas');
+                    const ctx = canvas.getContext('2d');
+                    const img = new Image();
+                    img.onload = () => {
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        ctx.drawImage(img, 0, 0);
+                    };
+                    img.src = url;
+
+                    let isDrawing = false;
+                    let startX, startY;
+                    canvas.onmousedown = (e) => {
+                        isDrawing = true;
+                        const rect = canvas.getBoundingClientRect();
+                        startX = (e.clientX - rect.left) * (canvas.width / rect.width);
+                        startY = (e.clientY - rect.top) * (canvas.height / rect.height);
+                    };
+                    canvas.onmousemove = (e) => {
+                        if (!isDrawing) return;
+                        const rect = canvas.getBoundingClientRect();
+                        const curX = (e.clientX - rect.left) * (canvas.width / rect.width);
+                        const curY = (e.clientY - rect.top) * (canvas.height / rect.height);
+                        ctx.drawImage(img, 0, 0);
+                        ctx.fillStyle = '#000000';
+                        ctx.fillRect(startX, startY, curX - startX, curY - startY);
+                    };
+                    canvas.onmouseup = () => { isDrawing = false; };
+                },
+                initInteractiveStega(file) {
+                    const container = document.getElementById('interactiveWorkspaceContainer');
+                    container.classList.remove('hidden');
+                    const url = URL.createObjectURL(file);
+                    PrivacyConvert.registerObjectUrl(url);
+                    container.innerHTML = `
+                        <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3">
+                            <span class="text-xs font-bold text-slate-500 uppercase">Image Steganography Workspace</span>
+                            <img id="stegaImg" src="${url}" class="max-h-40 mx-auto rounded-xl border">
+                            <textarea id="stegaSecretText" placeholder="Enter secret message to hide..." class="w-full h-20 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"></textarea>
+                            <div class="flex gap-2">
+                                <button onclick="PrivacyConvert.engine.hideStegaText()" class="flex-1 py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl shadow">Hide Secret in Image</button>
+                                <button onclick="PrivacyConvert.engine.extractStegaText()" class="flex-1 py-2.5 bg-slate-200 dark:bg-slate-700 font-bold text-xs rounded-xl shadow">Extract Secret</button>
+                            </div>
+                        </div>
+                    `;
                 },
                 renderQueue() {
                     const container = document.getElementById('fileListContainer');
@@ -661,28 +903,117 @@
             },
 
             engine: {
+                async saveVaultNote() {
+                    const title = document.getElementById('vaultTitle').value;
+                    const content = document.getElementById('vaultContent').value;
+                    if(!title || !content) return PrivacyConvert.ui.showToast('Title and content required', 'warning');
+                    const tx = PrivacyConvert.state.db.transaction('vault', 'readwrite');
+                    tx.objectStore('vault').add({ title, content, timestamp: new Date().toISOString() });
+                    tx.oncomplete = () => {
+                        PrivacyConvert.ui.showToast('Note securely stored in IndexedDB Vault!');
+                        document.getElementById('vaultTitle').value = '';
+                        document.getElementById('vaultContent').value = '';
+                        this.loadVaultNotes();
+                    };
+                },
+                async loadVaultNotes() {
+                    if(!PrivacyConvert.state.db) return;
+                    const tx = PrivacyConvert.state.db.transaction('vault', 'readonly');
+                    const req = tx.objectStore('vault').getAll();
+                    req.onsuccess = () => {
+                        const list = document.getElementById('vaultList');
+                        if(!list) return;
+                        list.innerHTML = '';
+                        req.result.forEach(note => {
+                            const div = document.createElement('div');
+                            div.className = "p-2.5 bg-white dark:bg-slate-800 border rounded-xl flex justify-between items-center text-xs";
+                            div.innerHTML = `<span class="font-bold">${note.title}</span><button onclick="PrivacyConvert.engine.deleteVaultNote(${note.id})" class="text-red-500 font-bold">Destroy</button>`;
+                            list.appendChild(div);
+                        });
+                    };
+                },
+                async deleteVaultNote(id) {
+                    const tx = PrivacyConvert.state.db.transaction('vault', 'readwrite');
+                    tx.objectStore('vault').delete(id);
+                    tx.oncomplete = () => {
+                        PrivacyConvert.ui.showToast('Note securely wiped from vault!');
+                        this.loadVaultNotes();
+                    };
+                },
+                async p2pStartHost() {
+                    const offer = await PrivacyConvert.p2pCore.createOffer();
+                    document.getElementById('p2pSignalingBox').value = offer;
+                    document.getElementById('p2pSendSection').classList.remove('hidden');
+                    PrivacyConvert.ui.showToast('Offer generated. Copy & send to peer.');
+                },
+                async p2pJoinHost() {
+                    const box = document.getElementById('p2pSignalingBox');
+                    const inputOffer = prompt('Paste Host Offer here:');
+                    if(!inputOffer) return;
+                    const answer = await PrivacyConvert.p2pCore.answerOffer(inputOffer);
+                    box.value = answer;
+                    document.getElementById('p2pSendSection').classList.remove('hidden');
+                    const inputAnswer = prompt('Paste Answer back to Host if needed, or connection establishing...');
+                    if(inputAnswer) await PrivacyConvert.p2pCore.acceptAnswer(inputAnswer);
+                    PrivacyConvert.ui.showToast('Connected to Host!');
+                },
+                p2pSendFile() {
+                    const fileInput = document.getElementById('p2pFileSend');
+                    if(fileInput.files.length === 0) return PrivacyConvert.ui.showToast('Select a file first', 'warning');
+                    PrivacyConvert.p2pCore.sendFile(fileInput.files[0]);
+                },
+                downloadRedactedImage() {
+                    const canvas = document.getElementById('redactCanvas');
+                    const url = canvas.toDataURL('image/png');
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = `redacted_${Date.now()}.png`;
+                    link.click();
+                    PrivacyConvert.ui.showToast('Redacted image downloaded securely!');
+                },
+                hideStegaText() {
+                    const img = document.getElementById('stegaImg');
+                    const text = document.getElementById('stegaSecretText').value;
+                    if(!text) return PrivacyConvert.ui.showToast('Enter secret text', 'warning');
+                    try {
+                        const dataUrl = PrivacyConvert.steganographyCore.hide(img, text);
+                        const link = document.createElement('a');
+                        link.href = dataUrl;
+                        link.download = `stega_hidden_${Date.now()}.png`;
+                        link.click();
+                        PrivacyConvert.ui.showToast('Secret successfully hidden inside image!');
+                    } catch(e) {
+                        PrivacyConvert.ui.showToast(e.message, 'error');
+                    }
+                },
+                extractStegaText() {
+                    const img = document.getElementById('stegaImg');
+                    try {
+                        const text = PrivacyConvert.steganographyCore.extract(img);
+                        document.getElementById('genericTextBox').classList.remove('hidden');
+                        document.getElementById('genericTextArea').value = `[EXTRACTED STEGANOGRAPHY SECRET]:\n${text}`;
+                        PrivacyConvert.ui.showToast('Secret successfully extracted from image!');
+                    } catch(e) {
+                        PrivacyConvert.ui.showToast('Failed to extract secret.', 'error');
+                    }
+                },
                 async executeTool() {
                     const tool = PrivacyConvert.state.tool;
                     const lang = PrivacyConvert.state.lang;
                     const successText = lang === 'es' ? "Éxito (Sandboxed en cliente)" : lang === 'zh' ? "成功 (客户端沙箱)" : lang === 'de' ? "Erfolg (Client-seitig)" : lang === 'fr' ? "Succès (Côté client)" : lang === 'ar' ? "نجاح (محلي بالكامل)" : "SUCCESS (Client-Side Sandboxed)";
 
-                    // 1. AES ŞİFRELEME
                     if (tool === 'encrypt-tool') {
                         const pwd = document.getElementById('cryptoPasswordInput').value;
                         if (!pwd) return PrivacyConvert.ui.showToast('Master Password required!', 'warning');
-
                         if (PrivacyConvert.state.files.length > 0) {
                             await PrivacyConvert.streamCore.processLargeFile(PrivacyConvert.state.files[0].file, pwd, PrivacyConvert.state.cryptoMode);
                             return;
                         }
-
                         const input = document.getElementById('mainInputField').value;
                         if (!input) return PrivacyConvert.ui.showToast('Enter text to encrypt/decrypt', 'warning');
-                        
                         document.getElementById('actionArea').classList.remove('hidden');
                         document.getElementById('genericTextBox').classList.remove('hidden');
                         PrivacyConvert.ui.updateProgress(50, "Executing WebCrypto AES-GCM...");
-
                         try {
                             if (PrivacyConvert.state.cryptoMode === 'encrypt') {
                                 const cipher = await PrivacyConvert.cryptoCore.encrypt(input, pwd);
@@ -702,14 +1033,12 @@
                         return;
                     }
 
-                    // 2. OCR (WEB WORKER)
                     if (tool === 'ocr-tool') {
                         if (PrivacyConvert.state.files.length === 0) return PrivacyConvert.ui.showToast('Select an image file', 'warning');
                         document.getElementById('actionArea').classList.remove('hidden');
                         document.getElementById('genericTextBox').classList.remove('hidden');
                         const outArea = document.getElementById('genericTextArea');
                         outArea.value = "Starting Worker thread...\n";
-
                         const worker = PrivacyConvert.workerCore.createWorker(PrivacyConvert.workerCore.ocrTaskWorker);
                         worker.postMessage({ type: 'heavyCompute' });
                         worker.onmessage = (e) => {
@@ -726,7 +1055,6 @@
                         return;
                     }
 
-                    // 3. PDF MERGER
                     if (tool === 'pdf-merge') {
                         if (PrivacyConvert.state.files.length < 2) return PrivacyConvert.ui.showToast('Select at least 2 PDF files to merge', 'warning');
                         PrivacyConvert.ui.updateProgress(30, "Merging PDFs locally...");
@@ -755,7 +1083,6 @@
                         return;
                     }
 
-                    // 4. PDF TO PNG CONVERTER (Real pdf.js rendering)
                     if (tool === 'pdf-to-png') {
                         if (PrivacyConvert.state.files.length === 0) return PrivacyConvert.ui.showToast('Select a PDF file', 'warning');
                         PrivacyConvert.ui.updateProgress(20, "Rendering PDF pages to PNG...");
@@ -799,7 +1126,6 @@
                         return;
                     }
 
-                    // 5. EXIF & META SCRUBBER (Canvas redraw to strip metadata)
                     if (tool === 'meta-scrubber') {
                         if (PrivacyConvert.state.files.length === 0) return PrivacyConvert.ui.showToast('Select image files to scrub', 'warning');
                         PrivacyConvert.ui.updateProgress(40, "Stripping metadata via Canvas sandbox...");
@@ -843,7 +1169,6 @@
                         return;
                     }
 
-                    // 6. CONTRACT DIFF
                     if (tool === 'doc-diff') {
                         const t1 = document.getElementById('mainInputField').value;
                         const t2 = document.getElementById('pane2Input').value;
@@ -855,7 +1180,6 @@
                         return;
                     }
 
-                    // GENEL FALLBACK RAPORU
                     const input = document.getElementById('mainInputField').value || "Default sovereign operation result.";
                     document.getElementById('actionArea').classList.remove('hidden');
                     document.getElementById('genericTextBox').classList.remove('hidden');
