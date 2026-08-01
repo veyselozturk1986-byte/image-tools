@@ -469,7 +469,6 @@
             const t = translations[currentLang] || translations['tr'];
             document.getElementById('liveCounterStat').textContent = `${mb} ${t.mbSafe || 'MB Safe'}`;
         }
-        updateLiveCounter(0);
 
         const translations = {
             tr: {
@@ -1064,14 +1063,17 @@
             }
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            applyLanguage(currentLang);
-            const hash = window.location.hash.replace('#', '');
-            const savedTool = localStorage.getItem('privacyConvert_lastTool');
-            if (hash && translations[currentLang].tools[hash]) switchTool(hash, false);
-            else if (savedTool && translations[currentLang].tools[savedTool]) switchTool(savedTool, false);
-            else switchTool('pdf-to-png', false);
-        });
+        // Immediate Initialization (Runs right away since script is at body end)
+        applyLanguage(currentLang);
+        const hash = window.location.hash.replace('#', '');
+        const savedTool = localStorage.getItem('privacyConvert_lastTool');
+        if (hash && translations[currentLang].tools[hash]) {
+            switchTool(hash, false);
+        } else if (savedTool && translations[currentLang].tools[savedTool]) {
+            switchTool(savedTool, false);
+        } else {
+            switchTool('pdf-to-png', false);
+        }
 
         let dragCounter = 0;
         window.addEventListener('dragenter', (e) => { e.preventDefault(); dragCounter++; globalDropOverlay.classList.remove('hidden'); });
