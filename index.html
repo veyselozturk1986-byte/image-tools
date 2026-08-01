@@ -72,7 +72,7 @@
         ⚠️ CDN Libraries could not be reached or loaded. Running in local fallback mode.
     </div>
 
-    <!-- PRO LİSANS YÖNETİM MODALI -->
+    <!-- HİBRİT ÖDEME VE PRO LİSANS YÖNETİM MODALI -->
     <div id="proModal" class="hidden fixed inset-0 bg-slate-900/80 z-50 flex items-center justify-center backdrop-blur-sm p-4">
         <div class="bg-white dark:bg-slate-800 w-full max-w-md rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-2xl flex flex-col gap-4">
             <div class="flex justify-between items-center">
@@ -80,6 +80,26 @@
                 <button onclick="document.getElementById('proModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
             </div>
             <p class="text-xs text-slate-600 dark:text-slate-300" data-i18n="proModalDesc">Unlock unlimited batch processing, cryptographic audit certificates, E2EE cloud sync, and P2P priority nodes.</p>
+            
+            <!-- HİBRİT ÖDEME KANALLARI -->
+            <div class="flex flex-col gap-2.5">
+                <!-- 1. Yerel / Türkiye Kartları (PayTR / iyzico Bağlantısı) -->
+                <a href="https://www.paytr.com/odeme/guvenli/sizin-linkiniz" target="_blank" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-center shadow-md text-xs transition flex items-center justify-center gap-2">
+                    🇹🇷 <span data-i18n="payTrBtn">PayTR / Kredi Kartı ile Öde (TL)</span>
+                </a>
+                
+                <!-- 2. Kripto Ödemesi (Cryptomus / NowPayments Bağlantısı) -->
+                <a href="https://pay.cryptomus.com/pay/sizin-linkiniz" target="_blank" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-center shadow-md text-xs transition flex items-center justify-center gap-2">
+                    🪙 <span data-i18n="cryptoPayBtn">Cryptomus / Kripto ile Öde (USDT/BTC)</span>
+                </a>
+            </div>
+
+            <div class="relative flex py-1 items-center">
+                <div class="flex-grow border-t border-slate-200 dark:border-slate-700"></div>
+                <span class="flex-shrink mx-4 text-slate-400 text-[10px] uppercase font-bold" data-i18n="orDivider">Or enter license key</span>
+                <div class="flex-grow border-t border-slate-200 dark:border-slate-700"></div>
+            </div>
+
             <input type="text" id="proLicenseKeyInput" placeholder="Enter Pro License Key..." class="w-full p-3 bg-slate-50 dark:bg-slate-900 border rounded-xl text-xs dark:text-white">
             <button onclick="PrivacyConvert.ui.activateProLicense()" class="dynamic-bg text-white font-bold py-3 px-4 rounded-xl text-xs shadow-md" data-i18n="activateKeyBtn">Activate Pro License</button>
         </div>
@@ -676,7 +696,6 @@
                 navigate(toolId) {
                     const meta = this.metaData[toolId] || { type: 'text', title: toolId };
                     
-                    // PRO VALUE WALL GUARD
                     if (meta.proRequired && !PrivacyConvert.state.isPro) {
                         PrivacyConvert.ui.showToast('🔒 Pro Subscription Required for this Enterprise Tool.', 'warning');
                         document.getElementById('proModal').classList.remove('hidden');
@@ -898,7 +917,6 @@
             },
 
             engine: {
-                // 📜 KRİPTOGRAFİK UYUMLULUK SERTİFİKASI MOTORU (B2B Compliance Engine)
                 async generateAuditCertificate() {
                     PrivacyConvert.ui.updateProgress(20, "Generating cryptographic compliance proof...");
                     try {
@@ -907,7 +925,7 @@
                         const randomFingerprint = "0x" + Array.from(window.crypto.getRandomValues(new Uint8Array(32))).map(b => b.toString(16).padStart(2,'0')).join('');
 
                         const pdfDoc = await PDFLib.PDFDocument.create();
-                        const page = pdfDoc.addPage([595.28, 841.89]); // A4
+                        const page = pdfDoc.addPage([595.28, 841.89]);
                         const { width, height } = page.getSize();
                         
                         page.drawText('SOVEREIGN AIR-GAP COMPLIANCE CERTIFICATE', { x: 50, y: height - 60, size: 18, color: PDFLib.rgb(0.08, 0.07, 0.55) });
@@ -1251,7 +1269,8 @@
                         faq2Q: "What compliance frameworks are supported?", faq2A: "The suite complies with GDPR, HIPAA, CCPA, and enterprise sovereign data residency standards by keeping all file processing localized.",
                         faq3Q: "How does large file handling work?", faq3A: "Using the Streams API and File System Access API, files are processed in 5MB memory-safe chunks directly to disk, preventing RAM overflow.",
                         faq4Q: "Can I use this completely offline?", faq4A: "Yes. Once loaded, you can disconnect your internet entirely and all 24 sovereign tools will function normally in air-gapped isolation.",
-                        proBtn: "Get Pro", proModalTitle: "💎 Upgrade to Sovereign Pro", proModalDesc: "Unlock unlimited batch processing, cryptographic audit certificates, E2EE cloud sync, and P2P priority nodes.", activateKeyBtn: "Activate Pro License"
+                        proBtn: "Get Pro", proModalTitle: "💎 Upgrade to Sovereign Pro", proModalDesc: "Unlock unlimited batch processing, cryptographic audit certificates, E2EE cloud sync, and P2P priority nodes.", activateKeyBtn: "Activate Pro License",
+                        payTrBtn: "PayTR / Credit Card (TL)", cryptoPayBtn: "Cryptomus / Crypto (USDT/BTC)"
                     },
                     es: {
                         accept: "Aceptar", secureLabel: "Seguro", dropText: "Haga clic para buscar o arrastre archivos aquí (Stream seguro)",
@@ -1274,7 +1293,8 @@
                         faq2Q: "¿Qué marcos de cumplimiento se admiten?", faq2A: "Cumple con GDPR, HIPAA y CCPA.",
                         faq3Q: "¿Cómo funciona el manejo de archivos grandes?", faq3A: "Usa la API Streams en fragmentos seguros.",
                         faq4Q: "¿Se puede usar completamente sin conexión?", faq4A: "Sí, en modo air-gapped absoluto.",
-                        proBtn: "Obtener Pro", proModalTitle: "💎 Actualizar a Sovereign Pro", proModalDesc: "Desbloquee procesamiento por lotes ilimitado, certificados de auditoría y más.", activateKeyBtn: "Activar Licencia Pro"
+                        proBtn: "Obtener Pro", proModalTitle: "💎 Actualizar a Sovereign Pro", proModalDesc: "Desbloquee procesamiento por lotes ilimitado, certificados de auditoría y más.", activateKeyBtn: "Activar Licencia Pro",
+                        payTrBtn: "PayTR / Tarjeta (TL)", cryptoPayBtn: "Cryptomus / Cripto (USDT/BTC)"
                     },
                     zh: {
                         accept: "接受", secureLabel: "安全", dropText: "点击浏览或拖放文件至此 (内存安全流)",
@@ -1297,7 +1317,8 @@
                         faq2Q: "支持哪些合规标准？", faq2A: "支持GDPR、HIPAA和CCPA。",
                         faq3Q: "大文件是如何处理的？", faq3A: "利用Streams API进行分块处理。",
                         faq4Q: "可以完全离线使用吗？", faq4A: "可以，支持完全离线和物理隔离。",
-                        proBtn: "获取Pro", proModalTitle: "💎 升级至 Sovereign Pro", proModalDesc: "解锁无限制批量处理、合规审计证书等高级功能。", activateKeyBtn: "激活Pro许可证"
+                        proBtn: "获取Pro", proModalTitle: "💎 升级至 Sovereign Pro", proModalDesc: "解锁无限制批量处理、合规审计证书等高级功能。", activateKeyBtn: "激活Pro许可证",
+                        payTrBtn: "PayTR / 信用卡 (TL)", cryptoPayBtn: "Cryptomus / 加密货币 (USDT/BTC)"
                     },
                     de: {
                         accept: "Akzeptieren", secureLabel: "Sicher", dropText: "Klicken oder Dateien hierher ziehen",
@@ -1320,7 +1341,8 @@
                         faq2Q: "Welche Standards werden unterstützt?", faq2A: "DSGVO, HIPAA, CCPA konform.",
                         faq3Q: "Wie werden große Dateien verarbeitet?", faq3A: "Über die Streams API direkt in Chunks.",
                         faq4Q: "Kann ich das komplett offline nutzen?", faq4A: "Ja, vollkommen air-gapped.",
-                        proBtn: "Pro holen", proModalTitle: "💎 Auf Sovereign Pro upgraden", proModalDesc: "Schalten Sie unbegrenzte Stapelverarbeitung und Audit-Zertifikate frei.", activateKeyBtn: "Pro-Lizenz aktivieren"
+                        proBtn: "Pro holen", proModalTitle: "💎 Auf Sovereign Pro upgraden", proModalDesc: "Schalten Sie unbegrenzte Stapelverarbeitung und Audit-Zertifikate frei.", activateKeyBtn: "Pro-Lizenz aktivieren",
+                        payTrBtn: "PayTR / Kreditkarte (TL)", cryptoPayBtn: "Cryptomus / Krypto (USDT/BTC)"
                     },
                     fr: {
                         accept: "Accepter", secureLabel: "Sécurisé", dropText: "Cliquez ou glissez les fichiers ici",
@@ -1343,7 +1365,8 @@
                         faq2Q: "Quelles normes sont prises en charge ?", faq2A: "RGPD, HIPAA, CCPA.",
                         faq3Q: "Comment sont gérés les gros fichiers ?", faq3A: "Via l'API Streams en mémoire sécurisée.",
                         faq4Q: "Puis-je l'utiliser hors ligne ?", faq4A: "Oui, totalement air-gapped.",
-                        proBtn: "Obtenir Pro", proModalTitle: "💎 Passer à Sovereign Pro", proModalDesc: "Débloquez le traitement par lots et les certificats d'audit.", activateKeyBtn: "Activer la licence Pro"
+                        proBtn: "Obtenir Pro", proModalTitle: "💎 Passer à Sovereign Pro", proModalDesc: "Débloquez le traitement par lots et les certificats d'audit.", activateKeyBtn: "Activer la licence Pro",
+                        payTrBtn: "PayTR / Carte (TL)", cryptoPayBtn: "Cryptomus / Crypto (USDT/BTC)"
                     },
                     ar: {
                         accept: "قبول", secureLabel: "آمن", dropText: "انقر للتصفح أو اسحب الملفات هنا",
@@ -1366,7 +1389,8 @@
                         faq2Q: "ما هي معايير الامتثال المدعومة؟", faq2A: "متوافق مع GDPR و HIPAA و CCPA.",
                         faq3Q: "كيف يتم التعامل مع الملفات الكبيرة؟", faq3A: "عبر تقنية التدفق (Streams API) لمنع امتلاء الذاكرة.",
                         faq4Q: "هل يمكنني استخدام التطبيق بدون إنترنت؟", faq4A: "نعم، يعمل بشكل معزول تماماً (Air-Gapped).",
-                        proBtn: "احصل على Pro", proModalTitle: "💎 الترقية إلى Sovereign Pro", proModalDesc: "افتح ميزات المعالجة الجماعية غير المحدودة وشهادات التدقيق.", activateKeyBtn: "تفعيل ترخيص Pro"
+                        proBtn: "احصل على Pro", proModalTitle: "💎 الترقية إلى Sovereign Pro", proModalDesc: "افتح ميزات المعالجة الجماعية غير المحدودة وشهادات التدقيق.", activateKeyBtn: "تفعيل ترخيص Pro",
+                        payTrBtn: "PayTR / بطاقة ائتمان (TL)", cryptoPayBtn: "Cryptomus / كريبتو (USDT/BTC)"
                     }
                 },
                 applyLanguage(lang) {
@@ -1396,9 +1420,19 @@
             init() {
                 this.initDB();
                 this.checkOfflineStatus();
+
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('pro_activated') === 'true') {
+                    this.state.isPro = true;
+                    localStorage.setItem('privacyConvert_pro', 'true');
+                    this.ui.showToast('🎉 Payment successful! Sovereign Pro activated.');
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
+
                 if (this.state.isPro) {
                     document.getElementById('proBadge').classList.remove('hidden');
                 }
+
                 const dropZone = document.getElementById('dropZone');
                 const fileInput = document.getElementById('fileInput');
                 dropZone.addEventListener('click', () => fileInput.click());
