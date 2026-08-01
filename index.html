@@ -456,7 +456,6 @@
             }
         } catch(e) { console.error("PDF.js worker init error:", e); }
 
-        // Theme Accent Engine
         function setAccentColor(colorKey) {
             const cfg = accentColors[colorKey] || accentColors.indigo;
             document.documentElement.style.setProperty('--accent-color', cfg.primary);
@@ -467,7 +466,6 @@
         setAccentColor(savedAccent);
         document.getElementById('accentSelect').addEventListener('change', (e) => setAccentColor(e.target.value));
 
-        // Live Safe Data Counter State
         let totalSafeBytes = parseFloat(localStorage.getItem('privacyConvert_safeBytes')) || 0;
         function updateLiveCounter(fileSize = 0) {
             totalSafeBytes += fileSize;
@@ -478,9 +476,14 @@
         }
         updateLiveCounter(0);
 
-        // Comprehensive Translation Maps (Fully Synchronized & JS Hardcoded Overrides)
         const translations = {
             tr: {
+                securePrefix: "Güvenli",
+                outOptimized: "Optimize Edilmiş Resim",
+                outClean: "Temiz Resim (EXIF Yok)",
+                outEncrypted: "Şifrelenmiş PDF",
+                fileStr: "Dosya",
+                sizeStr: "Boyut",
                 overlayTitle: "Dosyalarınızı yerel olarak işlemek için buraya bırakın!",
                 progressTitle: "Yerel Olarak İşleniyor...",
                 progressText: "Sunuculara 0 KB aktarıldı (%100 Güvenli)",
@@ -537,16 +540,6 @@
                 faq4Desc: "Sadece sözümüze güvenmek zorunda değilsiniz. Bunu hemen inceleyebilir ve kanıtlayabilirsiniz:",
                 verifyStep1: "<strong>Ağ Denetçisi Testi:</strong> Tarayıcı Geliştirici Araçlarını açmak için <kbd class='bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded font-mono text-xs'>F12</kbd> tuşuna basın, <strong>Network (Ağ)</strong> sekmesine gidin ve herhangi bir dosyayı dönüştürün. Sıfır giden dosya yükleme isteği göreceksiniz.",
                 verifyStep2: "<strong>Çevrimdışı Mod Testi:</strong> Bilgisayarınızın Wi-Fi veya internet bağlantısını tamamen kesin. PrivacyConvert dosyalarınızı kesintisiz olarak dönüştürmeye ve işlemeye devam edecektir.",
-                badgeOptimized: "Optimize Edilmiş Görsel",
-                badgeClean: "Temiz Görsel (EXIF Yok)",
-                badgeEncrypted: "Şifreli PDF",
-                titleAccent: "Tema Rengi Seç",
-                titleTheme: "Karanlık/Aydınlık Mod",
-                titleShortcuts: "Klavye Kısayolları",
-                hashFile: "Dosya:",
-                hashSize: "Boyut:",
-                hashBytes: "bayt",
-                hashChecksum: "SHA-256 Sağlama Toplamı:",
                 toasts: {
                     filesLoaded: "dosya güvenle yüklendi.",
                     copied: "Panoya kopyalandı!",
@@ -564,8 +557,7 @@
                     processCompleted: "İşlem tamamlandı ve dosya indirildi!",
                     errorOccurred: "Dosya işlenirken hata oluştu: ",
                     historyCleared: "Geçmiş temizlendi",
-                    noActivity: "Yakın zamanda etkinlik bulunamadı.",
-                    cryptoError: "Kriptografi API'si bu protokolde (file://) kısıtlanmıştır. Lütfen uygulamayı yerel sunucuda (localhost) çalıştırın."
+                    noActivity: "Yakın zamanda etkinlik bulunamadı."
                 },
                 tools: {
                     'pdf-to-png': { label: 'PDF - PNG', desc: 'PDF sayfalarını doğrudan tarayıcınızda yüksek çözünürlüklü PNG görsellerine dönüştürün. Hızlı, ücretsiz ve tamamen gizli.' },
@@ -593,6 +585,12 @@
                 }
             },
             en: {
+                securePrefix: "Secure",
+                outOptimized: "Optimized Image",
+                outClean: "Clean Image (No EXIF)",
+                outEncrypted: "Encrypted PDF",
+                fileStr: "File",
+                sizeStr: "Size",
                 overlayTitle: "Drop your files anywhere to process locally!",
                 progressTitle: "Processing Locally...",
                 progressText: "0 KB uploaded to servers (100% Secure)",
@@ -649,16 +647,6 @@
                 faq4Desc: "You don't just have to take our word for it. You can inspect and prove this right now:",
                 verifyStep1: "<strong>Network Inspector Test:</strong> Press <kbd class='bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded font-mono text-xs'>F12</kbd> to open browser Developer Tools, go to the <strong>Network</strong> tab, and convert any file. You will observe zero outbound file upload requests.",
                 verifyStep2: "<strong>Offline Mode Test:</strong> Completely disconnect your computer from Wi-Fi or internet. PrivacyConvert will continue to convert and process your files without interruption.",
-                badgeOptimized: "Optimized Image",
-                badgeClean: "Clean Image (No EXIF)",
-                badgeEncrypted: "Encrypted PDF",
-                titleAccent: "Select Accent Color",
-                titleTheme: "Toggle Dark/Light Mode",
-                titleShortcuts: "Keyboard Shortcuts",
-                hashFile: "File:",
-                hashSize: "Size:",
-                hashBytes: "bytes",
-                hashChecksum: "SHA-256 Checksum:",
                 toasts: {
                     filesLoaded: "files loaded safely.",
                     copied: "Copied to clipboard!",
@@ -676,8 +664,7 @@
                     processCompleted: "Process completed and file downloaded!",
                     errorOccurred: "Error processing file: ",
                     historyCleared: "History cleared",
-                    noActivity: "No recent activity found.",
-                    cryptoError: "Cryptography API is restricted in this protocol (file://). Please run the application on a local server (localhost)."
+                    noActivity: "No recent activity found."
                 },
                 tools: {
                     'pdf-to-png': { label: 'PDF to PNG', desc: 'Extract PDF pages into PNG images directly in your browser. Fast, free, and completely private.' },
@@ -705,6 +692,12 @@
                 }
             },
             zh: {
+                securePrefix: "安全",
+                outOptimized: "已优化图像",
+                outClean: "干净图像 (无 EXIF)",
+                outEncrypted: "已加密 PDF",
+                fileStr: "文件",
+                sizeStr: "大小",
                 overlayTitle: "将文件拖放到任何地方即可在本地处理！",
                 progressTitle: "正在本地处理...",
                 progressText: "向服务器上传了 0 KB（100% 安全）",
@@ -761,16 +754,6 @@
                 faq4Desc: "您不必只听信我们的话。您可以立即通过以下两项简单检查来证明：",
                 verifyStep1: "<strong>网络检查器测试：</strong> 按 F12 打开浏览器开发者工具，转到“网络 (Network)”选项卡并转换任何文件。您将观察到零出站文件上传请求。",
                 verifyStep2: "<strong>离线模式测试：</strong> 完全断开计算机的 Wi-Fi 或互联网连接。PrivacyConvert 将继续无中断地转换和处理您的文件。",
-                badgeOptimized: "优化后的图像",
-                badgeClean: "纯净图像 (无 EXIF)",
-                badgeEncrypted: "加密的 PDF",
-                titleAccent: "选择强调颜色",
-                titleTheme: "切换深色/浅色模式",
-                titleShortcuts: "键盘快捷键",
-                hashFile: "文件：",
-                hashSize: "大小：",
-                hashBytes: "字节",
-                hashChecksum: "SHA-256 校验和：",
                 toasts: {
                     filesLoaded: "文件已安全加载。",
                     copied: "已复制到剪贴板！",
@@ -788,8 +771,7 @@
                     processCompleted: "处理完成，文件已下载！",
                     errorOccurred: "处理文件时出错：",
                     historyCleared: "历史记录已清除",
-                    noActivity: "近期无活动记录。",
-                    cryptoError: "加密 API 在此协议 (file://) 中受限。请在本地服务器 (localhost) 上运行应用程序。"
+                    noActivity: "近期无活动记录。"
                 },
                 tools: {
                     'pdf-to-png': { label: 'PDF 转 PNG', desc: '直接在浏览器中将 PDF 页面提取为 PNG 图像。快速、免费且完全隐私。' },
@@ -817,6 +799,12 @@
                 }
             },
             de: {
+                securePrefix: "Sicher:",
+                outOptimized: "Optimiertes Bild",
+                outClean: "Sauberes Bild (Kein EXIF)",
+                outEncrypted: "Verschlüsseltes PDF",
+                fileStr: "Datei",
+                sizeStr: "Größe",
                 overlayTitle: "Dateien zum lokalen Verarbeiten hierher ziehen!",
                 progressTitle: "Wird lokal verarbeitet...",
                 progressText: "0 KB an Server übertragen (100% Sicher)",
@@ -873,16 +861,6 @@
                 faq4Desc: "Sie müssen sich nicht nur auf unser Wort verlassen. Sie können es jetzt selbst überprüfen:",
                 verifyStep1: "<strong>Netzwerk-Inspector-Test:</strong> Drücken Sie F12, öffnen Sie die Entwicklertools, gehen Sie zum Reiter Netzwerk und konvertieren Sie eine Datei. Sie werden null ausgehende Datei-Upload-Anfragen sehen.",
                 verifyStep2: "<strong>Offline-Modus-Test:</strong> Trennen Sie Ihren Computer komplett von WLAN oder Internet. PrivacyConvert funktioniert ohne Unterbrechung weiter.",
-                badgeOptimized: "Optimiertes Bild",
-                badgeClean: "Sauberes Bild (Kein EXIF)",
-                badgeEncrypted: "Verschlüsseltes PDF",
-                titleAccent: "Akzentfarbe auswählen",
-                titleTheme: "Dunkel-/Hellmodus umschalten",
-                titleShortcuts: "Tastaturkürzel",
-                hashFile: "Datei:",
-                hashSize: "Größe:",
-                hashBytes: "Bytes",
-                hashChecksum: "SHA-256-Prüfsumme:",
                 toasts: {
                     filesLoaded: "Dateien sicher geladen.",
                     copied: "In die Zwischenablage kopiert!",
@@ -900,8 +878,7 @@
                     processCompleted: "Vorgang abgeschlossen und Datei heruntergeladen!",
                     errorOccurred: "Fehler beim Verarbeiten der Datei: ",
                     historyCleared: "Verlauf gelöscht",
-                    noActivity: "Keine kürzlichen Aktivitäten.",
-                    cryptoError: "Die Kryptographie-API ist in diesem Protokoll (file://) eingeschränkt. Bitte führen Sie die Anwendung auf einem lokalen Server (localhost) aus."
+                    noActivity: "Keine kürzlichen Aktivitäten."
                 },
                 tools: {
                     'pdf-to-png': { label: 'PDF in PNG', desc: 'PDF-Seiten direkt im Browser in PNG-Bilder extrahieren.' },
@@ -929,6 +906,12 @@
                 }
             },
             fr: {
+                securePrefix: "Sécurisé",
+                outOptimized: "Image optimisée",
+                outClean: "Image propre (Pas d'EXIF)",
+                outEncrypted: "PDF chiffré",
+                fileStr: "Fichier",
+                sizeStr: "Taille",
                 overlayTitle: 'Glissez vos fichiers ici pour un traitement local !',
                 progressTitle: 'Traitement local en cours...',
                 progressText: "0 Ko téléchargés sur les serveurs (100% Sécurisé)",
@@ -985,16 +968,6 @@
                 faq4Desc: "Vous n'avez pas à nous croire sur parole. Vous pouvez l'inspecter et le prouver dès maintenant :",
                 verifyStep1: "<strong>Test de l'inspecteur réseau :</strong> Appuyez sur F12 pour ouvrir les outils de développement, allez dans l'onglet Réseau et convertissez n'importe quel fichier. Vous observerez zéro requête de téléchargement sortante.",
                 verifyStep2: "<strong>Test du mode hors ligne :</strong> Déconnectez complètement votre ordinateur du Wi-Fi ou d'Internet. PrivacyConvert continuera à convertir et traiter vos fichiers sans interruption.",
-                badgeOptimized: "Image Optimisée",
-                badgeClean: "Image Nette (Sans EXIF)",
-                badgeEncrypted: "PDF Chiffré",
-                titleAccent: "Sélectionner la Couleur d'Accentuation",
-                titleTheme: "Basculer Mode Sombre/Clair",
-                titleShortcuts: "Raccourcis clavier",
-                hashFile: "Fichier :",
-                hashSize: "Taille :",
-                hashBytes: "octets",
-                hashChecksum: "Somme de contrôle SHA-256 :",
                 toasts: {
                     filesLoaded: "fichiers chargés en toute sécurité.",
                     copied: "Copié dans le presse-papiers !",
@@ -1012,8 +985,7 @@
                     processCompleted: "Traitement terminé et fichier téléchargé !",
                     errorOccurred: "Erreur lors du traitement du fichier : ",
                     historyCleared: "Historique effacé",
-                    noActivity: "Aucune activité récente.",
-                    cryptoError: "L'API de cryptographie est restreinte dans ce protocole (file://). Veuillez exécuter l'application sur un serveur local (localhost)."
+                    noActivity: "Aucune activité récente."
                 },
                 tools: {
                     'pdf-to-png': { label: 'PDF en PNG', desc: 'Extraire des pages PDF en images PNG directement dans votre navigateur.' },
@@ -1041,6 +1013,12 @@
                 }
             },
             es: {
+                securePrefix: "Seguro",
+                outOptimized: "Imagen optimizada",
+                outClean: "Imagen limpia (Sin EXIF)",
+                outEncrypted: "PDF cifrado",
+                fileStr: "Archivo",
+                sizeStr: "Tamaño",
                 overlayTitle: '¡Suelta tus archivos en cualquier lugar para procesarlos localmente!',
                 progressTitle: 'Procesando localmente...',
                 progressText: "0 KB subidos a servidores (100% Seguro)",
@@ -1097,16 +1075,6 @@
                 faq4Desc: "No tiene que confiar ciegamente en nuestra palabra. Puede inspeccionar y comprobarlo ahora mismo:",
                 verifyStep1: "<strong>Prueba de Inspector de Red:</strong> Presione F12 para abrir las Herramientas de Desarrollador, vaya a la pestaña Red y convierta cualquier archivo. Observará cero solicitudes salientes de carga de archivos.",
                 verifyStep2: "<strong>Prueba de Modo Sin Conexión:</strong> Desconecte completamente su computadora del Wi-Fi o internet. PrivacyConvert continuará convirtiendo y procesando sus archivos sin interrupción.",
-                badgeOptimized: "Imagen Optimizada",
-                badgeClean: "Imagen Limpia (Sin EXIF)",
-                badgeEncrypted: "PDF Cifrado",
-                titleAccent: "Seleccionar Color de Acento",
-                titleTheme: "Alternar Modo Oscuro/Claro",
-                titleShortcuts: "Atajos de teclado",
-                hashFile: "Archivo:",
-                hashSize: "Tamaño:",
-                hashBytes: "bytes",
-                hashChecksum: "Suma de comprobación SHA-256:",
                 toasts: {
                     filesLoaded: "archivos cargados de forma segura.",
                     copied: "¡Copiado al portapapeles!",
@@ -1124,8 +1092,7 @@
                     processCompleted: "¡Proceso completado y archivo descargado!",
                     errorOccurred: "Error al procesar el archivo: ",
                     historyCleared: "Historial borrado",
-                    noActivity: "No hay actividad reciente.",
-                    cryptoError: "La API de criptografía está restringida en este protocolo (file://). Ejecute la aplicación en un servidor local (localhost)."
+                    noActivity: "No hay actividad reciente."
                 },
                 tools: {
                     'pdf-to-png': { label: 'PDF a PNG', desc: 'Extraiga páginas de PDF en imágenes PNG directamente en su navegador.' },
@@ -1153,6 +1120,12 @@
                 }
             },
             ar: {
+                securePrefix: "آمن",
+                outOptimized: "صورة محسنة",
+                outClean: "صورة نظيفة (بدون EXIF)",
+                outEncrypted: "PDF مشفر",
+                fileStr: "ملف",
+                sizeStr: "حجم",
                 overlayTitle: 'أفلت ملفاتك في أي مكان لمعالجتها محلياً!',
                 progressTitle: 'جاري المعالجة محلياً...',
                 progressText: "0 كيلوبايت مرفوعة للخوادم (آمن 100%)",
@@ -1209,16 +1182,6 @@
                 faq4Desc: "ليس عليك فقط أن تصدق كلامنا. يمكنك فحص وإثبات ذلك بنفسك الآن:",
                 verifyStep1: "<strong>اختبار فاحص الشبكة:</strong> اضغط على F12 لفتح أدوات المطور، وانتقل إلى تبويب Network، وقم بتحويل أي ملف. ستلاحظ تماماً عدم إرسال أي طلبات رفع ملفات خارجية.",
                 verifyStep2: "<strong>اختبار وضع عدم الاتصال:</strong> قم بفصل جهاز الكمبيوتر الخاص بك تماماً عن الواي فاي أو الإنترنت. ستستمر PrivacyConvert في تحويل ومعالجة ملفاتك دون أي انقطاع.",
-                badgeOptimized: "صورة محسنة",
-                badgeClean: "صورة نظيفة (بدون EXIF)",
-                badgeEncrypted: "ملف PDF مشفر",
-                titleAccent: "اختر لون التمييز",
-                titleTheme: "تبديل الوضع الداكن/الفاتح",
-                titleShortcuts: "اختصارات لوحة المفاتيح",
-                hashFile: "الملف:",
-                hashSize: "الحجم:",
-                hashBytes: "بايت",
-                hashChecksum: "مجموع التحقق SHA-256:",
                 toasts: {
                     filesLoaded: "تم تحميل الملفات بأمان.",
                     copied: "تم النسخ إلى الحافظة!",
@@ -1236,8 +1199,7 @@
                     processCompleted: "اكتملت العملية وتم تنزيل الملف!",
                     errorOccurred: "حدث خطأ أثناء معالجة الملف: ",
                     historyCleared: "تم مسح السجل",
-                    noActivity: "لا يوجد نشاط حديث.",
-                    cryptoError: "واجهة برمجة تطبيقات التشفير مقيدة في هذا البروتوكول (file://). يرجى تشغيل التطبيق على خادم محلي (localhost)."
+                    noActivity: "لا يوجد نشاط حديث."
                 },
                 tools: {
                     'pdf-to-png': { label: 'PDF إلى PNG', desc: 'استخراج صفحات PDF إلى صور PNG مباشرة في متصفحك.' },
@@ -1282,19 +1244,16 @@
             
             const t = translations[lang] || translations['tr'];
 
-            // 1. Update all standard i18n text nodes
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (t[key]) el.innerHTML = t[key];
             });
 
-            // 2. Update all placeholders
             document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
                 const key = el.getAttribute('data-i18n-placeholder');
                 if (t[key]) el.placeholder = t[key];
             });
 
-            // 3. Update specific dynamic inputs
             const mainInput = document.getElementById('mainInputField');
             if (mainInput) {
                 if (currentTool === 'json-tool') mainInput.placeholder = t.jsonPlaceholder;
@@ -1303,36 +1262,40 @@
                 else if (currentTool === 'qr-tool') mainInput.placeholder = t.qrPlaceholder;
             }
 
-            // 4. Fix dynamic button texts for generator tools
+            const passLenLabel = document.getElementById('passLengthLabel');
+            if (passLenLabel) {
+                const spanVal = passLenLabel.querySelector('#passLenVal');
+                const val = spanVal ? spanVal.textContent : '16';
+                passLenLabel.innerHTML = `<span data-i18n="passLen">${t.passLen}</span> <span id="passLenVal" class="dynamic-text">${val}</span>`;
+            }
+
             if (currentTool === 'password-gen' || currentTool === 'uuid-gen') {
                 document.getElementById('convertBtnText').textContent = t.copyOnly;
             } else {
                  document.getElementById('convertBtnText').textContent = t.convertBtn;
             }
-
-            // 5. Hardcoded Strings -> Dynamic Language Hooks
-            const badgeEl = document.getElementById('outputFormatBadge');
-            if (badgeEl) {
-                if (currentTool === 'compress-image') badgeEl.innerHTML = `🖼️ ${t.badgeOptimized}`;
-                else if (currentTool === 'exif-remover') badgeEl.innerHTML = `🧹 ${t.badgeClean}`;
-                else if (currentTool === 'encrypt-pdf') badgeEl.innerHTML = `🔒 ${t.badgeEncrypted}`;
-                // PDF, PNG, JPG, WebP are universal
+            
+            let formatText = "";
+            switch(currentTool) {
+                case 'pdf-to-png': formatText = "🖼️ PNG"; break;
+                case 'pdf-to-jpg': formatText = "🖼️ JPG"; break;
+                case 'merge-pdf': 
+                case 'split-pdf': 
+                case 'jpg-to-pdf': formatText = "📄 PDF"; break;
+                case 'compress-image': formatText = "🖼️ " + (t.outOptimized || "Optimized"); break;
+                case 'heic-to-jpg': formatText = "🖼️ JPG"; break;
+                case 'webp-converter': formatText = "🌐 WebP / AVIF"; break;
+                case 'exif-remover': formatText = "🧹 " + (t.outClean || "Clean"); break;
+                case 'encrypt-pdf': formatText = "🔒 " + (t.outEncrypted || "Encrypted"); break;
             }
-
-            // 6. Tooltips
-            const accentSelect = document.getElementById('accentSelect');
-            if(accentSelect) accentSelect.title = t.titleAccent;
-            
-            const themeToggleBtn = document.getElementById('themeToggle');
-            if(themeToggleBtn) themeToggleBtn.title = t.titleTheme;
-            
-            const shortcutsBtn = document.querySelector('button[onclick="toggleShortcutsModal(true)"]');
-            if(shortcutsBtn) shortcutsBtn.title = t.titleShortcuts;
+            const outputBadge = document.getElementById('outputFormatBadge');
+            if (outputBadge && formatText) {
+                outputBadge.innerHTML = formatText;
+            }
 
             updateLiveCounter(0);
             renderHistory();
 
-            // 7. Update Tool Sidebar Texts
             Object.keys(t.tools).forEach(key => {
                 const btn = document.getElementById(`tab-${key}`);
                 if (btn) {
@@ -1359,14 +1322,9 @@
             const prefix = document.getElementById('mainTitlePrefix');
             const accent = document.getElementById('mainTitleAccent');
             
-            const parts = meta.label.split(' ');
-            if (parts.length > 1) {
-                accent.textContent = parts.pop();
-                prefix.textContent = parts.join(' ');
-            } else {
-                prefix.textContent = "";
-                accent.textContent = meta.label;
-            }
+            prefix.textContent = (t.securePrefix || "Güvenli") + " ";
+            accent.textContent = meta.label;
+            
             const mainDesc = document.getElementById('mainDesc');
             if(mainDesc) mainDesc.textContent = meta.desc;
         }
@@ -1521,48 +1479,56 @@
             let requiresFile = true;
             let showAdvanced = true;
             const mainInput = document.getElementById('mainInputField');
+            let formatText = "";
 
             switch(tool) {
-                case 'pdf-to-png': case 'pdf-to-jpg':
+                case 'pdf-to-png': 
                     fileInput.accept = ".pdf"; fileInput.multiple = true;
                     document.getElementById('qualityContainer').classList.remove('hidden');
                     document.getElementById('pdfRangeGroup').classList.remove('hidden');
-                    document.getElementById('outputFormatBadge').innerHTML = tool === 'pdf-to-png' ? "🖼️ PNG" : "🖼️ JPG";
+                    formatText = "🖼️ PNG"; 
                     break;
-                case 'merge-pdf': case 'split-pdf':
+                case 'pdf-to-jpg':
+                    fileInput.accept = ".pdf"; fileInput.multiple = true;
+                    document.getElementById('qualityContainer').classList.remove('hidden');
+                    document.getElementById('pdfRangeGroup').classList.remove('hidden');
+                    formatText = "🖼️ JPG"; 
+                    break;
+                case 'merge-pdf': 
+                case 'split-pdf':
                     fileInput.accept = ".pdf"; fileInput.multiple = (tool === 'merge-pdf');
-                    document.getElementById('outputFormatBadge').innerHTML = "📄 PDF";
+                    formatText = "📄 PDF"; 
                     showAdvanced = false;
                     break;
                 case 'jpg-to-pdf':
                     fileInput.accept = "image/png,image/jpeg"; fileInput.multiple = true;
-                    document.getElementById('outputFormatBadge').innerHTML = "📄 PDF";
+                    formatText = "📄 PDF"; 
                     showAdvanced = false;
                     break;
                 case 'compress-image':
                     fileInput.accept = "image/*"; fileInput.multiple = true;
                     document.getElementById('compressOptionsGroup').classList.remove('hidden');
-                    document.getElementById('outputFormatBadge').innerHTML = `🖼️ ${t.badgeOptimized}`;
+                    formatText = "🖼️ " + (t.outOptimized || "Optimized"); 
                     break;
                 case 'heic-to-jpg':
                     fileInput.accept = ".heic,.heif,image/*"; fileInput.multiple = true;
-                    document.getElementById('outputFormatBadge').innerHTML = "🖼️ JPG";
+                    formatText = "🖼️ JPG"; 
                     showAdvanced = false;
                     break;
                 case 'webp-converter':
                     fileInput.accept = "image/*"; fileInput.multiple = true;
                     document.getElementById('webpOptionsGroup').classList.remove('hidden');
-                    document.getElementById('outputFormatBadge').innerHTML = "🌐 WebP / AVIF";
+                    formatText = "🌐 WebP / AVIF"; 
                     break;
                 case 'exif-remover':
                     fileInput.accept = "image/jpeg,image/png"; fileInput.multiple = true;
-                    document.getElementById('outputFormatBadge').innerHTML = `🧹 ${t.badgeClean}`;
+                    formatText = "🧹 " + (t.outClean || "Clean"); 
                     showAdvanced = false;
                     break;
                 case 'encrypt-pdf':
                     fileInput.accept = ".pdf"; fileInput.multiple = false;
                     document.getElementById('encryptOptionsGroup').classList.remove('hidden');
-                    document.getElementById('outputFormatBadge').innerHTML = `🔒 ${t.badgeEncrypted}`;
+                    formatText = "🔒 " + (t.outEncrypted || "Encrypted"); 
                     break;
                 case 'redact-tool': case 'extract-pdf-img':
                     fileInput.accept = "image/*,.pdf"; fileInput.multiple = true;
@@ -1623,6 +1589,11 @@
                     actionArea.classList.remove('hidden');
                     mainInput.placeholder = t.qrPlaceholder;
                     break;
+            }
+            
+            const outputBadge = document.getElementById('outputFormatBadge');
+            if (outputBadge && formatText) {
+                outputBadge.innerHTML = formatText;
             }
 
             if (!requiresFile) {
@@ -1803,10 +1774,13 @@
                 `;
             });
         }
-        function addHistory(action) {
+        function addHistory(actionKey) {
             let history = JSON.parse(localStorage.getItem('privacyConvert_history')) || [];
             const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            history.unshift({ action: action, time: timeStr });
+            const t = translations[currentLang] || translations['tr'];
+            const actionText = t.tools[actionKey] ? t.tools[actionKey].label : actionKey;
+            
+            history.unshift({ action: actionText, key: actionKey, time: timeStr });
             if(history.length > 5) history.pop();
             localStorage.setItem('privacyConvert_history', JSON.stringify(history));
             renderHistory();
@@ -1821,21 +1795,14 @@
         const convertBtn = document.getElementById('convertBtn');
         convertBtn.addEventListener('click', async () => {
             const t = translations[currentLang] || translations['tr'];
-            
             if (currentTool === 'password-gen' || currentTool === 'uuid-gen') { window.copyGenerated(); return; }
-            
-            if (currentTool === 'json-tool') { 
-                processJson(); 
-                addHistory(t.tools[currentTool].label); 
-                showToast(t.toasts.jsonFormatted); 
-                return; 
-            }
+            if (currentTool === 'json-tool') { processJson(); addHistory(currentTool); showToast(t.toasts.jsonFormatted); return; }
             if (currentTool === 'md-tool') {
                 const input = document.getElementById('mainInputField').value.trim();
                 const output = document.getElementById('genericTextArea');
                 output.value = typeof marked !== 'undefined' ? marked.parse(input) : input;
                 document.getElementById('genericTextBox').classList.remove('hidden');
-                addHistory(t.tools[currentTool].label);
+                addHistory(currentTool);
                 showToast(t.toasts.mdConverted);
                 return;
             }
@@ -1847,7 +1814,7 @@
                 if(typeof QRCode !== 'undefined') {
                     new QRCode(display, { text: input, width: 200, height: 200 });
                     document.getElementById('qrTextDisplay').textContent = input;
-                    addHistory(t.tools[currentTool].label);
+                    addHistory(currentTool);
                     showToast(t.toasts.qrCreated);
                 }
                 return;
@@ -1860,15 +1827,14 @@
                 if (currentTool === 'base64-tool') {
                     try { 
                         const isB64 = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/.test(input);
-                        if(isB64 && input.length % 4 === 0) { output.value = atob(input); showToast(t.toasts.base64Decoded); } 
-                        else { output.value = btoa(input); showToast(t.toasts.base64Encoded); }
-                    } catch(e) { output.value = btoa(input); showToast(t.toasts.base64Encoded); }
+                        if(isB64 && input.length % 4 === 0) { output.value = atob(input); showToast(t.toasts.base64Decoded); addHistory(currentTool); } 
+                        else { output.value = btoa(input); showToast(t.toasts.base64Encoded); addHistory(currentTool);}
+                    } catch(e) { output.value = btoa(input); showToast(t.toasts.base64Encoded); addHistory(currentTool); }
                 } else {
-                    if (input.includes('%')) { try { output.value = decodeURIComponent(input); } catch(e) { output.value = encodeURIComponent(input); } } 
-                    else { output.value = encodeURIComponent(input); }
+                    if (input.includes('%')) { try { output.value = decodeURIComponent(input); addHistory(currentTool);} catch(e) { output.value = encodeURIComponent(input); } } 
+                    else { output.value = encodeURIComponent(input); addHistory(currentTool);}
                     showToast(t.toasts.urlProcessed);
                 }
-                addHistory(t.tools[currentTool].label);
                 document.getElementById('genericTextBox').classList.remove('hidden');
                 return;
             }
@@ -1876,7 +1842,7 @@
                 processDiff();
                 const diffTxt = document.getElementById('diffOutputContainer').innerText;
                 downloadBlob(new Blob([diffTxt], { type: 'text/plain;charset=utf-8' }), 'diff_result.txt');
-                addHistory(t.tools[currentTool].label);
+                addHistory(currentTool);
                 showToast(t.toasts.diffDownloaded);
                 return;
             }
@@ -1923,7 +1889,7 @@
                         const zipBlob = await zip.generateAsync({ type: "blob" });
                         downloadBlob(zipBlob, `${file.name.replace(/\.[^/.]+$/, "")}_pages.zip`);
                     }
-                    addHistory(t.tools[currentTool].label);
+                    addHistory(currentTool);
                 }
                 else if (currentTool === 'jpg-to-pdf') {
                     const pdfDoc = await PDFLib.PDFDocument.create();
@@ -1935,7 +1901,7 @@
                     }
                     const pdfBytes = await pdfDoc.save();
                     downloadBlob(new Blob([pdfBytes], { type: 'application/pdf' }), 'converted_images.pdf');
-                    addHistory(t.tools[currentTool].label);
+                    addHistory(currentTool);
                 }
                 else if (currentTool === 'merge-pdf') {
                     const mergedPdf = await PDFLib.PDFDocument.create();
@@ -1947,7 +1913,7 @@
                     }
                     const pdfBytes = await mergedPdf.save();
                     downloadBlob(new Blob([pdfBytes], { type: 'application/pdf' }), 'merged_document.pdf');
-                    addHistory(t.tools[currentTool].label);
+                    addHistory(currentTool);
                 }
                 else if (currentTool === 'split-pdf') {
                     const file = selectedFiles[0];
@@ -1963,7 +1929,7 @@
                         zip.file(`page_${i + 1}.pdf`, new Blob([newBytes], { type: 'application/pdf' }));
                     }
                     downloadBlob(await zip.generateAsync({ type: "blob" }), `${file.name.replace(/\.[^/.]+$/, "")}_split.zip`);
-                    addHistory(t.tools[currentTool].label);
+                    addHistory(currentTool);
                 }
                 else if (currentTool === 'compress-image') {
                     const targetMB = parseFloat(document.getElementById('compressionLevel')?.value) || 1.0;
@@ -1982,7 +1948,7 @@
                     if (selectedFiles.length > 1) {
                         downloadBlob(await zip.generateAsync({ type: "blob" }), "compressed_images.zip");
                     }
-                    addHistory(t.tools[currentTool].label);
+                    addHistory(currentTool);
                 }
                 else if (currentTool === 'heic-to-jpg') {
                     const zip = new JSZip();
@@ -2003,7 +1969,7 @@
                     if (selectedFiles.length > 1) {
                         downloadBlob(await zip.generateAsync({ type: "blob" }), "converted_jpgs.zip");
                     }
-                    addHistory(t.tools[currentTool].label);
+                    addHistory(currentTool);
                 }
                 else if (currentTool === 'webp-converter') {
                     const format = document.getElementById('webpFormatSelect')?.value || 'image/webp';
@@ -2028,7 +1994,7 @@
                     if (selectedFiles.length > 1) {
                         downloadBlob(await zip.generateAsync({ type: "blob" }), `converted_${ext}s.zip`);
                     }
-                    addHistory(t.tools[currentTool].label);
+                    addHistory(currentTool);
                 }
                 else if (currentTool === 'exif-remover') {
                     const zip = new JSZip();
@@ -2049,7 +2015,7 @@
                     if (selectedFiles.length > 1) {
                         downloadBlob(await zip.generateAsync({ type: "blob" }), "clean_exif_images.zip");
                     }
-                    addHistory(t.tools[currentTool].label);
+                    addHistory(currentTool);
                     showToast(t.toasts.exifCleaned);
                 }
                 else if (currentTool === 'extract-pdf-img') {
@@ -2068,7 +2034,7 @@
                         zip.file(`page_${i}_image.png`, blob);
                     }
                     downloadBlob(await zip.generateAsync({ type: "blob" }), `${file.name.replace(/\.[^/.]+$/, "")}_extracted_images.zip`);
-                    addHistory(t.tools[currentTool].label);
+                    addHistory(currentTool);
                 }
                 else if (currentTool === 'redact-tool') {
                     const zip = new JSZip();
@@ -2093,11 +2059,11 @@
                     if (selectedFiles.length > 1) {
                         downloadBlob(await zip.generateAsync({ type: "blob" }), "redacted_images.zip");
                     }
-                    addHistory(t.tools[currentTool].label);
+                    addHistory(currentTool);
                 }
                 else if (currentTool === 'encrypt-pdf') {
                     if (!window.crypto || !window.crypto.subtle) {
-                        throw new Error(t.toasts.cryptoError);
+                        throw new Error("Kriptografi API'si bu protokolde (file://) kısıtlanmıştır. Lütfen uygulamayı yerel sunucuda (localhost) çalıştırın.");
                     }
                     const file = selectedFiles[0];
                     const password = document.getElementById('pdfPassInput')?.value || 'SecurePass123';
@@ -2129,22 +2095,22 @@
 
                     const encryptedBlob = new Blob([combined], { type: 'application/octet-stream' });
                     downloadBlob(encryptedBlob, `encrypted_${file.name}.enc`);
-                    addHistory(t.tools[currentTool].label);
+                    addHistory(currentTool);
                     showToast(t.toasts.pdfEncrypted);
                 }
                 else if (currentTool === 'hash-calc') {
                     if (!window.crypto || !window.crypto.subtle) {
-                        throw new Error(t.toasts.cryptoError);
+                        throw new Error("Kriptografi API'si bu protokolde (file://) kısıtlanmıştır. Lütfen uygulamayı yerel sunucuda (localhost) çalıştırın.");
                     }
                     const buffer = await selectedFiles[0].arrayBuffer();
                     const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
                     const hashHex = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
                     
-                    const outputText = `${t.hashFile} ${selectedFiles[0].name}\n${t.hashSize} ${selectedFiles[0].size} ${t.hashBytes}\n${t.hashChecksum}\n${hashHex}`;
+                    const outputText = `${t.fileStr || 'File'}: ${selectedFiles[0].name}\n${t.sizeStr || 'Size'}: ${selectedFiles[0].size} bytes\nSHA-256 Checksum:\n${hashHex}`;
                     document.getElementById('genericTextBox').classList.remove('hidden');
                     document.getElementById('genericTextArea').value = outputText;
                     downloadBlob(new Blob([outputText], { type: 'text/plain;charset=utf-8' }), `${selectedFiles[0].name}_hash.txt`);
-                    addHistory(t.tools[currentTool].label);
+                    addHistory(currentTool);
                 }
                 else if (currentTool === 'ocr-reader') {
                     if (typeof Tesseract !== 'undefined') {
@@ -2153,7 +2119,7 @@
                         document.getElementById('genericTextBox').classList.remove('hidden');
                         document.getElementById('genericTextArea').value = text;
                         downloadBlob(new Blob([text], { type: 'text/plain;charset=utf-8' }), `${selectedFiles[0].name}_ocr.txt`);
-                        addHistory(t.tools[currentTool].label);
+                        addHistory(currentTool);
                     }
                 }
                 if(currentTool !== 'encrypt-pdf' && currentTool !== 'exif-remover') showToast(t.toasts.processCompleted);
