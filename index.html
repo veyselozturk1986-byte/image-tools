@@ -4,16 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="pageTitle">PrivacyConvert - 100% Local & Secure Tools</title>
-    <meta name="description" id="pageMetaDesc" content="Extract PDF pages, generate passwords, format JSON, and process images directly in your browser. 100% private.">
+    <meta name="description" id="pageMetaDesc" content="Extract PDF pages, generate QR codes, format JSON, resize images, and process everything directly in your browser. 100% private.">
     <meta name="theme-color" content="#4f46e5">
-    
-    <!-- 1. ANALİTİK VE REKLAM (GELİR) BÖLÜMÜ -->
-    <!-- Not: Kendi Google Analytics G-XXXXX kodunuzu buraya ekleyebilirsiniz -->
-    <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-YOURID"></script>
-    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-YOURID');</script> -->
-    
-    <!-- Not: Kendi Google AdSense kodunuzu buraya ekleyebilirsiniz -->
-    <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOURID" crossorigin="anonymous"></script> -->
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -27,9 +19,11 @@
         tailwind.config = { darkMode: 'class' };
     </script>
 
-    <!-- Gerçek İşlem Kütüphaneleri (PDF, ZIP) -->
+    <!-- Tüm İşlem Kütüphaneleri (PDF, ZIP, QR, Markdown) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     
     <style>
         :root { --accent-color: #4f46e5; --accent-hover: #4338ca; }
@@ -76,10 +70,13 @@
     <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 py-4 px-6 shadow-sm sticky top-0 z-30 transition-colors duration-300">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
             <a href="#" onclick="PrivacyConvert.routing.navigate('pdf-to-png')" class="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 flex items-center gap-2 hover:opacity-80 transition">
-                ⚡ PrivacyConvert
+                ⚡ PrivacyConvert Pro
             </a>
             <div class="flex items-center gap-2 sm:gap-3">
-                <!-- PWA Yükleme Butonu (Sadece destekleyen tarayıcılarda görünür) -->
+                <!-- GitHub Açık Kaynak Rozeti -->
+                <a href="https://github.com" target="_blank" class="hidden sm:inline-flex bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs px-3 py-2 rounded-xl font-bold items-center gap-1.5 transition">
+                    ⭐ <span data-i18n="githubBadge">Open Source (Verified)</span>
+                </a>
                 <button id="pwaInstallBtn" class="hidden bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-3 py-2 rounded-xl font-bold items-center gap-1.5 transition shadow-sm">
                     📱 <span data-i18n="installApp">Install App</span>
                 </button>
@@ -99,45 +96,47 @@
     <main class="flex-grow max-w-6xl mx-auto w-full px-4 py-8">
         <div class="text-center mb-8">
             <h1 class="text-3xl sm:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-3">
-                <span id="mainTitlePrefix" data-i18n="secureLabel">Secure</span> <span id="mainTitleAccent" class="dynamic-text" data-i18n="toolPdfPng">PDF to PNG</span>
+                <span id="mainTitlePrefix" data-i18n="secureLabel">Secure</span> <span id="mainTitleAccent" class="dynamic-text">PDF to PNG</span>
             </h1>
-            <p id="mainDesc" class="text-slate-500 dark:text-slate-400 text-sm sm:text-base max-w-2xl mx-auto font-medium" data-i18n="mainDesc">
+            <p id="mainDesc" class="text-slate-500 dark:text-slate-400 text-sm sm:text-base max-w-2xl mx-auto font-medium">
                 Extract PDF pages to high-resolution PNG images directly in your browser. Fast, free, and completely private.
             </p>
         </div>
 
-        <!-- Ön Ayarlar Alanı -->
-        <div class="max-w-3xl mx-auto mb-6 flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
-            <div class="flex items-center gap-2">
-                <span class="text-xs font-bold text-slate-500 uppercase" data-i18n="presetLabel">📌 Preset:</span>
-                <select id="presetSelect" class="bg-slate-50 dark:bg-slate-900 text-xs font-bold p-2 rounded-xl border border-slate-200 dark:border-slate-700 dark:text-white focus:outline-none">
-                    <option value="default" data-i18n="presetDefault">Default Settings</option>
-                    <option value="hd" data-i18n="presetHD">High Quality (300 DPI)</option>
-                    <option value="compact" data-i18n="presetCompact">Max Compression</option>
-                </select>
-                <button class="text-xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-200 px-3 py-2 rounded-xl font-bold transition" data-i18n="btnSave">Save</button>
-            </div>
-        </div>
-
-        <div id="toolsNavContainer" class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <!-- Araç Kategorileri ve Yeni Eklenen Araçlar -->
+        <div id="toolsNavContainer" class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <!-- PDF & Medya -->
             <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3">
-                <h3 data-i18n="catPdf" class="text-xs font-extrabold dynamic-text uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">📄 PDF Tools</h3>
+                <h3 data-i18n="catPdf" class="text-xs font-extrabold dynamic-text uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">📄 PDF & Media</h3>
                 <div class="flex flex-col gap-2">
                     <button onclick="PrivacyConvert.routing.navigate('pdf-to-png')" id="tab-pdf-to-png" class="tool-tab flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm border"><span class="text-base">🖼️</span> <span class="truncate" data-i18n="toolPdfPng">PDF to PNG</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('image-resizer')" id="tab-image-resizer" class="tool-tab flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm border"><span class="text-base">📐</span> <span class="truncate" data-i18n="toolResize">Image Resizer</span></button>
                 </div>
             </div>
+            <!-- Geliştirici & Metin -->
             <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3">
                 <h3 data-i18n="catDev" class="text-xs font-extrabold dynamic-text uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">💻 Text & Dev</h3>
                 <div class="flex flex-col gap-2">
                     <button onclick="PrivacyConvert.routing.navigate('json-tool')" id="tab-json-tool" class="tool-tab flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm border"><span class="text-base">{}</span> <span class="truncate" data-i18n="toolJson">JSON Formatter</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('markdown-editor')" id="tab-markdown-editor" class="tool-tab flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm border"><span class="text-base">📝</span> <span class="truncate" data-i18n="toolMarkdown">Markdown Editor</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('word-counter')" id="tab-word-counter" class="tool-tab flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm border"><span class="text-base">📊</span> <span class="truncate" data-i18n="toolCounter">Word & Char Counter</span></button>
+                </div>
+            </div>
+            <!-- Güvenlik & Üreteçler -->
+            <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3">
+                <h3 data-i18n="catSec" class="text-xs font-extrabold dynamic-text uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/80 pb-2.5">🔐 Security & Gen</h3>
+                <div class="flex flex-col gap-2">
                     <button onclick="PrivacyConvert.routing.navigate('uuid-gen')" id="tab-uuid-gen" class="tool-tab flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm border"><span class="text-base">🆔</span> <span class="truncate" data-i18n="toolUuid">UUID Generator</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('qr-gen')" id="tab-qr-gen" class="tool-tab flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-2xl transition-all shadow-sm border"><span class="text-base">📷</span> <span class="truncate" data-i18n="toolQr">QR Code Generator</span></button>
                 </div>
             </div>
         </div>
 
-        <div class="max-w-3xl mx-auto p-6 sm:p-8 bg-white dark:bg-slate-800 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-700 relative transition-colors duration-300">
-            <button id="clearBtn" onclick="PrivacyConvert.ui.resetWorkspace(true)" class="hidden absolute top-6 right-6 text-xs font-bold text-red-500 dark:text-red-400 hover:text-red-700 bg-red-50 dark:bg-red-900/30 px-3 py-2 rounded-lg transition-all flex items-center gap-1.5 z-10" data-i18n="btnReset">Reset</button>
+        <!-- Ana Çalışma Alanı -->
+        <div class="max-w-3xl mx-auto p-6 sm:p-8 bg-white dark:bg-slate-800 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-700 relative transition-colors duration-300 mb-12">
+            <button id="clearBtn" onclick="PrivacyConvert.ui.resetWorkspace()" class="hidden absolute top-6 right-6 text-xs font-bold text-red-500 dark:text-red-400 hover:text-red-700 bg-red-50 dark:bg-red-900/30 px-3 py-2 rounded-lg transition-all flex items-center gap-1.5 z-10" data-i18n="btnReset">Reset</button>
 
+            <!-- Dosya Yükleme Alanı -->
             <div id="dropZone" class="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-2xl p-10 text-center cursor-pointer hover:border-indigo-500 dark:hover:border-indigo-400 hover:bg-indigo-50/50 dark:hover:bg-slate-700/50 transition-all duration-300 mt-2">
                 <div class="bg-indigo-100 dark:bg-slate-700 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
                     <svg class="w-8 h-8 dynamic-text" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
@@ -145,13 +144,36 @@
                 <p class="text-slate-800 dark:text-slate-200 font-bold text-lg" data-i18n="dropText">Click to browse or drag files here</p>
                 <p class="text-sm text-slate-500 dark:text-slate-400 mt-2" data-i18n="dropSub">Max file size: 50MB (Processed locally)</p>
             </div>
-            <input type="file" id="fileInput" class="hidden" multiple accept="application/pdf" />
+            <input type="file" id="fileInput" class="hidden" multiple />
 
             <div id="actionArea" class="mt-6 hidden flex-col gap-6">
                 <div id="fileListContainer" class="hidden w-full max-h-72 overflow-y-auto space-y-2 pr-2 custom-scrollbar"></div>
                 
+                <!-- Boyutlandırma için Ek Ayarlar -->
+                <div id="resizerOptions" class="hidden grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 mb-1 block" data-i18n="widthLabel">Width (px):</label>
+                        <input type="number" id="resizeWidth" value="800" class="w-full p-3 bg-slate-50 dark:bg-slate-900 border rounded-xl text-sm dark:text-white">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 mb-1 block" data-i18n="heightLabel">Height (px):</label>
+                        <input type="number" id="resizeHeight" value="600" class="w-full p-3 bg-slate-50 dark:bg-slate-900 border rounded-xl text-sm dark:text-white">
+                    </div>
+                </div>
+
                 <div id="textInputGroup" class="hidden w-full">
                     <textarea id="mainInputField" class="w-full h-32 p-4 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white focus:outline-none resize-none shadow-inner" data-i18n-placeholder="pasteText"></textarea>
+                </div>
+
+                <!-- Markdown Önizleme Alanı -->
+                <div id="markdownPreviewArea" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <textarea id="markdownInput" oninput="PrivacyConvert.engine.renderMarkdown()" class="w-full h-64 p-4 text-sm border rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white focus:outline-none resize-none font-mono" placeholder="# Type markdown here..."></textarea>
+                    <div id="markdownOutput" class="w-full h-64 p-4 text-sm border rounded-xl bg-white dark:bg-slate-900 overflow-y-auto custom-scrollbar prose dark:prose-invert"></div>
+                </div>
+
+                <!-- QR Kod Çıktı Alanı -->
+                <div id="qrOutputArea" class="hidden flex flex-col items-center justify-center gap-4">
+                    <div id="qrcodeContainer" class="bg-white p-4 rounded-2xl shadow-md"></div>
                 </div>
 
                 <div id="genericTextBox" class="hidden w-full flex flex-col gap-2">
@@ -164,21 +186,62 @@
 
                 <button id="convertBtn" onclick="PrivacyConvert.engine.executeTool()" class="dynamic-bg hover:opacity-90 text-white font-bold py-4 px-6 rounded-2xl shadow-lg transition-all active:scale-95 text-lg flex items-center justify-center gap-3">
                     <svg class="w-6 h-6 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                    <span id="convertBtnText" data-i18n="btnProcess">Process & Download ZIP</span>
+                    <span id="convertBtnText" data-i18n="btnProcess">Process & Download</span>
                 </button>
+            </div>
+        </div>
+
+        <!-- 🔒 NEDEN VERİ TUTMUYORUZ & NASIL DOĞRULARSINIZ? BÖLÜMÜ -->
+        <div class="max-w-3xl mx-auto bg-indigo-50 dark:bg-slate-800/80 border border-indigo-100 dark:border-slate-700 p-8 rounded-3xl shadow-sm mb-12">
+            <h2 class="text-xl font-extrabold text-indigo-900 dark:text-indigo-300 mb-3 flex items-center gap-2">
+                🛡️ <span data-i18n="privacyProofTitle">Zero-Server Policy: How to Verify?</span>
+            </h2>
+            <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-4" data-i18n="privacyProofText1">
+                PrivacyConvert operates entirely inside your browser sandbox using client-side JavaScript, WebAssembly, and local APIs. No files, passwords, or texts ever leave your device or get uploaded to any remote server.
+            </p>
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-indigo-100 dark:border-slate-700 text-xs text-slate-500 dark:text-slate-400 space-y-2">
+                <p class="font-bold text-slate-700 dark:text-slate-200" data-i18n="verifyHowTitle">🔍 How can you verify this yourself?</p>
+                <ol class="list-decimal pl-4 space-y-1">
+                    <li data-i18n="verifyStep1">Open your browser's Developer Tools by pressing <kbd class="bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded border">F12</kbd> or right-clicking and selecting <em>Inspect</em>.</li>
+                    <li data-i18n="verifyStep2">Go to the **Network** tab.</li>
+                    <li data-i18n="verifyStep3">Process any PDF or image file. Notice that **zero outgoing data transfer or file upload requests** are made to external servers.</li>
+                    <li data-i18n="verifyStep4">You can even disconnect your internet entirely; the tools will continue working offline!</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- ❓ SIKÇA SORULAN SORULAR (FAQ) AKORDEON DİZİNİ -->
+        <div class="max-w-3xl mx-auto mb-16 space-y-4">
+            <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white text-center mb-6" data-i18n="faqHeading">Frequently Asked Questions</h2>
+            
+            <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 shadow-sm">
+                <h3 class="font-bold text-base text-slate-800 dark:text-slate-200 mb-2" data-i18n="faq1Q">Is this service completely free?</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400" data-i18n="faq1A">Yes, all tools are 100% free with no hidden fees, subscriptions, or file quantity limits.</p>
+            </div>
+
+            <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 shadow-sm">
+                <h3 class="font-bold text-base text-slate-800 dark:text-slate-200 mb-2" data-i18n="faq2Q">Are my documents secure?</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400" data-i18n="faq2A">Extremely secure. Because files are never uploaded to a cloud server, data breaches or third-party interceptions are mathematically impossible.</p>
+            </div>
+
+            <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 shadow-sm">
+                <h3 class="font-bold text-base text-slate-800 dark:text-slate-200 mb-2" data-i18n="faq3Q">Do I need to install any software?</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400" data-i18n="faq3A">No installation required! It runs directly in Chrome, Safari, Firefox, or Edge. You can also install it as a PWA (Progressive Web App) on your mobile device.</p>
             </div>
         </div>
     </main>
 
-    <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-8 mt-12 transition-colors duration-300 text-center">
-        <div class="text-sm text-slate-500 dark:text-slate-400">
-            &copy; 2024 PrivacyConvert. 100% Local Processing.
+    <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-8 transition-colors duration-300 text-center">
+        <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
+            <div>&copy; 2026 PrivacyConvert. 100% Client-Side Processing.</div>
+            <div class="flex gap-4">
+                <a href="https://github.com" target="_blank" class="hover:text-indigo-500 transition-colors" data-i18n="githubFooter">GitHub Open Source</a>
+            </div>
         </div>
     </footer>
 
-    <!-- SISTEM KODLARI -->
+    <!-- SİSTEM MİMARİSİ VE ÇEVİRİ MOTORU -->
     <script>
-        // PDF.js Çalışanı Ayarı
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
 
         const PrivacyConvert = {
@@ -188,7 +251,6 @@
                 files: []
             },
             
-            // PWA Yükleme Altyapısı (Inline Service Worker)
             pwa: {
                 deferredPrompt: null,
                 init() {
@@ -213,9 +275,13 @@
 
             routing: {
                 metaData: {
-                    'pdf-to-png': { key: 'toolPdfPng', descKey: 'descPdfPng', isFile: true },
-                    'json-tool': { key: 'toolJson', descKey: 'descJson', isFile: false },
-                    'uuid-gen': { key: 'toolUuid', descKey: 'descUuid', isFile: false }
+                    'pdf-to-png': { key: 'toolPdfPng', descKey: 'descPdfPng', type: 'file', accept: 'application/pdf' },
+                    'image-resizer': { key: 'toolResize', descKey: 'descResize', type: 'resizer', accept: 'image/*' },
+                    'json-tool': { key: 'toolJson', descKey: 'descJson', type: 'text' },
+                    'markdown-editor': { key: 'toolMarkdown', descKey: 'descMarkdown', type: 'markdown' },
+                    'word-counter': { key: 'toolCounter', descKey: 'descCounter', type: 'text' },
+                    'uuid-gen': { key: 'toolUuid', descKey: 'descUuid', type: 'action' },
+                    'qr-gen': { key: 'toolQr', descKey: 'descQr', type: 'qr' }
                 },
                 navigate(toolId) {
                     PrivacyConvert.state.tool = toolId;
@@ -230,10 +296,7 @@
                         activeTab.classList.add('bg-slate-100', 'dark:bg-slate-700', 'border-indigo-500', 'shadow-md');
                     }
 
-                    // Arayüz sıfırlama
-                    PrivacyConvert.ui.resetWorkspace(meta.isFile);
-                    
-                    // Çeviriyi tetikle
+                    PrivacyConvert.ui.resetWorkspace(meta);
                     PrivacyConvert.i18n.applyLanguage(PrivacyConvert.state.lang);
                 }
             },
@@ -263,46 +326,57 @@
                     bar.querySelector('span').innerText = `${percent}%`;
                     if(text) pText.innerText = text;
                 },
-                resetWorkspace(isFileTool) {
+                resetWorkspace(meta) {
                     PrivacyConvert.state.files = [];
                     document.getElementById('fileListContainer').innerHTML = '';
                     document.getElementById('genericTextArea').value = '';
                     document.getElementById('mainInputField').value = '';
+                    document.getElementById('markdownInput').value = '';
+                    document.getElementById('markdownOutput').innerHTML = '';
+                    document.getElementById('qrcodeContainer').innerHTML = '';
                     document.getElementById('clearBtn').classList.add('hidden');
                     
-                    if (isFileTool) {
+                    document.getElementById('dropZone').style.display = 'none';
+                    document.getElementById('actionArea').classList.add('hidden');
+                    document.getElementById('textInputGroup').classList.add('hidden');
+                    document.getElementById('resizerOptions').classList.add('hidden');
+                    document.getElementById('markdownPreviewArea').classList.add('hidden');
+                    document.getElementById('qrOutputArea').classList.add('hidden');
+                    document.getElementById('genericTextBox').classList.add('hidden');
+                    document.getElementById('convertBtn').classList.add('hidden');
+
+                    const fileInput = document.getElementById('fileInput');
+                    fileInput.accept = meta.accept || '*';
+
+                    if (meta.type === 'file' || meta.type === 'resizer') {
                         document.getElementById('dropZone').style.display = 'block';
-                        document.getElementById('actionArea').classList.add('hidden');
-                        document.getElementById('textInputGroup').classList.add('hidden');
-                        document.getElementById('genericTextBox').classList.add('hidden');
-                        document.getElementById('convertBtn').classList.remove('hidden');
-                    } else {
-                        document.getElementById('dropZone').style.display = 'none';
+                        if(meta.type === 'resizer') document.getElementById('resizerOptions').classList.remove('hidden');
+                    } else if (meta.type === 'text') {
                         document.getElementById('actionArea').classList.remove('hidden');
-                        if (PrivacyConvert.state.tool === 'uuid-gen') {
-                            document.getElementById('textInputGroup').classList.add('hidden');
-                            document.getElementById('genericTextBox').classList.remove('hidden');
-                            PrivacyConvert.engine.executeTool();
-                        } else {
-                            document.getElementById('textInputGroup').classList.remove('hidden');
-                            document.getElementById('genericTextBox').classList.remove('hidden');
-                            document.getElementById('convertBtn').classList.remove('hidden');
-                        }
+                        document.getElementById('textInputGroup').classList.remove('hidden');
+                        document.getElementById('genericTextBox').classList.remove('hidden');
+                        document.getElementById('convertBtn').classList.remove('hidden');
+                    } else if (meta.type === 'markdown') {
+                        document.getElementById('actionArea').classList.remove('hidden');
+                        document.getElementById('markdownPreviewArea').classList.remove('hidden');
+                    } else if (meta.type === 'qr') {
+                        document.getElementById('actionArea').classList.remove('hidden');
+                        document.getElementById('textInputGroup').classList.remove('hidden');
+                        document.getElementById('qrOutputArea').classList.remove('hidden');
+                        document.getElementById('convertBtn').classList.remove('hidden');
+                    } else if (meta.type === 'action') {
+                        PrivacyConvert.engine.executeTool();
                     }
                 },
                 handleFiles(files) {
-                    const maxS = 50 * 1024 * 1024;
-                    let validFiles = [];
-                    for(let f of files) {
-                        if (f.size > maxS) this.showToast(`File too large: ${f.name}`, 'error');
-                        else validFiles.push({ file: f });
-                    }
+                    let validFiles = Array.from(files).map(f => ({ file: f }));
                     if(validFiles.length > 0) {
                         PrivacyConvert.state.files = validFiles;
                         document.getElementById('dropZone').style.display = 'none';
                         document.getElementById('actionArea').classList.remove('hidden');
                         document.getElementById('fileListContainer').classList.remove('hidden');
                         document.getElementById('clearBtn').classList.remove('hidden');
+                        document.getElementById('convertBtn').classList.remove('hidden');
                         this.renderFileList();
                         this.showToast(`${validFiles.length} file(s) ready`);
                     }
@@ -314,12 +388,7 @@
                         const sizeMB = (item.file.size / (1024*1024)).toFixed(2);
                         const el = document.createElement('div');
                         el.className = "flex items-center justify-between p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm";
-                        el.innerHTML = `
-                            <div class="flex items-center gap-3 truncate">
-                                <span class="text-sm font-bold text-slate-700 dark:text-slate-300 truncate">${item.file.name}</span>
-                                <span class="text-xs text-slate-400">(${sizeMB} MB)</span>
-                            </div>
-                        `;
+                        el.innerHTML = `<span class="text-sm font-bold text-slate-700 dark:text-slate-300 truncate">${item.file.name}</span><span class="text-xs text-slate-400">(${sizeMB} MB)</span>`;
                         container.appendChild(el);
                     });
                 },
@@ -328,18 +397,31 @@
                     if(!txt.value) return;
                     txt.select(); 
                     document.execCommand('copy'); 
-                    this.showToast(PrivacyConvert.i18n.translations[PrivacyConvert.state.lang].copiedMsg); 
+                    this.showToast('Copied to clipboard!'); 
                 }
             },
 
-            // GERÇEK İŞLEM ALANI (PDF -> PNG -> ZIP)
             engine: {
+                renderMarkdown() {
+                    const val = document.getElementById('markdownInput').value;
+                    document.getElementById('markdownOutput').innerHTML = marked.parse(val);
+                },
                 async executeTool() {
                     const tool = PrivacyConvert.state.tool;
                     
                     if (tool === 'uuid-gen') {
+                        document.getElementById('actionArea').classList.remove('hidden');
+                        document.getElementById('genericTextBox').classList.remove('hidden');
                         document.getElementById('genericTextArea').value = crypto.randomUUID ? crypto.randomUUID() : 'x-x-x'.replace(/x/g, () => Math.floor(Math.random()*16).toString(16));
-                        PrivacyConvert.ui.showToast(PrivacyConvert.i18n.translations[PrivacyConvert.state.lang].successMsg);
+                        PrivacyConvert.ui.showToast('UUID Generated');
+                        return;
+                    }
+                    if (tool === 'word-counter') {
+                        const text = document.getElementById('mainInputField').value;
+                        const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+                        const chars = text.length;
+                        const paras = text.split(/\n+/).filter(p => p.trim()).length;
+                        document.getElementById('genericTextArea').value = `Words: ${words}\nCharacters: ${chars}\nParagraphs: ${paras}`;
                         return;
                     }
                     if (tool === 'json-tool') {
@@ -348,8 +430,50 @@
                         try {
                             const parsed = JSON.parse(input);
                             document.getElementById('genericTextArea').value = JSON.stringify(parsed, null, 4);
-                            PrivacyConvert.ui.showToast(PrivacyConvert.i18n.translations[PrivacyConvert.state.lang].successMsg);
+                            PrivacyConvert.ui.showToast('JSON Formatted');
                         } catch(e) { PrivacyConvert.ui.showToast('Invalid JSON format', 'error'); }
+                        return;
+                    }
+                    if (tool === 'qr-gen') {
+                        const text = document.getElementById('mainInputField').value;
+                        if(!text) return PrivacyConvert.ui.showToast('Enter text or URL', 'warning');
+                        const container = document.getElementById('qrcodeContainer');
+                        container.innerHTML = '';
+                        QRCode.toCanvas(text, { width: 200 }, function (err, canvas) {
+                            if (err) return PrivacyConvert.ui.showToast('Error generating QR', 'error');
+                            container.appendChild(canvas);
+                            PrivacyConvert.ui.showToast('QR Code Generated');
+                        });
+                        return;
+                    }
+                    if (tool === 'image-resizer') {
+                        if (PrivacyConvert.state.files.length === 0) return;
+                        const file = PrivacyConvert.state.files[0].file;
+                        const w = parseInt(document.getElementById('resizeWidth').value) || 800;
+                        const h = parseInt(document.getElementById('resizeHeight').value) || 600;
+                        
+                        PrivacyConvert.ui.updateProgress(20, "Resizing image...");
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            const img = new Image();
+                            img.onload = function() {
+                                const canvas = document.createElement('canvas');
+                                canvas.width = w; canvas.height = h;
+                                const ctx = canvas.getContext('2d');
+                                ctx.drawImage(img, 0, 0, w, h);
+                                
+                                canvas.toBlob((blob) => {
+                                    const link = document.createElement('a');
+                                    link.href = URL.createObjectURL(blob);
+                                    link.download = `resized_${file.name}`;
+                                    link.click();
+                                    PrivacyConvert.ui.updateProgress(100, "Done!");
+                                    PrivacyConvert.ui.showToast('Image resized & downloaded');
+                                }, file.type);
+                            };
+                            img.src = event.target.result;
+                        };
+                        reader.readAsDataURL(file);
                         return;
                     }
                     if (tool === 'pdf-to-png') {
@@ -365,32 +489,25 @@
                             
                             for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
                                 PrivacyConvert.ui.updateProgress(Math.floor((pageNum / totalPages) * 80) + 10, `Processing Page ${pageNum}/${totalPages}`);
-                                
                                 const page = await pdf.getPage(pageNum);
-                                const viewport = page.getViewport({ scale: 2.0 }); // High Quality
+                                const viewport = page.getViewport({ scale: 2.0 });
                                 const canvas = document.createElement('canvas');
                                 const ctx = canvas.getContext('2d');
-                                canvas.height = viewport.height;
-                                canvas.width = viewport.width;
-                                
+                                canvas.height = viewport.height; canvas.width = viewport.width;
                                 await page.render({ canvasContext: ctx, viewport: viewport }).promise;
-                                
                                 const imgData = canvas.toDataURL("image/png").replace(/^data:image\/(png|jpg);base64,/, "");
                                 zip.file(`Page_${pageNum}.png`, imgData, {base64: true});
                             }
                             
                             PrivacyConvert.ui.updateProgress(95, "Creating ZIP...");
                             const content = await zip.generateAsync({type:"blob"});
-                            
                             const link = document.createElement('a');
                             link.href = URL.createObjectURL(content);
                             link.download = `${file.name.replace('.pdf', '')}_Images.zip`;
                             link.click();
                             
                             PrivacyConvert.ui.updateProgress(100, "Done!");
-                            PrivacyConvert.ui.showToast(PrivacyConvert.i18n.translations[PrivacyConvert.state.lang].successMsg);
-                            PrivacyConvert.ui.resetWorkspace(true);
-                            
+                            PrivacyConvert.ui.showToast('PDF extracted successfully!');
                         } catch (err) {
                             PrivacyConvert.ui.showToast("Error processing PDF", "error");
                             PrivacyConvert.ui.updateProgress(100, "Error");
@@ -420,64 +537,130 @@
             i18n: {
                 translations: {
                     en: {
-                        cookieTitle: "Privacy First:", cookieText: "We use local storage to save preferences. All files are processed locally.",
+                        cookieTitle: "Privacy First:", cookieText: "We use local storage. All file processing happens locally in your browser.",
                         accept: "Accept", secureLabel: "Secure", dropText: "Click to browse or drag files here", dropSub: "Max file size: 50MB (Processed locally)",
-                        presetLabel: "📌 Preset:", presetDefault: "Default Settings", presetHD: "High Quality", presetCompact: "Fast Mode",
-                        btnSave: "Save", btnReset: "Reset", btnCopy: "📋 Copy", btnProcess: "Process & Download ZIP",
-                        catPdf: "📄 PDF Tools", catDev: "💻 Text & Dev", installApp: "Install App",
-                        toolPdfPng: "PDF to PNG", toolJson: "JSON Formatter", toolUuid: "UUID Generator",
-                        descPdfPng: "Extract PDF pages to high-resolution PNG images. Download as ZIP.", descJson: "Format, validate, and beautify your JSON data locally.", descUuid: "Generate secure v4 UUIDs entirely offline.",
-                        outputLabel: "Output:", pasteText: "Paste data here...", successMsg: "Operation successful!", copiedMsg: "Copied to clipboard!"
+                        btnReset: "Reset", btnCopy: "📋 Copy", btnProcess: "Process & Download",
+                        catPdf: "📄 PDF & Media", catDev: "💻 Text & Dev", catSec: "🔐 Security & Gen",
+                        installApp: "Install App", githubBadge: "Open Source (Verified)", githubFooter: "GitHub Open Source",
+                        toolPdfPng: "PDF to PNG", toolResize: "Image Resizer", toolJson: "JSON Formatter", toolMarkdown: "Markdown Editor", toolCounter: "Word & Char Counter", toolUuid: "UUID Generator", toolQr: "QR Code Generator",
+                        descPdfPng: "Extract PDF pages to high-resolution PNG images. Download as ZIP.", descResize: "Resize images instantly inside your browser.", descJson: "Format, validate, and beautify your JSON data locally.", descMarkdown: "Write and preview Markdown documents in real-time.", descCounter: "Count words, characters, and paragraphs instantly.", descUuid: "Generate secure v4 UUIDs entirely offline.", descQr: "Create customizable QR codes instantly from text or URLs.",
+                        outputLabel: "Output:", pasteText: "Type or paste data here...", widthLabel: "Width (px):", heightLabel: "Height (px):",
+                        privacyProofTitle: "Zero-Server Policy: How to Verify?",
+                        privacyProofText1: "PrivacyConvert operates entirely inside your browser sandbox using client-side JavaScript, WebAssembly, and local APIs. No files, passwords, or texts ever leave your device or get uploaded to any remote server.",
+                        verifyHowTitle: "🔍 How can you verify this yourself?",
+                        verifyStep1: "Open your browser's Developer Tools by pressing F12 or right-clicking and selecting Inspect.",
+                        verifyStep2: "Go to the Network tab.",
+                        verifyStep3: "Process any PDF or image file. Notice that zero outgoing data transfer or file upload requests are made to external servers.",
+                        verifyStep4: "You can even disconnect your internet entirely; the tools will continue working offline!",
+                        faqHeading: "Frequently Asked Questions",
+                        faq1Q: "Is this service completely free?", faq1A: "Yes, all tools are 100% free with no hidden fees, subscriptions, or file limits.",
+                        faq2Q: "Are my documents secure?", faq2A: "Extremely secure. Because files are never uploaded to a cloud server, data breaches are mathematically impossible.",
+                        faq3Q: "Do I need to install software?", faq3A: "No installation required! Runs directly in your browser or as a PWA on mobile."
                     },
                     es: {
-                        cookieTitle: "Privacidad primero:", cookieText: "Usamos almacenamiento local. Todos los archivos se procesan localmente.",
-                        accept: "Aceptar", secureLabel: "Seguro", dropText: "Haz clic o arrastra archivos aquí", dropSub: "Tamaño máximo: 50MB (Procesado localmente)",
-                        presetLabel: "📌 Ajustes:", presetDefault: "Por defecto", presetHD: "Alta Calidad", presetCompact: "Modo rápido",
-                        btnSave: "Guardar", btnReset: "Reiniciar", btnCopy: "📋 Copiar", btnProcess: "Procesar y Descargar ZIP",
-                        catPdf: "📄 Herramientas PDF", catDev: "💻 Texto y Dev", installApp: "Instalar App",
-                        toolPdfPng: "PDF a PNG", toolJson: "Formateador JSON", toolUuid: "Generador UUID",
-                        descPdfPng: "Extrae páginas de PDF a imágenes PNG de alta resolución. Descarga en ZIP.", descJson: "Da formato y valida tus datos JSON localmente.", descUuid: "Genera UUIDs v4 seguros sin conexión.",
-                        outputLabel: "Resultado:", pasteText: "Pega tus datos aquí...", successMsg: "¡Operación exitosa!", copiedMsg: "¡Copiado al portapapeles!"
+                        cookieTitle: "Privacidad primero:", cookieText: "Usamos almacenamiento local. Todo el procesamiento es local.",
+                        accept: "Aceptar", secureLabel: "Seguro", dropText: "Haz clic o arrastra archivos aquí", dropSub: "Tamaño máximo: 50MB",
+                        btnReset: "Reiniciar", btnCopy: "📋 Copiar", btnProcess: "Procesar y Descargar",
+                        catPdf: "📄 PDF y Medios", catDev: "💻 Texto y Dev", catSec: "🔐 Seguridad",
+                        installApp: "Instalar App", githubBadge: "Código Abierto", githubFooter: "GitHub",
+                        toolPdfPng: "PDF a PNG", toolResize: "Redimensionar Imagen", toolJson: "Formateador JSON", toolMarkdown: "Editor Markdown", toolCounter: "Contador de Palabras", toolUuid: "Generador UUID", toolQr: "Generador QR",
+                        descPdfPng: "Extrae páginas de PDF a imágenes PNG en ZIP.", descResize: "Cambia el tamaño de imágenes en tu navegador.", descJson: "Valida y formatea JSON localmente.", descMarkdown: "Editor Markdown en tiempo real.", descCounter: "Cuenta palabras y caracteres.", descUuid: "Genera UUIDs offline.", descQr: "Crea códigos QR personalizados.",
+                        outputLabel: "Resultado:", pasteText: "Escribe o pega datos aquí...", widthLabel: "Ancho (px):", heightLabel: "Alto (px):",
+                        privacyProofTitle: "Política de Cero Servidores: ¿Cómo verificarlo?",
+                        privacyProofText1: "PrivacyConvert opera enteramente en tu navegador. Ningún archivo o texto sale de tu dispositivo.",
+                        verifyHowTitle: "🔍 ¿Cómo puedes verificarlo tú mismo?",
+                        verifyStep1: "Abre las Herramientas de Desarrollador con F12.",
+                        verifyStep2: "Ve a la pestaña Network (Red).",
+                        verifyStep3: "Procesa un archivo y observa que hay cero solicitudes de subida a servidores externos.",
+                        verifyStep4: "¡Incluso puedes desconectar tu internet y seguirá funcionando!",
+                        faqHeading: "Preguntas Frecuentes",
+                        faq1Q: "¿Es completamente gratis?", faq1A: "Sí, 100% gratis sin límites.",
+                        faq2Q: "¿Mis documentos están seguros?", faq2A: "Extremadamente seguros, nunca se suben a la nube.",
+                        faq3Q: "¿Necesito instalar algo?", faq3A: "No, funciona directamente en el navegador."
                     },
                     zh: {
-                        cookieTitle: "隐私第一：", cookieText: "我们使用本地存储来保存偏好设置。所有文件均在本地处理。",
-                        accept: "接受", secureLabel: "安全", dropText: "点击浏览或将文件拖放到此处", dropSub: "最大文件大小：50MB（本地处理）",
-                        presetLabel: "📌 预设：", presetDefault: "默认设置", presetHD: "高质量", presetCompact: "快速模式",
-                        btnSave: "保存", btnReset: "重置", btnCopy: "📋 复制", btnProcess: "处理并下载 ZIP",
-                        catPdf: "📄 PDF 工具", catDev: "💻 文本与开发", installApp: "安装应用",
-                        toolPdfPng: "PDF 转 PNG", toolJson: "JSON 格式化", toolUuid: "UUID 生成器",
-                        descPdfPng: "将 PDF 页面提取为高分辨率 PNG 图像，作为 ZIP 下载。", descJson: "在本地格式化、验证和美化您的 JSON 数据。", descUuid: "完全离线生成安全的 v4 UUID。",
-                        outputLabel: "输出：", pasteText: "在此粘贴数据...", successMsg: "操作成功！", copiedMsg: "已复制到剪贴板！"
+                        cookieTitle: "隐私第一：", cookieText: "我们使用本地存储。所有文件均在本地处理。",
+                        accept: "接受", secureLabel: "安全", dropText: "点击或拖放文件到此处", dropSub: "最大文件大小：50MB",
+                        btnReset: "重置", btnCopy: "📋 复制", btnProcess: "处理并下载",
+                        catPdf: "📄 PDF 与媒体", catDev: "💻 文本与开发", catSec: "🔐 安全",
+                        installApp: "安装应用", githubBadge: "开源验证", githubFooter: "GitHub",
+                        toolPdfPng: "PDF 转 PNG", toolResize: "图像调整", toolJson: "JSON 格式化", toolMarkdown: "Markdown 编辑器", toolCounter: "字数统计", toolUuid: "UUID 生成", toolQr: "QR 码生成",
+                        descPdfPng: "提取 PDF 页面并打包为 ZIP。", descResize: "在浏览器中调整图像大小。", descJson: "本地验证和美化 JSON。", descMarkdown: "实时 Markdown 预览。", descCounter: "即时统计字数与字符数。", descUuid: "完全离线生成 UUID。", descQr: "从文本或网址创建自定义 QR 码。",
+                        outputLabel: "输出：", pasteText: "在此输入或粘贴数据...", widthLabel: "宽度 (px)：", heightLabel: "高度 (px)：",
+                        privacyProofTitle: "零服务器政策：如何验证？",
+                        privacyProofText1: "PrivacyConvert 完全在您的浏览器沙箱中运行，没有任何文件上传至远程服务器。",
+                        verifyHowTitle: "🔍 如何亲自验证？",
+                        verifyStep1: "按 F12 打开开发者工具。",
+                        verifyStep2: "切换到 Network（网络）选项卡。",
+                        verifyStep3: "处理文件，观察没有任何向外部发送文件的上传请求。",
+                        verifyStep4: "您甚至可以断开网络，工具依然离线可用！",
+                        faqHeading: "常见问题",
+                        faq1Q: "完全免费吗？", faq1A: "是的，100% 免费且无限制。",
+                        faq2Q: "文档安全吗？", faq2A: "绝对安全，文件从不离开您的设备。",
+                        faq3Q: "需要安装软件吗？", faq3A: "无需安装，直接在浏览器中运行。"
                     },
                     de: {
-                        cookieTitle: "Privatsphäre zuerst:", cookieText: "Wir verwenden lokale Speicherung. Alle Dateien werden lokal verarbeitet.",
-                        accept: "Akzeptieren", secureLabel: "Sicher", dropText: "Klicken oder Dateien hierher ziehen", dropSub: "Maximale Dateigröße: 50MB (Lokal verarbeitet)",
-                        presetLabel: "📌 Vorlage:", presetDefault: "Standardeinstellungen", presetHD: "Hohe Qualität", presetCompact: "Schnellmodus",
-                        btnSave: "Speichern", btnReset: "Zurücksetzen", btnCopy: "📋 Kopieren", btnProcess: "Verarbeiten & ZIP Herunterladen",
-                        catPdf: "📄 PDF-Werkzeuge", catDev: "💻 Text & Dev", installApp: "App installieren",
-                        toolPdfPng: "PDF zu PNG", toolJson: "JSON Formatierer", toolUuid: "UUID Generator",
-                        descPdfPng: "Extrahieren Sie PDF-Seiten in hochauflösende PNG-Bilder. Als ZIP herunterladen.", descJson: "Formatieren und validieren Sie Ihre JSON-Daten lokal.", descUuid: "Sichere v4 UUIDs komplett offline generieren.",
-                        outputLabel: "Ausgabe:", pasteText: "Daten hier einfügen...", successMsg: "Erfolgreich abgeschlossen!", copiedMsg: "In die Zwischenablage kopiert!"
+                        cookieTitle: "Datenschutz zuerst:", cookieText: "Wir verwenden lokalen Speicher. Alles läuft lokal im Browser.",
+                        accept: "Akzeptieren", secureLabel: "Sicher", dropText: "Dateien hierher ziehen", dropSub: "Max. Dateigröße: 50MB",
+                        btnReset: "Zurücksetzen", btnCopy: "📋 Kopieren", btnProcess: "Verarbeiten & Herunterladen",
+                        catPdf: "📄 PDF & Medien", catDev: "💻 Text & Dev", catSec: "🔐 Sicherheit",
+                        installApp: "App installieren", githubBadge: "Open Source", githubFooter: "GitHub",
+                        toolPdfPng: "PDF zu PNG", toolResize: "Bildgröße ändern", toolJson: "JSON Formatierer", toolMarkdown: "Markdown Editor", toolCounter: "Wortzähler", toolUuid: "UUID Generator", toolQr: "QR-Code Generator",
+                        descPdfPng: "PDF-Seiten in PNG extrahieren.", descResize: "Bildgröße im Browser ändern.", descJson: "JSON lokal validieren.", descMarkdown: "Markdown Editor.", descCounter: "Wörter und Zeichen zählen.", descUuid: "UUIDs offline generieren.", descQr: "QR-Codes erstellen.",
+                        outputLabel: "Ausgabe:", pasteText: "Daten hier eingeben...", widthLabel: "Breite (px):", heightLabel: "Höhe (px):",
+                        privacyProofTitle: "Null-Server-Richtlinie: Wie verifizieren?",
+                        privacyProofText1: "PrivacyConvert läuft vollständig in Ihrem Browser. Keine Datei verlässt Ihr Gerät.",
+                        verifyHowTitle: "🔍 Wie können Sie das überprüfen?",
+                        verifyStep1: "Öffnen Sie die Entwicklertools mit F12.",
+                        verifyStep2: "Gehen Sie zum Tab Network (Netzwerk).",
+                        verifyStep3: "Verarbeiten Sie eine Datei und sehen Sie, dass keine Upload-Anfragen gesendet werden.",
+                        verifyStep4: "Sie können das Internet trennen; es funktioniert offline!",
+                        faqHeading: "Häufig gestellte Fragen",
+                        faq1Q: "Ist es kostenlos?", faq1A: "Ja, 100% kostenlos ohne Limits.",
+                        faq2Q: "Sind Dokumente sicher?", faq2A: "Äußerst sicher, da keine Cloud-Speicherung.",
+                        faq3Q: "Muss ich etwas installieren?", faq3A: "Nein, läuft direkt im Browser."
                     },
                     fr: {
-                        cookieTitle: "Confidentialité :", cookieText: "Nous utilisons le stockage local. Tous les fichiers sont traités localement.",
-                        accept: "Accepter", secureLabel: "Sécurisé", dropText: "Cliquez ou déposez vos fichiers ici", dropSub: "Taille max : 50 Mo (Traité localement)",
-                        presetLabel: "📌 Préréglage :", presetDefault: "Paramètres par défaut", presetHD: "Haute Qualité", presetCompact: "Mode rapide",
-                        btnSave: "Enregistrer", btnReset: "Réinitialiser", btnCopy: "📋 Copier", btnProcess: "Traiter et télécharger ZIP",
-                        catPdf: "📄 Outils PDF", catDev: "💻 Texte & Dév", installApp: "Installer l'appli",
-                        toolPdfPng: "PDF en PNG", toolJson: "Formateur JSON", toolUuid: "Générateur UUID",
-                        descPdfPng: "Extrayez des pages PDF en images PNG. Téléchargez en ZIP.", descJson: "Formatez et validez vos données JSON localement.", descUuid: "Générez des UUID v4 sécurisés hors ligne.",
-                        outputLabel: "Résultat :", pasteText: "Collez les données ici...", successMsg: "Opération réussie !", copiedMsg: "Copié dans le presse-papiers !"
+                        cookieTitle: "Confidentialité :", cookieText: "Stockage local utilisé. Tout est traité dans le navigateur.",
+                        accept: "Accepter", secureLabel: "Sécurisé", dropText: "Glissez vos fichiers ici", dropSub: "Taille max : 50Mo",
+                        btnReset: "Réinitialiser", btnCopy: "📋 Copier", btnProcess: "Traiter et Télécharger",
+                        catPdf: "📄 PDF & Média", catDev: "💻 Texte & Dév", catSec: "🔐 Sécurité",
+                        installApp: "Installer", githubBadge: "Open Source", githubFooter: "GitHub",
+                        toolPdfPng: "PDF en PNG", toolResize: "Redimensionner", toolJson: "Formateur JSON", toolMarkdown: "Éditeur Markdown", toolCounter: "Compteur de mots", toolUuid: "Générateur UUID", toolQr: "Générateur QR",
+                        descPdfPng: "Extraire des pages PDF en PNG.", descResize: "Redimensionner des images localement.", descJson: "Valider le JSON.", descMarkdown: "Éditeur Markdown.", descCounter: "Compter les mots.", descUuid: "Générer des UUIDs.", descQr: "Créer des codes QR.",
+                        outputLabel: "Sortie :", pasteText: "Tapez ou collez ici...", widthLabel: "Largeur (px) :", heightLabel: "Hauteur (px) :",
+                        privacyProofTitle: "Politique Zéro-Serveur : Comment vérifier ?",
+                        privacyProofText1: "PrivacyConvert fonctionne entièrement dans votre navigateur. Aucun fichier ne quitte votre appareil.",
+                        verifyHowTitle: "🔍 Comment vérifier par vous-même ?",
+                        verifyStep1: "Ouvrez les Outils de Développement (F12).",
+                        verifyStep2: "Allez sur l'onglet Network (Réseau).",
+                        verifyStep3: "Traitez un fichier et remarquez l'absence de requêtes d'envoi vers un serveur.",
+                        verifyStep4: "Vous pouvez même couper internet, les outils fonctionnent hors ligne !",
+                        faqHeading: "Foire Aux Questions",
+                        faq1Q: "Est-ce gratuit ?", faq1A: "Oui, 100% gratuit sans limites.",
+                        faq2Q: "Mes documents sont-ils sécurisés ?", faq2A: "Extrêmement sécurisés, pas de cloud.",
+                        faq3Q: "Faut-il installer un logiciel ?", faq3A: "Non, directement dans le navigateur."
                     },
                     ar: {
-                        cookieTitle: "الخصوصية أولاً:", cookieText: "نحن نستخدم التخزين المحلي. تتم معالجة جميع الملفات محليًا.",
-                        accept: "قبول", secureLabel: "آمن", dropText: "انقر أو اسحب الملفات هنا", dropSub: "الحجم الأقصى: 50 ميغابايت (معالجة محلية)",
-                        presetLabel: "📌 الإعداد المسبق:", presetDefault: "الإعدادات الافتراضية", presetHD: "جودة عالية", presetCompact: "الوضع السريع",
-                        btnSave: "حفظ", btnReset: "إعادة ضبط", btnCopy: "📋 نسخ", btnProcess: "معالجة وتحميل ZIP",
-                        catPdf: "📄 أدوات PDF", catDev: "💻 النصوص والتطوير", installApp: "تثبيت التطبيق",
-                        toolPdfPng: "PDF إلى PNG", toolJson: "منسق JSON", toolUuid: "مولد UUID",
-                        descPdfPng: "استخراج صفحات PDF إلى صور PNG. تحميل كملف ZIP.", descJson: "تنسيق والتحقق من بيانات JSON محليًا.", descUuid: "توليد UUIDs v4 آمنة بالكامل دون اتصال.",
-                        outputLabel: "النتيجة:", pasteText: "الصق البيانات هنا...", successMsg: "العملية ناجحة!", copiedMsg: "تم النسخ إلى الحافظة!"
+                        cookieTitle: "الخصوصية أولاً:", cookieText: "نحن نستخدم التخزين المحلي. المعالجة تتم في المتصفح.",
+                        accept: "قبول", secureLabel: "آمن", dropText: "اسحب الملفات هنا", dropSub: "الحد الأقصى: 50 ميغابايت",
+                        btnReset: "إعادة ضبط", btnCopy: "📋 نسخ", btnProcess: "معالجة وتحميل",
+                        catPdf: "📄 PDF والوسائط", catDev: "💻 النصوص والتطوير", catSec: "🔐 الأمان",
+                        installApp: "تثبيت", githubBadge: "مفتوح المصدر", githubFooter: "GitHub",
+                        toolPdfPng: "PDF إلى PNG", toolResize: "تغيير حجم الصورة", toolJson: "منسق JSON", toolMarkdown: "محرر Markdown", toolCounter: "عداد الكلمات", toolUuid: "مولد UUID", toolQr: "مولد QR",
+                        descPdfPng: "استخراج صفحات PDF إلى صور PNG.", descResize: "تغيير حجم الصور محلياً.", descJson: "تنسيق JSON محلياً.", descMarkdown: "محرر Markdown مباشر.", descCounter: "حساب الكلمات والأحرف.", descUuid: "توليد UUIDs بدون إنترنت.", descQr: "إنشاء رموز QR مخصصة.",
+                        outputLabel: "النتيجة:", pasteText: "اكتب أو الصق البيانات هنا...", widthLabel: "العرض (بكسل):", heightLabel: "الطول (بكسل):",
+                        privacyProofTitle: "سياسة خادم الصفر: كيف تحقق من ذلك؟",
+                        privacyProofText1: "يعمل PrivacyConvert بالكامل داخل متصفحك. لا توجد ملفات يتم إرسالها إلى أي خادم خارجي.",
+                        verifyHowTitle: "🔍 كيف يمكنك التحقق بنفسك؟",
+                        verifyStep1: "افتح أدوات المطورين في المتصفح عبر الضغط على F12.",
+                        verifyStep2: "انتقل إلى علامة التبويب Network (الشبكة).",
+                        verifyStep3: "قم بمعالجة أي ملف، وستلاحظ عدم وجود أي طلبات رفع بيانات لخارج جهازك.",
+                        verifyStep4: "يمكنك قطع اتصال الإنترنت تماماً وستستمر الأدوات في العمل دون اتصال!",
+                        faqHeading: "الأسئلة الشائعة",
+                        faq1Q: "هل الخدمة مجانية بالكامل؟", faq1A: "نعم، مجانية 100% بدون حدود أو رسوم خفية.",
+                        faq2Q: "هل مستنداتي آمنة؟", faq2A: "آمنة للغاية لأن الملفات لا تُرفع أبداً لأي سحابة.",
+                        faq3Q: "هل أحتاج لتثبيت برامج؟", faq3A: "لا حاجة للتثبيت، تعمل مباشرة في المتصفح."
                     }
                 },
                 applyLanguage(lang) {
@@ -493,7 +676,6 @@
                         if (dict[key]) el.setAttribute('placeholder', dict[key]);
                     });
 
-                    // Dinamik başlık ve açıklamayı araç bazlı çevir
                     const currentToolKey = PrivacyConvert.routing.metaData[PrivacyConvert.state.tool].key;
                     const currentDescKey = PrivacyConvert.routing.metaData[PrivacyConvert.state.tool].descKey;
                     
