@@ -365,6 +365,31 @@
         </section>
     </main>
 
+    <!-- FOOTER: GitHub, Sertifika ve Telif Hakkı Bildirimi -->
+    <footer class="w-full border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 py-6 mt-auto transition-colors duration-300">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-medium text-slate-500 dark:text-slate-400">
+            
+            <!-- Yıl ve Telif Hakkı -->
+            <div class="flex items-center gap-2">
+                <span class="text-lg">🛡️</span>
+                <span>&copy; <script>document.write(new Date().getFullYear())</script> PrivacyConvert Sovereign OS. <span data-i18n="allRights">All rights reserved.</span></span>
+            </div>
+
+            <!-- GitHub & Sertifika İbareleri -->
+            <div class="flex items-center gap-4">
+                <a href="https://github.com/your-username/privacyconvert" target="_blank" rel="noopener noreferrer" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition flex items-center gap-1.5">
+                    <svg viewBox="0 0 24 24" class="w-4 h-4 fill-current"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    GitHub Open Source / MIT License
+                </a>
+                <div class="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-wider border border-slate-200 dark:border-slate-600 flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    CERT: SHA256-AIRGAPPED
+                </div>
+            </div>
+
+        </div>
+    </footer>
+
     <!-- ÇALIŞMA MOTORU VE YÖNETİM SİSTEMİ -->
     <script>
         try {
@@ -691,7 +716,7 @@
                             if (useBlobFallback) {
                                 blobChunks.push(processedBuffer);
                                 if (blobChunks.length > 50) {
-                                    await new Promise(r => setTimeout(r, 10)); // Memory yield safeguard
+                                    await new Promise(r => setTimeout(r, 10));
                                 }
                             } else {
                                 await writableStream.write(processedBuffer);
@@ -1257,7 +1282,7 @@
                             const buf = await file.arrayBuffer();
                             const loadingTask = pdfjsLib.getDocument({ data: buf });
                             const pdfDoc = await loadingTask.promise;
-                            const numPages = Math.min(pdfDoc.numPages, 10); // Sayfa sınırı güvenliği
+                            const numPages = Math.min(pdfDoc.numPages, 10);
                             const zip = new JSZip();
 
                             for (let i = 1; i <= numPages; i++) {
@@ -1373,7 +1398,7 @@
                         faq3Q: "How does large file handling work?", faq3A: "Using the Streams API and File System Access API, files are processed in 5MB memory-safe chunks directly to disk, preventing RAM overflow.",
                         faq4Q: "Can I use this completely offline?", faq4A: "Yes. Once loaded, you can disconnect your internet entirely and all 24 sovereign tools will function normally in air-gapped isolation.",
                         proBtn: "Get Pro", proModalTitle: "💎 Upgrade to Sovereign Pro", proModalDesc: "Unlock unlimited batch processing, cryptographic audit certificates, E2EE cloud sync, and P2P priority nodes.", activateKeyBtn: "Activate Pro License",
-                        payTrBtn: "PayTR / Credit Card (TL)", cryptoPayBtn: "Cryptomus / Crypto (USDT/BTC)"
+                        payTrBtn: "PayTR / Credit Card (TL)", cryptoPayBtn: "Cryptomus / Crypto (USDT/BTC)", allRights: "All rights reserved."
                     },
                     es: {
                         accept: "Aceptar", secureLabel: "Seguro", dropText: "Haga clic para buscar o arrastre archivos aquí (Stream seguro)",
@@ -1397,7 +1422,7 @@
                         faq3Q: "¿Cómo funciona el manejo de archivos grandes?", faq3A: "Usa la API Streams en fragmentos seguros.",
                         faq4Q: "¿Se puede usar completamente sin conexión?", faq4A: "Sí, en modo air-gapped absoluto.",
                         proBtn: "Obtener Pro", proModalTitle: "💎 Actualizar a Sovereign Pro", proModalDesc: "Desbloquee procesamiento por lotes ilimitado, certificados de auditoría y más.", activateKeyBtn: "Activar Licencia Pro",
-                        payTrBtn: "PayTR / Tarjeta (TL)", cryptoPayBtn: "Cryptomus / Cripto (USDT/BTC)"
+                        payTrBtn: "PayTR / Tarjeta (TL)", cryptoPayBtn: "Cryptomus / Cripto (USDT/BTC)", allRights: "Todos los derechos reservados."
                     },
                     zh: {
                         accept: "接受", secureLabel: "安全", dropText: "点击浏览或拖放文件至此 (内存安全流)",
@@ -1421,7 +1446,7 @@
                         faq3Q: "大文件是如何处理的？", faq3A: "利用Streams API进行分块处理。",
                         faq4Q: "可以完全离线使用吗？", faq4A: "可以，支持完全离线和物理隔离。",
                         proBtn: "获取Pro", proModalTitle: "💎 升级至 Sovereign Pro", proModalDesc: "解锁无限制批量处理、合规审计证书等高级功能。", activateKeyBtn: "激活Pro许可证",
-                        payTrBtn: "PayTR / 信用卡 (TL)", cryptoPayBtn: "Cryptomus / 加密货币 (USDT/BTC)"
+                        payTrBtn: "PayTR / 信用卡 (TL)", cryptoPayBtn: "Cryptomus / 加密货币 (USDT/BTC)", allRights: "版权所有."
                     },
                     de: {
                         accept: "Akzeptieren", secureLabel: "Sicher", dropText: "Klicken oder Dateien hierher ziehen",
@@ -1445,7 +1470,7 @@
                         faq3Q: "Wie werden große Dateien verarbeitet?", faq3A: "Über die Streams API direkt in Chunks.",
                         faq4Q: "Kann ich das komplett offline nutzen?", faq4A: "Ja, vollkommen air-gapped.",
                         proBtn: "Pro holen", proModalTitle: "💎 Auf Sovereign Pro upgraden", proModalDesc: "Schalten Sie unbegrenzte Stapelverarbeitung und Audit-Zertifikate frei.", activateKeyBtn: "Pro-Lizenz aktivieren",
-                        payTrBtn: "PayTR / Kreditkarte (TL)", cryptoPayBtn: "Cryptomus / Krypto (USDT/BTC)"
+                        payTrBtn: "PayTR / Kreditkarte (TL)", cryptoPayBtn: "Cryptomus / Krypto (USDT/BTC)", allRights: "Alle Rechte vorbehalten."
                     },
                     fr: {
                         accept: "Accepter", secureLabel: "Sécurisé", dropText: "Cliquez ou glissez les fichiers ici",
@@ -1469,7 +1494,7 @@
                         faq3Q: "Comment sont gérés les gros fichiers ?", faq3A: "Via l'API Streams en mémoire sécurisée.",
                         faq4Q: "Puis-je l'utiliser hors ligne ?", faq4A: "Oui, totalement air-gapped.",
                         proBtn: "Obtenir Pro", proModalTitle: "💎 Passer à Sovereign Pro", proModalDesc: "Débloquez le traitement par lots et les certificats d'audit.", activateKeyBtn: "Activer la licence Pro",
-                        payTrBtn: "PayTR / Carte (TL)", cryptoPayBtn: "Cryptomus / Crypto (USDT/BTC)"
+                        payTrBtn: "PayTR / Carte (TL)", cryptoPayBtn: "Cryptomus / Crypto (USDT/BTC)", allRights: "Tous droits réservés."
                     },
                     ar: {
                         accept: "قبول", secureLabel: "آمن", dropText: "انقر للتصفح أو اسحب الملفات هنا",
@@ -1489,11 +1514,11 @@
                         outputLabel: "مخرجات النظام / السجلات:", compareBtn: "مقارنة وإيجاد الفروق", pasteSecondaryText: "نص ثانوي للمقارنة...", cmdPlaceholder: "البحث عن الأدوات...",
                         faqTitle: "الأسئلة الشائعة وسياسة الخصوصية",
                         faq1Q: "هل تتم مشاركة بياناتي مع خوادم خارجية؟", faq1A: "لا. يعمل النظام بالكامل محلياً في متصفحك.",
-                        faq2Q: " ما هي معايير الامتثال المدعومة؟", faq2A: "متوافق مع GDPR و HIPAA و CCPA.",
+                        faq2Q: "ما هي معايير الامتثال المدعومة؟", faq2A: "متوافق مع GDPR و HIPAA و CCPA.",
                         faq3Q: "كيف يتم التعامل مع الملفات الكبيرة؟", faq3A: "عبر تقنية التدفق (Streams API) لمنع امتلاء الذاكرة.",
                         faq4Q: "هل يمكنني استخدام التطبيق بدون إنترنت؟", faq4A: "نعم، يعمل بشكل معزول تماماً (Air-Gapped).",
                         proBtn: "احصل على Pro", proModalTitle: "💎 الترقية إلى Sovereign Pro", proModalDesc: "افتح ميزات المعالجة الجماعية غير المحدودة وشهادات التدقيق.", activateKeyBtn: "تفعيل ترخيص Pro",
-                        payTrBtn: "PayTR / بطاقة ائتمان (TL)", cryptoPayBtn: "Cryptomus / كريبتو (USDT/BTC)"
+                        payTrBtn: "PayTR / بطاقة ائتمان (TL)", cryptoPayBtn: "Cryptomus / كريبتو (USDT/BTC)", allRights: "جميع الحقوق محفوظة."
                     }
                 },
                 applyLanguage(lang) {
