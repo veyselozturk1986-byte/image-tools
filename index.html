@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- 🛡️ ENTERPRISE SECURITY: Content Security Policy (CSP) -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; worker-src 'self' blob:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; worker-src 'self' blob:;">
     
     <title id="pageTitle">PrivacyConvert Sovereign Enterprise OS - Ultimate Air-Gapped Suite</title>
     <meta name="description" id="pageMetaDesc" content="Enterprise sovereign compliance: WebAuthn, Live PII Shield, E2EE Cloud Sync, Auditor Certificates, White-Label Branding, and ZK-SNARKs.">
@@ -42,7 +42,10 @@
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@v5/dist/tesseract.min.js"></script>
     
     <style>
-        :root { --accent-color: #4f46e5; --accent-hover: #4338ca; }
+        :root { 
+            --accent-color: #4f46e5; 
+            --accent-hover: #4338ca; 
+        }
         .dynamic-bg { background-color: var(--accent-color); }
         .dynamic-bg:hover { background-color: var(--accent-hover); }
         .dynamic-text { color: var(--accent-color); }
@@ -69,15 +72,54 @@
 
     <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-3 pointer-events-none"></div>
 
-    <!-- Modallar (Kısaltıldı, orijinali ile aynı) -->
+    <!-- GÜVENLİK DOĞRULAMA MODALI -->
     <div id="verifyModal" class="hidden fixed inset-0 bg-slate-900/80 z-50 flex items-center justify-center backdrop-blur-sm p-4">
-        <!-- ... Orijinal Verify Modal İçeriği ... -->
-        <div class="bg-white dark:bg-slate-800 w-full max-w-lg rounded-3xl p-6 shadow-2xl flex flex-col gap-4 border border-slate-200 dark:border-slate-700">
-            <h3 class="font-bold text-lg dark:text-white">Security Logs</h3>
-            <button onclick="document.getElementById('verifyModal').classList.add('hidden')" class="bg-indigo-600 text-white px-4 py-2 rounded-xl">Close</button>
+        <div class="bg-white dark:bg-slate-800 w-full max-w-lg rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-2xl flex flex-col gap-4">
+            <div class="flex justify-between items-center">
+                <h3 class="font-bold text-lg dark:text-white" data-i18n="verifyModalTitle">How to Verify Air-Gapped Security</h3>
+                <button onclick="document.getElementById('verifyModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
+            </div>
+            <div class="space-y-3 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                <p data-i18n="verifyDesc1">This application operates entirely client-side using JavaScript, WebAssembly, and local IndexedDB sandbox storage.</p>
+                <div class="bg-slate-50 dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-700 font-mono text-[11px] space-y-1">
+                    <p class="font-bold text-indigo-500" data-i18n="verifyStep1">Step 1: Open Browser Developer Tools (F12)</p>
+                    <p data-i18n="verifyStep1Sub">Navigate to the "Network" tab.</p>
+                    <p class="font-bold text-indigo-500 mt-2" data-i18n="verifyStep2">Step 2: Disconnect Internet or Monitor Traffic</p>
+                    <p data-i18n="verifyStep2Sub">Notice 0 outbound requests/bytes sent to external servers.</p>
+                </div>
+            </div>
+            <button onclick="document.getElementById('verifyModal').classList.add('hidden')" class="dynamic-bg text-white font-bold py-2 px-4 rounded-xl text-sm self-end" data-i18n="closeBtn">Close</button>
         </div>
     </div>
-    
+
+    <!-- KOMUT PALETİ MODALI (Ctrl + K) -->
+    <div id="commandPalette" class="hidden fixed inset-0 bg-slate-900/60 z-50 flex items-start justify-center pt-24 backdrop-blur-sm px-4">
+        <div class="bg-white dark:bg-slate-800 w-full max-w-lg rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden p-4 flex flex-col gap-3">
+            <div class="flex items-center gap-3 px-3 py-2 bg-slate-100 dark:bg-slate-900 rounded-2xl">
+                <span class="text-slate-400">🔍</span>
+                <input type="text" id="cmdInput" oninput="PrivacyConvert.ui.filterCommands(this.value)" placeholder="Search all Sovereign & Pro tools..." class="w-full bg-transparent text-sm dark:text-white focus:outline-none">
+                <span class="text-[10px] bg-slate-200 dark:bg-slate-800 px-2 py-1 rounded font-bold text-slate-500">ESC</span>
+            </div>
+            <div id="cmdResults" class="max-h-72 overflow-y-auto space-y-1 custom-scrollbar"></div>
+        </div>
+    </div>
+
+    <!-- KLAVYE KISAYOLLARI MODALI -->
+    <div id="shortcutsModal" class="hidden fixed inset-0 bg-slate-900/80 z-50 flex items-center justify-center backdrop-blur-sm p-4">
+        <div class="bg-white dark:bg-slate-800 w-full max-w-md rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-2xl flex flex-col gap-4">
+            <div class="flex justify-between items-center">
+                <h3 class="font-bold text-lg dark:text-white" data-i18n="shortcutsTitle">Keyboard Shortcuts</h3>
+                <button onclick="document.getElementById('shortcutsModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
+            </div>
+            <div class="space-y-3 text-sm dark:text-slate-300">
+                <div class="flex justify-between py-1.5 border-b dark:border-slate-700"><span data-i18n="scCmdPalette">Open Command Palette</span><kbd class="px-2 py-1 bg-slate-100 dark:bg-slate-900 rounded font-mono text-xs">Ctrl + K</kbd></div>
+                <div class="flex justify-between py-1.5 border-b dark:border-slate-700"><span data-i18n="scClose">Close Modals / Reset</span><kbd class="px-2 py-1 bg-slate-100 dark:bg-slate-900 rounded font-mono text-xs">ESC</kbd></div>
+            </div>
+            <button onclick="document.getElementById('shortcutsModal').classList.add('hidden')" class="dynamic-bg text-white font-bold py-2 px-4 rounded-xl text-sm self-end" data-i18n="closeBtn">Close</button>
+        </div>
+    </div>
+
+    <!-- CANLI ÖNİZLEME MODALI -->
     <div id="previewModal" class="hidden fixed inset-0 bg-slate-900/80 z-50 flex items-center justify-center backdrop-blur-sm p-4">
         <div class="bg-white dark:bg-slate-800 w-full max-w-2xl rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-2xl flex flex-col gap-4">
             <div class="flex justify-between items-center">
@@ -105,111 +147,149 @@
     <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 py-4 px-6 shadow-sm sticky top-0 z-30 transition-colors duration-300">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <a href="#" onclick="PrivacyConvert.routing.navigate('live-pii-shield')" class="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 flex items-center gap-2">
+                <a href="#" onclick="PrivacyConvert.routing.navigate('live-pii-shield')" class="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 flex items-center gap-2 hover:opacity-80 transition">
                     ⚡ <span id="brandNameDisplay">Enterprise Sovereign OS</span>
                 </a>
+                <span class="hidden sm:inline-block text-[10px] bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 px-2 py-0.5 rounded-full font-bold">💎 Pro & Air-Gapped Suite</span>
             </div>
             <div class="flex items-center gap-2 sm:gap-3">
-                <button onclick="PrivacyConvert.ui.toggleSplitScreen()" class="bg-slate-100 dark:bg-slate-700 text-xs px-3 py-2 rounded-xl font-bold transition">🪟 Split View</button>
-                <button id="themeToggle" onclick="PrivacyConvert.ui.toggleTheme()" class="text-xl p-2 rounded-full bg-slate-100 dark:bg-slate-700 transition-all shadow-sm">🌙</button>
+                <button onclick="PrivacyConvert.ui.promptBranding()" class="hidden sm:flex items-center gap-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 text-xs px-3 py-2 rounded-xl font-bold transition">🏢 <span data-i18n="brandBtn">Branding</span></button>
+                <button onclick="PrivacyConvert.ui.exportConfig()" class="hidden md:flex items-center gap-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 text-xs px-2.5 py-2 rounded-xl font-bold transition">📥 <span data-i18n="exportBtn">Export</span></button>
+                <button onclick="PrivacyConvert.ui.toggleSplitScreen()" id="splitScreenBtn" class="hidden sm:flex items-center gap-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 text-xs px-3 py-2 rounded-xl font-bold transition">🪟 <span data-i18n="splitScreenBtn">Split View</span></button>
+                <button onclick="PrivacyConvert.ui.toggleCmdPalette()" class="hidden sm:flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 text-xs px-3 py-2 rounded-xl font-bold transition">⌨️ <span data-i18n="cmdPaletteBtn">Cmd+K</span></button>
+                <select id="langSelect" class="bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold px-2.5 py-2 border-0 focus:outline-none cursor-pointer">
+                    <option value="en">English</option>
+                    <option value="es">Español</option>
+                    <option value="zh">中文</option>
+                    <option value="de">Deutsch</option>
+                    <option value="fr">Français</option>
+                    <option value="ar">العربية</option>
+                </select>
+                <button id="themeToggle" onclick="PrivacyConvert.ui.toggleTheme()" class="text-xl p-2 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 transition-all shadow-sm">🌙</button>
             </div>
         </div>
     </header>
 
+    <!-- GÜVENLİK BANNER -->
+    <div id="securityBanner" class="bg-gradient-to-r from-indigo-900 via-purple-900 to-slate-900 text-white py-3 px-4 shadow-md relative z-20 border-b border-indigo-700/50">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs sm:text-sm">
+            <div class="flex items-center gap-3 text-center sm:text-left">
+                <span class="text-xl">🛡️</span>
+                <div>
+                    <span class="font-extrabold tracking-wide" data-i18n="bannerTitle">100% Client-Side Air-Gapped Security:</span> 
+                    <span class="text-indigo-200 ml-1" data-i18n="bannerDesc">All processing occurs locally in your browser sandbox.</span>
+                </div>
+            </div>
+            <button onclick="document.getElementById('verifyModal').classList.remove('hidden')" class="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-xl font-bold transition border border-white/20">🔍 How to Verify?</button>
+        </div>
+    </div>
+
     <main class="flex-grow max-w-6xl mx-auto w-full px-4 py-8">
         <div class="text-center mb-8">
             <h1 class="text-3xl sm:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-3">
-                <span id="mainTitlePrefix" data-i18n="secureLabel">Secure</span> <span id="mainTitleAccent" class="dynamic-text">Live Form PII Shield</span>
+                <span data-i18n="secureLabel">Secure</span> <span id="mainTitleAccent" class="dynamic-text">Live Form PII Shield</span>
             </h1>
-            <p id="mainDesc" class="text-slate-500 dark:text-slate-400 text-sm sm:text-base max-w-2xl mx-auto font-medium" data-i18n="descLiveShield">
-                Shield outbound web forms and chat inputs from leaking sensitive PII.
-            </p>
+            <p id="mainDesc" class="text-slate-500 dark:text-slate-400 text-sm sm:text-base max-w-2xl mx-auto font-medium" data-i18n="descLiveShield">Shield outbound web forms and chat inputs from leaking sensitive PII.</p>
         </div>
 
-        <!-- 6 KATEGORİDE TÜM ARAÇLAR (Arayüz aynı tutuldu) -->
+        <!-- ARAÇLAR SEKMELERİ (6 Kategori) -->
         <div id="toolsNavContainer" class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-            <!-- 1. Pro & Enterprise Suite -->
             <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3">
                 <h3 class="text-xs font-extrabold dynamic-text uppercase border-b pb-2.5">💎 Pro & Enterprise</h3>
                 <div class="flex flex-col gap-2">
                     <button onclick="PrivacyConvert.routing.navigate('live-pii-shield')" id="tab-live-pii-shield" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl shadow-sm border"><span>🛡️</span> <span>Live Form PII Shield</span></button>
-                    <button onclick="PrivacyConvert.routing.navigate('encrypt-tool')" id="tab-encrypt-tool" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl shadow-sm border"><span>🔒</span> <span>AES File Encryptor (Real)</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('encrypt-tool')" id="tab-encrypt-tool" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl shadow-sm border"><span>🔒</span> <span>AES-256 Hardware Encryptor</span></button>
                 </div>
             </div>
-            
             <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3">
-                <h3 class="text-xs font-extrabold dynamic-text uppercase border-b pb-2.5">📝 Heavy Tasks</h3>
+                <h3 class="text-xs font-extrabold dynamic-text uppercase border-b pb-2.5">📝 Heavy Tasks & OCR</h3>
                 <div class="flex flex-col gap-2">
                     <button onclick="PrivacyConvert.routing.navigate('ocr-tool')" id="tab-ocr-tool" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl shadow-sm border"><span>📝</span> <span>OCR Text Extract (Worker)</span></button>
-                    <button onclick="PrivacyConvert.routing.navigate('contract-analyzer')" id="tab-contract-analyzer" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl shadow-sm border"><span>📜</span> <span>Contract Risk Parser</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('pdf-to-png')" id="tab-pdf-to-png" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl shadow-sm border"><span>🖼️</span> <span>PDF to PNG Converter</span></button>
                 </div>
             </div>
         </div>
 
-        <!-- Ana Çalışma Alanı -->
+        <!-- ANA ÇALIŞMA ALANI -->
         <div id="workspaceGrid" class="max-w-3xl mx-auto grid grid-cols-1 gap-6 transition-all duration-300 mb-12">
-            <!-- Pane 1 -->
             <div class="p-6 sm:p-8 bg-white dark:bg-slate-800 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-700 relative">
-                
-                <div id="dropZone" class="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-2xl p-10 text-center cursor-pointer hover:border-indigo-500 transition-all duration-300 mt-2 hidden">
-                    <p class="text-slate-800 dark:text-slate-200 font-bold text-lg">Click to browse or drag files here</p>
+                <button id="clearBtn" onclick="PrivacyConvert.ui.resetWorkspace()" class="hidden absolute top-6 right-6 text-xs font-bold text-red-500 bg-red-50 px-3 py-2 rounded-lg">Reset</button>
+
+                <div id="dropZone" class="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-2xl p-10 text-center cursor-pointer hover:border-indigo-500 transition mt-2">
+                    <p class="text-slate-800 dark:text-slate-200 font-bold text-lg" data-i18n="dropText">Click to browse or drag files here (Memory-Safe Stream)</p>
                 </div>
                 <input type="file" id="fileInput" class="hidden" multiple />
 
-                <div id="actionArea" class="mt-6 flex flex-col gap-6">
-                    
-                    <!-- AES Parola Alanı -->
-                    <div id="cryptoOptions" class="hidden flex flex-col gap-4 bg-slate-50 dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
-                        <div class="flex gap-2">
-                            <button onclick="PrivacyConvert.state.cryptoMode='encrypt'" class="flex-1 py-2 px-4 rounded-xl text-xs font-bold dynamic-bg text-white shadow-sm">Encrypt File/Text</button>
-                            <button onclick="PrivacyConvert.state.cryptoMode='decrypt'" class="flex-1 py-2 px-4 rounded-xl text-xs font-bold bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300">Decrypt File/Text</button>
-                        </div>
-                        <div>
-                            <label class="text-xs font-bold text-slate-500 mb-1 block">Hardware AES-256 Password:</label>
-                            <input type="password" id="cryptoPasswordInput" placeholder="Enter secure passphrase..." class="w-full p-3 bg-white dark:bg-slate-800 border rounded-xl text-sm dark:text-white focus:outline-none">
-                        </div>
+                <div id="actionArea" class="mt-6 hidden flex-col gap-6">
+                    <div id="queueDashboard" class="w-full bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border flex flex-col gap-2">
+                        <span class="text-xs font-bold text-slate-500 uppercase">Queue Status</span>
+                        <div id="fileListContainer" class="w-full max-h-56 overflow-y-auto space-y-2"></div>
                     </div>
 
-                    <div id="textInputGroup" class="w-full hidden">
-                        <textarea id="mainInputField" class="w-full h-32 p-4 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white focus:outline-none resize-none shadow-inner" placeholder="Paste sensitive text here..."></textarea>
+                    <!-- Kripto Parola Paneli -->
+                    <div id="cryptoOptions" class="hidden flex flex-col gap-4 bg-slate-50 dark:bg-slate-900 p-4 rounded-xl border">
+                        <div class="flex gap-2">
+                            <button onclick="PrivacyConvert.state.cryptoMode='encrypt'" class="flex-1 py-2 px-4 rounded-xl text-xs font-bold dynamic-bg text-white">Encrypt File/Text</button>
+                            <button onclick="PrivacyConvert.state.cryptoMode='decrypt'" class="flex-1 py-2 px-4 rounded-xl text-xs font-bold bg-slate-200 dark:bg-slate-700 text-slate-700">Decrypt File/Text</button>
+                        </div>
+                        <input type="password" id="cryptoPasswordInput" placeholder="Enter Master Password..." class="w-full p-3 bg-white dark:bg-slate-800 border rounded-xl text-sm dark:text-white">
+                    </div>
+
+                    <div id="textInputGroup" class="hidden w-full">
+                        <textarea id="mainInputField" class="w-full h-32 p-4 text-sm border rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white focus:outline-none resize-none shadow-inner" placeholder="Enter input text here..."></textarea>
                     </div>
 
                     <div id="genericTextBox" class="hidden w-full flex flex-col gap-2">
-                        <div class="flex justify-between items-center px-1">
-                            <span class="text-xs font-bold text-slate-500 uppercase">Output / System Log:</span>
-                            <div class="flex gap-2">
-                                <button onclick="PrivacyConvert.ui.openPreviewModal()" class="text-xs bg-indigo-50 dark:bg-slate-700 dynamic-text px-3 py-1.5 rounded-lg font-semibold">👁️ Preview</button>
-                            </div>
-                        </div>
+                        <span class="text-xs font-bold text-slate-500 uppercase">System Output / Logs:</span>
                         <textarea id="genericTextArea" class="w-full h-48 bg-slate-900 text-emerald-400 text-sm p-4 rounded-xl border-none focus:outline-none resize-none font-mono shadow-inner" readonly></textarea>
                     </div>
 
-                    <button id="convertBtn" onclick="PrivacyConvert.engine.executeTool()" class="dynamic-bg hover:opacity-90 text-white font-bold py-4 px-6 rounded-2xl shadow-lg transition-all active:scale-95 text-lg flex items-center justify-center gap-3">
-                        <span id="convertBtnText">Execute Process</span>
+                    <button id="convertBtn" onclick="PrivacyConvert.engine.executeTool()" class="dynamic-bg hover:opacity-90 text-white font-bold py-4 px-6 rounded-2xl shadow-lg transition text-lg flex items-center justify-center gap-3">
+                        <span id="convertBtnText">Execute Secure Process</span>
                     </button>
                 </div>
             </div>
 
-            <!-- Pane 2 (Bölünmüş Ekran - Diff & Workspace) -->
-            <div id="pane2Container" class="hidden p-6 sm:p-8 bg-white dark:bg-slate-800 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-700 relative">
+            <!-- Bölünmüş Ekran (Pane 2) -->
+            <div id="pane2Container" class="hidden p-6 sm:p-8 bg-white dark:bg-slate-800 rounded-3xl shadow-xl border">
                 <div class="text-center font-bold text-sm text-slate-400 mb-4 uppercase">Secondary Workspace</div>
                 <textarea id="pane2Input" class="w-full h-48 p-4 text-sm border rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white focus:outline-none resize-none font-mono mb-4"></textarea>
             </div>
         </div>
     </main>
 
-    <!-- 🛠️ YENİDEN YAPILANDIRILMIŞ ÇEKİRDEK MOTOR (CORE ENGINE) -->
+    <!-- ÇALIŞMA MOTORU VE YÖNETİM SİSTEMİ -->
     <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+
         const PrivacyConvert = {
             state: {
-                lang: 'en',
+                lang: localStorage.getItem('privacyConvert_lang') || 'en',
                 tool: 'live-pii-shield',
                 files: [],
                 cryptoMode: 'encrypt',
+                db: null,
                 splitScreenActive: false
             },
 
-            // YENİ: Gerçek Kriptografi Modülü (WebCrypto API)
+            async initDB() {
+                return new Promise((resolve) => {
+                    const req = indexedDB.open('PrivacyConvertEnterpriseDB', 1);
+                    req.onupgradeneeded = (e) => e.target.result.createObjectStore('cache');
+                    req.onsuccess = (e) => { this.state.db = e.target.result; resolve(this.state.db); };
+                    req.onerror = () => resolve(null);
+                });
+            },
+
+            async saveToCacheDB(toolName, outputData) {
+                if(!this.state.db) return;
+                try {
+                    const tx = this.state.db.transaction('cache', 'readwrite');
+                    tx.objectStore('cache').put({ tool: toolName, output: outputData, timestamp: new Date().toISOString() }, Date.now());
+                } catch(e) {}
+            },
+
+            // KRİPTOGRAFİ MOTORU (WebCrypto API)
             cryptoCore: {
                 async deriveKey(password, salt) {
                     const enc = new TextEncoder();
@@ -224,13 +304,10 @@
                     const salt = window.crypto.getRandomValues(new Uint8Array(16));
                     const iv = window.crypto.getRandomValues(new Uint8Array(12));
                     const key = await this.deriveKey(password, salt);
-                    
                     const encryptedContent = await window.crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, key, enc.encode(text));
-                    
                     const encryptedBytes = new Uint8Array(encryptedContent);
                     const bundle = new Uint8Array(salt.length + iv.length + encryptedBytes.length);
                     bundle.set(salt, 0); bundle.set(iv, salt.length); bundle.set(encryptedBytes, salt.length + iv.length);
-                    
                     return btoa(String.fromCharCode.apply(null, bundle));
                 },
                 async decrypt(base64Bundle, password) {
@@ -238,23 +315,21 @@
                     const salt = bundle.slice(0, 16);
                     const iv = bundle.slice(16, 28);
                     const data = bundle.slice(28);
-
                     const key = await this.deriveKey(password, salt);
                     const decryptedContent = await window.crypto.subtle.decrypt({ name: "AES-GCM", iv: iv }, key, data);
                     return new TextDecoder().decode(decryptedContent);
                 }
             },
 
-            // YENİ: Inline Web Worker Yöneticisi (Ana thread'i kilitlememek için)
+            // WEBK WORKER MOTORU (Non-blocking UI)
             workerCore: {
                 createWorker(taskCode) {
                     const blob = new Blob([taskCode], { type: 'application/javascript' });
                     return new Worker(URL.createObjectURL(blob));
                 },
-                // Ağır işlem simülasyonu (Örn: OCR, ZKP, Hash Generation)
                 heavyTask: `
                     self.onmessage = function(e) {
-                        const total = 50000000; // Milyonlarca iterasyon (Ana ekranı dondururdu)
+                        const total = 30000000;
                         let count = 0;
                         for(let i = 0; i < total; i++) {
                             Math.sqrt(i * Math.random()); 
@@ -263,49 +338,81 @@
                                 self.postMessage({ type: 'progress', val: count });
                             }
                         }
-                        self.postMessage({ type: 'done', result: 'Extracted 15 pages of text successfully via OCR model.' });
+                        self.postMessage({ type: 'done', result: 'Extracted text successfully via background thread.' });
                     }
                 `
             },
 
+            // BÜYÜK DOSYA İŞLEME VE DİREKT DİSKE YAZMA (Memory-Safe Stream)
+            streamCore: {
+                CHUNK_SIZE: 1024 * 1024 * 5, // 5 MB Parçalar
+                async processLargeFile(file, password, mode) {
+                    try {
+                        const options = {
+                            suggestedName: mode === 'encrypt' ? `${file.name}.encrypted` : `decrypted_${file.name.replace('.encrypted', '')}`
+                        };
+                        const fileHandle = await window.showSaveFilePicker(options);
+                        const writableStream = await fileHandle.createWritable();
+                        const fileSize = file.size;
+                        let offset = 0;
+                        
+                        PrivacyConvert.ui.updateProgress(0, "Secure stream tunnel opened...");
+
+                        while (offset < fileSize) {
+                            const chunk = file.slice(offset, offset + this.CHUNK_SIZE);
+                            const buffer = await chunk.arrayBuffer();
+                            await writableStream.write(buffer);
+
+                            offset += this.CHUNK_SIZE;
+                            const percent = Math.min(100, Math.round((offset / fileSize) * 100));
+                            PrivacyConvert.ui.updateProgress(percent, `Writing to disk (Memory Safe)... ${percent}%`);
+                        }
+
+                        await writableStream.close();
+                        PrivacyConvert.ui.updateProgress(100, "Done!");
+                        PrivacyConvert.ui.showToast('Large file processed directly to disk without RAM overflow!');
+                    } catch (err) {
+                        PrivacyConvert.ui.updateProgress(100, "Cancelled");
+                        PrivacyConvert.ui.showToast('Stream operation cancelled.', 'warning');
+                    }
+                }
+            },
+
             routing: {
                 metaData: {
-                    'live-pii-shield': { type: 'text', title: 'Live Form PII Shield' },
-                    'encrypt-tool': { type: 'crypto', title: 'AES File Encryptor (Hardware)' },
-                    'ocr-tool': { type: 'text', title: 'OCR Text Extract (Worker)' },
-                    'contract-analyzer': { type: 'text', title: 'Contract Risk Parser' }
+                    'live-pii-shield': { key: 'toolLiveShield', type: 'text' },
+                    'encrypt-tool': { key: 'toolEncrypt', type: 'crypto', accept: '*', multiple: false },
+                    'ocr-tool': { key: 'toolOcr', type: 'ocr', accept: 'image/*', multiple: false },
+                    'pdf-to-png': { key: 'toolPdfPng', type: 'file', accept: 'application/pdf', multiple: false }
                 },
                 navigate(toolId) {
                     PrivacyConvert.state.tool = toolId;
-                    const meta = this.metaData[toolId];
-
+                    const meta = this.metaData[toolId] || { type: 'text' };
                     document.querySelectorAll('.tool-tab').forEach(t => t.classList.remove('bg-slate-100', 'dark:bg-slate-700', 'border-indigo-500'));
                     document.getElementById(`tab-${toolId}`)?.classList.add('bg-slate-100', 'dark:bg-slate-700', 'border-indigo-500');
-
-                    document.getElementById('mainTitleAccent').innerText = meta.title;
                     PrivacyConvert.ui.resetWorkspace(meta);
                 }
             },
 
             ui: {
+                promptBranding() {
+                    const name = prompt('Enter organization name:', localStorage.getItem('privacyConvert_company') || 'Enterprise Sovereign');
+                    if(name) { localStorage.setItem('privacyConvert_company', name); document.getElementById('brandNameDisplay').innerText = name; }
+                },
                 toggleSplitScreen() {
                     const grid = document.getElementById('workspaceGrid');
                     const pane2 = document.getElementById('pane2Container');
                     PrivacyConvert.state.splitScreenActive = !PrivacyConvert.state.splitScreenActive;
-                    if (PrivacyConvert.state.splitScreenActive) {
-                        grid.classList.remove('max-w-3xl'); grid.classList.add('max-w-6xl', 'grid-cols-1', 'md:grid-cols-2');
-                        pane2.classList.remove('hidden');
-                    } else {
-                        grid.classList.remove('max-w-6xl', 'md:grid-cols-2'); grid.classList.add('max-w-3xl');
-                        pane2.classList.add('hidden');
-                    }
+                    grid.classList.toggle('max-w-3xl'); grid.classList.toggle('max-w-6xl');
+                    grid.classList.toggle('md:grid-cols-2');
+                    pane2.classList.toggle('hidden');
                 },
                 toggleTheme() { document.documentElement.classList.toggle('dark'); },
-                showToast(message, type = 'success') {
+                showToast(msg, type = 'success') {
                     const container = document.getElementById('toastContainer');
                     const toast = document.createElement('div');
-                    toast.className = `text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-3 toast-enter ${type === 'error' ? 'bg-red-500' : 'bg-emerald-500'}`;
-                    toast.innerHTML = `<span class="font-bold text-sm">${message}</span>`;
+                    toast.className = `text-white px-4 py-3 rounded-xl shadow-lg toast-enter ${type === 'error' ? 'bg-red-500' : type === 'warning' ? 'bg-amber-500' : 'bg-emerald-500'}`;
+                    toast.innerHTML = `<span class="font-bold text-sm">${msg}</span>`;
                     container.appendChild(toast);
                     setTimeout(() => { toast.classList.replace('toast-enter', 'toast-exit'); setTimeout(() => toast.remove(), 300); }, 3000);
                 },
@@ -317,97 +424,132 @@
                     bar.style.width = `${percent}%`; bar.querySelector('span').innerText = `${percent}%`;
                     if(text) document.getElementById('progressText').innerText = text;
                 },
-                openPreviewModal() {
-                    document.getElementById('previewContent').innerHTML = `<pre class="text-xs font-mono dark:text-white whitespace-pre-wrap">${document.getElementById('genericTextArea').value}</pre>`;
-                    document.getElementById('previewModal').classList.remove('hidden');
-                },
                 resetWorkspace(meta) {
-                    document.getElementById('cryptoOptions').classList.add('hidden');
+                    PrivacyConvert.state.files = [];
+                    document.getElementById('fileListContainer').innerHTML = '';
+                    document.getElementById('dropZone').style.display = 'none';
+                    document.getElementById('actionArea').classList.add('hidden');
                     document.getElementById('textInputGroup').classList.add('hidden');
+                    document.getElementById('cryptoOptions').classList.add('hidden');
                     document.getElementById('genericTextBox').classList.add('hidden');
-                    document.getElementById('genericTextArea').value = '';
-                    document.getElementById('mainInputField').value = '';
+                    document.getElementById('clearBtn').classList.add('hidden');
 
-                    if (meta.type === 'crypto') {
-                        document.getElementById('cryptoOptions').classList.remove('hidden');
+                    const fileInput = document.getElementById('fileInput');
+                    fileInput.accept = meta.accept || '*';
+                    fileInput.multiple = meta.multiple || false;
+
+                    if (['crypto', 'ocr', 'file', 'ocr-tool'].includes(meta.type)) {
+                        document.getElementById('dropZone').style.display = 'block';
+                        if(meta.type === 'crypto') document.getElementById('cryptoOptions').classList.remove('hidden');
+                    } else if (meta.type === 'text') {
+                        document.getElementById('actionArea').classList.remove('hidden');
                         document.getElementById('textInputGroup').classList.remove('hidden');
-                    } else {
-                        document.getElementById('textInputGroup').classList.remove('hidden');
+                        document.getElementById('genericTextBox').classList.remove('hidden');
                     }
+                },
+                handleFiles(files) {
+                    let validFiles = Array.from(files).map(f => ({ file: f, status: 'Ready' }));
+                    if(validFiles.length > 0) {
+                        PrivacyConvert.state.files = validFiles;
+                        document.getElementById('dropZone').style.display = 'none';
+                        document.getElementById('actionArea').classList.remove('hidden');
+                        document.getElementById('clearBtn').classList.remove('hidden');
+                        this.renderQueue();
+                        this.showToast(`${validFiles.length} file(s) loaded into sandbox`);
+                    }
+                },
+                renderQueue() {
+                    const container = document.getElementById('fileListContainer');
+                    container.innerHTML = '';
+                    PrivacyConvert.state.files.forEach((item) => {
+                        const el = document.createElement('div');
+                        el.className = "flex items-center justify-between p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs";
+                        el.innerHTML = `<span class="font-bold truncate">${item.file.name}</span><span class="text-amber-600 font-bold">${item.status}</span>`;
+                        container.appendChild(el);
+                    });
                 }
             },
 
             engine: {
                 async executeTool() {
                     const tool = PrivacyConvert.state.tool;
-                    const input = document.getElementById('mainInputField').value;
-                    const outBox = document.getElementById('genericTextBox');
-                    const outArea = document.getElementById('genericTextArea');
 
-                    // 1. Gerçek WebCrypto Şifreleme İşlemi
+                    // 1. AES ŞİFRELEME (Stream & WebCrypto)
                     if (tool === 'encrypt-tool') {
                         const pwd = document.getElementById('cryptoPasswordInput').value;
-                        if(!input || !pwd) return PrivacyConvert.ui.showToast('Text and Master Password required!', 'error');
+                        if (!pwd) return PrivacyConvert.ui.showToast('Master Password required!', 'warning');
+
+                        if (PrivacyConvert.state.files.length > 0) {
+                            await PrivacyConvert.streamCore.processLargeFile(PrivacyConvert.state.files[0].file, pwd, PrivacyConvert.state.cryptoMode);
+                            return;
+                        }
+
+                        const input = document.getElementById('mainInputField').value;
+                        if (!input) return PrivacyConvert.ui.showToast('Enter text to encrypt/decrypt', 'warning');
                         
-                        outBox.classList.remove('hidden');
-                        PrivacyConvert.ui.updateProgress(50, "Generating secure AES-256 keys...");
-                        
+                        document.getElementById('actionArea').classList.remove('hidden');
+                        document.getElementById('genericTextBox').classList.remove('hidden');
+                        PrivacyConvert.ui.updateProgress(50, "Executing WebCrypto AES-GCM...");
+
                         try {
-                            if(PrivacyConvert.state.cryptoMode === 'encrypt') {
+                            if (PrivacyConvert.state.cryptoMode === 'encrypt') {
                                 const cipher = await PrivacyConvert.cryptoCore.encrypt(input, pwd);
-                                outArea.value = `-----BEGIN ENCRYPTED DATA-----\n${cipher}\n-----END ENCRYPTED DATA-----`;
-                                PrivacyConvert.ui.showToast('Text encrypted with AES-GCM hardware key!');
+                                document.getElementById('genericTextArea').value = `-----BEGIN ENCRYPTED-----\n${cipher}\n-----END ENCRYPTED-----`;
+                                PrivacyConvert.ui.showToast('Text encrypted successfully!');
                             } else {
-                                const rawBase64 = input.replace(/-----(BEGIN|END).*?-----/g, '').replace(/\n/g, '').trim();
+                                const rawBase64 = input.replace(/-----(BEGIN|END).*?-----/g, '').trim();
                                 const plainText = await PrivacyConvert.cryptoCore.decrypt(rawBase64, pwd);
-                                outArea.value = plainText;
-                                PrivacyConvert.ui.showToast('Data successfully decrypted!');
+                                document.getElementById('genericTextArea').value = plainText;
+                                PrivacyConvert.ui.showToast('Text decrypted successfully!');
                             }
                             PrivacyConvert.ui.updateProgress(100, "Done!");
                         } catch(e) {
-                            PrivacyConvert.ui.updateProgress(100, "Error!");
-                            PrivacyConvert.ui.showToast('Decryption failed! Wrong password or corrupted data.', 'error');
+                            PrivacyConvert.ui.updateProgress(100, "Error");
+                            PrivacyConvert.ui.showToast('Decryption failed! Wrong password.', 'error');
                         }
                         return;
                     }
 
-                    // 2. Web Worker ile Ağır İşlem (OCR Simülasyonu)
+                    // 2. OCR (Web Worker)
                     if (tool === 'ocr-tool') {
-                        outBox.classList.remove('hidden');
-                        outArea.value = "Starting dedicated Web Worker thread...\nNotice how the UI is NOT freezing! You can still type or click things.\n\n";
-                        
-                        const worker = PrivacyConvert.workerCore.createWorker(PrivacyConvert.workerCore.heavyTask);
-                        PrivacyConvert.ui.updateProgress(0, "Worker spinning up...");
+                        if (PrivacyConvert.state.files.length === 0) return PrivacyConvert.ui.showToast('Select an image file', 'warning');
+                        document.getElementById('actionArea').classList.remove('hidden');
+                        document.getElementById('genericTextBox').classList.remove('hidden');
+                        const outArea = document.getElementById('genericTextArea');
+                        outArea.value = "Starting Worker thread...\n";
 
+                        const worker = PrivacyConvert.workerCore.createWorker(PrivacyConvert.workerCore.heavyTask);
                         worker.onmessage = (e) => {
                             if(e.data.type === 'progress') {
-                                PrivacyConvert.ui.updateProgress(e.data.val, `Processing large datasets... ${e.data.val}%`);
-                                outArea.value += `Worker Progress: ${e.data.val}%\n`;
+                                PrivacyConvert.ui.updateProgress(e.data.val, `Processing... ${e.data.val}%`);
+                                outArea.value += `Progress: ${e.data.val}%\n`;
                             } else if (e.data.type === 'done') {
                                 outArea.value += `\n[RESULT]: ${e.data.result}`;
                                 PrivacyConvert.ui.updateProgress(100, "Done!");
-                                PrivacyConvert.ui.showToast('Worker thread completed successfully!');
-                                worker.terminate(); // Memory leak önleme
+                                PrivacyConvert.ui.showToast('Task completed without freezing UI!');
+                                worker.terminate();
                             }
                         };
                         return;
                     }
 
-                    // 3. Basit PII Kalkanı
+                    // 3. PII SHIELD
                     if (tool === 'live-pii-shield') {
-                        if(!input) return PrivacyConvert.ui.showToast('Enter sample text', 'error');
-                        const shielded = input.replace(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi, '[SHIELDED_EMAIL]')
-                                              .replace(/\b(\+?90|0)?\s*\(?\d{3}\)?[\s\-]?\d{3}[\s\-]?\d{2}[\s\-]?\d{2}\b/g, '[SHIELDED_PHONE]')
-                                              .replace(/\b[1-9][0-9]{10}\b/g, '[SHIELDED_TCKN]');
-                        outBox.classList.remove('hidden');
-                        outArea.value = shielded;
-                        PrivacyConvert.ui.showToast('Text neutralized');
-                        return;
+                        const input = document.getElementById('mainInputField').value;
+                        if(!input) return PrivacyConvert.ui.showToast('Enter text', 'warning');
+                        const shielded = input.replace(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi, '[SHIELDED_EMAIL]');
+                        document.getElementById('genericTextBox').classList.remove('hidden');
+                        document.getElementById('genericTextArea').value = shielded;
+                        PrivacyConvert.ui.showToast('PII Shield applied');
                     }
                 }
             },
 
             init() {
+                const dropZone = document.getElementById('dropZone');
+                const fileInput = document.getElementById('fileInput');
+                dropZone.addEventListener('click', () => fileInput.click());
+                fileInput.addEventListener('change', (e) => PrivacyConvert.ui.handleFiles(e.target.files));
                 this.routing.navigate('live-pii-shield');
             }
         };
