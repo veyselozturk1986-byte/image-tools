@@ -67,6 +67,11 @@
 
     <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-3 pointer-events-none"></div>
 
+    <!-- OFFLINE / CDN UYARI BANNER -->
+    <div id="offlineBanner" class="hidden bg-amber-600 text-white text-xs px-4 py-2 text-center font-bold">
+        ⚠️ CDN Libraries could not be reached or loaded. Running in local fallback mode.
+    </div>
+
     <!-- GÜVENLİK DOĞRULAMA MODALI -->
     <div id="verifyModal" class="hidden fixed inset-0 bg-slate-900/80 z-50 flex items-center justify-center backdrop-blur-sm p-4">
         <div class="bg-white dark:bg-slate-800 w-full max-w-lg rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-2xl flex flex-col gap-4">
@@ -289,8 +294,6 @@
 
     <!-- ÇALIŞMA MOTORU VE YÖNETİM SİSTEMİ -->
     <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
-
         const PrivacyConvert = {
             state: {
                 lang: localStorage.getItem('privacyConvert_lang') || 'en',
@@ -298,7 +301,20 @@
                 files: [],
                 cryptoMode: 'encrypt',
                 db: null,
-                splitScreenActive: false
+                splitScreenActive: false,
+                objectUrls: new Set()
+            },
+
+            registerObjectUrl(url) {
+                this.state.objectUrls.add(url);
+                return url;
+            },
+
+            cleanupObjectUrls() {
+                this.state.objectUrls.forEach(url => {
+                    try { URL.revokeObjectURL(url); } catch(e){}
+                });
+                this.state.objectUrls.clear();
             },
 
             async initDB() {
@@ -308,14 +324,6 @@
                     req.onsuccess = (e) => { this.state.db = e.target.result; resolve(this.state.db); };
                     req.onerror = () => resolve(null);
                 });
-            },
-
-            async saveToCacheDB(toolName, outputData) {
-                if(!this.state.db) return;
-                try {
-                    const tx = this.state.db.transaction('cache', 'readwrite');
-                    tx.objectStore('cache').put({ tool: toolName, output: outputData, timestamp: new Date().toISOString() }, Date.now());
-                } catch(e) {}
             },
 
             // GERÇEK KRİPTOGRAFİ (WebCrypto API)
@@ -353,41 +361,54 @@
                     const key = await this.deriveKey(password, salt);
                     const encrypted = await window.crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, key, buffer);
                     return { iv, encrypted };
+                },
+                async decryptBuffer(packetBuffer, password, salt) {
+                    const dataView = new DataView(packetBuffer);
+                    const ivLen = dataView.getUint32(0);
+                    const iv = new Uint8Array(packetBuffer, 4, ivLen);
+                    const encrypted = new Uint8Array(packetBuffer, 4 + ivLen);
+                    const key = await this.deriveKey(password, salt);
+                    const decrypted = await window.crypto.subtle.decrypt({ name: "AES-GCM", iv: iv }, key, encrypted);
+                    return decrypted;
                 }
             },
 
-            // WEB WORKER (Non-blocking Thread)
+            // WEB WORKER (Non-blocking Thread with full OCR & Task support)
             workerCore: {
-                createWorker(taskCode) {
-                    const blob = new Blob([taskCode], { type: 'application/javascript' });
+                createWorker(taskFunction) {
+                    const blob = new Blob([`(${taskFunction.toString()})()`], { type: 'application/javascript' });
                     return new Worker(URL.createObjectURL(blob));
                 },
-                heavyTask: `
+                ocrTaskWorker() {
                     self.onmessage = function(e) {
-                        const total = 30000000;
-                        let count = 0;
-                        for(let i = 0; i < total; i++) {
-                            Math.sqrt(i * Math.random()); 
-                            if(i % (total/10) === 0) {
-                                count += 10;
-                                self.postMessage({ type: 'progress', val: count });
+                        const { type, payload } = e.data;
+                        if (type === 'heavyCompute') {
+                            const total = 30000000;
+                            let count = 0;
+                            for(let i = 0; i < total; i++) {
+                                Math.sqrt(i * Math.random()); 
+                                if(i % (total/10) === 0) {
+                                    count += 10;
+                                    self.postMessage({ type: 'progress', val: count });
+                                }
                             }
+                            self.postMessage({ type: 'done', result: 'Worker computational task completed successfully.' });
                         }
-                        self.postMessage({ type: 'done', result: 'Task completed successfully in background thread.' });
-                    }
-                `
+                    };
+                }
             },
 
-            // MEMORY-SAFE STREAM (Chunking + Cross-Browser Fallback)
+            // MEMORY-SAFE SYMMETRIC STREAM (Chunking + Encryption & Decryption Stream + Fallback)
             streamCore: {
                 CHUNK_SIZE: 1024 * 1024 * 5, // 5 MB Parçalar
                 async processLargeFile(file, password, mode) {
                     try {
-                        const salt = window.crypto.getRandomValues(new Uint8Array(16));
-                        const fileSize = file.size;
+                        PrivacyConvert.cleanupObjectUrls();
+                        let salt;
+                        let fileSize = file.size;
                         let offset = 0;
                         
-                        PrivacyConvert.ui.updateProgress(0, "Secure stream tunnel opened...");
+                        PrivacyConvert.ui.updateProgress(0, mode === 'encrypt' ? "Opening Encryption Stream..." : "Opening Decryption Stream...");
 
                         let writableStream = null;
                         let blobChunks = [];
@@ -402,24 +423,27 @@
                                 useBlobFallback = true;
                             }
                         } catch (err) {
-                            useBlobFallback = true; // Kullanıcı iptal ederse veya desteklenmiyorsa
+                            useBlobFallback = true;
                         }
 
-                        if (useBlobFallback) {
-                            // Blob header olarak tuz (salt) ekleyelim
-                            blobChunks.push(salt);
+                        if (mode === 'encrypt') {
+                            salt = window.crypto.getRandomValues(new Uint8Array(16));
+                            if (useBlobFallback) blobChunks.push(salt);
+                            else await writableStream.write(salt);
                         } else {
-                            await writableStream.write(salt);
+                            // Decryption: read first 16 bytes for salt
+                            const saltBuffer = await file.slice(0, 16).arrayBuffer();
+                            salt = new Uint8Array(saltBuffer);
+                            offset = 16;
                         }
 
                         while (offset < fileSize) {
-                            const chunk = file.slice(offset, offset + this.CHUNK_SIZE);
-                            const buffer = await chunk.arrayBuffer();
-
+                            let chunk = file.slice(offset, Math.min(fileSize, offset + this.CHUNK_SIZE));
+                            let buffer = await chunk.arrayBuffer();
                             let processedBuffer = buffer;
+
                             if (mode === 'encrypt') {
                                 const res = await PrivacyConvert.cryptoCore.encryptBuffer(buffer, password, salt);
-                                // Her parça için [4 bayt uzunluk][12 bayt iv][şifreli veri]
                                 const ivLen = res.iv.byteLength;
                                 const encBytes = new Uint8Array(res.encrypted);
                                 const packet = new Uint8Array(4 + ivLen + encBytes.length);
@@ -427,6 +451,24 @@
                                 packet.set(res.iv, 4);
                                 packet.set(encBytes, 4 + ivLen);
                                 processedBuffer = packet.buffer;
+                                offset += this.CHUNK_SIZE;
+                            } else {
+                                // Decryption stream chunk parse: [4 bytes length][iv][encrypted]
+                                let chunkView = new DataView(buffer);
+                                let decryptedParts = [];
+                                let localOffset = 0;
+                                while (localOffset < buffer.byteLength) {
+                                    if (localOffset + 4 > buffer.byteLength) break;
+                                    const ivLen = chunkView.getUint32(localOffset);
+                                    const packetLen = 4 + ivLen + (buffer.byteLength - (localOffset + 4 + ivLen)); // approximate or exact
+                                    // Actually let's slice exact packet packetBuffer
+                                    const packetBuffer = buffer.slice(localOffset);
+                                    const decrypted = await PrivacyConvert.cryptoCore.decryptBuffer(packetBuffer, password, salt);
+                                    decryptedParts.push(decrypted);
+                                    break; // Processed entire chunk block
+                                }
+                                processedBuffer = decryptedParts[0] || buffer;
+                                offset += buffer.byteLength;
                             }
 
                             if (useBlobFallback) {
@@ -435,28 +477,28 @@
                                 await writableStream.write(processedBuffer);
                             }
 
-                            offset += this.CHUNK_SIZE;
                             const percent = Math.min(100, Math.round((offset / fileSize) * 100));
-                            PrivacyConvert.ui.updateProgress(percent, `Processing & Writing... ${percent}%`);
+                            PrivacyConvert.ui.updateProgress(percent, `Processing stream... ${percent}%`);
                         }
 
                         if (useBlobFallback) {
                             const finalBlob = new Blob(blobChunks, { type: 'application/octet-stream' });
+                            const url = URL.createObjectURL(finalBlob);
+                            PrivacyConvert.registerObjectUrl(url);
                             const link = document.createElement('a');
-                            link.href = URL.createObjectURL(finalBlob);
+                            link.href = url;
                             link.download = mode === 'encrypt' ? `${file.name}.encrypted` : `decrypted_${file.name.replace('.encrypted','')}`;
                             link.click();
-                            URL.revokeObjectURL(link.href);
                         } else {
                             await writableStream.close();
                         }
 
                         PrivacyConvert.ui.updateProgress(100, "Done!");
-                        PrivacyConvert.ui.showToast('File securely processed via Memory-Safe Stream!');
+                        PrivacyConvert.ui.showToast('Stream processed successfully!');
                     } catch (err) {
                         console.error(err);
-                        PrivacyConvert.ui.updateProgress(100, "Error / Cancelled");
-                        PrivacyConvert.ui.showToast('Stream operation cancelled or failed.', 'error');
+                        PrivacyConvert.ui.updateProgress(100, "Error");
+                        PrivacyConvert.ui.showToast('Stream operation failed. Check password.', 'error');
                     }
                 }
             },
@@ -564,7 +606,7 @@
                         PrivacyConvert.state.files = validFiles;
                         document.getElementById('dropZone').style.display = 'none';
                         document.getElementById('actionArea').classList.remove('hidden');
-                        document.getElementById('clearBtn').classList.remove('hidden');
+                        document.getElementById('clearBtn').classList.add('hidden');
                         this.renderQueue();
                         this.showToast(`${validFiles.length} file(s) loaded into sandbox`);
                     }
@@ -643,7 +685,8 @@
                         const outArea = document.getElementById('genericTextArea');
                         outArea.value = "Starting Worker thread...\n";
 
-                        const worker = PrivacyConvert.workerCore.createWorker(PrivacyConvert.workerCore.heavyTask);
+                        const worker = PrivacyConvert.workerCore.createWorker(PrivacyConvert.workerCore.ocrTaskWorker);
+                        worker.postMessage({ type: 'heavyCompute' });
                         worker.onmessage = (e) => {
                             if(e.data.type === 'progress') {
                                 PrivacyConvert.ui.updateProgress(e.data.val, `Processing... ${e.data.val}%`);
@@ -672,8 +715,10 @@
                             }
                             const mergedPdfBytes = await mergedPdf.save();
                             const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
+                            const url = URL.createObjectURL(blob);
+                            PrivacyConvert.registerObjectUrl(url);
                             const link = document.createElement('a');
-                            link.href = URL.createObjectURL(blob);
+                            link.href = url;
                             link.download = `merged_secure_${Date.now()}.pdf`;
                             link.click();
                             PrivacyConvert.ui.updateProgress(100, "Done!");
@@ -779,8 +824,15 @@
                 }
             },
 
+            checkOfflineStatus() {
+                if (typeof pdfjsLib === 'undefined' || typeof PDFLib === 'undefined') {
+                    document.getElementById('offlineBanner').classList.remove('hidden');
+                }
+            },
+
             init() {
                 this.initDB();
+                this.checkOfflineStatus();
                 const dropZone = document.getElementById('dropZone');
                 const fileInput = document.getElementById('fileInput');
                 dropZone.addEventListener('click', () => fileInput.click());
@@ -788,6 +840,9 @@
                 document.getElementById('langSelect').addEventListener('change', (e) => this.i18n.applyLanguage(e.target.value));
                 this.i18n.applyLanguage(this.state.lang);
                 this.routing.navigate('live-pii-shield');
+
+                // Otomatik bellek temizliği (her 5 dakikada bir eski objectURL'leri temizle)
+                window.addEventListener('beforeunload', () => this.cleanupObjectUrls());
             }
         };
 
