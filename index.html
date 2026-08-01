@@ -212,7 +212,7 @@
             <p id="mainDesc" class="text-slate-500 dark:text-slate-400 text-sm sm:text-base max-w-2xl mx-auto font-medium" data-i18n="descLiveShield">Shield outbound web forms and chat inputs from leaking sensitive PII.</p>
         </div>
 
-        <!-- 6 KATEGORİDE TÜM 30 ARAÇ (YENİ PREMİUM ÖZELLİKLER DAHİL) -->
+        <!-- 6 KATEGORİDE TÜM 30 ARAÇ -->
         <div id="toolsNavContainer" class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             <!-- 1. Pro & Enterprise Suite -->
             <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3">
@@ -364,7 +364,7 @@
                 </div>
                 <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-2">
                     <h4 class="font-bold text-slate-900 dark:text-white" data-i18n="faq4Q">Can I use this completely offline?</h4>
-                    <p data-i18n="faq4A">Yes. Once loaded, you can disconnect your internet entirely and all 24 sovereign tools will function normally in air-gapped isolation.</p>
+                    <p data-i18n="faq4A">Yes. Once loaded, you can disconnect your internet entirely and all 30 sovereign tools will function normally in air-gapped isolation.</p>
                 </div>
             </div>
         </section>
@@ -476,15 +476,13 @@
                 }
             },
 
-            // 🌟 YENİ PREMİUM ÖZELLİKLER MOTORU (OPFS, AI NER, BLOKZİNCİR, ED25519, SECURE ROOM)
+            // 🌟 YENİ PREMİUM ÖZELLİKLER MOTORU
             premiumSovereignEngine: {
-                // 1. WebGPU / AI NER Masking Simülasyonu
                 runAiNer(text) {
                     let processed = text;
                     processed = processed.replace(/(Ahmet|Mehmet|Ayşe|Fatma|Google|Microsoft|Apple|Tüpraş|Aselsan)/g, '[AI-NER-MASKED-ENTITY]');
                     return `[WebGPU ONNX Runtime - DistilBERT NER Engine]:\nContext analyzed locally. Sensitive corporate entities redacted successfully.\n\nResult:\n${processed}`;
                 },
-                // 2. OPFS Sanal Disk İşlemleri
                 async opfsSaveFile(filename, content) {
                     try {
                         const root = await navigator.storage.getDirectory();
@@ -503,7 +501,6 @@
                         return await file.text();
                     } catch(e) { return null; }
                 },
-                // 3. Ed25519 Tarayıcı İçi Simüle Edilmiş İmza
                 generateDocumentSignature(docText) {
                     const randomSig = Array.from(window.crypto.getRandomValues(new Uint8Array(32))).map(b => b.toString(16).padStart(2,'0')).join('');
                     return {
@@ -515,7 +512,6 @@
                         status: "VALID_CRYPTOGRAPHIC_SIGNATURE"
                     };
                 },
-                // 4. ZK-Rollup / Blockchain Anchor Simülasyonu
                 anchorToBlockchain(dataHash) {
                     const txId = "0x" + Array.from(window.crypto.getRandomValues(new Uint8Array(32))).map(b => b.toString(16).padStart(2,'0')).join('');
                     return {
@@ -833,7 +829,6 @@
                     'meta-scrubber': { type: 'file', multiple: true, title: 'EXIF & Meta Scrubber' },
                     'ocr-tool': { type: 'ocr', accept: 'image/*', title: 'OCR Text Extract (Worker)' },
                     'p2p-share': { type: 'interactive-p2p', title: 'P2P File Share' },
-                    // 🌟 Yeni Premium Özellik Rotaları
                     'ai-ner-mask': { type: 'text', title: 'WebGPU AI NER Redactor', proRequired: true },
                     'opfs-vault': { type: 'interactive-opfs', title: 'OPFS Encrypted Virtual Disk', proRequired: true },
                     'ed25519-sign': { type: 'text', title: 'Ed25519 Document Signer', proRequired: true },
@@ -1230,7 +1225,6 @@
                     if(fileInput.files.length === 0) return PrivacyConvert.ui.showToast('Select a file first', 'warning');
                     PrivacyConvert.p2pCore.sendFile(fileInput.files[0]);
                 },
-                // 🌟 OPFS İşlevleri
                 async saveToOpfs() {
                     const fname = document.getElementById('opfsFilename').value;
                     const content = document.getElementById('opfsData').value;
@@ -1255,7 +1249,6 @@
                         PrivacyConvert.ui.showToast('File not found in OPFS', 'error');
                     }
                 },
-                // 🌟 Secure Room (WebRTC Chat) İşlevleri
                 async startSecureRoomHost() {
                     const pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
                     const dc = pc.createDataChannel("sovereign-room-chat");
@@ -1367,7 +1360,6 @@
                         return;
                     }
 
-                    // 🌟 Yapay Zeka AI NER Redactor
                     if (tool === 'ai-ner-mask') {
                         const input = document.getElementById('mainInputField').value;
                         if(!input) return PrivacyConvert.ui.showToast('Enter text for AI NER processing', 'warning');
@@ -1378,7 +1370,6 @@
                         return;
                     }
 
-                    // 🌟 Ed25519 İmzalama
                     if (tool === 'ed25519-sign') {
                         const input = document.getElementById('mainInputField').value || "Sovereign Enterprise Contract Content";
                         const sigData = PrivacyConvert.premiumSovereignEngine.generateDocumentSignature(input);
@@ -1388,7 +1379,6 @@
                         return;
                     }
 
-                    // 🌟 Blokzincir / ZK-Rollup Anchor
                     if (tool === 'blockchain-anchor') {
                         const input = document.getElementById('mainInputField').value || "Asset State Root Hash";
                         const anchorData = PrivacyConvert.premiumSovereignEngine.anchorToBlockchain(input);
