@@ -73,7 +73,7 @@
         <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-2xl w-80 text-center flex flex-col items-center border border-slate-200 dark:border-slate-700 animate-pulse">
             <div class="w-14 h-14 border-4 border-indigo-100 dark:border-slate-600 border-t-indigo-600 dark:border-t-indigo-400 rounded-full animate-spin mb-4"></div>
             <h3 data-i18n="progressTitle" class="text-lg font-bold text-slate-800 dark:text-white mb-2">Yerel Olarak İşleniyor...</h3>
-            <p id="progressText" class="text-sm text-slate-500 dark:text-slate-400 font-medium">Sunuculara 0 KB aktarıldı (%100 Güvenli)</p>
+            <p id="progressText" data-i18n="progressText" class="text-sm text-slate-500 dark:text-slate-400 font-medium">Sunuculara 0 KB aktarıldı (%100 Güvenli)</p>
         </div>
     </div>
 
@@ -325,19 +325,19 @@
                         <div id="generatorResultBox" class="hidden w-full flex flex-col items-center justify-center py-8 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 gap-4">
                             <div class="w-full max-w-md flex items-center gap-2 px-4">
                                 <input type="text" id="generatedDisplay" readonly class="w-full p-3 bg-white dark:bg-slate-800 dynamic-text font-mono font-bold text-center rounded-xl border border-slate-200 dark:border-slate-700 text-lg">
-                                <button onclick="copyGenerated()" data-i18n="copy" class="px-4 py-3 dynamic-bg hover:opacity-90 text-white font-bold rounded-xl shadow-sm">Kopyala</button>
+                                <button onclick="copyGenerated()" id="genCopyBtnText" data-i18n="copyOnly" class="px-4 py-3 dynamic-bg hover:opacity-90 text-white font-bold rounded-xl shadow-sm">Kopyala</button>
                             </div>
                             <button id="genAnotherBtn" data-i18n="generateAnother" class="text-sm font-semibold text-slate-500 hover:text-slate-700 dark:text-slate-400">🔄 Başka Üret</button>
                         </div>
 
                         <div id="primaryInputsArea" class="w-full flex flex-col gap-4">
                             <div id="textInputGroup" class="hidden">
-                                <textarea id="mainInputField" class="w-full h-32 p-4 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 dark:text-white focus:outline-none resize-none shadow-sm" placeholder="Veriyi buraya yapıştırın..."></textarea>
+                                <textarea id="mainInputField" data-i18n-placeholder="jsonPlaceholder" class="w-full h-32 p-4 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 dark:text-white focus:outline-none resize-none shadow-sm" placeholder="Veriyi buraya yapıştırın..."></textarea>
                             </div>
                             
                             <div id="passwordOptionsGroup" class="hidden bg-white dark:bg-slate-800 p-4 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm">
                                 <div class="mb-4">
-                                    <label id="passLengthLabel" class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 flex justify-between">Uzunluk: <span id="passLenVal" class="dynamic-text">16</span></label>
+                                    <label id="passLengthLabel" class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 flex justify-between"><span data-i18n="passLen">Uzunluk:</span> <span id="passLenVal" class="dynamic-text">16</span></label>
                                     <input type="range" id="passLength" min="8" max="64" value="16" class="w-full accent-indigo-600 cursor-pointer" oninput="document.getElementById('passLenVal').textContent=this.value; generateNewPassword();">
                                 </div>
                                 <div class="flex flex-wrap gap-4 text-sm font-semibold text-slate-700 dark:text-slate-300">
@@ -483,6 +483,7 @@
             tr: {
                 overlayTitle: "Dosyalarınızı yerel olarak işlemek için buraya bırakın!",
                 progressTitle: "Yerel Olarak İşleniyor...",
+                progressText: "Sunuculara 0 KB aktarıldı (%100 Güvenli)",
                 secTitle: "%100 Yerel ve Güvenli İşleme Garantisi",
                 secDesc: "Tüm dönüşümler tarayıcınızda çalışır. Uzak sunucuya sıfır bayt yüklenir.",
                 blockedCloudData: "Engellenen Bulut Verisi",
@@ -502,6 +503,7 @@
                 shortcutReset: "Çalışma Alanını Sıfırla",
                 shortcutConvert: "Dönüştür ve İndir",
                 copy: "📋 Kopyala",
+                copyOnly: "Kopyala",
                 generateAnother: "🔄 Başka Üret",
                 output: "Çıktı:",
                 comparisonOutput: "Karşılaştırma Çıktısı:",
@@ -582,6 +584,7 @@
             en: {
                 overlayTitle: "Drop your files anywhere to process locally!",
                 progressTitle: "Processing Locally...",
+                progressText: "0 KB uploaded to servers (100% Secure)",
                 secTitle: "100% Local & Secure Processing Guarantee",
                 secDesc: "All conversions run client-side. Zero bytes uploaded to any remote server.",
                 blockedCloudData: "Blocked Cloud Data",
@@ -601,6 +604,7 @@
                 shortcutReset: "Reset Workspace",
                 shortcutConvert: "Convert & Download",
                 copy: "📋 Copy",
+                copyOnly: "Copy",
                 generateAnother: "🔄 Generate Another",
                 output: "Output:",
                 comparisonOutput: "Comparison Output:",
@@ -681,6 +685,7 @@
             zh: {
                 overlayTitle: "将文件拖放到任何地方即可在本地处理！",
                 progressTitle: "正在本地处理...",
+                progressText: "向服务器上传了 0 KB（100% 安全）",
                 secTitle: "100% 本地与安全处理保证",
                 secDesc: "所有转换均在客户端运行。零字节上传至任何远程服务器。",
                 blockedCloudData: "已拦截的云数据",
@@ -700,6 +705,7 @@
                 shortcutReset: "重置工作区",
                 shortcutConvert: "转换并下载",
                 copy: "📋 复制",
+                copyOnly: "复制",
                 generateAnother: "🔄 生成另一个",
                 output: "输出：",
                 comparisonOutput: "对比输出：",
@@ -780,6 +786,7 @@
             de: {
                 overlayTitle: "Dateien zum lokalen Verarbeiten hierher ziehen!",
                 progressTitle: "Wird lokal verarbeitet...",
+                progressText: "0 KB an Server übertragen (100% Sicher)",
                 secTitle: "100% lokale & sichere Verarbeitungsgarantie",
                 secDesc: "Alle Konvertierungen laufen im Browser. Keine Datenübertragung an Server.",
                 blockedCloudData: "Blockierte Cloud-Daten",
@@ -799,6 +806,7 @@
                 shortcutReset: "Arbeitsbereich zurücksetzen",
                 shortcutConvert: "Konvertieren & Herunterladen",
                 copy: "📋 Kopieren",
+                copyOnly: "Kopieren",
                 generateAnother: "🔄 Weiteres generieren",
                 output: "Ausgabe:",
                 comparisonOutput: "Vergleichsausgabe:",
@@ -879,6 +887,7 @@
             fr: {
                 overlayTitle: 'Glissez vos fichiers ici pour un traitement local !',
                 progressTitle: 'Traitement local en cours...',
+                progressText: "0 Ko téléchargés sur les serveurs (100% Sécurisé)",
                 secTitle: "Garantie de traitement 100% local et sécurisé",
                 secDesc: "Toutes les conversions s'exécutent côté client. Zéro octet envoyé sur un serveur.",
                 blockedCloudData: "Données cloud bloquées",
@@ -898,6 +907,7 @@
                 shortcutReset: "Réinitialiser l'espace de travail",
                 shortcutConvert: "Convertir et Télécharger",
                 copy: "📋 Copier",
+                copyOnly: "Copier",
                 generateAnother: "🔄 Générer un autre",
                 output: "Sortie :",
                 comparisonOutput: "Sortie de comparaison :",
@@ -978,6 +988,7 @@
             es: {
                 overlayTitle: '¡Suelta tus archivos en cualquier lugar para procesarlos localmente!',
                 progressTitle: 'Procesando localmente...',
+                progressText: "0 KB subidos a servidores (100% Seguro)",
                 secTitle: "Garantía de procesamiento 100% local y seguro",
                 secDesc: "Todas las conversiones se ejecutan localmente. Cero bytes subidos a servidores.",
                 blockedCloudData: "Datos en la nube bloqueados",
@@ -997,6 +1008,7 @@
                 shortcutReset: "Restablecer espacio de trabajo",
                 shortcutConvert: "Convertir y Descargar",
                 copy: "📋 Copiar",
+                copyOnly: "Copiar",
                 generateAnother: "🔄 Generar otro",
                 output: "Salida:",
                 comparisonOutput: "Salida de comparación:",
@@ -1077,6 +1089,7 @@
             ar: {
                 overlayTitle: 'أفلت ملفاتك في أي مكان لمعالجتها محلياً!',
                 progressTitle: 'جاري المعالجة محلياً...',
+                progressText: "0 كيلوبايت مرفوعة للخوادم (آمن 100%)",
                 secTitle: "ضمان المعالجة المحلية الآمنة 100%",
                 secDesc: "تتم جميع العمليات محلياً. صفر بايت مرفوعة لأي خادم خارجي.",
                 blockedCloudData: "بيانات السحابة المحظورة",
@@ -1096,6 +1109,7 @@
                 shortcutReset: "إعادة ضبط مساحة العمل",
                 shortcutConvert: "تحويل وتنزيل",
                 copy: "📋 نسخ",
+                copyOnly: "نسخ",
                 generateAnother: "🔄 إنشاء آخر",
                 output: "المخرجات:",
                 comparisonOutput: "مخرجات المقارنة:",
@@ -1191,16 +1205,19 @@
             
             const t = translations[lang] || translations['tr'];
 
+            // Update all standard i18n text nodes
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (t[key]) el.innerHTML = t[key];
             });
 
+            // Update all placeholders
             document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
                 const key = el.getAttribute('data-i18n-placeholder');
                 if (t[key]) el.placeholder = t[key];
             });
 
+            // Update specific dynamic inputs
             const mainInput = document.getElementById('mainInputField');
             if (mainInput) {
                 if (currentTool === 'json-tool') mainInput.placeholder = t.jsonPlaceholder;
@@ -1209,14 +1226,25 @@
                 else if (currentTool === 'qr-tool') mainInput.placeholder = t.qrPlaceholder;
             }
 
+            // Fix for password length span specifically
             const passLenLabel = document.getElementById('passLengthLabel');
             if (passLenLabel) {
-                passLenLabel.childNodes[0].nodeValue = `${t.passLen} `;
+                const spanVal = passLenLabel.querySelector('#passLenVal');
+                const val = spanVal ? spanVal.textContent : '16';
+                passLenLabel.innerHTML = `<span data-i18n="passLen">${t.passLen}</span> <span id="passLenVal" class="dynamic-text">${val}</span>`;
+            }
+
+            // Fix dynamic button texts for generator tools
+            if (currentTool === 'password-gen' || currentTool === 'uuid-gen') {
+                document.getElementById('convertBtnText').textContent = t.copyOnly;
+            } else {
+                 document.getElementById('convertBtnText').textContent = t.convertBtn;
             }
 
             updateLiveCounter(0);
             renderHistory();
 
+            // Update Tool Sidebar Texts
             Object.keys(t.tools).forEach(key => {
                 const btn = document.getElementById(`tab-${key}`);
                 if (btn) {
@@ -1488,7 +1516,7 @@
                     document.getElementById('passwordOptionsGroup').classList.remove('hidden');
                     document.getElementById('generatorResultBox').classList.remove('hidden');
                     actionArea.classList.remove('hidden');
-                    document.getElementById('convertBtnText').textContent = t.copy.replace('📋 ', '');
+                    document.getElementById('convertBtnText').textContent = t.copyOnly;
                     document.getElementById('genAnotherBtn').onclick = generateNewPassword;
                     generateNewPassword();
                     break;
@@ -1496,7 +1524,7 @@
                     requiresFile = false; showAdvanced = false;
                     document.getElementById('generatorResultBox').classList.remove('hidden');
                     actionArea.classList.remove('hidden');
-                    document.getElementById('convertBtnText').textContent = t.copy.replace('📋 ', '');
+                    document.getElementById('convertBtnText').textContent = t.copyOnly;
                     document.getElementById('genAnotherBtn').onclick = generateNewUuid;
                     generateNewUuid();
                     break;
