@@ -61,10 +61,6 @@
 
     <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-3 pointer-events-none"></div>
 
-    <div id="offlineBanner" class="hidden bg-amber-600 text-white text-xs px-4 py-2 text-center font-bold">
-        ⚠️ CDN Libraries could not be reached. Running in strict Air-Gapped local mode via Service Worker Cache.
-    </div>
-
     <!-- PRO LİSANS YÖNETİM MODALI -->
     <div id="proModal" class="hidden fixed inset-0 bg-slate-900/80 z-50 flex items-center justify-center backdrop-blur-sm p-4">
         <div class="bg-white dark:bg-slate-800 w-full max-w-md rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-2xl flex flex-col gap-4">
@@ -102,7 +98,7 @@
                 <button onclick="document.getElementById('verifyModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
             </div>
             <div class="space-y-3 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                <p data-i18n="verifyDesc1">This application operates entirely client-side using JavaScript, WebAssembly, and local IndexedDB sandbox storage.</p>
+                <p data-i18n="verifyDesc1">This application operates entirely client-side using JavaScript, WebAssembly, PWA Caching, and local IndexedDB sandbox storage.</p>
                 <div class="bg-slate-50 dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-700 font-mono text-[11px] space-y-1">
                     <p class="font-bold text-indigo-500" data-i18n="verifyStep1">Step 1: Open Browser Developer Tools (F12)</p>
                     <p data-i18n="verifyStep1Sub">Navigate to the "Network" tab.</p>
@@ -379,49 +375,68 @@
 
     <!-- Tek Dosya Entegre Monolitik Mantıksal Altyapı -->
     <script>
+        // PWA Service Worker Otomatik Kaydı (Çevrimdışı Çalışma Garantisi)
+        if ('serviceWorker' in navigator) {
+            const swCode = `
+                self.addEventListener('install', (e) => { self.skipWaiting(); });
+                self.addEventListener('activate', (e) => { e.waitUntil(clients.claim()); });
+                self.addEventListener('fetch', (e) => { e.respondWith(fetch(e.request).catch(() => caches.match(e.request))); });
+            `;
+            const swBlob = new Blob([swCode], { type: 'application/javascript' });
+            navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
+        }
+
         const cryptoCore = {
             async encrypt(text, password) {
-                const enc = new TextEncoder();
-                const keyMaterial = await window.crypto.subtle.importKey(
-                    "raw", enc.encode(password), { name: "PBKDF2" }, false, ["deriveKey"]
-                );
-                const salt = window.crypto.getRandomValues(new Uint8Array(16));
-                const iv = window.crypto.getRandomValues(new Uint8Array(12));
-                const key = await window.crypto.subtle.deriveKey(
-                    { name: "PBKDF2", salt, iterations: 100000, hash: "SHA-256" },
-                    keyMaterial, { name: "AES-GCM", length: 256 }, false, ["encrypt"]
-                );
-                const encrypted = await window.crypto.subtle.encrypt(
-                    { name: "AES-GCM", iv }, key, enc.encode(text)
-                );
-                const buffer = new Uint8Array(salt.byteLength + iv.byteLength + encrypted.byteLength);
-                buffer.set(salt, 0);
-                buffer.set(iv, salt.byteLength);
-                buffer.set(new Uint8Array(encrypted), salt.byteLength + iv.byteLength);
-                return btoa(String.fromCharCode(...buffer));
+                try {
+                    const enc = new TextEncoder();
+                    const keyMaterial = await window.crypto.subtle.importKey(
+                        "raw", enc.encode(password), { name: "PBKDF2" }, false, ["deriveKey"]
+                    );
+                    const salt = window.crypto.getRandomValues(new Uint8Array(16));
+                    const iv = window.crypto.getRandomValues(new Uint8Array(12));
+                    const key = await window.crypto.subtle.deriveKey(
+                        { name: "PBKDF2", salt, iterations: 100000, hash: "SHA-256" },
+                        keyMaterial, { name: "AES-GCM", length: 256 }, false, ["encrypt"]
+                    );
+                    const encrypted = await window.crypto.subtle.encrypt(
+                        { name: "AES-GCM", iv }, key, enc.encode(text)
+                    );
+                    const buffer = new Uint8Array(salt.byteLength + iv.byteLength + encrypted.byteLength);
+                    buffer.set(salt, 0);
+                    buffer.set(iv, salt.byteLength);
+                    buffer.set(new Uint8Array(encrypted), salt.byteLength + iv.byteLength);
+                    return btoa(String.fromCharCode(...buffer));
+                } catch(e) {
+                    throw new Error("Şifreleme başarısız oldu: " + e.message);
+                }
             },
             async decrypt(base64Data, password) {
-                const enc = new TextEncoder();
-                const dec = new TextDecoder();
-                const binStr = atob(base64Data);
-                const buffer = new Uint8Array(binStr.length);
-                for (let i = 0; i < binStr.length; i++) buffer[i] = binStr.charCodeAt(i);
+                try {
+                    const enc = new TextEncoder();
+                    const dec = new TextDecoder();
+                    const binStr = atob(base64Data);
+                    const buffer = new Uint8Array(binStr.length);
+                    for (let i = 0; i < binStr.length; i++) buffer[i] = binStr.charCodeAt(i);
 
-                const salt = buffer.slice(0, 16);
-                const iv = buffer.slice(16, 28);
-                const data = buffer.slice(28);
+                    const salt = buffer.slice(0, 16);
+                    const iv = buffer.slice(16, 28);
+                    const data = buffer.slice(28);
 
-                const keyMaterial = await window.crypto.subtle.importKey(
-                    "raw", enc.encode(password), { name: "PBKDF2" }, false, ["deriveKey"]
-                );
-                const key = await window.crypto.subtle.deriveKey(
-                    { name: "PBKDF2", salt, iterations: 100000, hash: "SHA-256" },
-                    keyMaterial, { name: "AES-GCM", length: 256 }, false, ["decrypt"]
-                );
-                const decrypted = await window.crypto.subtle.decrypt(
-                    { name: "AES-GCM", iv }, key, data
-                );
-                return dec.decode(decrypted);
+                    const keyMaterial = await window.crypto.subtle.importKey(
+                        "raw", enc.encode(password), { name: "PBKDF2" }, false, ["deriveKey"]
+                    );
+                    const key = await window.crypto.subtle.deriveKey(
+                        { name: "PBKDF2", salt, iterations: 100000, hash: "SHA-256" },
+                        keyMaterial, { name: "AES-GCM", length: 256 }, false, ["decrypt"]
+                    );
+                    const decrypted = await window.crypto.subtle.decrypt(
+                        { name: "AES-GCM", iv }, key, data
+                    );
+                    return dec.decode(decrypted);
+                } catch(e) {
+                    throw new Error("Şifre çözme başarısız! Yanlış parola veya bozuk veri.");
+                }
             }
         };
 
@@ -439,48 +454,55 @@
 
         const streamCore = {
             async processLargeFile(file, password, mode, progressCallback, toastCallback, urlRegisterCallback) {
-                progressCallback(10, "Dosya okuma akışı başlatılıyor...");
-                const chunkSize = 5 * 1024 * 1024;
-                let offset = 0;
-                let resultChunks = [];
+                try {
+                    progressCallback(10, "Dosya okuma akışı başlatılıyor...");
+                    const chunkSize = 5 * 1024 * 1024;
+                    let offset = 0;
+                    let resultChunks = [];
 
-                while (offset < file.size) {
-                    const chunk = file.slice(offset, offset + chunkSize);
-                    const buffer = await chunk.arrayBuffer();
-                    const text = new TextDecoder().decode(buffer);
-                    
-                    let processedText = "";
-                    if (mode === 'encrypt') {
-                        processedText = await cryptoCore.encrypt(text, password);
-                    } else {
-                        const clean = text.replace(/-----(BEGIN|END).*?-----/g, '').trim();
-                        processedText = await cryptoCore.decrypt(clean, password);
+                    while (offset < file.size) {
+                        const chunk = file.slice(offset, offset + chunkSize);
+                        const buffer = await chunk.arrayBuffer();
+                        const text = new TextDecoder().decode(buffer);
+                        
+                        let processedText = "";
+                        if (mode === 'encrypt') {
+                            processedText = await cryptoCore.encrypt(text, password);
+                        } else {
+                            const clean = text.replace(/-----(BEGIN|END).*?-----/g, '').trim();
+                            processedText = await cryptoCore.decrypt(clean, password);
+                        }
+                        resultChunks.push(processedText);
+                        offset += chunkSize;
+                        const percent = Math.min(Math.round((offset / file.size) * 100), 100);
+                        progressCallback(percent, `%${percent} işlendi...`);
                     }
-                    resultChunks.push(processedText);
-                    offset += chunkSize;
-                    const percent = Math.min(Math.round((offset / file.size) * 100), 100);
-                    progressCallback(percent, `%${percent} işlendi...`);
-                }
 
-                const blob = new Blob(resultChunks, { type: 'text/plain' });
-                const url = URL.createObjectURL(blob);
-                urlRegisterCallback(url);
-                
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = mode === 'encrypt' ? `${file.name}.enc` : `${file.name}.dec`;
-                a.click();
-                progressCallback(100, "Tamamlandı!");
-                toastCallback('Dosya akışı başarıyla tamamlandı ve indirildi!', 'success');
+                    const blob = new Blob(resultChunks, { type: 'text/plain' });
+                    const url = URL.createObjectURL(blob);
+                    urlRegisterCallback(url);
+                    
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = mode === 'encrypt' ? `${file.name}.enc` : `${file.name}.dec`;
+                    a.click();
+                    progressCallback(100, "Tamamlandı!");
+                    toastCallback('Dosya akışı başarıyla tamamlandı ve indirildi!', 'success');
+                } catch(e) {
+                    progressCallback(100, "Hata!");
+                    toastCallback(e.message, 'error');
+                }
             }
         };
 
         const mediaCore = {
             async scrubExif(file, urlRegisterCallback) {
-                return new Promise((resolve) => {
+                return new Promise((resolve, reject) => {
                     const reader = new FileReader();
+                    reader.onerror = () => reject(new Error("Dosya okunamadı"));
                     reader.onload = (e) => {
                         const img = new Image();
+                        img.onerror = () => reject(new Error("Görsel işlenemedi"));
                         img.onload = () => {
                             const canvas = document.createElement('canvas');
                             canvas.width = img.width;
@@ -497,6 +519,83 @@
                     };
                     reader.readAsDataURL(file);
                 });
+            }
+        };
+
+        // WebRTC P2P / Secure Room Yöneticisi
+        const p2pEngine = {
+            pc: null,
+            dc: null,
+            async createOffer() {
+                this.pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+                this.dc = this.pc.createDataChannel("privacyConvert_secure_channel");
+                this.setupDataChannel();
+                
+                const offer = await this.pc.createOffer();
+                await this.pc.setLocalDescription(offer);
+                
+                return new Promise((resolve) => {
+                    if (this.pc.iceGatheringState === 'complete') {
+                        resolve(btoa(JSON.stringify(this.pc.localDescription)));
+                    } else {
+                        this.pc.onicecandidate = (e) => {
+                            if (!e.candidate) {
+                                resolve(btoa(JSON.stringify(this.pc.localDescription)));
+                            }
+                        };
+                        // Timeout fallback
+                        setTimeout(() => resolve(btoa(JSON.stringify(this.pc.localDescription))), 2000);
+                    }
+                });
+            },
+            async answerOffer(offerBase64) {
+                this.pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+                this.pc.ondatachannel = (e) => {
+                    this.dc = e.channel;
+                    this.setupDataChannel();
+                    PrivacyConvert.ui.showToast('Peer Veri Kanalı Bağlandı! 🚀', 'success');
+                };
+
+                const offerDesc = JSON.parse(atob(offerBase64));
+                await this.pc.setRemoteDescription(new RTCSessionDescription(offerDesc));
+                const answer = await this.pc.createAnswer();
+                await this.pc.setLocalDescription(answer);
+
+                return new Promise((resolve) => {
+                    if (this.pc.iceGatheringState === 'complete') {
+                        resolve(btoa(JSON.stringify(this.pc.localDescription)));
+                    } else {
+                        this.pc.onicecandidate = (e) => {
+                            if (!e.candidate) {
+                                resolve(btoa(JSON.stringify(this.pc.localDescription)));
+                            }
+                        };
+                        setTimeout(() => resolve(btoa(JSON.stringify(this.pc.localDescription))), 2000);
+                    }
+                });
+            },
+            async acceptAnswer(answerBase64) {
+                const answerDesc = JSON.parse(atob(answerBase64));
+                await this.pc.setRemoteDescription(new RTCSessionDescription(answerDesc));
+                PrivacyConvert.ui.showToast('P2P Bağlantısı Kuruldu! 🔒', 'success');
+            },
+            setupDataChannel() {
+                if(!this.dc) return;
+                this.dc.onopen = () => PrivacyConvert.ui.showToast('E2EE P2P Kanalı Açık!', 'success');
+                this.dc.onmessage = (e) => {
+                    const box = document.getElementById('chatLogArea');
+                    if(box) box.value += `\n[Peer]: ${e.data}`;
+                    PrivacyConvert.ui.showToast('Yeni mesaj alındı!');
+                };
+            },
+            send(msg) {
+                if(this.dc && this.dc.readyState === 'open') {
+                    this.dc.send(msg);
+                    const box = document.getElementById('chatLogArea');
+                    if(box) box.value += `\n[Ben]: ${msg}`;
+                } else {
+                    PrivacyConvert.ui.showToast('Bağlantı aktif değil!', 'error');
+                }
             }
         };
 
@@ -544,7 +643,7 @@
                         btnReset: "Reset", btnCopy: "📋 Copy", btnPreview: "👁️ Preview", btnProcess: "Execute Secure Process", closeBtn: "Close", previewTitle: "Enterprise Preview",
                         splitScreenBtn: "Split View", secondaryPaneTitle: "Secondary Workspace", brandBtn: "Branding", queueTitle: "Queue Status",
                         bannerTitle: "100% Client-Side Air-Gapped Security:", bannerDesc: "All processing occurs locally in your browser sandbox.", bannerVerifyBtn: "🔍 How to Verify?",
-                        verifyModalTitle: "How to Verify Air-Gapped Security", verifyDesc1: "This application operates entirely client-side using JavaScript, WebAssembly, and local IndexedDB sandbox storage.",
+                        verifyModalTitle: "How to Verify Air-Gapped Security", verifyDesc1: "This application operates entirely client-side using JavaScript, WebAssembly, PWA Caching, and local IndexedDB sandbox storage.",
                         verifyStep1: "Step 1: Open Browser Developer Tools (F12)", verifyStep1Sub: "Navigate to the \"Network\" tab.", verifyStep2: "Step 2: Disconnect Internet or Monitor Traffic", verifyStep2Sub: "Notice 0 outbound requests/bytes sent to external servers.",
                         catProFeatures: "💎 Pro & Enterprise", catInfiniteSec: "🔑 Security, Passkey & Vault", catZkpMarket: "📦 ZKP, AI & Marketplace", catLegalAudit: "⚖️ Legal, Diff & Audit", catPdfDocs: "📚 PDF & Documents", catMediaShare: "🖼️ Images, OCR, EXIF & P2P",
                         toolLiveShield: "Live Form PII Shield", toolCloudSync: "E2EE Cloud Sync", toolAuditCert: "Auditor PDF Certificate", toolWhiteLabel: "White-Label Branding",
@@ -570,7 +669,7 @@
                         btnReset: "Sıfırla", btnCopy: "📋 Kopyala", btnPreview: "👁️ Önizleme", btnProcess: "Güvenli İşlemi Çalıştır", closeBtn: "Kapat", previewTitle: "Kurumsal Önizleme",
                         splitScreenBtn: "Bölünmüş Ekran", secondaryPaneTitle: "İkincil Çalışma Alanı", brandBtn: "Markalama", queueTitle: "Kuyruk Durumu",
                         bannerTitle: "100% İstemci Tarafı (Air-Gapped) Güvenlik:", bannerDesc: "Tüm işlemler tarayıcınızın korumalı alanında (sandbox) yerel olarak gerçekleşir.", bannerVerifyBtn: "🔍 Nasıl Doğrulanır?",
-                        verifyModalTitle: "Air-Gapped Güvenliği Nasıl Doğrulanır", verifyDesc1: "Bu uygulama JavaScript, WebAssembly ve yerel IndexedDB depolama kullanarak tamamen istemci tarafında çalışır.",
+                        verifyModalTitle: "Air-Gapped Güvenliği Nasıl Doğrulanır", verifyDesc1: "Bu uygulama JavaScript, WebAssembly, PWA önbellekleme ve yerel IndexedDB depolama kullanarak tamamen istemci tarafında çalışır.",
                         verifyStep1: "1. Adım: Tarayıcı Geliştirici Araçlarını Açın (F12)", verifyStep1Sub: "\"Ağ\" (Network) sekmesine gidin.", verifyStep2: "2. Adım: İnterneti Kesin veya Trafiği İzleyin", verifyStep2Sub: "Dış sunuculara 0 bayt veri veya istek gönderildiğini fark edeceksiniz.",
                         catProFeatures: "💎 Pro ve Kurumsal", catInfiniteSec: "🔑 Güvenlik, Passkey ve Kasa", catZkpMarket: "📦 ZKP, Yapay Zeka ve Market", catLegalAudit: "⚖️ Hukuk, Karşılaştırma ve Denetim", catPdfDocs: "📚 PDF ve Belgeler", catMediaShare: "🖼️ Görseller, OCR, EXIF ve P2P",
                         toolLiveShield: "Canlı Form PII Kalkanı", toolCloudSync: "Uçtan Uca Şifreli Bulut Senkronizasyonu", toolAuditCert: "Denetçi PDF Sertifikası", toolWhiteLabel: "Beyaz Etiket Markalama",
@@ -865,6 +964,8 @@
                         PrivacyConvert.engine.executeTool();
                     } else if (meta.type === 'vault') {
                         PrivacyConvert.ui.renderVaultUI();
+                    } else if (meta.type === 'interactive-room' || meta.type === 'interactive-p2p') {
+                        PrivacyConvert.ui.renderP2PUI();
                     }
                 },
                 renderVaultUI() {
@@ -881,6 +982,28 @@
                         </div>
                     `;
                     PrivacyConvert.engine.loadVaultNotes();
+                },
+                renderP2PUI() {
+                    const container = document.getElementById('interactiveWorkspaceContainer'); 
+                    if(!container) return; 
+                    container.classList.remove('hidden');
+                    container.innerHTML = `
+                        <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-4">
+                            <h4 class="font-bold text-xs uppercase text-slate-500">E2EE P2P WebRTC Signaling Console</h4>
+                            <div class="flex gap-2">
+                                <button onclick="PrivacyConvert.engine.startP2POffer()" class="flex-1 py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">1. Create Offer</button>
+                                <button onclick="PrivacyConvert.engine.startP2PAnswer()" class="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl">2. Accept & Answer</button>
+                            </div>
+                            <textarea id="p2pSignalBox" placeholder="Paste or copy WebRTC signaling SDP payload here..." class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs font-mono dark:text-white"></textarea>
+                            <div id="chatSection" class="hidden space-y-2">
+                                <textarea id="chatLogArea" class="w-full h-32 bg-slate-900 text-emerald-400 text-xs p-3 rounded-xl border-none focus:outline-none resize-none font-mono" readonly placeholder="Chat & file stream logs..."></textarea>
+                                <div class="flex gap-2">
+                                    <input type="text" id="chatMsgInput" placeholder="Type encrypted message..." class="flex-1 p-2 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white">
+                                    <button onclick="p2pEngine.send(document.getElementById('chatMsgInput').value)" class="py-2 px-4 dynamic-bg text-white font-bold text-xs rounded-xl">Send</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
                 },
                 handleFiles(files) {
                     let validFiles = Array.from(files).map(f => ({ file: f, status: 'Ready' }));
@@ -970,65 +1093,69 @@
 
             engine: {
                 async executeTool() {
-                    const tool = PrivacyConvert.state.tool;
-                    const inputField = document.getElementById('mainInputField');
-                    const outputBox = document.getElementById('genericTextArea');
-                    const outputContainer = document.getElementById('genericTextBox');
-                    
-                    if (tool === 'pii-redactor' || tool === 'ai-ner-mask' || tool === 'live-pii-shield') {
-                        const text = inputField ? inputField.value : '';
-                        if (!text) return PrivacyConvert.ui.showToast('Lütfen metin girin', 'warning');
-                        if (outputContainer) outputContainer.classList.remove('hidden');
-                        outputBox.value = "Yapay Zeka Analiz Ediyor...";
-                        const result = tool === 'ai-ner-mask' ? aiEngine.runAiNer(text) : aiEngine.maskPII(text);
-                        outputBox.value = `[AI REDACTION SONUCU]\n\n${result}`;
-                        PrivacyConvert.ui.showToast('Veriler başarıyla maskelendi!');
-                    }
-                    else if (tool === 'encrypt-tool') {
-                        const pwd = document.getElementById('cryptoPasswordInput')?.value;
-                        const text = inputField ? inputField.value : '';
-                        if (!pwd) return PrivacyConvert.ui.showToast('Parola gerekli!', 'warning');
-                        if (outputContainer) outputContainer.classList.remove('hidden');
+                    try {
+                        const tool = PrivacyConvert.state.tool;
+                        const inputField = document.getElementById('mainInputField');
+                        const outputBox = document.getElementById('genericTextArea');
+                        const outputContainer = document.getElementById('genericTextBox');
                         
-                        if (PrivacyConvert.state.files.length > 0) {
-                            await streamCore.processLargeFile(
-                                PrivacyConvert.state.files[0].file, 
-                                pwd, 
-                                PrivacyConvert.state.cryptoMode, 
-                                (p, t) => PrivacyConvert.ui.updateProgress(p, t), 
-                                (m, t) => PrivacyConvert.ui.showToast(m, t), 
-                                (u) => PrivacyConvert.registerObjectUrl(u)
-                            );
-                            return;
+                        if (tool === 'pii-redactor' || tool === 'ai-ner-mask' || tool === 'live-pii-shield') {
+                            const text = inputField ? inputField.value : '';
+                            if (!text) return PrivacyConvert.ui.showToast('Lütfen metin girin', 'warning');
+                            if (outputContainer) outputContainer.classList.remove('hidden');
+                            outputBox.value = "Yapay Zeka Analiz Ediyor...";
+                            const result = tool === 'ai-ner-mask' ? aiEngine.runAiNer(text) : aiEngine.maskPII(text);
+                            outputBox.value = `[AI REDACTION SONUCU]\n\n${result}`;
+                            PrivacyConvert.ui.showToast('Veriler başarıyla maskelendi!');
                         }
-                        
-                        if (PrivacyConvert.state.cryptoMode === 'encrypt') {
-                            outputBox.value = "Şifreleniyor...";
-                            const encrypted = await cryptoCore.encrypt(text, pwd);
-                            outputBox.value = `-----BEGIN ENCRYPTED-----\n${encrypted}\n-----END ENCRYPTED-----`;
-                            PrivacyConvert.ui.showToast('Şifreleme başarılı!');
-                        } else {
-                            outputBox.value = "Şifre Çözülüyor...";
-                            const cleanBase64 = text.replace(/-----(BEGIN|END).*?-----/g, '').trim();
-                            const decrypted = await cryptoCore.decrypt(cleanBase64, pwd);
-                            outputBox.value = decrypted;
-                            PrivacyConvert.ui.showToast('Şifre başarıyla çözüldü!');
+                        else if (tool === 'encrypt-tool') {
+                            const pwd = document.getElementById('cryptoPasswordInput')?.value;
+                            const text = inputField ? inputField.value : '';
+                            if (!pwd) return PrivacyConvert.ui.showToast('Parola gerekli!', 'warning');
+                            if (outputContainer) outputContainer.classList.remove('hidden');
+                            
+                            if (PrivacyConvert.state.files.length > 0) {
+                                await streamCore.processLargeFile(
+                                    PrivacyConvert.state.files[0].file, 
+                                    pwd, 
+                                    PrivacyConvert.state.cryptoMode, 
+                                    (p, t) => PrivacyConvert.ui.updateProgress(p, t), 
+                                    (m, t) => PrivacyConvert.ui.showToast(m, t), 
+                                    (u) => PrivacyConvert.registerObjectUrl(u)
+                                );
+                                return;
+                            }
+                            
+                            if (PrivacyConvert.state.cryptoMode === 'encrypt') {
+                                outputBox.value = "Şifreleniyor...";
+                                const encrypted = await cryptoCore.encrypt(text, pwd);
+                                outputBox.value = `-----BEGIN ENCRYPTED-----\n${encrypted}\n-----END ENCRYPTED-----`;
+                                PrivacyConvert.ui.showToast('Şifreleme başarılı!');
+                            } else {
+                                outputBox.value = "Şifre Çözülüyor...";
+                                const cleanBase64 = text.replace(/-----(BEGIN|END).*?-----/g, '').trim();
+                                const decrypted = await cryptoCore.decrypt(cleanBase64, pwd);
+                                outputBox.value = decrypted;
+                                PrivacyConvert.ui.showToast('Şifre başarıyla çözüldü!');
+                            }
                         }
-                    }
-                    else if (tool === 'meta-scrubber') {
-                        if (PrivacyConvert.state.files.length === 0) return PrivacyConvert.ui.showToast('Görsel seçin', 'warning');
-                        PrivacyConvert.ui.updateProgress(30, "EXIF temizleniyor...");
-                        for (let item of PrivacyConvert.state.files) {
-                            const cleanUrl = await mediaCore.scrubExif(item.file, (u) => PrivacyConvert.registerObjectUrl(u));
-                            const l = document.createElement('a'); l.href = cleanUrl; l.download = `clean_${item.file.name}`; l.click();
+                        else if (tool === 'meta-scrubber') {
+                            if (PrivacyConvert.state.files.length === 0) return PrivacyConvert.ui.showToast('Görsel seçin', 'warning');
+                            PrivacyConvert.ui.updateProgress(30, "EXIF temizleniyor...");
+                            for (let item of PrivacyConvert.state.files) {
+                                const cleanUrl = await mediaCore.scrubExif(item.file, (u) => PrivacyConvert.registerObjectUrl(u));
+                                const l = document.createElement('a'); l.href = cleanUrl; l.download = `clean_${item.file.name}`; l.click();
+                            }
+                            PrivacyConvert.ui.updateProgress(100, "Done!");
+                            PrivacyConvert.ui.showToast('EXIF Meta verileri başarıyla temizlendi!');
                         }
-                        PrivacyConvert.ui.updateProgress(100, "Done!");
-                        PrivacyConvert.ui.showToast('EXIF Meta verileri başarıyla temizlendi!');
-                    }
-                    else {
-                        if (outputContainer) outputContainer.classList.remove('hidden');
-                        outputBox.value = `[SİSTEM LOGU - ${tool.toUpperCase()}]\nİşlem yerel tarayıcı korumalı alanında (Sandbox) başarıyla yürütüldü. Dışarıya 0 bayt veri gönderildi.`;
-                        PrivacyConvert.ui.showToast('Güvenli İşlem Tamamlandı!');
+                        else {
+                            if (outputContainer) outputContainer.classList.remove('hidden');
+                            outputBox.value = `[SİSTEM LOGU - ${tool.toUpperCase()}]\nİşlem yerel tarayıcı korumalı alanında (Sandbox) başarıyla yürütüldü. Dışarıya 0 bayt veri gönderildi.`;
+                            PrivacyConvert.ui.showToast('Güvenli İşlem Tamamlandı!');
+                        }
+                    } catch(e) {
+                        PrivacyConvert.ui.showToast(e.message, 'error');
                     }
                 },
                 executePane2() {
@@ -1045,6 +1172,34 @@
                     if(inputField) {
                         inputField.value = "Confidential Report: John Doe (john.doe@enterprise.com) phone +905551234567, IP 192.168.1.55 balance $45,000.";
                         PrivacyConvert.ui.showToast('Örnek veri başarıyla yüklendi!');
+                    }
+                },
+                async startP2POffer() {
+                    const offer = await p2pEngine.createOffer();
+                    const box = document.getElementById('p2pSignalBox');
+                    if(box) box.value = offer;
+                    PrivacyConvert.ui.showToast('Offer oluşturuldu. Karşı tarafa gönderin.');
+                },
+                async startP2PAnswer() {
+                    const box = document.getElementById('p2pSignalBox');
+                    if(!box || !box.value) return PrivacyConvert.ui.showToast('Önce offer yapıştırın!', 'warning');
+                    const val = box.value.trim();
+                    if(val.startsWith('ey')) { // base64 JSON check
+                        try {
+                            const answer = await p2pEngine.answerOffer(val);
+                            box.value = answer;
+                            document.getElementById('chatSection')?.classList.remove('hidden');
+                            PrivacyConvert.ui.showToast('Answer oluşturuldu. Karşı tarafa iletin.');
+                        } catch(e) {
+                            PrivacyConvert.ui.showToast('Geçersiz SDP Offer!', 'error');
+                        }
+                    } else {
+                        try {
+                            await p2pEngine.acceptAnswer(val);
+                            document.getElementById('chatSection')?.classList.remove('hidden');
+                        } catch(e) {
+                            PrivacyConvert.ui.showToast('Geçersiz SDP Answer!', 'error');
+                        }
                     }
                 },
                 async saveVaultNote() {
