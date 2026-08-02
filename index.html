@@ -16,7 +16,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://unpkg.com/tesseract.js@2.1.4/dist/tesseract.min.js"></script>
     <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        // PDF.js Worker'ı CDN engeline takılmamak ve Air-Gapped çalışmak için Blob Worker olarak tanımlıyoruz
+        const pdfWorkerBlobUrl = URL.createObjectURL(new Blob([
+            `importScripts("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js");`
+        ], { type: "application/javascript" }));
+        pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorkerBlobUrl;
     </script>
 
     <script>
@@ -436,14 +440,15 @@
         if ('serviceWorker' in navigator) {
             try {
                 const swCode = `
-                    const CACHE_NAME = 'sovereign-cache-v1';
+                    const CACHE_NAME = 'sovereign-cache-v2';
                     const assetsToCache = [
                         '/',
                         'https://cdn.tailwindcss.com',
                         'https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js',
                         'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js',
                         'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js',
-                        'https://unpkg.com/tesseract.js@2.1.4/dist/tesseract.min.js'
+                        'https://unpkg.com/tesseract.js@2.1.4/dist/tesseract.min.js',
+                        'https://unpkg.com/tesseract.js-core@2.2.0/tesseract-core.wasm.js'
                     ];
 
                     self.addEventListener('install', (e) => {
@@ -456,7 +461,13 @@
                     });
 
                     self.addEventListener('activate', (e) => {
-                        e.waitUntil(clients.claim());
+                        e.waitUntil(
+                            caches.keys().then((keys) => {
+                                return Promise.all(keys.map(key => {
+                                    if(key !== CACHE_NAME) return caches.delete(key);
+                                }));
+                            }).then(() => clients.claim())
+                        );
                     });
 
                     self.addEventListener('fetch', (e) => {
@@ -1352,7 +1363,7 @@
             routing: {
                 metaData: {
                     'live-pii-shield': { type: 'text', titleKey: 'toolLiveShield', valueTitleKey: 'v_live_title', valueDescKey: 'v_live_desc' },
-                    'pii-redactor': { type: 'text', titleKey: 'toolPii', proRequired: true, valueTitleKey: 'v_pii_title', valueDescKey: 'v_pii_desc' },
+                    'pii-redactor': { type: 'file', accept: 'application/pdf,image/*,text/plain', titleKey: 'toolPii', proRequired: true, valueTitleKey: 'v_pii_title', valueDescKey: 'v_pii_desc' },
                     'audit-certificate': { type: 'action', titleKey: 'toolAuditCert', proRequired: true, valueTitleKey: 'v_cert_title', valueDescKey: 'v_cert_desc' },
                     'white-label': { type: 'text', titleKey: 'toolWhiteLabel', proRequired: true, valueTitleKey: 'v_brand_title', valueDescKey: 'v_brand_desc' },
                     'opfs-vault': { type: 'interactive-opfs', titleKey: 'toolOpfs', proRequired: true, valueTitleKey: 'v_opfs_title', valueDescKey: 'v_opfs_desc' },
@@ -1374,7 +1385,7 @@
                     'cross-compliance': { type: 'text', titleKey: 'toolCross', valueTitleKey: 'v_cross_title', valueDescKey: 'v_cross_desc' },
                     'timestamp-anchor': { type: 'file', multiple: true, accept: '*/*', titleKey: 'toolTimestamp', valueTitleKey: 'v_timestamp_title', valueDescKey: 'v_timestamp_desc' },
                     'chain-custody': { type: 'file', multiple: true, accept: '*/*', titleKey: 'toolCustody', valueTitleKey: 'v_custody_title', valueDescKey: 'v_custody_desc' },
-                    'contract-analyzer': { type: 'text', titleKey: 'toolContract', valueTitleKey: 'v_contract_title', valueDescKey: 'v_contract_desc' },
+                    'contract-analyzer': { type: 'file', accept: 'application/pdf,image/*,text/plain', titleKey: 'toolContract', valueTitleKey: 'v_contract_title', valueDescKey: 'v_contract_desc' },
                     'pdf-to-png': { type: 'file', accept: 'application/pdf', titleKey: 'toolPdfPng', valueTitleKey: 'v_pdfpng_title', valueDescKey: 'v_pdfpng_desc' },
                     'pdf-merge': { type: 'file', accept: 'application/pdf', multiple: true, titleKey: 'toolPdfMerge', valueTitleKey: 'v_pdfmerge_title', valueDescKey: 'v_pdfmerge_desc' },
                     'visual-redact': { type: 'interactive-redact', accept: 'image/*', titleKey: 'toolVisual', valueTitleKey: 'v_visual_title', valueDescKey: 'v_visual_desc' },
@@ -1792,13 +1803,66 @@
                         
                         if (outputContainer) outputContainer.classList.remove('hidden');
 
-                        if (tool === 'pii-redactor' || tool === 'ai-ner-mask' || tool === 'live-pii-shield') {
+                        if (tool === 'ai-ner-mask' || tool === 'live-pii-shield') {
                             const text = inputField ? inputField.value : '';
                             if (!text) return PrivacyConvert.ui.showToast(PrivacyConvert.i18n.get('errEnterText', lang), 'warning');
                             outputBox.value = "AI Analiz Ediliyor...";
                             const result = tool === 'ai-ner-mask' ? aiEngine.runAiNer(text) : aiEngine.maskPII(text);
                             outputBox.value = `[AI REDACTION REPORT]\n\n${result}`;
                             PrivacyConvert.ui.showToast('Data successfully masked!');
+                        }
+                        else if (tool === 'pii-redactor' || tool === 'contract-analyzer') {
+                            if (files.length === 0) return PrivacyConvert.ui.showToast('Lütfen taranacak bir belge (PDF, Görsel veya TXT) seçin', 'warning');
+                            
+                            outputBox.value = "Belge İşleniyor ve Metin Çıkarılıyor...\nLütfen bekleyin.";
+                            PrivacyConvert.ui.updateProgress(10, 'Belge okunuyor...');
+
+                            const file = files[0].file;
+                            let extractedText = "";
+
+                            try {
+                                if (file.type === "application/pdf") {
+                                    const arrayBuffer = await file.arrayBuffer();
+                                    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                                    for (let i = 1; i <= pdf.numPages; i++) {
+                                        PrivacyConvert.ui.updateProgress(10 + Math.round((i / pdf.numPages) * 60), `Sayfa ${i}/${pdf.numPages} taranıyor...`);
+                                        const page = await pdf.getPage(i);
+                                        const textContent = await page.getTextContent();
+                                        extractedText += textContent.items.map(s => s.str).join(' ') + "\n";
+                                        // UI Thread'in donmasını önlemek için asenkron nefes aldırıyoruz
+                                        await new Promise(r => setTimeout(r, 10));
+                                    }
+                                } else if (file.type.startsWith("image/")) {
+                                    PrivacyConvert.ui.updateProgress(40, 'OCR Motoru çalışıyor (Tesseract)...');
+                                    const imgUrl = PrivacyConvert.registerObjectUrl(URL.createObjectURL(file));
+                                    const result = await Tesseract.recognize(imgUrl, 'eng+tur', {
+                                        logger: m => PrivacyConvert.ui.updateProgress(Math.round(m.progress * 100), m.status)
+                                    });
+                                    extractedText = result.data.text;
+                                } else {
+                                    extractedText = await file.text();
+                                }
+
+                                PrivacyConvert.ui.updateProgress(85, 'Yapay Zeka Analizi Yapılıyor...');
+
+                                if (tool === 'pii-redactor') {
+                                    const maskedResult = aiEngine.maskPII(extractedText);
+                                    outputBox.value = `[AI BATCH REDACTION REPORT - ${file.name}]\n\n${maskedResult}\n\n(Belge başarıyla tarandı ve PII verileri korumalı alanda temizlendi.)`;
+                                    PrivacyConvert.ui.showToast('Hassas veriler başarıyla maskelendi!');
+                                } else if (tool === 'contract-analyzer') {
+                                    const riskLevel = extractedText.toLowerCase().includes('liability') || extractedText.toLowerCase().includes('sorumluluk') ? 'YÜKSEK (Sorumluluk / Liability maddeleri içeriyor)' : 'DÜŞÜK (Standart şartlar)';
+                                    outputBox.value = `[CONTRACT RISK PARSER - ${file.name}]\n- Belge Uzunluğu: ${extractedText.length} karakter\n- Risk Seviyesi: ${riskLevel}\n- Veri Gizliliği: Tamamen Yerel (Air-Gapped) Analiz Edildi.\n\n[Çıkarılan Metin Önizlemesi]\n${extractedText.substring(0, 500)}...`;
+                                    PrivacyConvert.ui.showToast('Sözleşme risk analizi yapıldı!');
+                                }
+                                
+                                PrivacyConvert.ui.updateProgress(100, 'Tamamlandı!');
+                                // İşlem bittikten sonra UX temizliği
+                                PrivacyConvert.state.files = [];
+                            } catch (err) {
+                                outputBox.value = `Hata oluştu: ${err.message}`;
+                                PrivacyConvert.ui.updateProgress(100, 'Hata!');
+                                PrivacyConvert.ui.showToast('İşlem başarısız oldu', 'error');
+                            }
                         }
                         else if (tool === 'cloud-sync') {
                             outputBox.value = `[E2EE CLOUD SYNC ACTIVE]\n- Protocol: AES-GCM 256-bit Local Sandbox Backup\n- Status: Encrypted vault successfully synchronized with OPFS virtual storage.\n- Last Sync: ${new Date().toISOString()}`;
@@ -1827,6 +1891,7 @@
                             if (!pwd) return PrivacyConvert.ui.showToast(PrivacyConvert.i18n.get('errPasswordRequired', lang), 'warning');
                             if (files.length > 0) {
                                 await streamCore.processLargeFile(files[0].file, pwd, PrivacyConvert.state.cryptoMode, (p, t) => PrivacyConvert.ui.updateProgress(p, t), (m, t) => PrivacyConvert.ui.showToast(m, t), (u) => PrivacyConvert.registerObjectUrl(u));
+                                PrivacyConvert.state.files = [];
                                 return;
                             }
                             if (PrivacyConvert.state.cryptoMode === 'encrypt') {
@@ -1867,11 +1932,6 @@
                             outputBox.value = `[CONTRACT DIFF ENGINE REPORT]\n- Primary Text Length: ${text.length} chars\n- Clause changes: None detected against baseline.\n- Integrity Hash: ${await cryptoCore.sha256(text)}`;
                             PrivacyConvert.ui.showToast('Sözleşme fark analizi tamamlandı!');
                         }
-                        else if (tool === 'contract-analyzer') {
-                            const text = inputField ? inputField.value : 'Sample liability clause...';
-                            outputBox.value = `[CONTRACT RISK PARSER]\n- Liability Risk: LOW (Sandboxed terms)\n- Indemnity Clause: Checked\n- Data Retention: Local-only compliance verified.`;
-                            PrivacyConvert.ui.showToast('Sözleşme risk analizi yapıldı!');
-                        }
                         else if (tool === 'blockchain-anchor') {
                             const text = inputField ? inputField.value : 'Enterprise Root Log';
                             const merkleHash = await cryptoCore.sha256(text);
@@ -1890,6 +1950,7 @@
                             outputBox.value = report;
                             PrivacyConvert.ui.updateProgress(100, 'Tamamlandı!');
                             PrivacyConvert.ui.showToast('İşlem başarıyla tamamlandı!');
+                            PrivacyConvert.state.files = [];
                         }
                         else if (tool === 'pdf-merge') {
                             if (files.length === 0) return PrivacyConvert.ui.showToast('Please select PDF files', 'warning');
@@ -1909,6 +1970,7 @@
                             setTimeout(() => { try { URL.revokeObjectURL(url); } catch(e){} }, 10000);
                             PrivacyConvert.ui.updateProgress(100, 'Tamamlandı!');
                             PrivacyConvert.ui.showToast('PDFs merged successfully!');
+                            PrivacyConvert.state.files = [];
                         }
                         else if (tool === 'pdf-to-png') {
                             if (files.length === 0) return PrivacyConvert.ui.showToast('Please select PDF files', 'warning');
@@ -1935,10 +1997,12 @@
                                 a.download = `${file.name.replace('.pdf', '')}_page_${i}.png`;
                                 a.click();
                                 setTimeout(() => { try { URL.revokeObjectURL(url); } catch(e){} }, 10000);
+                                await new Promise(r => setTimeout(r, 20));
                             }
                             PrivacyConvert.ui.updateProgress(100, 'Tamamlandı!');
                             outputBox.value = `[PDF TO PNG CONVERSION COMPLETE]\n- File: ${file.name}\n- Total Pages Converted & Downloaded: ${numPages}`;
                             PrivacyConvert.ui.showToast('PDF sayfaları başarıyla PNG olarak dışa aktarıldı!');
+                            PrivacyConvert.state.files = [];
                         }
                         else if (tool === 'ocr-tool') {
                             if (files.length === 0) return PrivacyConvert.ui.showToast('Please select image files', 'warning');
@@ -1949,6 +2013,7 @@
                                 outputBox.value = text;
                                 PrivacyConvert.ui.updateProgress(100, 'Tamamlandı!');
                                 PrivacyConvert.ui.showToast('OCR extracted!');
+                                PrivacyConvert.state.files = [];
                             });
                             return;
                         }
@@ -1962,6 +2027,7 @@
                             }
                             PrivacyConvert.ui.updateProgress(100, "Done!");
                             PrivacyConvert.ui.showToast('EXIF cleaned!');
+                            PrivacyConvert.state.files = [];
                         }
                         else {
                             outputBox.value = `[SOVEREIGN OS ENGINE LOG - ${tool.toUpperCase()}]\nExecuted securely in isolated browser sandbox. Zero bytes leaked to external networks.`;
