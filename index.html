@@ -559,6 +559,90 @@
             }
         };
 
+        const p2pEngine = {
+            pc: null,
+            dataChannel: null,
+            async init(isInitiator) {
+                this.pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+                if (isInitiator) {
+                    this.dataChannel = this.pc.createDataChannel("PrivacyConvertSecureChat");
+                    this.setupDataChannel();
+                    const offer = await this.pc.createOffer();
+                    await this.pc.setLocalDescription(offer);
+                    return new Promise(resolve => {
+                        if (this.pc.iceGatheringState === 'complete') {
+                            resolve(JSON.stringify(this.pc.localDescription));
+                        } else {
+                            this.pc.onicecandidate = e => {
+                                if (!e.candidate) resolve(JSON.stringify(this.pc.localDescription));
+                            };
+                        }
+                    });
+                } else {
+                    this.pc.ondatachannel = e => {
+                        this.dataChannel = e.channel;
+                        this.setupDataChannel();
+                    };
+                }
+            },
+            setupDataChannel() {
+                this.dataChannel.onopen = () => {
+                    document.getElementById('chatSection')?.classList.remove('hidden');
+                    PrivacyConvert.ui.showToast('P2P E2EE Bağlantısı Kuruldu!');
+                };
+                this.dataChannel.onmessage = e => {
+                    const log = document.getElementById('chatLogArea');
+                    if(log) log.value += `\n[Peer]: ${e.data}`;
+                };
+            },
+            async createOffer() {
+                const sdp = await this.init(true);
+                const box = document.getElementById('p2pSignalBox');
+                if(box) box.value = sdp;
+                PrivacyConvert.ui.showToast('Offer oluşturuldu. Karşı tarafa gönderin.');
+            },
+            async createAnswer() {
+                const box = document.getElementById('p2pSignalBox');
+                if(!box || !box.value) return PrivacyConvert.ui.showToast('Offer verisi girilmedi!', 'warning');
+                const remoteSdp = JSON.parse(box.value);
+                await this.init(false);
+                await this.pc.setRemoteDescription(new RTCSessionDescription(remoteSdp));
+                const answer = await this.pc.createAnswer();
+                await this.pc.setLocalDescription(answer);
+                return new Promise(resolve => {
+                    if (this.pc.iceGatheringState === 'complete') {
+                        box.value = JSON.stringify(this.pc.localDescription);
+                        resolve();
+                    } else {
+                        this.pc.onicecandidate = e => {
+                            if (!e.candidate) {
+                                box.value = JSON.stringify(this.pc.localDescription);
+                                resolve();
+                            }
+                        };
+                    }
+                });
+            },
+            async acceptAnswer() {
+                const box = document.getElementById('p2pSignalBox');
+                if(!box || !box.value) return PrivacyConvert.ui.showToast('Answer verisi girilmedi!', 'warning');
+                const answerSdp = JSON.parse(box.value);
+                await this.pc.setRemoteDescription(new RTCSessionDescription(answerSdp));
+                PrivacyConvert.ui.showToast('Bağlantı kabul edildi, el sıkışma tamamlanıyor...');
+            },
+            send(msg) {
+                if(this.dataChannel && this.dataChannel.readyState === 'open') {
+                    this.dataChannel.send(msg);
+                    const log = document.getElementById('chatLogArea');
+                    if(log) log.value += `\n[Siz]: ${msg}`;
+                    const input = document.getElementById('chatMsgInput');
+                    if(input) input.value = '';
+                } else {
+                    PrivacyConvert.ui.showToast('P2P bağlantısı aktif değil!', 'error');
+                }
+            }
+        };
+
         const mediaCore = {
             async scrubExif(file, urlRegisterCallback) {
                 return new Promise((resolve, reject) => {
@@ -626,7 +710,8 @@
                 db: null,
                 splitScreenActive: false,
                 objectUrls: new Set(),
-                isPro: localStorage.getItem('privacyConvert_pro') === 'true'
+                isPro: localStorage.getItem('privacyConvert_pro') === 'true',
+                ragDocs: []
             },
 
             registerObjectUrl(url) {
@@ -1087,7 +1172,6 @@
                             mainTitle.innerText = dict[meta.titleKey];
                         }
 
-                        // Kurumsal değer ve özellik açıklama banner'ını dillere göre güncelle
                         const banner = document.getElementById('toolEnterpriseValueBanner');
                         const bTitle = document.getElementById('enterpriseBannerTitle');
                         const bDesc = document.getElementById('enterpriseBannerDesc');
@@ -1217,7 +1301,6 @@
                         mainTitle.innerText = dict[meta.titleKey];
                     }
 
-                    // Uzun formlu değer banner'ını yönet ve dillere göre çevir
                     const banner = document.getElementById('toolEnterpriseValueBanner');
                     const bTitle = document.getElementById('enterpriseBannerTitle');
                     const bDesc = document.getElementById('enterpriseBannerDesc');
@@ -1763,6 +1846,123 @@
                     if(inputField) {
                         inputField.value = "Confidential Report: John Doe (john.doe@enterprise.com) phone +905551234567, IP 192.168.1.55 balance $45,000.";
                         PrivacyConvert.ui.showToast('Sample data loaded!');
+                    }
+                },
+                // OPFS Entegrasyonu
+                async opfsSave() {
+                    const name = document.getElementById('opfsFileName')?.value;
+                    const content = document.getElementById('opfsFileContent')?.value;
+                    if(!name || !content) return PrivacyConvert.ui.showToast('Dosya adı ve içerik gerekli!', 'warning');
+                    await opfsEngine.writeFile(name, content);
+                    PrivacyConvert.ui.showToast('OPFS Sanal Diske başarıyla kaydedildi!');
+                    this.opfsList();
+                },
+                async opfsList() {
+                    const listDiv = document.getElementById('opfsFileList');
+                    if(!listDiv) return;
+                    try {
+                        const files = await opfsEngine.listFiles();
+                        listDiv.innerHTML = files.length ? files.map(f => `<div class="flex justify-between items-center bg-white dark:bg-slate-800 p-2 rounded"><span>📄 ${f}</span><button onclick="PrivacyConvert.engine.opfsRead('${f}')" class="text-indigo-500 font-bold">Oku</button></div>`).join('') : '<span class="text-slate-400">Hiç dosya yok.</span>';
+                    } catch(e) {
+                        listDiv.innerHTML = `<span class="text-red-400">OPFS Erişilemedi</span>`;
+                    }
+                },
+                async opfsRead(name) {
+                    const content = await opfsEngine.readFile(name);
+                    const contentArea = document.getElementById('opfsFileContent');
+                    const nameArea = document.getElementById('opfsFileName');
+                    if(contentArea) contentArea.value = content;
+                    if(nameArea) nameArea.value = name;
+                    PrivacyConvert.ui.showToast(`"${name}" yüklendi.`);
+                },
+                // RAG Entegrasyonu
+                async ragAddDoc() {
+                    const title = document.getElementById('ragDocTitle')?.value;
+                    const content = document.getElementById('ragDocContent')?.value;
+                    if(!title || !content) return PrivacyConvert.ui.showToast('Başlık ve içerik gerekli!', 'warning');
+                    PrivacyConvert.state.ragDocs.push({ title, content });
+                    PrivacyConvert.ui.showToast(`"${title}" indekse eklendi!`);
+                    document.getElementById('ragDocTitle').value = '';
+                    document.getElementById('ragDocContent').value = '';
+                },
+                async ragSearch() {
+                    const q = document.getElementById('ragQueryInput')?.value.toLowerCase();
+                    const out = document.getElementById('ragResultArea');
+                    if(!q) return PrivacyConvert.ui.showToast('Arama sorgusu girin', 'warning');
+                    const results = PrivacyConvert.state.ragDocs.filter(d => d.content.toLowerCase().includes(q) || d.title.toLowerCase().includes(q));
+                    out.value = `[LOCAL RAG SEARCH RESULTS]\nQuery: "${q}"\nFound matches: ${results.length}\n\n` + results.map(r => `--- [${r.title}] ---\n${r.content.substring(0, 200)}...\n`).join('\n');
+                    PrivacyConvert.ui.showToast('Arama tamamlandı!');
+                },
+                // ZKP Entegrasyonu
+                async zkpCommit() {
+                    const secret = document.getElementById('zkpSecret')?.value;
+                    if(!secret) return PrivacyConvert.ui.showToast('Gizli sır girin!', 'warning');
+                    const salt = window.crypto.getRandomValues(new Uint8Array(8));
+                    const saltHex = Array.from(salt).map(b => b.toString(16).padStart(2, '0')).join('');
+                    const hash = await cryptoCore.sha256(secret + saltHex);
+                    document.getElementById('zkpResultBox').value = `[ZKP COMMITMENT GENERATED]\nCommitment Hash (SHA-256):\n${hash}\n\nSalt (Tuz - Güvenle saklayın):\n${saltHex}`;
+                    document.getElementById('zkpVerifySecret').value = secret;
+                    document.getElementById('zkpVerifySalt').value = saltHex;
+                    document.getElementById('zkpVerifyTarget').value = hash;
+                    PrivacyConvert.ui.showToast('ZKP taahhüdü oluşturuldu!');
+                },
+                async zkpVerify() {
+                    const secret = document.getElementById('zkpVerifySecret')?.value;
+                    const saltHex = document.getElementById('zkpVerifySalt')?.value;
+                    const targetHash = document.getElementById('zkpVerifyTarget')?.value;
+                    if(!secret || !saltHex || !targetHash) return PrivacyConvert.ui.showToast('Tüm alanları doldurun!', 'warning');
+                    const calcHash = await cryptoCore.sha256(secret + saltHex);
+                    const isValid = calcHash === targetHash;
+                    PrivacyConvert.ui.showToast(isValid ? 'ZKP Doğrulama BAŞARILI!' : 'ZKP Doğrulama BAŞARISIZ!', isValid ? 'success' : 'error');
+                },
+                // IndexedDB Vault Entegrasyonu
+                async saveVaultNote() {
+                    const title = document.getElementById('vaultTitle')?.value;
+                    const content = document.getElementById('vaultContent')?.value;
+                    if(!title || !content) return PrivacyConvert.ui.showToast('Başlık ve içerik gerekli!', 'warning');
+                    if(!PrivacyConvert.state.db) await PrivacyConvert.initDB();
+                    const tx = PrivacyConvert.state.db.transaction('vault', 'readwrite');
+                    const store = tx.objectStore('vault');
+                    store.add({ title, content, date: new Date().toISOString() });
+                    tx.oncomplete = () => {
+                        PrivacyConvert.ui.showToast('Not kasaya kaydedildi!');
+                        document.getElementById('vaultTitle').value = '';
+                        document.getElementById('vaultContent').value = '';
+                        this.loadVaultNotes();
+                    };
+                },
+                async loadVaultNotes() {
+                    const list = document.getElementById('vaultList');
+                    if(!list) return;
+                    if(!PrivacyConvert.state.db) await PrivacyConvert.initDB();
+                    const tx = PrivacyConvert.state.db.transaction('vault', 'readonly');
+                    const store = tx.objectStore('vault');
+                    const req = store.getAll();
+                    req.onsuccess = () => {
+                        const notes = req.result;
+                        list.innerHTML = notes.length ? notes.map(n => `<div class="p-2.5 bg-white dark:bg-slate-800 rounded-xl border flex justify-between items-center text-xs"><div><strong>${n.title}</strong><p class="text-[10px] text-slate-400">${n.content.substring(0, 40)}...</p></div><button onclick="PrivacyConvert.engine.deleteVaultNote(${n.id})" class="text-red-500 font-bold">Sil</button></div>`).join('') : '<span class="text-slate-400 text-xs">Kasa boş.</span>';
+                    };
+                },
+                async deleteVaultNote(id) {
+                    if(!PrivacyConvert.state.db) await PrivacyConvert.initDB();
+                    const tx = PrivacyConvert.state.db.transaction('vault', 'readwrite');
+                    tx.objectStore('vault').delete(id);
+                    tx.oncomplete = () => {
+                        PrivacyConvert.ui.showToast('Not silindi.');
+                        this.loadVaultNotes();
+                    };
+                },
+                // P2P Sinyalleşme Entegrasyonu
+                async startP2POffer() {
+                    await p2pEngine.createOffer();
+                },
+                async startP2PAnswer() {
+                    const box = document.getElementById('p2pSignalBox');
+                    if(box && box.value.includes('type":"offer')) {
+                        await p2pEngine.createAnswer();
+                        PrivacyConvert.ui.showToast('Answer oluşturuldu. Karşı tarafa iletin.');
+                    } else {
+                        await p2pEngine.acceptAnswer();
                     }
                 }
             },
