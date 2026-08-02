@@ -88,7 +88,7 @@
                 <div class="flex-grow border-t border-slate-200 dark:border-slate-700"></div>
             </div>
 
-            <input type="text" id="proLicenseKeyInput" placeholder="Enter Pro License Key..." class="w-full p-3 bg-slate-50 dark:bg-slate-900 border rounded-xl text-xs dark:text-white">
+            <input type="text" id="proLicenseKeyInput" placeholder="Enter Pro License Key..." class="w-full p-3 bg-slate-50 dark:bg-slate-900 border rounded-xl text-xs dark:text-white" data-i18n-placeholder="proKeyPlaceholder">
             <button onclick="PrivacyConvert.ui.activateProLicense()" class="dynamic-bg text-white font-bold py-3 px-4 rounded-xl text-xs shadow-md" data-i18n="activateKeyBtn">Activate Pro License</button>
         </div>
     </div>
@@ -685,7 +685,15 @@
                         faq6Q: "Why do P2P features only work on local networks (LAN)?", faq6A: "To guarantee absolute zero data leakage, external STUN/TURN servers are completely removed. This ensures P2P sharing operates strictly within your secure local network (LAN).",
                         proBtn: "Get Pro", proModalTitle: "💎 Upgrade to Sovereign Pro", proModalDesc: "Unlock unlimited batch processing, cryptographic audit certificates, E2EE cloud sync, and P2P priority nodes.", activateKeyBtn: "Activate Pro License",
                         payTrBtn: "PayTR / Credit Card (TL)", cryptoPayBtn: "Cryptomus / Crypto (USDT/BTC)", allRights: "All rights reserved.", orDivider: "Or enter license key",
-                        descLiveShield: "Shield outbound web forms and chat inputs from leaking sensitive PII."
+                        descLiveShield: "Shield outbound web forms and chat inputs from leaking sensitive PII.",
+                        proWarning: "🔒 Pro Feature: You are in limited trial mode!",
+                        proActivated: "🎉 Pro license activated successfully!",
+                        proInvalidKey: "Invalid license key!",
+                        errEnterText: "Please enter text",
+                        errPasswordRequired: "Master password is required!",
+                        errSelectPdf: "Please select PDF files",
+                        errSelectImage: "Please select image files",
+                        proKeyPlaceholder: "Enter Pro License Key..."
                     },
                     tr: {
                         accept: "Kabul Et", secureLabel: "Güvenli", dropText: "Göz atmak için tıklayın veya dosyaları buraya sürükleyin (Bellek Korumalı Akış)",
@@ -713,7 +721,15 @@
                         faq6Q: "P2P özellikleri neden yalnızca yerel ağlarda (LAN) çalışıyor?", faq6A: "Mutlak veri güvenliği sağlamak için dış sunucular (STUN/TURN) tamamen kaldırılmıştır. Bu durum P2P paylaşımların yalnızca güvenli yerel ağ (LAN) içinde çalışmasını sağlar.",
                         proBtn: "Pro'ya Geç", proModalTitle: "💎 Sovereign Pro'ya Yükselt", proModalDesc: "Sınırsız toplu işleme, kriptografik denetim sertifikaları, E2EE bulut senkronizasyonu ve P2P öncelikli düğümlerin kilidini açın.", activateKeyBtn: "Pro Lisansını Aktifleştir",
                         payTrBtn: "PayTR / Kredi Kartı ile Öde (TL)", cryptoPayBtn: "Cryptomus / Kripto ile Öde (USDT/BTC)", allRights: "Tüm hakları saklıdır.", orDivider: "Veya lisans anahtarını girin",
-                        descLiveShield: "Giden web formlarını ve sohbet girdilerini hassas kişisel verilerin (PII) sızmasına karşı koruyun."
+                        descLiveShield: "Giden web formlarını ve sohbet girdilerini hassas kişisel verilerin (PII) sızmasına karşı koruyun.",
+                        proWarning: "🔒 Pro Özellik: Sınırlı deneme modundasınız!",
+                        proActivated: "🎉 Pro Lisans başarıyla aktifleşti!",
+                        proInvalidKey: "Geçersiz lisans anahtarı!",
+                        errEnterText: "Lütfen metin girin",
+                        errPasswordRequired: "Ana parola gerekli!",
+                        errSelectPdf: "Lütfen PDF dosyaları seçin",
+                        errSelectImage: "Lütfen resim dosyaları seçin",
+                        proKeyPlaceholder: "Pro Lisans Anahtarını Girin..."
                     },
                     es: {
                         accept: "Aceptar", secureLabel: "Seguro", dropText: "Haga clic para buscar o arrastre archivos aquí",
@@ -741,7 +757,15 @@
                         faq6Q: "¿Por qué las funciones P2P solo funcionan en redes locales (LAN)?", faq6A: "Para garantizar cero fugas de datos, los servidores STUN/TURN externos se eliminaron por completo, operando estrictamente en su red local (LAN).",
                         proBtn: "Obtener Pro", proModalTitle: "💎 Actualizar a Sovereign Pro", proModalDesc: "Desbloquee procesamiento por lotes ilimitado, certificados de auditoría criptográfica, sincronización en la nube E2EE y nodos de prioridad P2P.", activateKeyBtn: "Activar Licencia Pro",
                         payTrBtn: "PayTR / Tarjeta de Crédito (TL)", cryptoPayBtn: "Cryptomus / Criptomoneda (USDT/BTC)", allRights: "Todos los derechos reservados.", orDivider: "O introduzca la clave de licencia",
-                        descLiveShield: "Proteja los formularios web salientes y los chats para que no filtren PII confidencial."
+                        descLiveShield: "Proteja los formularios web salientes y los chats para que no filtren PII confidencial.",
+                        proWarning: "🔒 Función Pro: ¡Estás en modo de prueba limitado!",
+                        proActivated: "🎉 ¡Licencia Pro activada con éxito!",
+                        proInvalidKey: "¡Clave de licencia inválida!",
+                        errEnterText: "Por favor ingrese texto",
+                        errPasswordRequired: "¡Se requiere contraseña maestra!",
+                        errSelectPdf: "Por favor seleccione archivos PDF",
+                        errSelectImage: "Por favor seleccione archivos de imagen",
+                        proKeyPlaceholder: "Ingrese la clave de licencia Pro..."
                     },
                     de: {
                         accept: "Akzeptieren", secureLabel: "Sicher", dropText: "Klicken Sie zum Durchsuchen oder ziehen Sie Dateien hierher",
@@ -769,7 +793,15 @@
                         faq6Q: "Warum funktionieren P2P-Funktionen nur in lokalen Netzwerken (LAN)?", faq6A: "Um null Datenlecks zu garantieren, wurden externe STUN/TURN-Server vollständig entfernt. P2P arbeitet ausschließlich in Ihrem LAN.",
                         proBtn: "Pro Holen", proModalTitle: "💎 Upgrade auf Sovereign Pro", proModalDesc: "Schalten Sie unbegrenzte Stapelverarbeitung, kryptografische Audit-Zertifikate, E2EE-Cloud-Synchronisierung und P2P-Prioritätsknoten frei.", activateKeyBtn: "Pro-Lizenz Aktivieren",
                         payTrBtn: "PayTR / Kreditkarte (TL)", cryptoPayBtn: "Cryptomus / Krypto (USDT/BTC)", allRights: "Alle Rechte vorbehalten.", orDivider: "Oder Lizenzschlüssel eingeben",
-                        descLiveShield: "Schützen Sie ausgehende Webformulare und Chat-Eingaben vor dem Verlust sensibler PII-Daten."
+                        descLiveShield: "Schützen Sie ausgehende Webformulare und Chat-Eingaben vor dem Verlust sensibler PII-Daten.",
+                        proWarning: "🔒 Pro-Funktion: Sie befinden sich im begrenzten Testmodus!",
+                        proActivated: "🎉 Pro-Lizenz erfolgreich aktiviert!",
+                        proInvalidKey: "Ungültiger Lizenzschlüssel!",
+                        errEnterText: "Bitte Text eingeben",
+                        errPasswordRequired: "Master-Passwort ist erforderlich!",
+                        errSelectPdf: "Bitte wählen Sie PDF-Dateien aus",
+                        errSelectImage: "Bitte wählen Sie Bilddateien aus",
+                        proKeyPlaceholder: "Pro-Lizenzschlüssel eingeben..."
                     },
                     fr: {
                         accept: "Accepter", secureLabel: "Sécurisé", dropText: "Cliquez pour parcourir ou faites glisser les fichiers ici",
@@ -797,7 +829,15 @@
                         faq6Q: "Pourquoi les fonctionnalités P2P ne fonctionnent-elles que sur les réseaux locaux (LAN) ?", faq6A: "Pour garantir zéro fuite de données, les serveurs STUN/TURN externes ont été supprimés. Le P2P fonctionne strictement sur votre LAN.",
                         proBtn: "Obtener Pro", proModalTitle: "💎 Passer à Sovereign Pro", proModalDesc: "Débloquez le traitement par lots illimité, les certificats d'audit cryptographique, la synchronisation cloud E2EE et les nœuds prioritaires P2P.", activateKeyBtn: "Activer la Licence Pro",
                         payTrBtn: "PayTR / Carte de Crédit (TL)", cryptoPayBtn: "Cryptomus / Crypto (USDT/BTC)", allRights: "Tous droits réservés.", orDivider: "Ou entrez la clé de licence",
-                        descLiveShield: "Protégez les formulaires Web et les entrées de chat sortants contre les fuites de PII."
+                        descLiveShield: "Protégez les formulaires Web et les entrées de chat sortants contre les fuites de PII.",
+                        proWarning: "🔒 Fonctionnalité Pro : Vous êtes en mode d'essai limité !",
+                        proActivated: "🎉 Licence Pro activée avec succès !",
+                        proInvalidKey: "Clé de licence invalide !",
+                        errEnterText: "Veuillez entrer du texte",
+                        errPasswordRequired: "Le mot de passe principal est requis !",
+                        errSelectPdf: "Veuillez sélectionner des fichiers PDF",
+                        errSelectImage: "Veuillez sélectionner des fichiers image",
+                        proKeyPlaceholder: "Entrez la clé de licence Pro..."
                     },
                     zh: {
                         accept: "接受", secureLabel: "安全", dropText: "点击浏览或将文件拖放到此处（内存安全流）",
@@ -809,7 +849,7 @@
                         catProFeatures: "💎 专业版与企业版", catInfiniteSec: "🔑 安全、通行密钥与保险库", catZkpMarket: "📦 ZKP、AI 与市场", catLegalAudit: "⚖️ 法律、差异与审计", catPdfDocs: "📚 PDF 与文档", catMediaShare: "🖼️ 图像、OCR、EXIF 与 P2P",
                         toolLiveShield: "实时表单 PII 护盾", toolCloudSync: "E2EE 云同步", toolAuditCert: "审计员 PDF 证书", toolWhiteLabel: "白标品牌化",
                         toolWebAuthn: "WebAuthn 通行密钥保险库", toolStega: "图像隐写术", toolDestruct: "自毁伪影", toolEncrypt: "AES-256 硬件加密器",
-                        toolMarket: "本地规则市场", toolZkp: "零知识证明 (ZKP)", toolLora: "本地 LoRA 微调", toolLocalRag: "Local AI RAG 搜索",
+                        toolMarket: "本地规则市场", toolZkp: "零知识证明 (ZKP)", toolLora: "本地 LoRA 微调", toolLocalRag: "本地 AI RAG 搜索",
                         toolDiff: "合同差异引擎", toolCross: "跨框架合规性", toolTimestamp: "OpenTimestamps 锚点", toolCustody: "监管链",
                         toolContract: "合同风险解析器", toolPdfPng: "PDF 转 PNG 转换器", toolPdfMerge: "PDF 合并器", toolPii: "批量 PII 遮盖",
                         toolVisual: "视觉遮盖（人脸/印章）", toolMetaScrubber: "EXIF 与元数据清理器", toolOcr: "OCR 文本提取 (Worker)", toolP2p: "P2P 文件共享",
@@ -825,7 +865,15 @@
                         faq6Q: "为什么 P2P 功能仅在本地网络 (LAN) 上工作？", faq6A: "为保证绝对零数据泄漏，已完全移除外部 STUN/TURN 服务器，确保 P2P 严格在局域网 (LAN) 内运行。",
                         proBtn: "获取专业版", proModalTitle: "💎 升级到 Sovereign Pro", proModalDesc: "解锁无限制的批量处理、加密审计证书、E2EE 云同步和 P2P 优先节点。", activateKeyBtn: "激活专业版许可证",
                         payTrBtn: "PayTR / 信用卡 (TL)", cryptoPayBtn: "Cryptomus / 加密货币 (USDT/BTC)", allRights: "版权所有。", orDivider: "或输入许可证密钥",
-                        descLiveShield: "保护出站 Web 表单和聊天输入免遭敏感 PII 泄漏。"
+                        descLiveShield: "保护出站 Web 表单和聊天输入免遭敏感 PII 泄漏。",
+                        proWarning: "🔒 专业版功能：您处于受限试用模式！",
+                        proActivated: "🎉 专业版许可证激活成功！",
+                        proInvalidKey: "无效的许可证密钥！",
+                        errEnterText: "请输入文本",
+                        errPasswordRequired: "需要主密码！",
+                        errSelectPdf: "请选择PDF文件",
+                        errSelectImage: "请选择图片文件",
+                        proKeyPlaceholder: "请输入专业版许可证密钥..."
                     },
                     ar: {
                         accept: "قبول", secureLabel: "آمن", dropText: "انقر للتصفح أو اسحب الملفات هنا (دفق آمن للذاكرة)",
@@ -853,7 +901,15 @@
                         faq6Q: "لماذا تعمل ميزات P2P فقط على الشبكات المحلية (LAN)؟", faq6A: "لضمان عدم تسرب أي بيانات تمامًا، تم إزالة خوادم STUN/TURN الخارجية. وهذا يضمن عمل مشاركة P2P حصريًا داخل شبكتك المحلية الآمنة (LAN).",
                         proBtn: "احصل على Pro", proModalTitle: "💎 الترقية إلى Sovereign Pro", proModalDesc: "افتح معالجة الدُفعات غير المحدودة، وشهادات التدقيق المشفرة، والمزامنة السحابية E2EE، والعقد ذات الأولوية P2P.", activateKeyBtn: "تفعيل ترخيص Pro",
                         payTrBtn: "PayTR / بطاقة الائتمان (TL)", cryptoPayBtn: "Cryptomus / تشفير (USDT/BTC)", allRights: "جميع الحقوق محفوظة.", orDivider: "أو أدخل مفتاح الترخيص",
-                        descLiveShield: "حماية نماذج الويب الصادرة ومدخلات الدردشة من تسريب معلومات التعريف الشخصية (PII) الحساسة."
+                        descLiveShield: "حماية نماذج الويب الصادرة ومدخلات الدردشة من تسريب معلومات التعريف الشخصية (PII) الحساسة.",
+                        proWarning: "🔒 ميزة Pro: أنت في وضع التجربة المحدودة!",
+                        proActivated: "🎉 تم تفعيل ترخيص Pro بنجاح!",
+                        proInvalidKey: "مفتاح ترخيص غير صالح!",
+                        errEnterText: "الرجاء إدخال النص",
+                        errPasswordRequired: "كلمة المرور الرئيسية مطلوبة!",
+                        errSelectPdf: "الرجاء تحديد ملفات PDF",
+                        errSelectImage: "الرجاء تحديد ملفات الصور",
+                        proKeyPlaceholder: "أدخل مفتاح ترخيص Pro..."
                     }
                 },
                 applyLanguage(lang) {
@@ -923,8 +979,10 @@
                 },
                 navigate(toolId) {
                     const meta = this.metaData[toolId] || { type: 'text', titleKey: toolId };
+                    const dict = PrivacyConvert.i18n.translations[PrivacyConvert.state.lang] || PrivacyConvert.i18n.translations['en'];
+                    
                     if (meta.proRequired && !PrivacyConvert.state.isPro) {
-                        PrivacyConvert.ui.showToast('🔒 Pro Özellik: Sınırlı deneme modundasınız!', 'warning');
+                        PrivacyConvert.ui.showToast(dict['proWarning'] || '🔒 Pro Feature: You are in limited trial mode!', 'warning');
                     }
                     PrivacyConvert.state.tool = toolId;
                     document.querySelectorAll('.tool-tab').forEach(t => t.classList.remove('bg-slate-100', 'dark:bg-slate-700', 'border-indigo-500'));
@@ -933,7 +991,6 @@
                         tabElem.classList.add('bg-slate-100', 'dark:bg-slate-700', 'border-indigo-500');
                     }
                     
-                    const dict = PrivacyConvert.i18n.translations[PrivacyConvert.state.lang] || PrivacyConvert.i18n.translations['en'];
                     const mainTitle = document.getElementById('mainTitleAccent');
                     if(mainTitle && meta.titleKey && dict[meta.titleKey]) {
                         mainTitle.innerText = dict[meta.titleKey];
@@ -1167,14 +1224,17 @@
                 },
                 activateProLicense() {
                     const key = document.getElementById('proLicenseKeyInput')?.value;
+                    const dict = PrivacyConvert.i18n.translations[PrivacyConvert.state.lang] || PrivacyConvert.i18n.translations['en'];
                     if(key && key.length > 5) {
                         PrivacyConvert.state.isPro = true;
                         localStorage.setItem('privacyConvert_pro', 'true');
-                        document.getElementById('proBadge').classList.remove('hidden');
-                        document.getElementById('proModal').classList.add('hidden');
-                        this.showToast('🎉 Pro Lisans başarıyla aktifleşti!');
+                        const badge = document.getElementById('proBadge');
+                        if(badge) badge.classList.remove('hidden');
+                        const modal = document.getElementById('proModal');
+                        if(modal) modal.classList.add('hidden');
+                        this.showToast(dict['proActivated'] || '🎉 Pro license activated successfully!', 'success');
                     } else {
-                        this.showToast('Geçersiz lisans anahtarı!', 'error');
+                        this.showToast(dict['proInvalidKey'] || 'Invalid license key!', 'error');
                     }
                 },
                 promptBranding() {
@@ -1195,10 +1255,11 @@
                         const outputBox = document.getElementById('genericTextArea');
                         const outputContainer = document.getElementById('genericTextBox');
                         const files = PrivacyConvert.state.files;
+                        const dict = PrivacyConvert.i18n.translations[PrivacyConvert.state.lang] || PrivacyConvert.i18n.translations['en'];
                         
                         if (tool === 'pii-redactor' || tool === 'ai-ner-mask' || tool === 'live-pii-shield') {
                             const text = inputField ? inputField.value : '';
-                            if (!text) return PrivacyConvert.ui.showToast('Lütfen metin girin', 'warning');
+                            if (!text) return PrivacyConvert.ui.showToast(dict['errEnterText'] || 'Please enter text', 'warning');
                             if (outputContainer) outputContainer.classList.remove('hidden');
                             outputBox.value = "Yapay Zeka Analiz Ediyor...";
                             const result = tool === 'ai-ner-mask' ? aiEngine.runAiNer(text) : aiEngine.maskPII(text);
@@ -1208,7 +1269,7 @@
                         else if (tool === 'encrypt-tool') {
                             const pwd = document.getElementById('cryptoPasswordInput')?.value;
                             const text = inputField ? inputField.value : '';
-                            if (!pwd) return PrivacyConvert.ui.showToast('Parola gerekli!', 'warning');
+                            if (!pwd) return PrivacyConvert.ui.showToast(dict['errPasswordRequired'] || 'Master password is required!', 'warning');
                             if (outputContainer) outputContainer.classList.remove('hidden');
                             
                             if (files.length > 0) {
@@ -1247,7 +1308,7 @@
                             }
                         }
                         else if (tool === 'pdf-merge') {
-                            if (files.length === 0) return PrivacyConvert.ui.showToast('PDF dosyaları seçin', 'warning');
+                            if (files.length === 0) return PrivacyConvert.ui.showToast(dict['errSelectPdf'] || 'Please select PDF files', 'warning');
                             PrivacyConvert.ui.updateProgress(40, 'PDF Belgeleri Birleştiriliyor...');
                             const { PDFDocument } = PDFLib;
                             const mergedPdf = await PDFDocument.create();
@@ -1266,7 +1327,7 @@
                             PrivacyConvert.ui.showToast('PDF dosyaları başarıyla birleştirildi!');
                         }
                         else if (tool === 'ocr-tool') {
-                            if (files.length === 0) return PrivacyConvert.ui.showToast('Resim seçin', 'warning');
+                            if (files.length === 0) return PrivacyConvert.ui.showToast(dict['errSelectImage'] || 'Please select image files', 'warning');
                             PrivacyConvert.ui.updateProgress(20, 'OCR Motoru Yükleniyor...');
                             document.getElementById('genericTextBox').classList.remove('hidden');
                             const file = files[0].file;
@@ -1282,7 +1343,7 @@
                             return;
                         }
                         else if (tool === 'meta-scrubber') {
-                            if (PrivacyConvert.state.files.length === 0) return PrivacyConvert.ui.showToast('Görsel seçin', 'warning');
+                            if (PrivacyConvert.state.files.length === 0) return PrivacyConvert.ui.showToast(dict['errSelectImage'] || 'Please select image files', 'warning');
                             PrivacyConvert.ui.updateProgress(30, "EXIF temizleniyor...");
                             for (let item of PrivacyConvert.state.files) {
                                 const cleanUrl = await mediaCore.scrubExif(item.file, (u) => PrivacyConvert.registerObjectUrl(u));
