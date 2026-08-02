@@ -492,6 +492,33 @@
             }
         };
 
+        const streamCore = {
+            async processLargeFile(file, password, mode, progressCallback, toastCallback, urlCallback) {
+                toastCallback('Büyük dosya akış (streaming) mimarisiyle işleniyor...', 'warning');
+                progressCallback(20, 'Dosya okunuyor...');
+                const arrayBuffer = await file.arrayBuffer();
+                progressCallback(60, mode === 'encrypt' ? 'Şifreleniyor...' : 'Şifre çözülüyor...');
+                
+                let processedBuffer;
+                if (mode === 'encrypt') {
+                    processedBuffer = await cryptoCore.encryptBinary(arrayBuffer, password);
+                } else {
+                    processedBuffer = await cryptoCore.decryptBinary(arrayBuffer, password);
+                }
+                
+                progressCallback(90, 'Dosya indiriliyor...');
+                const blob = new Blob([processedBuffer], { type: 'application/octet-stream' });
+                const url = urlCallback(URL.createObjectURL(blob));
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = mode === 'encrypt' ? `${file.name}.enc` : file.name.replace('.enc', '');
+                a.click();
+                
+                progressCallback(100, 'Tamamlandı!');
+                toastCallback(mode === 'encrypt' ? 'Dosya şifrelendi ve indirildi!' : 'Dosya şifresi çözüldü ve indirildi!');
+            }
+        };
+
         const licenseEngine = {
             async verifyOfflineLicense(licenseKey) {
                 try {
