@@ -164,7 +164,7 @@ const PrivacyConvert = {
                 toolVisual: "Rédaction Visuelle (Visage/Sceau)", toolMetaScrubber: "Nettoyeur EXIF & Métadonnées", toolOcr: "Extraction de Texte OCR (Worker)", toolP2p: "Partage de Fichiers P2P",
                 toolOpfs: "Disque Virtuel Chiffré OPFS", toolSign: "Signataire de Documents Ed25519", toolAiNer: "Rédacteur IA NER WebGPU", toolChain: "Ancrage ZK-Rollup / Blockchain", toolRoom: "Salle de Discussion Sécurisée E2EE",
                 encryptModeBtn: "Chiffrer Fichier/Texte", decryptModeBtn: "Déchiffrer Fichier/Texte", passPlaceholder: "Entrez le mot de passe principal...", pasteText: "Entrez le texte d'entrée ici...",
-                outputLabel: "Sortie Système / Journaux :", compareBtn: "Comparer & Différencier", pasteSecondaryText: "Texte secondaire pour comparaison...", cmdPlaceholder: "Rechercher tous les outils Sovereign & Pro...",
+                outputLabel: "Sortie Système / Journaux :", compareBtn: "Comparer & Différenciér", pasteSecondaryText: "Texte secondaire pour comparaison...", cmdPlaceholder: "Rechercher tous les outils Sovereign & Pro...",
                 faqTitle: "Foire Aux Questions et Conformité de Confidentialité",
                 faq1Q: "Mes données sont-elles un jour envoyées à des serveurs externes ?", faq1A: "Non. PrivacyConvert Sovereign OS s'exécute à 100% côté client dans le bac à sable de votre navigateur. Avec la technologie Air-Gapped et WebAssembly, zéro octet ne quitte votre appareil.",
                 faq2Q: "Quels cadres de conformité sont pris en charge ?", faq2A: "La suite est conforme au RGPD, HIPAA, CCPA et aux normes de résidence des données souveraines de l'entreprise en gardant tout le traitement des fichiers localisé.",
@@ -216,7 +216,7 @@ const PrivacyConvert = {
                 toolVisual: "تنقيح بصري (وجه / ختم)", toolMetaScrubber: "منظف EXIF والبيانات الوصفية", toolOcr: "استخراج نص OCR (عامل)", toolP2p: "مشاركة ملفات P2P",
                 toolOpfs: "قرص ظاهري مشفر OPFS", toolSign: "Ed25519 موقع مستندات", toolAiNer: "منقح AI NER لـ WebGPU", toolChain: "ZK-Rollup / مرساة Blockchain", toolRoom: "غرفة دردشة آمنة E2EE",
                 encryptModeBtn: "تشفير ملف/نص", decryptModeBtn: "فك تشفير ملف/نص", passPlaceholder: "أدخل كلمة المرور الرئيسية...", pasteText: "أدخل نص الإدخال هنا...",
-                outputLabel: "مخرجات النظام / السجلات:", compareBtn: "مقارنة وإيجاد الفروق", pasteSecondaryText: "نص ثانوي للمقارنة...", cmdPlaceholder: "ابحث في جميع أدوات Sovereign و Pro...",
+                outputLabel: "مخرجات النظام / السجلات:", compareBtn: "قارنة وإيجاد الفروق", pasteSecondaryText: "نص ثانوي للمقارنة...", cmdPlaceholder: "ابحث في جميع أدوات Sovereign و Pro...",
                 faqTitle: "الأسئلة الشائعة والامتثال للخصوصية",
                 faq1Q: "هل يتم إرسال بياناتي أبدًا إلى خوادم خارجية؟", faq1A: "لا. يعمل نظام PrivacyConvert Sovereign OS بنسبة 100% من جانب العميل في وضع الحماية الخاص بمتصفحك. بفضل تقنية Air-Gapped و WebAssembly، لا تغادر أي بايتات جهازك.",
                 faq2Q: "ما هي أطر الامتثال المدعومة؟", faq2A: "يتوافق الجناح مع معايير إقامة البيانات السيادية للشركات و GDPR و HIPAA و CCPA من خلال الحفاظ على محلية جميع عمليات معالجة الملفات.",
@@ -229,20 +229,26 @@ const PrivacyConvert = {
         },
         applyLanguage(lang) {
             const dict = this.translations[lang] || this.translations['en'];
+            
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (dict[key]) el.innerHTML = dict[key];
             });
+            
             document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
                 const key = el.getAttribute('data-i18n-placeholder');
                 if (dict[key]) el.placeholder = dict[key];
             });
+
             PrivacyConvert.state.lang = lang;
             localStorage.setItem('privacyConvert_lang', lang);
+            
             const langSelect = document.getElementById('langSelect');
             if(langSelect) langSelect.value = lang;
+
             document.documentElement.lang = lang;
             document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+            console.log("Dil başarıyla değiştirildi:", lang);
         }
     },
 
@@ -487,7 +493,10 @@ const PrivacyConvert = {
         
         const langSelect = document.getElementById('langSelect');
         if (langSelect) {
-            langSelect.addEventListener('change', (e) => this.i18n.applyLanguage(e.target.value));
+            // Dil değişimini doğrudan ve güvenli bir şekilde PrivacyConvert üzerinden bağlıyoruz
+            langSelect.addEventListener('change', (e) => {
+                PrivacyConvert.i18n.applyLanguage(e.target.value);
+            });
         }
 
         const dropZone = document.getElementById('dropZone');
@@ -500,6 +509,7 @@ const PrivacyConvert = {
             fileInput.addEventListener('change', (e) => PrivacyConvert.ui.handleFiles(e.target.files));
         }
 
+        // Açılışta kayıtlı dili uygula
         this.i18n.applyLanguage(this.state.lang);
         this.routing.navigate(this.state.tool);
         window.addEventListener('beforeunload', () => this.cleanupObjectUrls());
