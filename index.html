@@ -200,7 +200,7 @@
             <div class="flex items-center gap-3">
                 <div class="bg-emerald-950/80 border border-emerald-500/50 text-emerald-300 px-3 py-1 rounded-xl text-[11px] font-mono flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span>Outbound Traffic: <strong class="text-white">0 KB</strong> (Isolated)</span>
+                    <span data-i18n="outboundTrafficLabel">Outbound Traffic: <strong class="text-white">0 KB</strong> (Isolated)</span>
                 </div>
                 <button onclick="document.getElementById('verifyModal').classList.remove('hidden')" class="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-xl font-bold transition border border-white/20" data-i18n="bannerVerifyBtn">🔍 How to Verify?</button>
             </div>
@@ -215,9 +215,9 @@
             <p id="mainDesc" class="text-slate-500 dark:text-slate-400 text-sm sm:text-base max-w-2xl mx-auto font-medium" data-i18n="descLiveShield">Shield outbound web forms and chat inputs from leaking sensitive PII.</p>
         </div>
 
-        <!-- YENİ SEGMENTASYON: PREMIUM VE ÜCRETSİZ ARAÇLAR -->
+        <!-- ARAÇLAR VE SEGMENTLER -->
         <div id="toolsNavContainer" class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-            <!-- 1. 💎 Sovereign Pro & Enterprise Suite (ÖZEL SEGMENT) -->
+            <!-- 1. 💎 Sovereign Pro & Enterprise Suite -->
             <div class="bg-gradient-to-br from-indigo-50/80 via-white to-purple-50/50 dark:from-indigo-950/30 dark:via-slate-800 dark:to-slate-800 p-5 rounded-3xl shadow-md border-2 border-indigo-500/40 dark:border-indigo-500/50 space-y-3 relative overflow-hidden">
                 <div class="absolute top-0 right-0 bg-indigo-600 text-white text-[9px] font-extrabold px-3 py-1 rounded-bl-xl tracking-wider uppercase">💎 PRO SUITE</div>
                 <h3 class="text-xs font-extrabold dynamic-text uppercase tracking-wider border-b border-indigo-200 dark:border-indigo-800 pb-2.5 flex items-center gap-1.5" data-i18n="catProFeatures">💎 Sovereign Pro & Enterprise</h3>
@@ -295,7 +295,7 @@
 
             <!-- 5. PDF & Document Utilities -->
             <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3">
-                <h3 class="text-xs font-extrabold dynamic-text uppercase tracking-wider border-b pb-2.5" data-i18n="catPdfDocs">📚 PDF & Documents (Free)</h3>
+                <h3 class="text-xs font-extrabold dynamic-text uppercase tracking-wider border-b pb-2.5" data-i18n="catPdfDocs">📚 PDF & Documents</h3>
                 <div class="flex flex-col gap-2">
                     <button id="tab-contract-analyzer" onclick="PrivacyConvert.routing.navigate('contract-analyzer')" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>📜</span> <span class="truncate" data-i18n="toolContract">Contract Risk Parser</span></button>
                     <button id="tab-pdf-to-png" onclick="PrivacyConvert.routing.navigate('pdf-to-png')" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🖼️</span> <span class="truncate" data-i18n="toolPdfPng">PDF to PNG Converter</span></button>
@@ -325,8 +325,8 @@
 
                 <!-- Uzun Formlu Değer ve Fayda Açıklama Paneli (Dinamik) -->
                 <div id="toolEnterpriseValueBanner" class="hidden mb-5 p-4 bg-indigo-50/70 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800 rounded-2xl text-xs text-indigo-900 dark:text-indigo-200 space-y-1.5 leading-relaxed">
-                    <div class="font-extrabold text-indigo-700 dark:text-indigo-400 flex items-center gap-1.5 text-sm" id="enterpriseBannerTitle">💎 Sovereign Pro Enterprise Value</div>
-                    <p id="enterpriseBannerDesc" class="text-[11px] opacity-90">Bu araç kurumsal düzeyde veri egemenliği ve denetim uyumluluğu sağlar.</p>
+                    <div class="font-extrabold text-indigo-700 dark:text-indigo-400 flex items-center gap-1.5 text-sm" id="enterpriseBannerTitle"></div>
+                    <p id="enterpriseBannerDesc" class="text-[11px] opacity-90"></p>
                 </div>
 
                 <div id="sandboxTrialBanner" class="hidden mb-4 p-4 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-700/50 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3">
@@ -395,14 +395,6 @@
                 <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-2">
                     <h4 class="font-bold text-slate-900 dark:text-white" data-i18n="faq2Q">What compliance frameworks are supported?</h4>
                     <p data-i18n="faq2A">The suite complies with GDPR, HIPAA, CCPA, and enterprise sovereign data residency standards by keeping all file processing localized.</p>
-                </div>
-                <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-2">
-                    <h4 class="font-bold text-slate-900 dark:text-white" data-i18n="faq3Q">How does large file handling work?</h4>
-                    <p data-i18n="faq3A">Using the Streams API and File System Access API, files are processed in 5MB memory-safe chunks directly to disk, preventing RAM overflow.</p>
-                </div>
-                <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-2">
-                    <h4 class="font-bold text-slate-900 dark:text-white" data-i18n="faq4Q">Can I use this completely offline?</h4>
-                    <p data-i18n="faq4A">Yes. Once loaded, you can disconnect your internet entirely and all 30 sovereign tools will function normally in air-gapped isolation.</p>
                 </div>
             </div>
         </section>
@@ -554,40 +546,6 @@
             }
         };
 
-        const localRagEngine = {
-            docs: [],
-            addDocument(title, content) {
-                const tokens = content.toLowerCase().match(/\b(\w+)\b/g) || [];
-                this.docs.push({ title, content, tokens });
-            },
-            search(query) {
-                if(!query || this.docs.length === 0) return "Arama yapılamadı. Önce doküman ekleyin.";
-                const qTokens = query.toLowerCase().match(/\b(\w+)\b/g) || [];
-                let results = this.docs.map(doc => {
-                    let score = 0;
-                    qTokens.forEach(qt => {
-                        const matches = doc.tokens.filter(dt => dt.includes(qt)).length;
-                        score += matches;
-                    });
-                    return { title: doc.title, content: doc.content, score };
-                }).filter(r => r.score > 0).sort((a,b) => b.score - a.score);
-                if(results.length === 0) return "Yerel RAG: Eşleşen bağlam bulunamadı.";
-                return results.map(r => `📄 [Skor: ${r.score}] ${r.title}\nÖzet: ${r.content.substring(0, 150)}...\n---`).join('\n');
-            }
-        };
-
-        const zkpEngine = {
-            async generateCommitment(secret) {
-                const salt = window.crypto.getRandomValues(new Uint8Array(8)).reduce((acc, b) => acc + b.toString(16).padStart(2,'0'), '');
-                const commitment = await cryptoCore.sha256(secret + salt);
-                return { commitment, salt };
-            },
-            async verifyCommitment(secret, salt, targetCommitment) {
-                const check = await cryptoCore.sha256(secret + salt);
-                return check === targetCommitment;
-            }
-        };
-
         const mediaCore = {
             async scrubExif(file, urlRegisterCallback) {
                 return new Promise((resolve, reject) => {
@@ -646,49 +604,6 @@
             }
         };
 
-        const p2pEngine = {
-            pc: null, dc: null,
-            async createOffer() {
-                this.pc = new RTCPeerConnection({ iceServers: [] }); 
-                this.dc = this.pc.createDataChannel("privacyConvert_secure_channel");
-                this.setupDataChannel();
-                const offer = await this.pc.createOffer();
-                await this.pc.setLocalDescription(offer);
-                return new Promise(resolve => setTimeout(() => resolve(btoa(JSON.stringify(this.pc.localDescription))), 1000));
-            },
-            async answerOffer(offerBase64) {
-                this.pc = new RTCPeerConnection({ iceServers: [] });
-                this.pc.ondatachannel = (e) => { this.dc = e.channel; this.setupDataChannel(); PrivacyConvert.ui.showToast('Peer Connected!', 'success'); };
-                const offerDesc = JSON.parse(atob(offerBase64));
-                await this.pc.setRemoteDescription(new RTCSessionDescription(offerDesc));
-                const answer = await this.pc.createAnswer();
-                await this.pc.setLocalDescription(answer);
-                return new Promise(resolve => setTimeout(() => resolve(btoa(JSON.stringify(this.pc.localDescription))), 1000));
-            },
-            async acceptAnswer(answerBase64) {
-                const answerDesc = JSON.parse(atob(answerBase64));
-                await this.pc.setRemoteDescription(new RTCSessionDescription(answerDesc));
-                PrivacyConvert.ui.showToast('LAN P2P Connected! 🔒', 'success');
-            },
-            setupDataChannel() {
-                if(!this.dc) return;
-                this.dc.onopen = () => PrivacyConvert.ui.showToast('E2EE LAN Channel Open!', 'success');
-                this.dc.onmessage = (e) => {
-                    const box = document.getElementById('chatLogArea');
-                    if(box) box.value += `\n[Peer]: ${e.data}`;
-                };
-            },
-            send(msg) {
-                if(this.dc && this.dc.readyState === 'open') {
-                    this.dc.send(msg);
-                    const box = document.getElementById('chatLogArea');
-                    if(box) box.value += `\n[You]: ${msg}`;
-                } else {
-                    PrivacyConvert.ui.showToast('Connection not active!', 'error');
-                }
-            }
-        };
-
         const PrivacyConvert = {
             state: {
                 lang: localStorage.getItem('privacyConvert_lang') || 'en',
@@ -731,8 +646,8 @@
                         btnReset: "Reset", btnCopy: "📋 Copy", btnPreview: "👁️ Preview", btnProcess: "Execute Secure Process", closeBtn: "Close", previewTitle: "Enterprise Preview",
                         splitScreenBtn: "Split View", secondaryPaneTitle: "Secondary Workspace", brandBtn: "Branding", queueTitle: "Queue Status",
                         bannerTitle: "100% Client-Side Air-Gapped Security:", bannerDesc: "All processing occurs locally in your browser sandbox.", bannerVerifyBtn: "🔍 How to Verify?",
+                        outboundTrafficLabel: "Outbound Traffic: <strong class=\"text-white\">0 KB</strong> (Isolated)",
                         verifyModalTitle: "How to Verify Air-Gapped Security", verifyDesc1: "This application operates entirely client-side using JavaScript, WebAssembly, OPFS, PWA Caching, and local IndexedDB sandbox storage.",
-                        verifyStep1: "Step 1: Open Browser Developer Tools (F12)", verifyStep1Sub: "Navigate to the \"Network\" tab.", verifyStep2: "Step 2: Disconnect Internet or Monitor Traffic", verifyStep2Sub: "Notice 0 outbound requests/bytes sent to external servers.",
                         catProFeatures: "💎 Sovereign Pro & Enterprise", catInfiniteSec: "🔑 Security, Passkey & Vault", catZkpMarket: "📦 ZKP, AI & Marketplace", catLegalAudit: "⚖️ Legal, Diff & Audit", catPdfDocs: "📚 PDF & Documents", catMediaShare: "🖼️ Images, OCR, EXIF & P2P",
                         toolLiveShield: "Live Form PII Shield", toolCloudSync: "E2EE Cloud Sync", toolAuditCert: "Auditor PDF Certificate", toolWhiteLabel: "White-Label Branding",
                         toolWebAuthn: "WebAuthn Passkey Vault", toolStega: "Image Steganography", toolDestruct: "Self-Destructing Artifacts", toolEncrypt: "AES-256 Hardware Encryptor",
@@ -746,8 +661,6 @@
                         faqTitle: "Frequently Asked Questions & Privacy Compliance",
                         faq1Q: "Is my data ever sent to external servers?", faq1A: "No. PrivacyConvert Sovereign OS runs 100% client-side in your browser sandbox. With Air-Gapped and WebAssembly technology, zero bytes leave your device.",
                         faq2Q: "What compliance frameworks are supported?", faq2A: "The suite complies with GDPR, HIPAA, CCPA, and enterprise sovereign data residency standards by keeping all file processing localized.",
-                        faq3Q: "How does large file handling work?", faq3A: "Using the Streams API and File System Access API, files are processed in 5MB memory-safe chunks directly to disk, preventing RAM overflow.",
-                        faq4Q: "Can I use this completely offline?", faq4A: "Yes. Once loaded, you can disconnect your internet entirely and all 30 sovereign tools will function normally in air-gapped isolation.",
                         proBtn: "Get Pro", proModalTitle: "💎 Upgrade to Sovereign Pro", proModalDesc: "Unlock unlimited batch processing, audit certificates, and E2EE cloud sync. <strong>Air-Gap Guarantee:</strong> This offline license is verified mathematically via asymmetric cryptography (Web Crypto API) directly inside your browser sandbox. Zero online connections or external API calls are ever made.", activateKeyBtn: "Verify & Activate Offline License",
                         payTrBtn: "PayTR / Credit Card (TL - ₺999)", cryptoPayBtn: "Cryptomus / Crypto (USDT/BTC - $29.99)", proPlanName: "Sovereign Pro Lifetime License", allRights: "All rights reserved.", orDivider: "Or enter offline license key",
                         descLiveShield: "Shield outbound web forms and chat inputs from leaking sensitive PII.",
@@ -756,26 +669,39 @@
                         proInvalidKey: "Cryptographic signature verification failed!",
                         errEnterText: "Please enter text",
                         errPasswordRequired: "Master password is required!",
-                        errSelectPdf: "Please select PDF files",
-                        errSelectImage: "Please select image files",
-                        proKeyPlaceholder: "SOVPRO.eyJjb21wYW55IjoiVmV5c2VsIiwiZXhwIjoxOT...--SIGNATURE...",
                         successMasked: "Data successfully masked!",
                         successEncrypt: "Encryption successful!",
                         successDecrypt: "Decryption successful!",
-                        successPdfMerge: "PDF files successfully merged!",
-                        successOcr: "Text extracted successfully!",
-                        successExif: "EXIF metadata successfully scrubbed!",
                         successGeneric: "Secure Process Completed!",
-                        fileProcessed: "File processed and downloaded successfully!",
-                        errInvalidPassword: "Error: Incorrect password or corrupted file."
+                        
+                        v_live_title: "🛡️ Enterprise Live PII Shield & Form Guardian",
+                        v_live_desc: "Automatically intercepts sensitive PII (SSN, credit cards, emails) in web forms and chat interfaces directly inside the browser sandbox, eliminating GDPR/KVKK leakage risks.",
+                        v_pii_title: "🕶️ Batch PII Document Redactor & Legal Masking",
+                        v_pii_desc: "Scans thousands of legal briefs or HR contracts in seconds for law firms, permanently redacting confidential entities to eliminate compliance exposure.",
+                        v_cert_title: "📜 Cryptographic Auditor PDF Compliance Certificate",
+                        v_cert_desc: "Generates SHA-256 signed official auditor certificates proving all file processing occurred locally with zero external network connectivity for ISO 27001 readiness.",
+                        v_brand_title: "🏢 White-Label Intranet Branding Studio",
+                        v_brand_desc: "Customizes the application interface with your enterprise logo and corporate color palette for seamless internal intranet deployment.",
+                        v_opfs_title: "💽 OPFS Encrypted Virtual Disk & Secure Sandbox Storage",
+                        v_opfs_desc: "Leverages browser OPFS technology to create an isolated, AES-256 hardware-encrypted virtual storage drive directly on your local device.",
+                        v_sign_title: "✒️ Asymmetric Ed25519 & ECDSA Sovereign Document Signer",
+                        v_sign_desc: "Digitally signs confidential enterprise agreements locally using asymmetric public/private key pairs without relying on third-party cloud authorities.",
+                        v_cloud_title: "☁️ E2EE Zero-Knowledge Cloud Synchronization",
+                        v_cloud_desc: "Securely synchronizes your encrypted vaults across trusted devices using a strict zero-knowledge encryption architecture.",
+                        v_ainer_title: "🧠 WebGPU AI NER Redactor & Neural Privacy Engine",
+                        v_ainer_desc: "Utilizes local WebGPU-accelerated neural networks to identify and redact named entities with high semantic precision.",
+                        v_chain_title: "⛓️ ZK-Rollup & Blockchain Cryptographic Anchor",
+                        v_chain_desc: "Anchors Merkle root hashes of your critical documents and logs onto immutable blockchain ledgers for tamper-proof time-stamping.",
+                        v_room_title: "💬 E2EE Secure LAN Chat Room & P2P Exchange",
+                        v_room_desc: "Provides a fully isolated, end-to-end encrypted peer-to-peer communication channel operating strictly within your secure local area network (LAN)."
                     },
                     tr: {
                         accept: "Kabul Et", secureLabel: "Güvenli", dropText: "Göz atmak için tıklayın veya dosyaları buraya sürükleyin (Bellek Korumalı Akış)",
                         btnReset: "Sıfırla", btnCopy: "📋 Kopyala", btnPreview: "👁️ Önizleme", btnProcess: "Güvenli İşlemi Çalıştır", closeBtn: "Kapat", previewTitle: "Kurumsal Önizleme",
                         splitScreenBtn: "Bölünmüş Ekran", secondaryPaneTitle: "İkincil Çalışma Alanı", brandBtn: "Markalama", queueTitle: "Kuyruk Durumu",
                         bannerTitle: "100% İstemci Tarafı (Air-Gapped) Güvenlik:", bannerDesc: "Tüm işlemler tarayıcınızın korumalı alanında (sandbox) yerel olarak gerçekleşir.", bannerVerifyBtn: "🔍 Nasıl Doğrulanır?",
+                        outboundTrafficLabel: "Giden Trafik: <strong class=\"text-white\">0 KB</strong> (Yalıtılmış)",
                         verifyModalTitle: "Air-Gapped Güvenliği Nasıl Doğrulanır", verifyDesc1: "Bu uygulama JavaScript, WebAssembly, OPFS, PWA önbellekleme ve yerel IndexedDB depolama kullanarak tamamen istemci tarafında çalışır.",
-                        verifyStep1: "1. Adım: Tarayıcı Geliştirici Araçlarını Açın (F12)", verifyStep1Sub: "\"Ağ\" (Network) sekmesine gidin.", verifyStep2: "2. Adım: İnterneti Kesin veya Trafiği İzleyin", verifyStep2Sub: "Dış sunuculara 0 bayt veri veya istek gönderildiğini fark edeceksiniz.",
                         catProFeatures: "💎 Sovereign Pro & Kurumsal", catInfiniteSec: "🔑 Güvenlik, Passkey ve Kasa", catZkpMarket: "📦 ZKP, Yapay Zeka ve Market", catLegalAudit: "⚖️ Hukuk, Karşılaştırma ve Denetim", catPdfDocs: "📚 PDF ve Belgeler", catMediaShare: "🖼️ Görseller, OCR, EXIF ve P2P",
                         toolLiveShield: "Canlı Form PII Kalkanı", toolCloudSync: "Uçtan Uca Şifreli Bulut Senkronizasyonu", toolAuditCert: "Denetçi PDF Sertifikası", toolWhiteLabel: "Beyaz Etiket Markalama",
                         toolWebAuthn: "WebAuthn Passkey Kasası", toolStega: "Görsel Steganografi (Veri Gizleme)", toolDestruct: "Kendi Kendini İmha Eden Dosyalar", toolEncrypt: "AES-256 Donanım Şifreleyici",
@@ -789,8 +715,6 @@
                         faqTitle: "Sıkça Sorulan Sorular ve Gizlilik Uyumluluğu",
                         faq1Q: "Verilerim hiç harici sunuculara gönderiliyor mu?", faq1A: "Hayır. PrivacyConvert Sovereign OS, tarayıcı korumalı alanınızda %100 istemci tarafında çalışır. Air-Gapped ve WebAssembly teknolojisi sayesinde cihazınızdan sıfır bayt dışarı çıkar.",
                         faq2Q: "Hangi uyumluluk çerçeveleri destekleniyor?", faq2A: "Araç takımı, tüm dosya işlemlerini yerelleştirerek GDPR, HIPAA, KVKK ve kurumsal egemen veri barındırma standartlarına tam uyum sağlar.",
-                        faq3Q: "Büyük dosya işleme nasıl çalışır?", faq3A: "Streams API ve Dosya Sistemi Erişim API'si kullanılarak dosyalar, RAM taşmasını önleyecek şekilde belleğe duyarlı 5MB'lık parçalar halinde doğrudan diske işlenir.",
-                        faq4Q: "Bunu tamamen çevrimdışı (offline) kullanabilir miyim?", faq4A: "Evet. Sayfa bir kez yüklendikten sonra internet bağlantınızı tamamen kesebilirsiniz; 30 aracın tamamı izole bir şekilde hava boşluklu (air-gapped) olarak çalışmaya devam edecektir.",
                         proBtn: "Pro'ya Geç", proModalTitle: "💎 Sovereign Pro'ya Yükselt", proModalDesc: "Sınırsız toplu işleme, denetim sertifikaları ve E2EE bulut senkronizasyonunun kilidini açın. <strong>Air-Gap Garantisi:</strong> Bu çevrimdışı lisans, tarayıcınızın korumalı alanında asimetrik kriptografi (Web Crypto API) kullanılarak tamamen yerel ve matematiksel olarak doğrulanır. Harici sunuculara veya API'lere asla istek atılmaz.", activateKeyBtn: "Çevrimdışı Lisansı Doğrula ve Aktifleştir",
                         payTrBtn: "PayTR / Kredi Kartı ile Öde (TL - ₺999)", cryptoPayBtn: "Cryptomus / Kripto ile Öde (USDT/BTC - $29.99)", proPlanName: "Sovereign Pro Ömür Boyu Lisans", allRights: "Tüm hakları saklıdır.", orDivider: "Veya çevrimdışı lisans anahtarını girin",
                         descLiveShield: "Giden web formlarını ve sohbet girdilerini hassas kişisel verilerin (PII) sızmasına karşı koruyun.",
@@ -799,228 +723,261 @@
                         proInvalidKey: "Kriptografik imza doğrulaması başarısız!",
                         errEnterText: "Lütfen metin girin",
                         errPasswordRequired: "Ana parola gerekli!",
-                        errSelectPdf: "Lütfen PDF dosyaları seçin",
-                        errSelectImage: "Lütfen resim dosyaları seçin",
-                        proKeyPlaceholder: "SOVPRO.eyJjb21wYW55IjoiVmV5c2VsIiwiZXhwIjoxOT...--İMZA...",
                         successMasked: "Veriler başarıyla maskelendi!",
                         successEncrypt: "Şifreleme başarılı!",
                         successDecrypt: "Şifre başarıyla çözüldü!",
-                        successPdfMerge: "PDF dosyaları başarıyla birleştirildi!",
-                        successOcr: "Metin başarıyla çıkarıldı!",
-                        successExif: "EXIF Meta verileri başarıyla temizlendi!",
                         successGeneric: "Güvenli İşlem Tamamlandı!",
-                        fileProcessed: "Dosya işlemi başarıyla tamamlandı ve indirildi!",
-                        errInvalidPassword: "Hata: Parola yanlış veya dosya bozuk."
+                        
+                        v_live_title: "🛡️ Kurumsal Canlı PII Kalkanı ve Form Koruyucusu",
+                        v_live_desc: "Web formlarına ve sohbet arayüzlerine girilen hassas kişisel verileri (T.C., kredi kartı, e-posta) tarayıcı korumalı alanında anında yakalayıp maskeleyerek KVKK/GDPR ihlal risklerini sıfırlar.",
+                        v_pii_title: "🕶️ Toplu PII Belge Redaktörü ve Hukuki Maskeleme",
+                        v_pii_desc: "Hukuk büroları ve İK departmanları için binlerce sayfalık sözleşmeyi saniyeler içinde tarar; gizli varlıkları kalıcı olarak karartarak yasal riskleri ortadan kaldırır.",
+                        v_cert_title: "📜 Kriptografik Denetçi PDF Uyumluluk Sertifikası",
+                        v_cert_desc: "ISO 27001 ve denetim süreçleri için tüm dosya işlemlerinin dış ağlara hiç bağlanmadan yerel sandbox'ta yapıldığını kanıtlayan SHA-256 imzalı resmi denetçi sertifikaları üretir.",
+                        v_brand_title: "🏢 Beyaz Etiket İntranet Markalama Stüdyosu",
+                        v_brand_desc: "Uygulama arayüzünü kurumunuzun kendi logosu ve kurumsal renk paletiyle özelleştirerek dahili intranet ağınızda güvenle konumlandırmanızı sağlar.",
+                        v_opfs_title: "💽 OPFS Şifreli Sanal Disk ve Güvenli Kasa Depolama",
+                        v_opfs_desc: "Tarayıcının OPFS teknolojisini kullanarak bilgisayarınızda yer kaplamayan, AES-256 donanım düzeyinde şifrelenmiş izole sanal disk alanı oluşturur.",
+                        v_sign_title: "✒️ Asimetrik Ed25519 ve ECDSA Egemen Belge İmzalayıcı",
+                        v_sign_desc: "Şirketler arası gizli sözleşmeleri üçüncü taraf bulut yetkililerine bağımlı kalmadan yerel açık/özel anahtar çiftleriyle güvenle imzalar.",
+                        v_cloud_title: "☁️ Uçtan Uca Şifreli (E2EE) Bulut Senkronizasyonu",
+                        v_cloud_desc: "Şifrelenmiş kasalarınızı sıfır bilgi mimarisiyle güvenilir bulut depolama alanları üzerinde sorunsuzca senkronize eder.",
+                        v_ainer_title: "🧠 WebGPU AI NER Redaktörü ve Nöral Gizlilik Motoru",
+                        v_ainer_desc: "Yerel WebGPU hızlandırmalı yapay zeka modelleriyle metin içerisindeki varlık isimlerini (NER) yüksek anlamsal hassasiyetle algılar.",
+                        v_chain_title: "⛓️ ZK-Rollup ve Blokzincir Kriptografik Çapası",
+                        v_chain_desc: "Kritik belgelerinizin ve loglarınızın Merkle kök özetlerini değiştirilemez blokzincir defterleri üzerinde zaman damgalarıyla mühürler.",
+                        v_room_title: "💬 E2EE Güvenli LAN Sohbet Odası ve P2P Paylaşım",
+                        v_room_desc: "Harici STUN/TURN sunucularına ihtiyaç duymadan, yalnızca yerel ağınızda (LAN) tam yalıtımlı uçtan uca şifreli iletişim kanalı sağlar."
                     },
                     es: {
                         accept: "Aceptar", secureLabel: "Seguro", dropText: "Haga clic para buscar o arrastre archivos aquí",
-                        btnReset: "Reiniciar", btnCopy: "📋 Copiar", btnPreview: "👁️ Vista previa", btnProcess: "Ejecutar Proceso Seguro", closeBtn: "Cerrar", previewTitle: "Vista Previa Empresarial",
+                        btnReset: "Reiniciar", btnCopy: "📋 Copiar", btnPreview: "👁️ Vista previa", btnProcess: "Ejecutar Proceso Seguro", closeBtn: "Cerrar", previewTitle: "Vista Previa",
                         splitScreenBtn: "Pantalla Dividida", secondaryPaneTitle: "Espacio de Trabajo Secundario", brandBtn: "Marca", queueTitle: "Estado de Cola",
                         bannerTitle: "Seguridad Air-Gapped 100% del Lado del Cliente:", bannerDesc: "Todo el procesamiento ocurre localmente en el sandbox de su navegador.", bannerVerifyBtn: "🔍 ¿Cómo Verificar?",
-                        verifyModalTitle: "Cómo Verificar la Seguridad Air-Gapped", verifyDesc1: "Esta aplicación opera íntegramente del lado del cliente utilizando JavaScript, WebAssembly y almacenamiento local IndexedDB en sandbox.",
-                        verifyStep1: "Paso 1: Abrir Herramientas de Desarrollo (F12)", verifyStep1Sub: "Navegue a la pestaña \"Red\" (Network).", verifyStep2: "Paso 2: Desconecte Internet o Supervise el Tráfico", verifyStep2Sub: "Notará que se envían 0 solicitudes o bytes a servidores externos.",
+                        outboundTrafficLabel: "Tráfico Saliente: <strong class=\"text-white\">0 KB</strong> (Aislado)",
+                        verifyModalTitle: "Cómo Verificar la Seguridad Air-Gapped", verifyDesc1: "Esta aplicación opera íntegramente del lado del cliente utilizando JavaScript, WebAssembly y almacenamiento local IndexedDB.",
                         catProFeatures: "💎 Sovereign Pro & Empresarial", catInfiniteSec: "🔑 Seguridad, Passkey y Bóveda", catZkpMarket: "📦 ZKP, IA y Mercado", catLegalAudit: "⚖️ Legal, Comparación y Auditoría", catPdfDocs: "📚 PDF y Documentos", catMediaShare: "🖼️ Imágenes, OCR, EXIF y P2P",
                         toolLiveShield: "Escudo PII de Formularios", toolCloudSync: "Sincronización en la Nube E2EE", toolAuditCert: "Certificado PDF de Auditor", toolWhiteLabel: "Marca Blanca",
                         toolWebAuthn: "Bóveda de Passkey WebAuthn", toolStega: "Esteganografía de Imágenes", toolDestruct: "Artefactos Autodestructibles", toolEncrypt: "Cifrador de Hardware AES-256",
                         toolMarket: "Mercado de Reglas Locales", toolZkp: "Pruebas de Conocimiento Cero (ZKP)", toolLora: "Ajuste Fino de LoRA Local", toolLocalRag: "Búsqueda RAG de IA Local",
                         toolDiff: "Motor Diff de Contratos", toolCross: "Cumplimiento Multi-Marco", toolTimestamp: "Anclaje de OpenTimestamps", toolCustody: "Cadena de Custodia",
                         toolContract: "Analizador de Riesgos de Contratos", toolPdfPng: "Conversor de PDF a PNG", toolPdfMerge: "Fusión de PDF", toolPii: "Redacción de PII por Lotes",
-                        toolVisual: "Redacción Visual (Cara/Sello)", toolMetaScrubber: "Limpiador de EXIF y Metadatos", toolOcr: "Extracción de Texto OCR (Worker)", toolP2p: "Intercambio de Archivos P2P",
-                        toolOpfs: "Disco Virtual Cifrado OPFS", toolSign: "Firmante de Documentos Ed25519", toolAiNer: "Redactor IA NER WebGPU", toolChain: "Anclaje ZK-Rollup / Blockchain", toolRoom: "Sala de Chat Segura E2EE",
-                        encryptModeBtn: "Cifrar Archivo/Texto", decryptModeBtn: "Descifrar Archivo/Texto", passPlaceholder: "Ingrese la Contraseña Maestra...", pasteText: "Ingrese el texto de entrada aquí...",
-                        outputLabel: "Salida del Sistema / Registros:", compareBtn: "Comparar y Diferenciar", pasteSecondaryText: "Texto secundario para comparación...", cmdPlaceholder: "Buscar todas las herramientas Sovereign y Pro...",
-                        faqTitle: "Preguntas Frecuentes y Cumplimiento de Privacidad",
-                        faq1Q: "¿Mis datos se envían alguna vez a servidores externos?", faq1A: "No. PrivacyConvert Sovereign OS se ejecuta 100% del lado del cliente en el sandbox de su navegador. Con tecnología Air-Gapped y WebAssembly, cero bytes salen de su dispositivo.",
-                        faq2Q: "¿Qué marcos de cumplimiento son compatibles?", faq2A: "La suite cumple con los estándares GDPR, HIPAA, CCPA y de residencia de datos soberanos empresariales al mantener localizado todo el procesamiento de archivos.",
-                        faq3Q: "¿Cómo funciona el manejo de archivos grandes?", faq3A: "Utilizando la API de Streams y la API de Acceso al Sistema de Archivos, los archivos se procesan directamente en el disco en fragmentos de 5 MB seguros para la memoria, evitando el desbordamiento de RAM.",
-                        faq4Q: "¿Puedo usar esto completamente sin conexión?", faq4A: "Sí. Una vez cargado, puede desconectar su Internet por completo y las 30 herramientas funcionarán normalmente en aislamiento air-gapped.",
-                        proBtn: "Obtener Pro", proModalTitle: "💎 Actualizar a Sovereign Pro", proModalDesc: "Desbloquee procesamiento ilimitado y sincronización E2EE. <strong>Garantía Air-Gap:</strong> Esta licencia offline se verifica mediante criptografía asimétrica localmente en su sandbox. Cero conexiones externas.", activateKeyBtn: "Activar Licencia Pro",
-                        payTrBtn: "PayTR / Tarjeta de Crédito (TL - ₺999)", cryptoPayBtn: "Cryptomus / Criptomoneda (USDT/BTC - $29.99)", proPlanName: "Licencia Vitalicia Sovereign Pro", allRights: "Todos los derechos reservados.", orDivider: "O introduzca la clave de licencia",
-                        descLiveShield: "Proteja los formularios web salientes y los chats para que no filtren PII confidencial.",
-                        proWarning: "🔒 Función Pro: ¡Se requiere licencia Sovereign Pro!",
-                        proActivated: "🎉 ¡Licencia Pro activada con éxito!",
-                        proInvalidKey: "¡Clave de licencia inválida!",
-                        errEnterText: "Por favor ingrese texto",
-                        errPasswordRequired: "¡Se requiere contraseña maestra!",
-                        errSelectPdf: "Por favor seleccione archivos PDF",
-                        errSelectImage: "Por favor seleccione archivos de imagen",
-                        successMasked: "¡Datos enmascarados con éxito!",
-                        successEncrypt: "¡Cifrado exitoso!",
-                        successDecrypt: "¡Descifrado exitoso!",
-                        successPdfMerge: "¡Archivos PDF fusionados con éxito!",
-                        successOcr: "¡Texto extraído con éxito!",
-                        successExif: "¡Metadatos EXIF eliminados con éxito!",
-                        successGeneric: "¡Proceso Seguro Completado!",
-                        fileProcessed: "¡Archivo procesado y descargado con éxito!",
-                        errInvalidPassword: "Error: Contraseña incorrecta o archivo dañado."
+                        toolVisual: "Redacción Visual", toolMetaScrubber: "Limpiador de EXIF", toolOcr: "Extracción de Texto OCR", toolP2p: "Intercambio P2P",
+                        toolOpfs: "Disco Virtual OPFS", toolSign: "Firmante Ed25519", toolAiNer: "Redactor IA NER", toolChain: "Anclaje Blockchain", toolRoom: "Sala de Chat E2EE",
+                        encryptModeBtn: "Cifrar Archivo/Texto", decryptModeBtn: "Descifrar Archivo/Texto", passPlaceholder: "Contraseña maestra...", pasteText: "Ingrese texto...",
+                        outputLabel: "Salida del Sistema:", compareBtn: "Comparar", pasteSecondaryText: "Texto secundario...", cmdPlaceholder: "Buscar herramientas...",
+                        faqTitle: "Preguntas Frecuentes", faq1Q: "¿Datos enviados a servidores externos?", faq1A: "No. Se ejecuta 100% en el cliente.",
+                        proBtn: "Obtener Pro", proModalTitle: "💎 Actualizar a Sovereign Pro", proModalDesc: "Desbloquee procesamiento ilimitado con garantía Air-Gap.", activateKeyBtn: "Activar Licencia Pro",
+                        payTrBtn: "PayTR / Tarjeta (999 ₺)", cryptoPayBtn: "Cryptomus / Cripto ($29.99)", proPlanName: "Licencia Vitalicia", allRights: "Todos los derechos reservados.", orDivider: "O clave",
+                        descLiveShield: "Proteja formularios web contra fugas de PII.",
+                        proWarning: "🔒 ¡Se requiere licencia Sovereign Pro!", proActivated: "🎉 ¡Licencia activada con éxito!", proInvalidKey: "¡Clave inválida!",
+                        errEnterText: "Ingrese texto", errPasswordRequired: "¡Contraseña requerida!",
+                        successMasked: "¡Datos enmascarados!", successEncrypt: "¡Cifrado exitoso!", successDecrypt: "¡Descifrado exitoso!", successGeneric: "¡Proceso Completado!",
+                        
+                        v_live_title: "🛡️ Escudo PII en Vivo y Guardián de Formularios",
+                        v_live_desc: "Intercepta automáticamente PII sensible en formularios web y chats dentro del sandbox del navegador.",
+                        v_pii_title: "🕶️ Redacción de PII por Lotes en Documentos",
+                        v_pii_desc: "Analiza miles de contratos en segundos para firmas legales, eliminando riesgos regulatorios.",
+                        v_cert_title: "📜 Certificado de Cumplimiento PDF Criptográfico",
+                        v_cert_desc: "Genera certificados firmados SHA-256 para preparación ISO 27001.",
+                        v_brand_title: "🏢 Estudio de Marca White-Label para Intranet",
+                        v_brand_desc: "Personaliza la interfaz con tu logotipo empresarial para despliegue interno.",
+                        v_opfs_title: "💽 Disco Virtual Cifrado OPFS",
+                        v_opfs_desc: "Crea una unidad de almacenamiento virtual aislada con cifrado hardware AES-256.",
+                        v_sign_title: "✒️ Firmante de Documentos Soberanos Ed25519",
+                        v_sign_desc: "Firma acuerdos corporativos localmente mediante pares de claves asimétricas.",
+                        v_cloud_title: "☁️ Sincronización en la Nube E2EE de Conocimiento Cero",
+                        v_cloud_desc: "Sincroniza tus bóvedas cifradas de forma segura entre dispositivos de confianza.",
+                        v_ainer_title: "🧠 Redactor IA NER WebGPU y Motor Neuronal",
+                        v_ainer_desc: "Utiliza redes neuronales locales aceleradas por WebGPU para enmascarar entidades.",
+                        v_chain_title: "⛓️ Anclaje Criptográfico ZK-Rollup y Blockchain",
+                        v_chain_desc: "Ancla hashes Merkle en libros de contabilidad blockchain inmutables.",
+                        v_room_title: "💬 Sala de Chat LAN Segura E2EE y P2P",
+                        v_room_desc: "Proporciona canal de comunicación cifrado de extremo a extremo en su red local."
                     },
                     de: {
                         accept: "Akzeptieren", secureLabel: "Sicher", dropText: "Klicken Sie zum Durchsuchen oder ziehen Sie Dateien hierher",
-                        btnReset: "Zurücksetzen", btnCopy: "📋 Kopieren", btnPreview: "👁️ Vorschau", btnProcess: "Sicheren Prozess Ausführen", closeBtn: "Schließen", previewTitle: "Unternehmensvorschau",
+                        btnReset: "Zurücksetzen", btnCopy: "📋 Kopieren", btnPreview: "👁️ Vorschau", btnProcess: "Sicheren Prozess Ausführen", closeBtn: "Schließen", previewTitle: "Vorschau",
                         splitScreenBtn: "Geteilte Ansicht", secondaryPaneTitle: "Sekundärer Arbeitsbereich", brandBtn: "Branding", queueTitle: "Warteschlangenstatus",
-                        bannerTitle: "100% Client-seitige Air-Gapped-Sicherheit:", bannerDesc: "Die gesamte Verarbeitung erfolgt lokal in der Sandbox Ihres Browsers.", bannerVerifyBtn: "🔍 Wie man das überprüft?",
-                        verifyModalTitle: "So überprüfen Sie die Air-Gapped-Sicherheit", verifyDesc1: "Diese Anwendung arbeitet vollständig clientseitig mithilfe von JavaScript, WebAssembly und lokalem IndexedDB-Sandbox-Speicher.",
-                        verifyStep1: "Schritt 1: Öffnen Sie die Browser-Entwicklertools (F12)", verifyStep1Sub: "Navigieren Sie zur Registerkarte \"Netzwerk\".", verifyStep2: "Schritt 2: Trennen Sie das Internet oder überwachen Sie den Datenverkehr", verifyStep2Sub: "Beachten Sie, dass 0 ausgehende Anforderungen/Bytes an externe Server gesendet werden.",
+                        bannerTitle: "100% Client-seitige Air-Gapped-Sicherheit:", bannerDesc: "Die Verarbeitung erfolgt lokal in der Sandbox.", bannerVerifyBtn: "🔍 Wie prüfen?",
+                        outboundTrafficLabel: "Ausgehender Datenverkehr: <strong class=\"text-white\">0 KB</strong> (Isoliert)",
+                        verifyModalTitle: "Air-Gapped-Sicherheit prüfen", verifyDesc1: "Diese Anwendung arbeitet clientseitig mit JS, WebAssembly und IndexedDB.",
                         catProFeatures: "💎 Sovereign Pro & Unternehmen", catInfiniteSec: "🔑 Sicherheit, Passkey & Tresor", catZkpMarket: "📦 ZKP, KI & Marktplatz", catLegalAudit: "⚖️ Recht, Diff & Audit", catPdfDocs: "📚 PDF & Dokumente", catMediaShare: "🖼️ Bilder, OCR, EXIF & P2P",
                         toolLiveShield: "Live-Formular-PII-Schild", toolCloudSync: "E2EE Cloud Sync", toolAuditCert: "Auditor PDF-Zertifikat", toolWhiteLabel: "White-Label-Branding",
                         toolWebAuthn: "WebAuthn Passkey-Tresor", toolStega: "Bildsteganographie", toolDestruct: "Selbstzerstörende Artefakte", toolEncrypt: "AES-256 Hardware-Verschlüsseler",
-                        toolMarket: "Lokaler Regel-Marktplatz", toolZkp: "Zero-Knowledge-Beweise (ZKP)", toolLora: "Lokale LoRA-Feinabstimmung", toolLocalRag: "Lokale KI-RAG-Suche",
-                        toolDiff: "Vertrags-Diff-Engine", toolCross: "Framework-übergreifende Compliance", toolTimestamp: "OpenTimestamps-Anker", toolCustody: "Beweiskette (Custody)",
-                        toolContract: "Vertragsrisiko-Parser", toolPdfPng: "PDF zu PNG Konverter", toolPdfMerge: "PDF-Zusammenführung", toolPii: "Batch-PII-Schwärzung",
-                        toolVisual: "Visuelle Schwärzung (Gesicht/Stempel)", toolMetaScrubber: "EXIF- & Meta-Wäscher", toolOcr: "OCR-Textextraktion (Worker)", toolP2p: "P2P-Dateifreigabe",
-                        toolOpfs: "Verschlüsseltes virtuelles OPFS-Laufwerk", toolSign: "Ed25519 Dokumenten-Signierer", toolAiNer: "WebGPU AI NER-Redaktor", toolChain: "ZK-Rollup / Blockchain-Anker", toolRoom: "E2EE Sicherer Chatraum",
-                        encryptModeBtn: "Datei/Text Verschlüsseln", decryptModeBtn: "Datei/Text Entschlüsseln", passPlaceholder: "Master-Passwort eingeben...", pasteText: "Geben Sie hier den Eingabetext ein...",
-                        outputLabel: "Systemausgabe / Protokolle:", compareBtn: "Vergleichen & Differenzieren", pasteSecondaryText: "Sekundärer Text zum Vergleich...", cmdPlaceholder: "Durchsuchen Sie alle Sovereign- & Pro-Tools...",
-                        faqTitle: "Häufig gestellte Fragen und Datenschutz-Compliance",
-                        faq1Q: "Werden meine Daten jemals an externe Server gesendet?", faq1A: "Nein. PrivacyConvert Sovereign OS läuft zu 100% clientseitig in Ihrer Browser-Sandbox. Mit Air-Gapped- und WebAssembly-Technologie verlassen null Bytes Ihr Gerät.",
-                        faq2Q: "Welche Compliance-Frameworks werden unterstützt?", faq2A: "Die Suite entspricht der DSGVO, HIPAA, CCPA und den Standards für die Datenresidenz von Unternehmen, indem die gesamte Dateiverarbeitung lokalisiert wird.",
-                        faq3Q: "Wie funktioniert die Verarbeitung großer Dateien?", faq3A: "Mithilfe der Streams-API und der File System Access-API werden Dateien direkt auf die Festplatte in 5 MB speichersicheren Blöcken verarbeitet, wodurch ein RAM-Überlauf verhindert wird.",
-                        faq4Q: "Kann ich dies komplett offline nutzen?", faq4A: "Ja. Nach dem Laden können Sie Ihr Internet vollständig trennen, und alle 30 Tools funktionieren normal in isolierter Air-Gapped-Umgebung.",
-                        proBtn: "Pro Holen", proModalTitle: "💎 Upgrade auf Sovereign Pro", proModalDesc: "Schalten Sie unbegrenzte Verarbeitung frei. <strong>Air-Gap-Garantie:</strong> Diese Offline-Lizenz wird mittels asymmetrischer Kryptographie lokal in Ihrem Browser verifiziert. Null externe Verbindungen.", activateKeyBtn: "Pro-Lizenz Aktivieren",
-                        payTrBtn: "PayTR / Kreditkarte (TL - ₺999)", cryptoPayBtn: "Cryptomus / Krypto (USDT/BTC - $29.99)", proPlanName: "Sovereign Pro Lebenslange Lizenz", allRights: "Alle Rechte vorbehalten.", orDivider: "Oder Lizenzschlüssel eingeben",
-                        descLiveShield: "Schützen Sie ausgehende Webformulare und Chat-Eingaben vor dem Verlust sensibler PII-Daten.",
-                        proWarning: "🔒 Pro-Funktion: Sovereign Pro-Lizenz erforderlich!",
-                        proActivated: "🎉 Pro-Lizenz erfolgreich aktiviert!",
-                        proInvalidKey: "Ungültiger Lizenzschlüssel!",
-                        errEnterText: "Bitte Text eingeben",
-                        errPasswordRequired: "Master-Passwort ist erforderlich!",
-                        errSelectPdf: "Bitte wählen Sie PDF-Dateien aus",
-                        errSelectImage: "Bitte wählen Sie Bilddateien aus",
-                        successMasked: "Daten erfolgreich maskiert!",
-                        successEncrypt: "Verschlüsselung erfolgreich!",
-                        successDecrypt: "Entschlüsselung erfolgreich!",
-                        successPdfMerge: "PDF-Dateien erfolgreich zusammengeführt!",
-                        successOcr: "Text erfolgreich extrahiert!",
-                        successExif: "EXIF-Metadaten erfolgreich entfernt!",
-                        successGeneric: "Sicherer Prozess Abgeschlossen!",
-                        fileProcessed: "Datei erfolgreich verarbeitet und heruntergeladen!",
-                        errInvalidPassword: "Fehler: Falsches Passwort oder beschädigte Datei."
+                        toolMarket: "Lokaler Markt", toolZkp: "Zero-Knowledge-Beweise", toolLora: "Lokale LoRA", toolLocalRag: "Lokale KI-RAG",
+                        toolDiff: "Vertrags-Diff", toolCross: "Compliance", toolTimestamp: "OpenTimestamps", toolCustody: "Beweiskette",
+                        toolContract: "Vertragsrisiko", toolPdfPng: "PDF zu PNG", toolPdfMerge: "PDF-Zusammenführung", toolPii: "Batch-PII",
+                        toolVisual: "Visuelle Schwärzung", toolMetaScrubber: "EXIF-Wäscher", toolOcr: "OCR", toolP2p: "P2P",
+                        toolOpfs: "OPFS Laufwerk", toolSign: "Ed25519 Signierer", toolAiNer: "WebGPU NER", toolChain: "Blockchain Anker", toolRoom: "Sicherer Chat",
+                        encryptModeBtn: "Verschlüsseln", decryptModeBtn: "Entschlüsseln", passPlaceholder: "Master-Passwort...", pasteText: "Text eingeben...",
+                        outputLabel: "Ausgabe:", compareBtn: "Vergleichen", pasteSecondaryText: "Sekundärer Text...", cmdPlaceholder: "Suchen...",
+                        faqTitle: "FAQ", faq1Q: "Daten an Server?", faq1A: "Nein, 100% clientseitig.",
+                        proBtn: "Pro Holen", proModalTitle: "💎 Upgrade auf Sovereign Pro", proModalDesc: "Unbegrenzte Verarbeitung mit Air-Gap-Garantie.", activateKeyBtn: "Pro-Lizenz Aktivieren",
+                        payTrBtn: "PayTR / Karte (999 ₺)", cryptoPayBtn: "Cryptomus / Krypto ($29.99)", proPlanName: "Lebenslange Lizenz", allRights: "Alle Rechte vorbehalten.", orDivider: "Oder Schlüssel",
+                        descLiveShield: "Schützen Sie Webformulare vor PII-Lecks.",
+                        proWarning: "🔒 Sovereign Pro-Lizenz erforderlich!", proActivated: "🎉 Pro-Lizenz aktiviert!", proInvalidKey: "Ungültiger Schlüssel!",
+                        errEnterText: "Bitte Text eingeben", errPasswordRequired: "Passwort erforderlich!",
+                        successMasked: "Daten maskiert!", successEncrypt: "Verschlüsselt!", successDecrypt: "Entschlüsselt!", successGeneric: "Abgeschlossen!",
+                        
+                        v_live_title: "🛡️ Live PII-Schild & Formularschutz",
+                        v_live_desc: "Fängt sensible PII in Webformularen direkt in der Browser-Sandbox ab.",
+                        v_pii_title: "🕶️ Batch-PII-Dokumenten-Schwärzung",
+                        v_pii_desc: "Durchsucht tausende Verträge in Sekunden für Anwaltskanzleien.",
+                        v_cert_title: "📜 Kryptografisches PDF-Compliance-Zertifikat",
+                        v_cert_desc: "Generiert SHA-256 signierte Audit-Zertifikate für ISO 27001.",
+                        v_brand_title: "🏢 White-Label Intranet-Branding",
+                        v_brand_desc: "Passt die Benutzeroberfläche mit Ihrem Firmenlogo an.",
+                        v_opfs_title: "💽 OPFS Verschlüsseltes Virtuelles Laufwerk",
+                        v_opfs_desc: "Erstellt einen isolierten, AES-256 verschlüsselten Speicher.",
+                        v_sign_title: "✒️ Asymmetrischer Ed25519 Dokumentensignierer",
+                        v_sign_desc: "Signiert vertrauliche Vereinbarungen lokal mittels Schlüsselpaaren.",
+                        v_cloud_title: "☁️ E2EE Zero-Knowledge Cloud-Synchronisation",
+                        v_cloud_desc: "Synchronisiert verschlüsselte Tresore sicher.",
+                        v_ainer_title: "🧠 WebGPU KI NER Redaktor",
+                        v_ainer_desc: "Nutzt lokale WebGPU-beschleunigte neuronale Netze.",
+                        v_chain_title: "⛓️ ZK-Rollup & Blockchain Anker",
+                        v_chain_desc: "Verankert Merkle-Root-Hashes auf unveränderlichen Ledgern.",
+                        v_room_title: "💬 E2EE Sicherer LAN Chat",
+                        v_room_desc: "Bietet einen isolierten, verschlüsselten P2P-Kommunikationskanal."
                     },
                     fr: {
-                        accept: "Accepter", secureLabel: "Sécurisé", dropText: "Cliquez pour parcourir ou faites glisser les fichiers ici",
-                        btnReset: "Réinitialiser", btnCopy: "📋 Copier", btnPreview: "👁️ Aperçu", btnProcess: "Exécuter le Processus Sécurisé", closeBtn: "Fermer", previewTitle: "Aperçu Entreprise",
-                        splitScreenBtn: "Vue Divisée", secondaryPaneTitle: "Espace de Travail Secondaire", brandBtn: "Marque", queueTitle: "État de la File",
-                        bannerTitle: "Sécurité Air-Gapped 100% Côté Client :", bannerDesc: "Tout le traitement s'effectue localement dans le bac à sable de votre navigateur.", bannerVerifyBtn: "🔍 Comment Vérifier ?",
-                        verifyModalTitle: "Comment Vérifier la Sécurité Air-Gapped", verifyDesc1: "Cette application fonctionne entièrement côté client en utilisant JavaScript, WebAssembly et le stockage local IndexedDB en bac à sable.",
-                        verifyStep1: "Étape 1 : Ouvrir les Outils de Développement (F12)", verifyStep1Sub: "Accédez à l'onglet \"Réseau\".", verifyStep2: "Étape 2 : Déconnecter Internet ou Surveiller le Trafic", verifyStep2Sub: "Remarquez que 0 requête ou octet n'est envoyé aux serveurs externes.",
-                        catProFeatures: "💎 Sovereign Pro & Entreprise", catInfiniteSec: "🔑 Sécurité, Passkey & Coffre", catZkpMarket: "📦 ZKP, IA & Marché", catLegalAudit: "⚖️ Légal, Diff & Audit", catPdfDocs: "📚 PDF & Documents", catMediaShare: "🖼️ Images, OCR, EXIF & P2P",
-                        toolLiveShield: "Bouclier PII pour Formulaires", toolCloudSync: "Synchronisation Cloud E2EE", toolAuditCert: "Certificat PDF d'Auditeur", toolWhiteLabel: "Marque Blanche",
-                        toolWebAuthn: "Coffre WebAuthn Passkey", toolStega: "Stéganographie d'Image", toolDestruct: "Artéfacts Autodestructibles", toolEncrypt: "Chiffreur Matériel AES-256",
-                        toolMarket: "Marché de Règles Locales", toolZkp: "Preuves à Divulgation Nulle (ZKP)", toolLora: "Affinage LoRA Local", toolLocalRag: "Recherche RAG IA Locale",
-                        toolDiff: "Moteur Diff de Contratos", toolCross: "Conformité Inter-Cadres", toolTimestamp: "Ancrage OpenTimestamps", toolCustody: "Chaîne de Traçabilité",
-                        toolContract: "Analyseur de Risques de Contrats", toolPdfPng: "Convertisseur PDF en PNG", toolPdfMerge: "Fusion de PDF", toolPii: "Rédaction PII par Lots",
-                        toolVisual: "Rédaction Visuelle (Visage/Sceau)", toolMetaScrubber: "Nettoyeur EXIF & Métadonnées", toolOcr: "Extraction de Texte OCR (Worker)", toolP2p: "Partage de Fichiers P2P",
-                        toolOpfs: "Disque Virtuel Chiffré OPFS", toolSign: "Signataire de Documents Ed25519", toolAiNer: "Rédacteur IA NER WebGPU", toolChain: "Ancrage ZK-Rollup / Blockchain", toolRoom: "Salle de Discussion Sécurisée E2EE",
-                        encryptModeBtn: "Chiffrer Fichier/Texte", decryptModeBtn: "Déchiffrer Fichier/Texte", passPlaceholder: "Entrez le mot de passe principal...", pasteText: "Entrez le texte d'entrée ici...",
-                        outputLabel: "Sortie Système / Journaux :", compareBtn: "Comparer & Différenciér", pasteSecondaryText: "Texte secondaire pour comparaison...", cmdPlaceholder: "Rechercher tous les outils Sovereign & Pro...",
-                        faqTitle: "Foire Aux Questions et Conformité de Confidentialité",
-                        faq1Q: "Mes données sont-elles un jour envoyées à des serveurs externes ?", faq1A: "Non. PrivacyConvert Sovereign OS s'exécute à 100% côté client dans le bac à sable de votre navigateur. Avec la technologie Air-Gapped et WebAssembly, zéro octet ne quitte votre appareil.",
-                        faq2Q: "Quels cadres de conformité sont pris en charge ?", faq2A: "La suite est conforme au RGPD, HIPAA, CCPA et aux normes de résidence des données souveraines de l'entreprise en gardant tout le traitement des fichiers localisé.",
-                        faq3Q: "Comment fonctionne la gestion des fichiers volumineux ?", faq3A: "En utilisant l'API Streams et l'API d'accès au système de fichiers, les fichiers sont traités directement sur le disque par blocs de 5 Mo sécurisés pour la mémoire, empêchant le débordement de la RAM.",
-                        faq4Q: "Puis-je l'utiliser complètement hors ligne ?", faq4A: "Oui. Une fois chargé, vous pouvez déconnecter complètement votre connexion Internet et les 30 outils fonctionneront normalement en isolation air-gapped.",
-                        proBtn: "Obtener Pro", proModalTitle: "💎 Passer à Sovereign Pro", proModalDesc: "Débloquez le traitement illimité. <strong>Garantie Air-Gap :</strong> Cette licence hors ligne est vérifiée par cryptographie asymétrique localement dans votre sandbox. Zéro connexion externe.", activateKeyBtn: "Activer la Licence Pro",
-                        payTrBtn: "PayTR / Carte de Crédit (TL - ₺999)", cryptoPayBtn: "Cryptomus / Crypto (USDT/BTC - $29.99)", proPlanName: "Licence à vie Sovereign Pro", allRights: "Tous droits réservés.", orDivider: "Ou entrez la clé de licence",
-                        descLiveShield: "Protégez les formulaires Web et les entrées de chat sortants contre les fuites de PII.",
-                        proWarning: "🔒 Fonctionnalité Pro : Licence Sovereign Pro requise !",
-                        proActivated: "🎉 Licence Pro activée avec succès !",
-                        proInvalidKey: "Clé de licence invalide !",
-                        errEnterText: "Veuillez entrer du texte",
-                        errPasswordRequired: "Le mot de passe principal est requis !",
-                        errSelectPdf: "Veuillez sélectionner des fichiers PDF",
-                        errSelectImage: "Veuillez sélectionner des fichiers image",
-                        successMasked: "Données masquées avec succès !",
-                        successEncrypt: "Chiffrement réussi !",
-                        successDecrypt: "Déchiffrement réussi !",
-                        successPdfMerge: "Fichiers PDF fusionnés avec succès !",
-                        successOcr: "Texte extrait avec succès !",
-                        successExif: "Métadonnées EXIF nettoyées avec succès !",
-                        successGeneric: "Processus Sécurisé Terminé !",
-                        fileProcessed: "Fichier traité et téléchargé avec succès !",
-                        errInvalidPassword: "Erreur : Mot de passe incorrect ou fichier corrompu."
+                        accept: "Accepter", secureLabel: "Sécurisé", dropText: "Cliquez ou glissez les fichiers ici",
+                        btnReset: "Réinitialiser", btnCopy: "📋 Copier", btnPreview: "👁️ Aperçu", btnProcess: "Exécuter", closeBtn: "Fermer", previewTitle: "Aperçu",
+                        splitScreenBtn: "Vue Divisée", secondaryPaneTitle: "Espace Secondaire", brandBtn: "Marque", queueTitle: "File d'attente",
+                        bannerTitle: "Sécurité Air-Gapped 100% Client :", bannerDesc: "Traitement local dans le sandbox.", bannerVerifyBtn: "🔍 Vérifier",
+                        outboundTrafficLabel: "Trafic Sortant : <strong class=\"text-white\">0 KB</strong> (Isolé)",
+                        verifyModalTitle: "Vérifier la sécurité Air-Gapped", verifyDesc1: "Fonctionne entièrement côté client via JS et IndexedDB.",
+                        catProFeatures: "💎 Sovereign Pro & Entreprise", catInfiniteSec: "🔑 Sécurité, Passkey & Coffre", catZkpMarket: "📦 ZKP, IA & Marché", catLegalAudit: "⚖️ Légal & Audit", catPdfDocs: "📚 PDF & Documents", catMediaShare: "🖼️ Images, OCR & P2P",
+                        toolLiveShield: "Bouclier PII Formulaires", toolCloudSync: "Cloud Sync E2EE", toolAuditCert: "Certificat PDF d'Auditeur", toolWhiteLabel: "Marque Blanche",
+                        toolWebAuthn: "Coffre WebAuthn Passkey", toolStega: "Stéganographie", toolDestruct: "Artéfacts Autodestructibles", toolEncrypt: "Chiffreur AES-256",
+                        toolMarket: "Marché de Règles", toolZkp: "Preuves ZKP", toolLora: "LoRA Local", toolLocalRag: "Recherche RAG",
+                        toolDiff: "Moteur Diff", toolCross: "Conformité", toolTimestamp: "OpenTimestamps", toolCustody: "Traçabilité",
+                        toolContract: "Analyseur de Contrats", toolPdfPng: "PDF en PNG", toolPdfMerge: "Fusion PDF", toolPii: "Rédaction PII",
+                        toolVisual: "Rédaction Visuelle", toolMetaScrubber: "Nettoyeur EXIF", toolOcr: "OCR", toolP2p: "P2P",
+                        toolOpfs: "Disque OPFS", toolSign: "Signataire Ed25519", toolAiNer: "Redacteur IA NER", toolChain: "Ancre Blockchain", toolRoom: "Salon Sécurisé",
+                        encryptModeBtn: "Chiffrer", decryptModeBtn: "Déchiffrer", passPlaceholder: "Mot de passe...", pasteText: "Entrez le texte...",
+                        outputLabel: "Sortie :", compareBtn: "Comparer", pasteSecondaryText: "Texte secondaire...", cmdPlaceholder: "Rechercher...",
+                        faqTitle: "FAQ", faq1Q: "Données envoyées aux serveurs ?", faq1A: "Non, 100% client.",
+                        proBtn: "Obtenir Pro", proModalTitle: "💎 Passer à Sovereign Pro", proModalDesc: "Traitement illimité garanti Air-Gap.", activateKeyBtn: "Activer la Licence Pro",
+                        payTrBtn: "PayTR / Carte (999 ₺)", cryptoPayBtn: "Cryptomus / Crypto ($29.99)", proPlanName: "Licence à vie", allRights: "Tous droits réservés.", orDivider: "Ou clé",
+                        descLiveShield: "Protégez les formulaires web contre les fuites PII.",
+                        proWarning: "🔒 Licence Sovereign Pro requise !", proActivated: "🎉 Licence Pro activée !", proInvalidKey: "Clé invalide !",
+                        errEnterText: "Entrez du texte", errPasswordRequired: "Mot de passe requis !",
+                        successMasked: "Données masquées !", successEncrypt: "Chiffré !", successDecrypt: "Déchiffré !", successGeneric: "Terminé !",
+                        
+                        v_live_title: "🛡️ Bouclier PII en Direct et Gardien de Formulaire",
+                        v_live_desc: "Intercepte automatiquement les PII sensibles dans le sandbox.",
+                        v_pii_title: "🕶️ Rédaction de PII par Lots",
+                        v_pii_desc: "Analyse des milliers de contrats en quelques secondes.",
+                        v_cert_title: "📜 Certificat de Conformité PDF Cryptographique",
+                        v_cert_desc: "Génère des certificats officiels signés SHA-256.",
+                        v_brand_title: "🏢 Studio de Marque White-Label Intranet",
+                        v_brand_desc: "Personnalisez l'interface avec votre logo d'entreprise.",
+                        v_opfs_title: "💽 Disque Virtuel Chiffré OPFS",
+                        v_opfs_desc: "Crée un stockage virtuel isolé chiffré AES-256.",
+                        v_sign_title: "✒️ Signataire de Documents Souverains Ed25519",
+                        v_sign_desc: "Signe les accords localement via des paires de clés asymétriques.",
+                        v_cloud_title: "☁️ Synchronisation Cloud E2EE Zero-Knowledge",
+                        v_cloud_desc: "Synchronisez vos coffres chiffrés en toute sécurité.",
+                        v_ainer_title: "🧠 Rédacteur IA NER WebGPU",
+                        v_ainer_desc: "Utilise des réseaux neuronaux locaux accélérés par WebGPU.",
+                        v_chain_title: "⛓️ Ancrage Cryptographique ZK-Rollup et Blockchain",
+                        v_chain_desc: "Ancre les hACHes Merkle sur des registres immuables.",
+                        v_room_title: "💬 Salon de Discussion LAN Sécurisé E2EE",
+                        v_room_desc: "Fournit un canal de communication P2P chiffré de bout en bout."
                     },
                     zh: {
-                        accept: "接受", secureLabel: "安全", dropText: "点击浏览或将文件拖放到此处（内存安全流）",
-                        btnReset: "重置", btnCopy: "📋 复制", btnPreview: "👁️ 预览", btnProcess: "执行安全流程", closeBtn: "关闭", previewTitle: "企业预览",
-                        splitScreenBtn: "分屏视图", secondaryPaneTitle: "辅助工作区", brandBtn: "品牌化", queueTitle: "队列状态",
-                        bannerTitle: "100% 客户端物理隔离安全：", bannerDesc: "所有处理都在浏览器的沙盒中本地进行。", bannerVerifyBtn: "🔍 如何验证？",
-                        verifyModalTitle: "如何验证物理隔离安全性", verifyDesc1: "此应用程序完全使用JavaScript、WebAssembly和本地IndexedDB沙盒存储在客户端运行。",
-                        verifyStep1: "第一步：打开浏览器开发者工具（F12）", verifyStep1Sub: "导航到“网络”选项卡。", verifyStep2: "第二步：断开互联网或监控流量", verifyStep2Sub: "您将注意到发送到外部服务器的请求/字节数为 0。",
-                        catProFeatures: "💎 Sovereign Pro 与企业版", catInfiniteSec: "🔑 安全、通行密钥与保险库", catZkpMarket: "📦 ZKP、AI 与市场", catLegalAudit: "⚖️ 法律、差异与审计", catPdfDocs: "📚 PDF 与文档", catMediaShare: "🖼️ 图像、OCR、EXIF 与 P2P",
+                        accept: "接受", secureLabel: "安全", dropText: "点击浏览或拖放文件",
+                        btnReset: "重置", btnCopy: "📋 复制", btnPreview: "👁️ 预览", btnProcess: "执行安全流程", closeBtn: "关闭", previewTitle: "预览",
+                        splitScreenBtn: "分屏", secondaryPaneTitle: "辅助工作区", brandBtn: "品牌化", queueTitle: "队列状态",
+                        bannerTitle: "100% 客户端物理隔离安全：", bannerDesc: "所有处理在沙盒本地运行。", bannerVerifyBtn: "🔍 如何验证？",
+                        outboundTrafficLabel: "出站流量：<strong class=\"text-white\">0 KB</strong>（已隔离）",
+                        verifyModalTitle: "验证物理隔离安全", verifyDesc1: "应用程序完全在客户端使用JS和IndexedDB运行。",
+                        catProFeatures: "💎 Sovereign Pro 与企业版", catInfiniteSec: "🔑 安全与保险库", catZkpMarket: "📦 ZKP 与 AI", catLegalAudit: "⚖️ 法律与审计", catPdfDocs: "📚 PDF 与文档", catMediaShare: "🖼️ 图像与 P2P",
                         toolLiveShield: "实时表单 PII 护盾", toolCloudSync: "E2EE 云同步", toolAuditCert: "审计员 PDF 证书", toolWhiteLabel: "白标品牌化",
-                        toolWebAuthn: "WebAuthn 通行密钥保险库", toolStega: "图像隐写术", toolDestruct: "自毁伪影", toolEncrypt: "AES-256 硬件加密器",
-                        toolMarket: "本地规则市场", toolZkp: "零知识证明 (ZKP)", toolLora: "本地 LoRA 微调", toolLocalRag: "本地 AI RAG 搜索",
-                        toolDiff: "合同差异引擎", toolCross: "跨框架合规性", toolTimestamp: "OpenTimestamps 锚点", toolCustody: "监管链",
-                        toolContract: "合同风险解析器", toolPdfPng: "PDF 转 PNG 转换器", toolPdfMerge: "PDF 合并器", toolPii: "批量 PII 遮盖",
-                        toolVisual: "视觉遮盖（人脸/印章）", toolMetaScrubber: "EXIF 与元数据清理器", toolOcr: "OCR 文本提取 (Worker)", toolP2p: "P2P 文件共享",
-                        toolOpfs: "OPFS 加密虚拟磁盘", toolSign: "Ed25519 文档签名器", toolAiNer: "WebGPU AI NER 编排器", toolChain: "ZK-Rollup / 区块链锚点", toolRoom: "E2EE 安全聊天室",
-                        encryptModeBtn: "加密文件/文本", decryptModeBtn: "解密文件/文本", passPlaceholder: "输入主密码...", pasteText: "在此处输入输入文本...",
-                        outputLabel: "系统输出 / 日志：", compareBtn: "比较与差异", pasteSecondaryText: "用于比较的辅助文本...", cmdPlaceholder: "搜索所有 Sovereign 和 Pro 工具...",
-                        faqTitle: "常见问题解答与隐私合规性",
-                        faq1Q: "我的数据是否曾被发送到外部服务器？", faq1A: "不会。PrivacyConvert Sovereign OS 100% 在您浏览器的沙盒中以客户端模式运行。借助物理隔离和 WebAssembly 技术，您的设备中不会流出任何字节。",
-                        faq2Q: "支持哪些合规框架？", faq2A: "该套件通过将所有文件处理本地化，符合 GDPR、HIPAA、CCPA 以及企业主权数据驻留标准。",
-                        faq3Q: "大文件处理如何工作？", faq3A: "使用 Streams API 和文件系统访问 API，文件以 5MB 的内存安全块直接处理到磁盘上，从而防止 RAM 溢出。",
-                        faq4Q: "我可以完全离线使用它吗？", faq4A: "可以。加载完成后，您可以完全断开互联网连接，所有 30 个工具都将在物理隔离的环境中正常运行。",
-                        proBtn: "获取专业版", proModalTitle: "💎 升级到 Sovereign Pro", proModalDesc: "解锁无限制处理。<strong>物理隔离保证：</strong> 此离线许可证直接在浏览器沙盒内通过非对称密码学进行数学验证，绝不产生任何外部网络连接。", activateKeyBtn: "激活专业版许可证",
-                        payTrBtn: "PayTR / 信用卡 (TL - ₺999)", cryptoPayBtn: "Cryptomus / 加密货币 (USDT/BTC - $29.99)", proPlanName: "Sovereign Pro 终身许可证", allRights: "版权所有。", orDivider: "或输入许可证密钥",
-                        descLiveShield: "保护出站 Web 表单和聊天输入免遭敏感 PII 泄漏。",
-                        proWarning: "🔒 专业版功能：此工具需要 Sovereign Pro 许可证！",
-                        proActivated: "🎉 专业版许可证激活成功！",
-                        proInvalidKey: "无效的许可证密钥！",
-                        errEnterText: "请输入文本",
-                        errPasswordRequired: "需要主密码！",
-                        errSelectPdf: "请选择PDF文件",
-                        errSelectImage: "请选择图片文件",
-                        successMasked: "数据成功掩码！",
-                        successEncrypt: "加密成功！",
-                        successDecrypt: "解密成功！",
-                        successPdfMerge: "PDF文件合并成功！",
-                        successOcr: "文本提取成功！",
-                        successExif: "EXIF元数据清理成功！",
-                        successGeneric: "安全流程已完成！",
-                        fileProcessed: "文件处理并下载成功！",
-                        errInvalidPassword: "错误：密码错误或文件损坏。"
+                        toolWebAuthn: "WebAuthn 通行密钥", toolStega: "图像隐写术", toolDestruct: "自毁伪影", toolEncrypt: "AES-256 加密",
+                        toolMarket: "本地规则市场", toolZkp: "零知识证明", toolLora: "本地 LoRA", toolLocalRag: "本地 AI RAG",
+                        toolDiff: "合同差异引擎", toolCross: "跨框架合规", toolTimestamp: "时间戳锚点", toolCustody: "监管链",
+                        toolContract: "合同风险", toolPdfPng: "PDF 转 PNG", toolPdfMerge: "PDF 合并", toolPii: "批量 PII 遮盖",
+                        toolVisual: "视觉遮盖", toolMetaScrubber: "EXIF 清理", toolOcr: "OCR", toolP2p: "P2P 共享",
+                        toolOpfs: "OPFS 虚拟磁盘", toolSign: "Ed25519 签名器", toolAiNer: "WebGPU NER", toolChain: "区块链锚点", toolRoom: "安全聊天室",
+                        encryptModeBtn: "加密", decryptModeBtn: "解密", passPlaceholder: "主密码...", pasteText: "输入文本...",
+                        outputLabel: "输出：", compareBtn: "比较", pasteSecondaryText: "辅助文本...", cmdPlaceholder: "搜索...",
+                        faqTitle: "常见问题", faq1Q: "数据发送到外部服务器吗？", faq1A: "不会，100%客户端运行。",
+                        proBtn: "获取专业版", proModalTitle: "💎 升级到 Sovereign Pro", proModalDesc: "物理隔离保证下的无限处理。", activateKeyBtn: "激活专业版",
+                        payTrBtn: "PayTR / 信用卡 (999 ₺)", cryptoPayBtn: "Cryptomus / 加密货币 ($29.99)", proPlanName: "终身许可证", allRights: "版权所有。", orDivider: "或密钥",
+                        descLiveShield: "保护表单免受敏感 PII 泄漏。",
+                        proWarning: "🔒 需要 Sovereign Pro 许可证！", proActivated: "🎉 专业版许可证已激活！", proInvalidKey: "无效密钥！",
+                        errEnterText: "请输入文本", errPasswordRequired: "需要密码！",
+                        successMasked: "数据成功掩码！", successEncrypt: "加密成功！", successDecrypt: "解密成功！", successGeneric: "流程完成！",
+                        
+                        v_live_title: "🛡️ 实时表单 PII 护盾与表单守护者",
+                        v_live_desc: "自动在浏览器沙盒内拦截表单中的敏感 PII。",
+                        v_pii_title: "🕶️ 批量 PII 文档遮盖与法律掩码",
+                        v_pii_desc: "为律所秒速扫描数千份合同，永久遮盖机密实体。",
+                        v_cert_title: "📜 加密审计员 PDF 合规证书",
+                        v_cert_desc: "生成带有 SHA-256 签名的官方审计证书以满足 ISO 27001。",
+                        v_brand_title: "🏢 白标内网品牌工作室",
+                        v_brand_desc: "使用企业标志自定义应用界面，用于内网部署。",
+                        v_opfs_title: "💽 OPFS 加密虚拟磁盘与安全沙盒存储",
+                        v_opfs_desc: "利用 OPFS 技术直接在设备上创建 AES-256 加密虚拟盘。",
+                        v_sign_title: "✒️ 非对称 Ed25519 与 ECDSA 主权文档签名器",
+                        v_sign_desc: "在本地使用非对称公私钥对签署机密企业协议。",
+                        v_cloud_title: "☁️ E2EE 零知识云同步",
+                        v_cloud_desc: "在受信任设备之间安全同步加密保险库。",
+                        v_ainer_title: "🧠 WebGPU AI NER 编排器与神经隐私引擎",
+                        v_ainer_desc: "利用本地 WebGPU 加速的神经网络精准识别命名实体。",
+                        v_chain_title: "⛓️ ZK-Rollup 与区块链加密锚点",
+                        v_chain_desc: "将关键文档和日志的 Merkle 根哈希固定在区块链上。",
+                        v_room_title: "💬 E2EE 安全局域网聊天室与 P2P 交换",
+                        v_room_desc: "在局域网内提供完全隔离的点对点加密通信频道。"
                     },
                     ar: {
-                        accept: "قبول", secureLabel: "آمن", dropText: "انقر للتصفح أو اسحب الملفات هنا (دفق آمن للذاكرة)",
-                        btnReset: "إعادة ضبط", btnCopy: "📋 نسخ", btnPreview: "👁️ معاينة", btnProcess: "تنفيذ عملية آمنة", closeBtn: "إغلاق", previewTitle: "معاينة المؤسسة",
-                        splitScreenBtn: "عرض مقسم", secondaryPaneTitle: "مساحة العمل الثانوية", brandBtn: "العلامة التجارية", queueTitle: "حالة قائمة الانتظار",
-                        bannerTitle: "أمان معزول 100% على جانب العميل:", bannerDesc: "تتم جميع عمليات المعالجة محليًا في وضع الحماية للمتصفح الخاص بك.", bannerVerifyBtn: "🔍 كيف أتحقق؟",
-                        verifyModalTitle: "كيفية التحقق من الأمان المعزول (Air-Gapped)", verifyDesc1: "يعمل هذا التطبيق بالكامل من جانب العميل باستخدام JavaScript و WebAssembly وتخزين IndexedDB المحلي في وضع الحماية.",
-                        verifyStep1: "الخطوة 1: افتح أدوات مطوري المتصفح (F12)", verifyStep1Sub: "انتقل إلى علامة التبويب \"الشبكة\".", verifyStep2: "الخطوة 2: افصل الإنترنت أو راقب حركة المرور", verifyStep2Sub: "لاحظ إرسال 0 طلبات/بايت صادرة إلى الخوادم الخارجية.",
-                        catProFeatures: "💎 Sovereign Pro والمؤسسات", catInfiniteSec: "🔑 الأمان ومفاتيح المرور والقبو", catZkpMarket: "📦 ZKP والذكاء الاصطناعي والسوق", catLegalAudit: "⚖️ القانون والاختلافات والتدقيق", catPdfDocs: "📚 PDF والمستندات", catMediaShare: "🖼️ الصور و OCR و EXIF و P2P",
+                        accept: "قبول", secureLabel: "آمن", dropText: "انقر للتصفح أو اسحب الملفات هنا",
+                        btnReset: "إعادة ضبط", btnCopy: "📋 نسخ", btnPreview: "👁️ معاينة", btnProcess: "تنفيذ", closeBtn: "إغلاق", previewTitle: "معاينة",
+                        splitScreenBtn: "عرض مقسم", secondaryPaneTitle: "مساحة ثانوية", brandBtn: "العلامة التجارية", queueTitle: "قائمة الانتظار",
+                        bannerTitle: "أمان معزول 100% على جانب العميل:", bannerDesc: "تتم المعالجة محليًا في وضع الحماية.", bannerVerifyBtn: "🔍 تحقق",
+                        outboundTrafficLabel: "حركة المرور الصادرة: <strong class=\"text-white\">0 كيلوبايت</strong> (معزولة)",
+                        verifyModalTitle: "كيفية التحقق من الأمان", verifyDesc1: "يعمل التطبيق بالكامل من جانب العميل باستخدام JS و IndexedDB.",
+                        catProFeatures: "💎 Sovereign Pro والمؤسسات", catInfiniteSec: "🔑 الأمان والقبو", catZkpMarket: "📦 ZKP والذكاء الاصطناعي", catLegalAudit: "⚖️ القانون والتدقيق", catPdfDocs: "📚 PDF والمستندات", catMediaShare: "🖼️ الصور و P2P",
                         toolLiveShield: "درع PII للنماذج المباشرة", toolCloudSync: "مزامنة سحابية E2EE", toolAuditCert: "شهادة PDF للمدقق", toolWhiteLabel: "علامة تجارية بيضاء",
-                        toolWebAuthn: "قبو مفاتيح المرور WebAuthn", toolStega: "إخفاء المعلومات في الصور", toolDestruct: "قطع أثرية ذاتية التدمير", toolEncrypt: "مُشفِّر أجهزة AES-256",
-                        toolMarket: "سوق القواعد المحلية", toolZkp: "براهين المعرفة الصفرية (ZKP)", toolLora: "ضبط دقيق محلي لـ LoRA", toolLocalRag: "بحث RAG محلي للذكاء الاصطناعي",
-                        toolDiff: "محرك فروق العقود", toolCross: "الامتثال عبر الأطر", toolTimestamp: "مرساة OpenTimestamps", toolCustody: "سلسلة الحضانة",
-                        toolContract: "محلل مخاطر العقود", toolPdfPng: "محول PDF إلى PNG", toolPdfMerge: "دمج PDF", toolPii: "تنقيح PII الدفعي",
-                        toolVisual: "تنقيح بصري (وجه / ختم)", toolMetaScrubber: "منظف EXIF والبيانات الوصفية", toolOcr: "استخراج نص OCR (عامل)", toolP2p: "مشاركة ملفات P2P",
-                        toolOpfs: "قرص ظاهري مشفر OPFS", toolSign: "Ed25519 موقع مستندات", toolAiNer: "منقح AI NER لـ WebGPU", toolChain: "ZK-Rollup / مرساة Blockchain", toolRoom: "غرفة دردشة آمنة E2EE",
-                        encryptModeBtn: "تشفير ملف/نص", decryptModeBtn: "فك تشفير ملف/نص", passPlaceholder: "أدخل كلمة المرور الرئيسية...", pasteText: "أدخل نص الإدخال هنا...",
-                        outputLabel: "مخرجات النظام / السجلات:", compareBtn: "قارنة وإيجاد الفروق", pasteSecondaryText: "نص ثانوي للمقارنة...", cmdPlaceholder: "ابحث في جميع أدوات Sovereign و Pro...",
-                        faqTitle: "الأسئلة الشائعة والامتثال للخصوصية",
-                        faq1Q: "هل يتم إرسال بياناتي أبدًا إلى خوادم خارجية؟", faq1A: "لا. يعمل نظام PrivacyConvert Sovereign OS بنسبة 100% من جانب العميل في وضع الحماية الخاص بمتصفحك. بفضل تقنية Air-Gapped و WebAssembly، لا تغادر أي بايتات جهازك.",
-                        faq2Q: "ما هي أطر الامتثال المدعومة؟", faq2A: "يتوافق الجناح مع معايير إقامة البيانات السيادية للشركات و GDPR و HIPAA و CCPA من خلال الحفاظ على محلية جميع عمليات معالجة الملفات.",
-                        faq3Q: "كيف تعمل معالجة الملفات الكبيرة؟", faq3A: "باستخدام واجهة برمجة تطبيقات Streams وواجهة برمجة تطبيقات File System Access، تتم معالجة الملفات مباشرة على القرص في أجزاء آمنة للذاكرة بحجم 5 ميجابايت، مما يمنع تجاوز سعة ذاكرة الوصول العشوائي (RAM).",
-                        faq4Q: "هل يمكنني استخدام هذا في وضع عدم الاتصال تمامًا؟", faq4A: "نعم. بمجرد التحميل، يمكنك قطع اتصالك بالإنترنت بالكامل، وستعمل جميع الأدوات الثلاثين بشكل طبيعي في عزلة عن الهواء (air-gapped).",
-                        proBtn: "احصل على Pro", proModalTitle: "💎 الترقية إلى Sovereign Pro", proModalDesc: "افتح معالجة غير محدودة. <strong>ضمان Air-Gap:</strong> يتم التحقق من هذا الترخيص غير المتصل بالinternet بالكامل رياضياً عبر التشفير غير المتماثل داخل sandbox الخاص بمتصفحك. لا توجد اتصالات خارجية على الإطلاق.", activateKeyBtn: "تفعيل ترخيص Pro",
-                        payTrBtn: "PayTR / بطاقة الائتمان (TL - ₺999)", cryptoPayBtn: "Cryptomus / تشفير (USDT/BTC - $29.99)", proPlanName: "رخصة مدى الحياة Sovereign Pro", allRights: "جميع الحقوق محفوظة.", orDivider: "أو أدخل مفتاح الترخيص",
-                        descLiveShield: "حماية نماذج الويب الصادرة ومدخلات الدردشة من تسريب معلومات التعريف الشخصية (PII) الحساسة.",
-                        proWarning: "🔒 ميزة Pro: تتطلب ترخيص Sovereign Pro!",
-                        proActivated: "🎉 تم تفعيل ترخيص Pro بنجاح!",
-                        proInvalidKey: "مفتاح ترخيص غير صالح!",
-                        errEnterText: "الرجاء إدخال النص",
-                        errPasswordRequired: "كلمة المرور الرئيسية مطلوبة!",
-                        errSelectPdf: "الرجاء تحديد ملفات PDF",
-                        errSelectImage: "الرجاء تحديد ملفات الصور",
-                        successMasked: "تم اخفاء البيانات بنجاح!",
-                        successEncrypt: "تم التشفير بنجاح!",
-                        successDecrypt: "تم فك التشفير بنجاح!",
-                        successPdfMerge: "تم دمج ملفات PDF بنجاح!",
-                        successOcr: "تم استخراج النص بنجاح!",
-                        successExif: "تم تنظيف بيانات EXIF بنجاح!",
-                        successGeneric: "اكتملت العملية الآمنة!",
-                        fileProcessed: "تمت معالجة الملف وتنزيله بنجاح!",
-                        errInvalidPassword: "خطأ: كلمة المرور غير صحيحة أو الملف تالف."
+                        toolWebAuthn: "قبو مفاتيح المرور", toolStega: "إخفاء الصور", toolDestruct: "ملفات ذاتية التدمير", toolEncrypt: "تشفير AES-256",
+                        toolMarket: "سوق القواعد", toolZkp: "براهين المعرفة الصفرية", toolLora: "LoRA محلي", toolLocalRag: "بحث RAG محلي",
+                        toolDiff: "محرك فروق العقود", toolCross: "الامتثال", toolTimestamp: "OpenTimestamps", toolCustody: "سلسلة الحضانة",
+                        toolContract: "محلل المخاطر", toolPdfPng: "تحويل PDF إلى PNG", toolPdfMerge: "دمج PDF", toolPii: "تنقيح PII",
+                        toolVisual: "تنقيح بصري", toolMetaScrubber: "منظف EXIF", toolOcr: "OCR", toolP2p: "مشاركة P2P",
+                        toolOpfs: "قرص OPFS", toolSign: "موقع Ed25519", toolAiNer: "منقح AI NER", toolChain: "مرساة Blockchain", toolRoom: "غرفة دردشة",
+                        encryptModeBtn: "تشفير", decryptModeBtn: "فك تشفير", passPlaceholder: "كلمة المرور...", pasteText: "أدخل النص...",
+                        outputLabel: "المخرجات:", compareBtn: "قارن", pasteSecondaryText: "نص ثانوي...", cmdPlaceholder: "بحث...",
+                        faqTitle: "الأسئلة الشائعة", faq1Q: "هل تُرسل البيانات إلى خوادم خارجية؟", faq1A: "لا، التطبيق يعمل 100% محلياً.",
+                        proBtn: "احصل على Pro", proModalTitle: "💎 الترقية إلى Sovereign Pro", proModalDesc: "افتح معالجة غير محدودة بضمان Air-Gap.", activateKeyBtn: "تفعيل ترخيص Pro",
+                        payTrBtn: "PayTR / بطاقة (999 ₺)", cryptoPayBtn: "Cryptomus / تشفير ($29.99)", proPlanName: "رخصة مدى الحياة", allRights: "جميع الحقوق محفوظة.", orDivider: "أو المفتاح",
+                        descLiveShield: "حماية نماذج الويب من تسريب PII.",
+                        proWarning: "🔒 مطلوب ترخيص Sovereign Pro!", proActivated: "🎉 تم تفعيل الترخيص بنجاح!", proInvalidKey: "مفتاح غير صالح!",
+                        errEnterText: "الرجاء إدخال النص", errPasswordRequired: "كلمة المرور مطلوبة!",
+                        successMasked: "تم إخفاء البيانات!", successEncrypt: "تم التشفير!", successDecrypt: "تم فك التشفير!", successGeneric: "اكتملت العملية!",
+                        
+                        v_live_title: "🛡️ درع PII الحي وحارس النماذج",
+                        v_live_desc: "يلتقي تلقائياً بمعلومات PII الحساسة في نماذج الويب داخل sandbox.",
+                        v_pii_title: "🕶️ تنقيح PII الدفعي للمستندات",
+                        v_pii_desc: "يفحص آلاف العقود في ثوانٍ لشركات المحاماة.",
+                        v_cert_title: "📜 شهادة امتثال PDF للمدقق المشفر",
+                        v_cert_desc: "ينشئ شهادات رسمية موقعة بـ SHA-256 لتلبية معايير ISO 27001.",
+                        v_brand_title: "🏢 استوديو العلامة التجارية White-Label",
+                        v_brand_desc: "يخصص واجهة التطبيق بشعار مؤسستك للنشر الداخلي.",
+                        v_opfs_title: "💽 قرص OPFS الافتراضي المشفر",
+                        v_opfs_desc: "ينشئ محرك تخزين افتراضي معزول ومشفراً بـ AES-256.",
+                        v_sign_title: "✒️ موقع المستندات السيادية Ed25519",
+                        v_sign_desc: "يوقع الاتفاقيات محلياً باستخدام أزواج مفاتيح غير متماثلة.",
+                        v_cloud_title: "☁️ مزامنة سحابية E2EE بمعرفة صفرية",
+                        v_cloud_desc: "يزامن خزائنك المشفرة بشكل آمن بين الأجهزة الموثوقة.",
+                        v_ainer_title: "🧠 منقح WebGPU AI NER",
+                        v_ainer_desc: "يستخدم شبكات عصبية محلية مدعومة بـ WebGPU لتنقيح الكيانات.",
+                        v_chain_title: "⛓️ مرساة ZK-Rollup و Blockchain",
+                        v_chain_desc: "يربط قيم Merkle الجذرية بدفاتر أستاذ بلاك تشين.",
+                        v_room_title: "💬 غرفة دردشة LAN آمنة E2EE",
+                        v_room_desc: "يوفر قناة اتصال مشفرة من端 إلى end ضمن شبكتك المحلية."
                     }
                 },
                 applyLanguage(lang) {
@@ -1050,6 +1007,18 @@
                         if(mainTitle && meta.titleKey && dict[meta.titleKey]) {
                             mainTitle.innerText = dict[meta.titleKey];
                         }
+
+                        // Kurumsal değer ve özellik açıklama banner'ını dillere göre güncelle
+                        const banner = document.getElementById('toolEnterpriseValueBanner');
+                        const bTitle = document.getElementById('enterpriseBannerTitle');
+                        const bDesc = document.getElementById('enterpriseBannerDesc');
+                        if (meta.valueTitleKey && meta.valueDescKey && dict[meta.valueTitleKey] && dict[meta.valueDescKey]) {
+                            bTitle.innerText = dict[meta.valueTitleKey];
+                            bDesc.innerText = dict[meta.valueDescKey];
+                            banner.classList.remove('hidden');
+                        } else {
+                            banner.classList.add('hidden');
+                        }
                     }
 
                     if(meta) PrivacyConvert.ui.resetWorkspace(meta);
@@ -1061,73 +1030,73 @@
                     'live-pii-shield': { 
                         type: 'text', 
                         titleKey: 'toolLiveShield',
-                        proValueTitle: "🛡️ Enterprise Live PII Shield & Form Guardian",
-                        proValueDesc: "Kurumsal web formlarına ve chat arayüzlerine girilen T.C. kimlik, kredi kartı, IBAN ve hassas kişisel verileri (PII) tarayıcı korumalı alanında anında tespit edip maskeleyerek KVKK/GDPR ihlallerini sıfırlar."
+                        valueTitleKey: 'v_live_title',
+                        valueDescKey: 'v_live_desc'
                     },
                     'pii-redactor': { 
                         type: 'text', 
                         titleKey: 'toolPii', 
                         proRequired: true,
-                        proValueTitle: "🕶️ Batch PII Document Redactor & Legal Masking",
-                        proValueDesc: "Hukuk büroları ve İK departmanları için binlerce sayfalık sözleşme ve mahkeme tutanağını saniyeler içinde tarar; hassas verileri geri döndürülemez şekilde karartarak yasal riskleri bitirir."
+                        valueTitleKey: 'v_pii_title',
+                        valueDescKey: 'v_pii_desc'
                     },
                     'audit-certificate': { 
                         type: 'action', 
                         titleKey: 'toolAuditCert', 
                         proRequired: true,
-                        proValueTitle: "📜 Cryptographic Auditor PDF Compliance Certificate",
-                        proValueDesc: "ISO 27001 ve bağımsız güvenlik denetimleri için verilerin dış sunuculara hiç gitmeden yerel sandbox'ta işlendiğini kanıtlayan SHA-256 imzalı resmi denetçi uyumluluk sertifikaları üretir."
+                        valueTitleKey: 'v_cert_title',
+                        valueDescKey: 'v_cert_desc'
                     },
                     'white-label': { 
                         type: 'text', 
                         titleKey: 'toolWhiteLabel', 
                         proRequired: true,
-                        proValueTitle: "🏢 White-Label Intranet Branding Studio",
-                        proValueDesc: "Uygulama arayüzünü kurumunuzun kendi logosu ve renk paletiyle özelleştirerek dahili intranet ağınızda güvenle konumlandırmanızı sağlar."
+                        valueTitleKey: 'v_brand_title',
+                        valueDescKey: 'v_brand_desc'
                     },
                     'opfs-vault': { 
                         type: 'interactive-opfs', 
                         titleKey: 'toolOpfs', 
                         proRequired: true,
-                        proValueTitle: "💽 OPFS Encrypted Virtual Disk & Secure Sandbox Storage",
-                        proValueDesc: "Tarayıcının OPFS teknolojisini kullanarak bilgisayarınızda yer kaplamayan, AES-256 donanım düzeyinde şifrelenmiş izole sanal disk ve güvenli dosya kasası sunar."
+                        valueTitleKey: 'v_opfs_title',
+                        valueDescKey: 'v_opfs_desc'
                     },
                     'ed25519-sign': { 
                         type: 'interactive-sign', 
                         titleKey: 'toolSign', 
                         proRequired: true,
-                        proValueTitle: "✒️ Asymmetric Ed25519 & ECDSA Sovereign Document Signer",
-                        proValueDesc: "Şirketler arası gizli sözleşmelerin ve iç denetim raporlarının bütünlüğünü üçüncü taraf bulut servislerine bağımlı kalmadan yerel açık/özel anahtarlarla imzalar."
+                        valueTitleKey: 'v_sign_title',
+                        valueDescKey: 'v_sign_desc'
                     },
                     'cloud-sync': { 
                         type: 'action', 
                         titleKey: 'toolCloudSync', 
                         proRequired: true,
-                        proValueTitle: "☁️ E2EE Zero-Knowledge Cloud Synchronization",
-                        proValueDesc: "Şifrelenmiş kasalarınızı sıfır bilgi (zero-knowledge) mimarisiyle bulut depolama alanlarında güvenle senkronize eder."
+                        valueTitleKey: 'v_cloud_title',
+                        valueDescKey: 'v_cloud_desc'
                     },
                     'ai-ner-mask': { 
                         type: 'text', 
                         titleKey: 'toolAiNer', 
                         proRequired: true,
-                        proValueTitle: "🧠 WebGPU AI NER Redactor & Neural Privacy Engine",
-                        proValueDesc: "WebGPU hızlandırmalı yerel yapay zeka modelleri ile metin içerisindeki varlıkları (NER) algılar ve akıllı maskeleme uygular."
+                        valueTitleKey: 'v_ainer_title',
+                        valueDescKey: 'v_ainer_desc'
                     },
                     'blockchain-anchor': { 
                         type: 'text', 
                         titleKey: 'toolChain', 
                         proRequired: true,
-                        proValueTitle: "⛓️ ZK-Rollup & Blockchain Cryptographic Anchor",
-                        proValueDesc: "Kritik belgelerin ve işlem loglarının SHA-256 Merkle köklerini akıllı kontratlar ve blokzincir ağları üzerinden doğrulanamaz zaman damgalarıyla mühürler."
+                        valueTitleKey: 'v_chain_title',
+                        valueDescKey: 'v_chain_desc'
                     },
                     'secure-room': { 
                         type: 'interactive-room', 
                         titleKey: 'toolRoom', 
                         proRequired: true,
-                        proValueTitle: "💬 E2EE Secure LAN Chat Room & P2P Exchange",
-                        proValueDesc: "Harici STUN/TURN sunucularına ihtiyaç duymadan, yerel ağ (LAN) üzerinde tam yalıtımlı, uçtan uca şifreli güvenli iletişim odası sağlar."
+                        valueTitleKey: 'v_room_title',
+                        valueDescKey: 'v_room_desc'
                     },
-                    // Ücretsiz araçlar
+                    // Ücretsiz Araçlar
                     'webauthn-vault': { type: 'webauthn', titleKey: 'toolWebAuthn' },
                     'steganography': { type: 'interactive-stega', accept: 'image/*', titleKey: 'toolStega' },
                     'self-destruct': { type: 'vault', titleKey: 'toolDestruct' },
@@ -1169,13 +1138,13 @@
                         mainTitle.innerText = dict[meta.titleKey];
                     }
 
-                    // Uzun formlu değer banner'ını yönet
+                    // Uzun formlu değer banner'ını yönet ve dillere göre çevir
                     const banner = document.getElementById('toolEnterpriseValueBanner');
                     const bTitle = document.getElementById('enterpriseBannerTitle');
                     const bDesc = document.getElementById('enterpriseBannerDesc');
-                    if (meta.proValueTitle && meta.proValueDesc) {
-                        bTitle.innerText = meta.proValueTitle;
-                        bDesc.innerText = meta.proValueDesc;
+                    if (meta.valueTitleKey && meta.valueDescKey && dict[meta.valueTitleKey] && dict[meta.valueDescKey]) {
+                        bTitle.innerText = dict[meta.valueTitleKey];
+                        bDesc.innerText = dict[meta.valueDescKey];
                         banner.classList.remove('hidden');
                     } else {
                         banner.classList.add('hidden');
@@ -1258,7 +1227,6 @@
                     }
                 },
                 renderStegaUI() {
-                    const dict = PrivacyConvert.i18n.translations[PrivacyConvert.state.lang] || PrivacyConvert.i18n.translations['en'];
                     const container = document.getElementById('interactiveWorkspaceContainer');
                     if(!container) return;
                     container.classList.remove('hidden');
@@ -1717,133 +1685,6 @@
                         inputField.value = "Confidential Report: John Doe (john.doe@enterprise.com) phone +905551234567, IP 192.168.1.55 balance $45,000.";
                         PrivacyConvert.ui.showToast('Sample data loaded!');
                     }
-                },
-                async startP2POffer() {
-                    const offer = await p2pEngine.createOffer();
-                    const box = document.getElementById('p2pSignalBox');
-                    if(box) box.value = offer;
-                    PrivacyConvert.ui.showToast('Offer created.');
-                },
-                async startP2PAnswer() {
-                    const box = document.getElementById('p2pSignalBox');
-                    if(!box || !box.value) return PrivacyConvert.ui.showToast('Paste offer first!', 'warning');
-                    const val = box.value.trim();
-                    if(val.startsWith('ey')) {
-                        try {
-                            const answer = await p2pEngine.answerOffer(val);
-                            box.value = answer;
-                            document.getElementById('chatSection')?.classList.remove('hidden');
-                            PrivacyConvert.ui.showToast('Answer created.');
-                        } catch(e) {
-                            PrivacyConvert.ui.showToast('Invalid SDP Offer!', 'error');
-                        }
-                    } else {
-                        try {
-                            await p2pEngine.acceptAnswer(val);
-                            document.getElementById('chatSection')?.classList.remove('hidden');
-                        } catch(e) {
-                            PrivacyConvert.ui.showToast('Invalid SDP Answer!', 'error');
-                        }
-                    }
-                },
-                async opfsSave() {
-                    const name = document.getElementById('opfsFileName')?.value;
-                    const content = document.getElementById('opfsFileContent')?.value;
-                    if(!name || !content) return PrivacyConvert.ui.showToast('Name & content required!', 'warning');
-                    await opfsEngine.writeFile(name, content);
-                    PrivacyConvert.ui.showToast('Saved to OPFS!');
-                    this.opfsList();
-                },
-                async opfsList() {
-                    try {
-                        const files = await opfsEngine.listFiles();
-                        const list = document.getElementById('opfsFileList');
-                        if(!list) return;
-                        list.innerHTML = files.length === 0 ? `<span class="text-slate-400">Sürücü boş.</span>` : '';
-                        files.forEach(f => {
-                            const div = document.createElement('div');
-                            div.className = "flex justify-between items-center bg-white dark:bg-slate-800 p-2 rounded-xl border";
-                            div.innerHTML = `<span>${f}</span><div class="space-x-2"><button onclick="PrivacyConvert.engine.opfsRead('${f}')" class="text-indigo-500 font-bold">Oku</button><button onclick="PrivacyConvert.engine.opfsDel('${f}')" class="text-red-500 font-bold">Sil</button></div>`;
-                            list.appendChild(div);
-                        });
-                    } catch(e) {
-                        PrivacyConvert.ui.showToast('OPFS error', 'error');
-                    }
-                },
-                async opfsRead(name) {
-                    const text = await opfsEngine.readFile(name);
-                    document.getElementById('opfsFileName').value = name;
-                    document.getElementById('opfsFileContent').value = text;
-                    PrivacyConvert.ui.showToast(`Read: ${name}`);
-                },
-                async opfsDel(name) {
-                    await opfsEngine.deleteFile(name);
-                    PrivacyConvert.ui.showToast(`Deleted: ${name}`);
-                    this.opfsList();
-                },
-                ragAddDoc() {
-                    const title = document.getElementById('ragDocTitle')?.value;
-                    const content = document.getElementById('ragDocContent')?.value;
-                    if(!title || !content) return PrivacyConvert.ui.showToast('Title & content required!', 'warning');
-                    localRagEngine.addDocument(title, content);
-                    PrivacyConvert.ui.showToast('Document indexed locally!');
-                    document.getElementById('ragDocTitle').value = '';
-                    document.getElementById('ragDocContent').value = '';
-                },
-                ragSearch() {
-                    const query = document.getElementById('ragQueryInput')?.value;
-                    const result = localRagEngine.search(query);
-                    document.getElementById('ragResultArea').value = result;
-                },
-                async zkpCommit() {
-                    const secret = document.getElementById('zkpSecret')?.value;
-                    if(!secret) return PrivacyConvert.ui.showToast('Secret required!', 'warning');
-                    const res = await zkpEngine.generateCommitment(secret);
-                    document.getElementById('zkpResultBox').value = `Commitment Hash: ${res.commitment}\nSalt: ${res.salt}`;
-                    document.getElementById('zkpVerifySecret').value = secret;
-                    document.getElementById('zkpVerifySalt').value = res.salt;
-                    document.getElementById('zkpVerifyTarget').value = res.commitment;
-                    PrivacyConvert.ui.showToast('ZKP Commitment created!');
-                },
-                async zkpVerify() {
-                    const secret = document.getElementById('zkpVerifySecret')?.value;
-                    const salt = document.getElementById('zkpVerifySalt')?.value;
-                    const target = document.getElementById('zkpVerifyTarget')?.value;
-                    const isValid = await zkpEngine.verifyCommitment(secret, salt, target);
-                    if(isValid) {
-                        PrivacyConvert.ui.showToast('✅ ZKP Proof SUCCESSFUL!', 'success');
-                    } else {
-                        PrivacyConvert.ui.showToast('❌ ZKP Proof INVALID!', 'error');
-                    }
-                },
-                async saveVaultNote() {
-                    const title = document.getElementById('vaultTitle')?.value; 
-                    const content = document.getElementById('vaultContent')?.value;
-                    if(!title || !content) return PrivacyConvert.ui.showToast('Fields required', 'warning');
-                    const tx = PrivacyConvert.state.db.transaction('vault', 'readwrite'); 
-                    tx.objectStore('vault').add({ title, content, timestamp: new Date().toISOString() });
-                    tx.oncomplete = () => { PrivacyConvert.ui.showToast('Saved to Vault!'); this.loadVaultNotes(); };
-                },
-                async loadVaultNotes() {
-                    if(!PrivacyConvert.state.db) return;
-                    const tx = PrivacyConvert.state.db.transaction('vault', 'readonly');
-                    const req = tx.objectStore('vault').getAll();
-                    req.onsuccess = () => {
-                        const list = document.getElementById('vaultList'); if(!list) return; list.innerHTML = '';
-                        const fragment = document.createDocumentFragment();
-                        req.result.forEach(note => {
-                            const div = document.createElement('div'); div.className = "p-2.5 bg-white dark:bg-slate-800 border rounded-xl flex justify-between text-xs";
-                            div.innerHTML = `<span class="font-bold">${note.title}</span><button onclick="PrivacyConvert.engine.deleteVaultNote(${note.id})" class="text-red-500 font-bold">Destroy</button>`;
-                            fragment.appendChild(div);
-                        });
-                        list.appendChild(fragment);
-                    };
-                },
-                async deleteVaultNote(id) { 
-                    PrivacyConvert.state.db.transaction('vault', 'readwrite').objectStore('vault').delete(id).onsuccess = () => { 
-                        PrivacyConvert.ui.showToast('Destroyed!'); 
-                        this.loadVaultNotes(); 
-                    }; 
                 }
             },
 
