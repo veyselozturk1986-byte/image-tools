@@ -385,9 +385,10 @@
             </div>
         </div>
 
+        <!-- 5 SORULUK SIKÇA SORULAN SORULAR BÖLÜMÜ -->
         <section class="max-w-6xl mx-auto mt-16 mb-12 border-t border-slate-200 dark:border-slate-700 pt-10 px-4">
             <h2 class="text-2xl font-extrabold mb-6 dark:text-white" data-i18n="faqTitle">Frequently Asked Questions & Privacy Compliance</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-slate-600 dark:text-slate-300">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-sm text-slate-600 dark:text-slate-300">
                 <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-2">
                     <h4 class="font-bold text-slate-900 dark:text-white" data-i18n="faq1Q">Is my data ever sent to external servers?</h4>
                     <p data-i18n="faq1A">No. PrivacyConvert Sovereign OS runs 100% client-side in your browser sandbox. With Air-Gapped and WebAssembly technology, zero bytes leave your device.</p>
@@ -395,6 +396,18 @@
                 <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-2">
                     <h4 class="font-bold text-slate-900 dark:text-white" data-i18n="faq2Q">What compliance frameworks are supported?</h4>
                     <p data-i18n="faq2A">The suite complies with GDPR, HIPAA, CCPA, and enterprise sovereign data residency standards by keeping all file processing localized.</p>
+                </div>
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-2">
+                    <h4 class="font-bold text-slate-900 dark:text-white" data-i18n="faq3Q">How does the offline Pro license verification work?</h4>
+                    <p data-i18n="faq3A">Offline licenses are verified mathematically using asymmetric cryptography (Web Crypto API) directly inside your sandbox without phoning home.</p>
+                </div>
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-2">
+                    <h4 class="font-bold text-slate-900 dark:text-white" data-i18n="faq4Q">Are large files supported safely without crashing the browser?</h4>
+                    <p data-i18n="faq4A">Yes, using memory-safe streaming and chunking architectures, you can process large enterprise files without running out of RAM.</p>
+                </div>
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-2 md:col-span-2 lg:col-span-1">
+                    <h4 class="font-bold text-slate-900 dark:text-white" data-i18n="faq5Q">Where is my data stored locally?</h4>
+                    <p data-i18n="faq5A">Data is stored securely in your browser's local sandbox using IndexedDB and OPFS (Origin Private File System) storage layers.</p>
                 </div>
             </div>
         </section>
@@ -659,8 +672,16 @@
                         encryptModeBtn: "Encrypt File/Text", decryptModeBtn: "Decrypt File/Text", passPlaceholder: "Enter Master Password...", pasteText: "Enter input text here...",
                         outputLabel: "System Output / Logs:", compareBtn: "Compare & Diff", pasteSecondaryText: "Secondary text for comparison...", cmdPlaceholder: "Search all Sovereign & Pro tools...",
                         faqTitle: "Frequently Asked Questions & Privacy Compliance",
-                        faq1Q: "Is my data ever sent to external servers?", faq1A: "No. PrivacyConvert Sovereign OS runs 100% client-side in your browser sandbox. With Air-Gapped and WebAssembly technology, zero bytes leave your device.",
-                        faq2Q: "What compliance frameworks are supported?", faq2A: "The suite complies with GDPR, HIPAA, CCPA, and enterprise sovereign data residency standards by keeping all file processing localized.",
+                        faq1Q: "Is my data ever sent to external servers?",
+                        faq1A: "No. PrivacyConvert Sovereign OS runs 100% client-side in your browser sandbox. With Air-Gapped and WebAssembly technology, zero bytes leave your device.",
+                        faq2Q: "What compliance frameworks are supported?",
+                        faq2A: "The suite complies with GDPR, HIPAA, CCPA, and enterprise sovereign data residency standards by keeping all file processing localized.",
+                        faq3Q: "How does the offline Pro license verification work?",
+                        faq3A: "Offline licenses are verified mathematically using asymmetric cryptography (Web Crypto API) directly inside your sandbox without phoning home.",
+                        faq4Q: "Are large files supported safely without crashing the browser?",
+                        faq4A: "Yes, using memory-safe streaming and chunking architectures, you can process large enterprise files without running out of RAM.",
+                        faq5Q: "Where is my data stored locally?",
+                        faq5A: "Data is stored securely in your browser's local sandbox using IndexedDB and OPFS (Origin Private File System) storage layers.",
                         proBtn: "Get Pro", proModalTitle: "💎 Upgrade to Sovereign Pro", proModalDesc: "Unlock unlimited batch processing, audit certificates, and E2EE cloud sync. <strong>Air-Gap Guarantee:</strong> This offline license is verified mathematically via asymmetric cryptography (Web Crypto API) directly inside your browser sandbox. Zero online connections or external API calls are ever made.", activateKeyBtn: "Verify & Activate Offline License",
                         payTrBtn: "PayTR / Credit Card (TL - ₺999)", cryptoPayBtn: "Cryptomus / Crypto (USDT/BTC - $29.99)", proPlanName: "Sovereign Pro Lifetime License", allRights: "All rights reserved.", orDivider: "Or enter offline license key",
                         descLiveShield: "Shield outbound web forms and chat inputs from leaking sensitive PII.",
@@ -713,8 +734,16 @@
                         encryptModeBtn: "Dosya/Metin Şifrele", decryptModeBtn: "Dosya/Metin Şifresini Çöz", passPlaceholder: "Ana Parolayı Girin...", pasteText: "Girdi metnini buraya yazın...",
                         outputLabel: "Sistem Çıktısı / Loglar:", compareBtn: "Karşılaştır ve Farkı Bul", pasteSecondaryText: "Karşılaştırma için ikincil metin...", cmdPlaceholder: "Tüm Sovereign ve Pro araçlarını ara...",
                         faqTitle: "Sıkça Sorulan Sorular ve Gizlilik Uyumluluğu",
-                        faq1Q: "Verilerim hiç harici sunuculara gönderiliyor mu?", faq1A: "Hayır. PrivacyConvert Sovereign OS, tarayıcı korumalı alanınızda %100 istemci tarafında çalışır. Air-Gapped ve WebAssembly teknolojisi sayesinde cihazınızdan sıfır bayt dışarı çıkar.",
-                        faq2Q: "Hangi uyumluluk çerçeveleri destekleniyor?", faq2A: "Araç takımı, tüm dosya işlemlerini yerelleştirerek GDPR, HIPAA, KVKK ve kurumsal egemen veri barındırma standartlarına tam uyum sağlar.",
+                        faq1Q: "Verilerim hiç harici sunuculara gönderiliyor mu?",
+                        faq1A: "Hayır. PrivacyConvert Sovereign OS, tarayıcı korumalı alanınızda %100 istemci tarafında çalışır. Air-Gapped ve WebAssembly teknolojisi sayesinde cihazınızdan sıfır bayt dışarı çıkar.",
+                        faq2Q: "Hangi uyumluluk çerçeveleri destekleniyor?",
+                        faq2A: "Araç takımı, tüm dosya işlemlerini yerelleştirerek GDPR, HIPAA, KVKK ve kurumsal egemen veri barındırma standartlarına tam uyum sağlar.",
+                        faq3Q: "Çevrimdışı Pro lisansı nasıl doğrulanır?",
+                        faq3A: "Çevrimdışı lisanslar, herhangi bir sunucuya bağlanmadan doğrudan tarayıcı korumalı alanınızda asimetrik kriptografi (Web Crypto API) kullanılarak matematiksel olarak doğrulanır.",
+                        faq4Q: "Büyük dosyalar tarayıcının çökmesine yol açmadan destekleniyor mu?",
+                        faq4A: "Evet, bellek güvenli akış (streaming) ve parça parça işleme mimarisi sayesinde RAM tüketimi aşılmadan büyük kurumsal dosyalar güvenle işlenebilir.",
+                        faq5Q: "Verilerim yerel olarak nerede saklanıyor?",
+                        faq5A: "Verileriniz, tarayıcınızın IndexedDB ve OPFS (Origin Private File System) yerel korumalı alan depolama katmanlarında güvenle saklanır.",
                         proBtn: "Pro'ya Geç", proModalTitle: "💎 Sovereign Pro'ya Yükselt", proModalDesc: "Sınırsız toplu işleme, denetim sertifikaları ve E2EE bulut senkronizasyonunun kilidini açın. <strong>Air-Gap Garantisi:</strong> Bu çevrimdışı lisans, tarayıcınızın korumalı alanında asimetrik kriptografi (Web Crypto API) kullanılarak tamamen yerel ve matematiksel olarak doğrulanır. Harici sunuculara veya API'lere asla istek atılmaz.", activateKeyBtn: "Çevrimdışı Lisansı Doğrula ve Aktifleştir",
                         payTrBtn: "PayTR / Kredi Kartı ile Öde (TL - ₺999)", cryptoPayBtn: "Cryptomus / Kripto ile Öde (USDT/BTC - $29.99)", proPlanName: "Sovereign Pro Ömür Boyu Lisans", allRights: "Tüm hakları saklıdır.", orDivider: "Veya çevrimdışı lisans anahtarını girin",
                         descLiveShield: "Giden web formlarını ve sohbet girdilerini hassas kişisel verilerin (PII) sızmasına karşı koruyun.",
@@ -771,6 +800,12 @@
                         faq1A: "No. PrivacyConvert Sovereign OS se ejecuta 100% del lado del cliente en el sandbox de su navegador. Cero bytes abandonan su dispositivo.",
                         faq2Q: "¿Qué marcos de cumplimiento son compatibles?",
                         faq2A: "La suite cumple con GDPR, HIPAA, CCPA y estándares de residencia de datos soberanos corporativos al mantener todo el procesamiento localizado.",
+                        faq3Q: "¿Cómo funciona la verificación de licencia Pro offline?",
+                        faq3A: "Las licencias offline se verifican matemáticamente mediante criptografía asimétrica (Web Crypto API) directamente dentro de su sandbox.",
+                        faq4Q: "¿Se admiten archivos grandes de forma segura sin bloquear el navegador?",
+                        faq4A: "Sí, utilizando arquitectura de streaming seguro en memoria, puede procesar archivos empresariales grandes sin agotar la memoria RAM.",
+                        faq5Q: "¿Dónde se almacenan mis datos localmente?",
+                        faq5A: "Los datos se almacenan de forma segura en el almacenamiento local IndexedDB y OPFS de su navegador.",
                         proBtn: "Obtener Pro", proModalTitle: "💎 Actualizar a Sovereign Pro", proModalDesc: "Desbloquee procesamiento ilimitado con garantía Air-Gap.", activateKeyBtn: "Activar Licencia Pro",
                         payTrBtn: "PayTR / Tarjeta (999 ₺)", cryptoPayBtn: "Cryptomus / Cripto ($29.99)", proPlanName: "Licencia Vitalicia", allRights: "Todos los derechos reservados.", orDivider: "O clave",
                         descLiveShield: "Proteja formularios web contra fugas de PII.",
@@ -821,6 +856,12 @@
                         faq1A: "Nein. PrivacyConvert Sovereign OS läuft zu 100% clientseitig in Ihrer Browser-Sandbox. Dank Air-Gapped- und WebAssembly-Technologie verlassen null Bytes Ihr Gerät.",
                         faq2Q: "Welche Compliance-Frameworks werden unterstützt?",
                         faq2A: "Die Suite entspricht den Standards DSGVO, HIPAA, CCPA und unternehmerischer Datensouveränität, indem die gesamte Dateiverarbeitung lokal gehalten wird.",
+                        faq3Q: "Wie funktioniert die Offline-Pro-Lizenzprüfung?",
+                        faq3A: "Offline-Lizenzen werden mathematisch mittels asymmetrischer Kryptographie (Web Crypto API) direkt in Ihrer Sandbox verifiziert, ohne externe Verbindungen.",
+                        faq4Q: "Werden große Dateien sicher unterstützt, ohne den Browser zu belasten?",
+                        faq4A: "Ja, dank speichersicherer Streaming-Architektur können große Unternehmensdateien verarbeitet werden, ohne den Arbeitsspeicher zu überlasten.",
+                        faq5Q: "Wo werden meine Daten lokal gespeichert?",
+                        faq5A: "Daten werden sicher in den lokalen Sandbox-Speicherebenen IndexedDB und OPFS (Origin Private File System) Ihres Browsers gespeichert.",
                         proBtn: "Pro Holen", proModalTitle: "💎 Upgrade auf Sovereign Pro", proModalDesc: "Unbegrenzte Verarbeitung mit Air-Gap-Garantie.", activateKeyBtn: "Pro-Lizenz Aktivieren",
                         payTrBtn: "PayTR / Karte (999 ₺)", cryptoPayBtn: "Cryptomus / Krypto ($29.99)", proPlanName: "Lebenslange Lizenz", allRights: "Alle Rechte vorbehalten.", orDivider: "Oder Schlüssel",
                         descLiveShield: "Schützen Sie Webformulare vor PII-Lecks.",
@@ -871,6 +912,12 @@
                         faq1A: "Non. PrivacyConvert Sovereign OS fonctionne 100% côté client dans le bac à sable de votre navigateur. Zéro octet ne quitte votre appareil.",
                         faq2Q: "Quels cadres de conformité sont pris en charge ?",
                         faq2A: "La suite est conforme aux normes RGPD, HIPAA, CCPA et de souveraineté des données d'entreprise en gardant tout le traitement localisé.",
+                        faq3Q: "Comment fonctionne la vérification de la licence Pro hors ligne ?",
+                        faq3A: "Les licences hors ligne sont vérifiées mathématiquement par cryptographie asymétrique (Web Crypto API) directement dans votre sandbox sans connexion externe.",
+                        faq4Q: "Les fichiers volumineux sont-ils pris en charge en toute sécurité ?",
+                        faq4A: "Oui, grâce à une architecture de streaming sécurisée, vous pouvez traiter des fichiers d'entreprise sans saturer la mémoire RAM.",
+                        faq5Q: "Où mes données sont-elles stockées localement ?",
+                        faq5A: "Les données sont stockées en toute sécurité dans les couches de stockage locales IndexedDB et OPFS de votre navigateur.",
                         proBtn: "Obtenir Pro", proModalTitle: "💎 Passer à Sovereign Pro", proModalDesc: "Traitement illimité garanti Air-Gap.", activateKeyBtn: "Activer la Licence Pro",
                         payTrBtn: "PayTR / Carte (999 ₺)", cryptoPayBtn: "Cryptomus / Crypto ($29.99)", proPlanName: "Licence à vie", allRights: "Tous droits réservés.", orDivider: "Ou clé",
                         descLiveShield: "Protégez les formulaires web contre les fuites PII.",
@@ -921,6 +968,12 @@
                         faq1A: "不会。PrivacyConvert Sovereign OS 100% 在您的浏览器沙盒中客户端运行。零字节离开您的设备。",
                         faq2Q: "支持哪些合规框架？",
                         faq2A: "该套件通过保持所有文件处理本地化，符合 GDPR、HIPAA、CCPA 和企业主权数据驻留标准。",
+                        faq3Q: "离线专业版许可证如何验证？",
+                        faq3A: "离线许可证直接在浏览器沙盒内使用非对称密码学（Web Crypto API）进行数学验证，无需联网。",
+                        faq4Q: "是否支持安全处理大文件而不会使浏览器崩溃？",
+                        faq4A: "是的，利用内存安全流式传输和分块架构，您可以处理大型企业文件而不会耗尽内存。",
+                        faq5Q: "我的数据本地存储在哪里？",
+                        faq5A: "数据使用 IndexedDB 和 OPFS（源私有文件系统）本地沙盒存储层安全地存储在您的浏览器中。",
                         proBtn: "获取专业版", proModalTitle: "💎 升级到 Sovereign Pro", proModalDesc: "物理隔离保证下的无限处理。", activateKeyBtn: "激活专业版",
                         payTrBtn: "PayTR / 信用卡 (999 ₺)", cryptoPayBtn: "Cryptomus / 加密货币 ($29.99)", proPlanName: "终身许可证", allRights: "版权所有。", orDivider: "或密钥",
                         descLiveShield: "保护表单免受敏感 PII 泄漏。",
@@ -971,6 +1024,12 @@
                         faq1A: "لا. يعمل PrivacyConvert Sovereign OS بنسبة 100% على جانب العميل في بيئة الحماية الخاصة بمتصفحك. لا توجد أي بيانات تغادر جهازك.",
                         faq2Q: "ما هي أطر الامتثال المدعومة؟",
                         faq2A: "يتوافق النظام مع معايير اللائحة العامة لحماية البيانات (GDPR) و HIPAA و CCPA ومعايير إقامة البيانات السيادية للشركات من خلال الحفاظ على جميع معالجة الملفات محلياً.",
+                        faq3Q: "كيف يتم التحقق من ترخيص Pro غير المتصل بالإنترنت؟",
+                        faq3A: "يتم التحقق من التراخيص رياضياً باستخدام التشفير غير المتماثل (Web Crypto API) مباشرة داخل بيئة الحماية الخاصة بك دون الاتصال بخوادم خارجية.",
+                        faq4Q: "هل يتم دعم الملفات الكبيرة بأمان دون تعطل المتصفح؟",
+                        faq4A: "نعم، باستخدام بنية التدفق الآمن للذاكرة، يمكنك معالجة ملفات المؤسسات الكبيرة بكفاءة دون استهلاك كامل الذاكرة العشوائية.",
+                        faq5Q: "أين يتم تخزين بياناتي محلياً؟",
+                        faq5A: "يتم تخزين البيانات بشكل آمن في طبقات التخزين المحلية IndexedDB و OPFS الخاصة بمتصفحك.",
                         proBtn: "احصل على Pro", proModalTitle: "💎 الترقية إلى Sovereign Pro", proModalDesc: "افتح معالجة غير محدودة بضمان Air-Gap.", activateKeyBtn: "تفعيل ترخيص Pro",
                         payTrBtn: "PayTR / بطاقة (999 ₺)", cryptoPayBtn: "Cryptomus / تشفير ($29.99)", proPlanName: "رخصة مدى الحياة", allRights: "جميع الحقوق محفوظة.", orDivider: "أو المفتاح",
                         descLiveShield: "حماية نماذج الويب من تسريب PII.",
