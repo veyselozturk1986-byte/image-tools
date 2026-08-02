@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- GÜNCELLENDİ: Gerçek araç kütüphaneleri (PDF, OCR) için CSP politikası esnetildi -->
+    <!-- Katı Güvenlik Politikası (CSP) -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://unpkg.com; style-src 'self' 'unsafe-inline'; worker-src 'self' blob: https://unpkg.com; connect-src 'self' wss: https: data: blob:;">
     
     <title id="pageTitle">PrivacyConvert Sovereign Enterprise OS - Ultimate Air-Gapped Suite</title>
     <meta name="description" id="pageMetaDesc" content="Enterprise sovereign compliance: WebAuthn, Live PII Shield, E2EE Cloud Sync, Auditor Certificates, White-Label Branding, and ZK-SNARKs.">
     <meta name="theme-color" content="#4f46e5">
 
-    <!-- GÜNCELLENDİ: Tailwind, PDF-Lib ve Tesseract Kütüphaneleri -->
+    <!-- Tailwind, PDF-Lib ve Tesseract Kütüphaneleri -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
     <script src="https://unpkg.com/tesseract.js@2.1.4/dist/tesseract.min.js"></script>
@@ -353,6 +353,15 @@
                     <h4 class="font-bold text-slate-900 dark:text-white" data-i18n="faq4Q">Can I use this completely offline?</h4>
                     <p data-i18n="faq4A">Yes. Once loaded, you can disconnect your internet entirely and all 30 sovereign tools will function normally in air-gapped isolation.</p>
                 </div>
+                <!-- YENİ EKLENEN SSS MADDELERİ -->
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-2">
+                    <h4 class="font-bold text-slate-900 dark:text-white" data-i18n="faq5Q">How to run this in an initial Air-Gapped environment?</h4>
+                    <p data-i18n="faq5A">While the app operates offline, advanced tools like PDF merging and OCR require external libraries on first load. Open the app online once to cache dependencies before moving to an isolated machine.</p>
+                </div>
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-2">
+                    <h4 class="font-bold text-slate-900 dark:text-white" data-i18n="faq6Q">Why do P2P features only work on local networks (LAN)?</h4>
+                    <p data-i18n="faq6A">To guarantee absolute zero data leakage, external STUN/TURN servers are completely removed. This ensures P2P sharing operates strictly within your secure local network (LAN).</p>
+                </div>
             </div>
         </section>
     </main>
@@ -378,7 +387,6 @@
 
     <!-- Tek Dosya Entegre Monolitik Mantıksal Altyapı -->
     <script>
-        // GÜNCELLENDİ: Güvenli Service Worker Kaydı
         if ('serviceWorker' in navigator) {
             try {
                 const swCode = `self.addEventListener('install',(e)=>{self.skipWaiting();});self.addEventListener('activate',(e)=>{e.waitUntil(clients.claim());});self.addEventListener('fetch',(e)=>{});`;
@@ -387,7 +395,6 @@
             } catch(e) {}
         }
 
-        // GÜNCELLENDİ: TAMAMEN İKİLİ (BINARY) GÜVENLİ KRİPTO MOTORU
         const cryptoCore = {
             async deriveKey(password, salt) {
                 const enc = new TextEncoder();
@@ -473,7 +480,6 @@
             }
         };
 
-        // GÜNCELLENDİ: TF-IDF RAG Arama Motoru
         const localRagEngine = {
             docs: [],
             addDocument(title, content) {
@@ -510,7 +516,6 @@
             }
         };
 
-        // GÜNCELLENDİ: Stream Core artık verileri bozmadan Binary (İkili) şifreliyor
         const streamCore = {
             async processLargeFile(file, password, mode, progressCallback, toastCallback, urlRegisterCallback) {
                 try {
@@ -573,7 +578,6 @@
             }
         };
 
-        // GÜNCELLENDİ: Google STUN çıkarıldı, P2P %100 LAN içine hapsedildi (Air-Gapped)
         const p2pEngine = {
             pc: null, dc: null,
             async createOffer() {
@@ -678,6 +682,8 @@
                         faq2Q: "What compliance frameworks are supported?", faq2A: "The suite complies with GDPR, HIPAA, CCPA, and enterprise sovereign data residency standards by keeping all file processing localized.",
                         faq3Q: "How does large file handling work?", faq3A: "Using the Streams API and File System Access API, files are processed in 5MB memory-safe chunks directly to disk, preventing RAM overflow.",
                         faq4Q: "Can I use this completely offline?", faq4A: "Yes. Once loaded, you can disconnect your internet entirely and all 30 sovereign tools will function normally in air-gapped isolation.",
+                        faq5Q: "How to run this in an initial Air-Gapped environment?", faq5A: "While the app operates offline, advanced tools like PDF merging and OCR require external libraries on first load. Open the app online once to cache dependencies before moving to an isolated machine.",
+                        faq6Q: "Why do P2P features only work on local networks (LAN)?", faq6A: "To guarantee absolute zero data leakage, external STUN/TURN servers are completely removed. This ensures P2P sharing operates strictly within your secure local network (LAN).",
                         proBtn: "Get Pro", proModalTitle: "💎 Upgrade to Sovereign Pro", proModalDesc: "Unlock unlimited batch processing, cryptographic audit certificates, E2EE cloud sync, and P2P priority nodes.", activateKeyBtn: "Activate Pro License",
                         payTrBtn: "PayTR / Credit Card (TL)", cryptoPayBtn: "Cryptomus / Crypto (USDT/BTC)", allRights: "All rights reserved.", orDivider: "Or enter license key",
                         descLiveShield: "Shield outbound web forms and chat inputs from leaking sensitive PII."
@@ -704,6 +710,8 @@
                         faq2Q: "Hangi uyumluluk çerçeveleri destekleniyor?", faq2A: "Araç takımı, tüm dosya işlemlerini yerelleştirerek GDPR, HIPAA, KVKK ve kurumsal egemen veri barındırma standartlarına tam uyum sağlar.",
                         faq3Q: "Büyük dosya işleme nasıl çalışır?", faq3A: "Streams API ve Dosya Sistemi Erişim API'si kullanılarak dosyalar, RAM taşmasını önleyecek şekilde belleğe duyarlı 5MB'lık parçalar halinde doğrudan diske işlenir.",
                         faq4Q: "Bunu tamamen çevrimdışı (offline) kullanabilir miyim?", faq4A: "Evet. Sayfa bir kez yüklendikten sonra internet bağlantınızı tamamen kesebilirsiniz; 30 aracın tamamı izole bir şekilde hava boşluklu (air-gapped) olarak çalışmaya devam edecektir.",
+                        faq5Q: "Uygulamayı tamamen internetsiz (Air-Gapped) bir ortamda ilk kez nasıl çalıştırmalıyım?", faq5A: "Uygulama temel olarak çevrimdışı çalışır; ancak PDF birleştirme ve OCR gibi bazı gelişmiş modüller ilk kullanımda dış kütüphanelere ihtiyaç duyabilir. İzole cihaza taşımadan önce sayfayı bir kez internetle açıp önbelleğe almanız önerilir.",
+                        faq6Q: "P2P özellikleri neden yalnızca yerel ağlarda (LAN) çalışıyor?", faq6A: "Mutlak veri güvenliği sağlamak için dış sunucular (STUN/TURN) tamamen kaldırılmıştır. Bu durum P2P paylaşımların yalnızca güvenli yerel ağ (LAN) içinde çalışmasını sağlar.",
                         proBtn: "Pro'ya Geç", proModalTitle: "💎 Sovereign Pro'ya Yükselt", proModalDesc: "Sınırsız toplu işleme, kriptografik denetim sertifikaları, E2EE bulut senkronizasyonu ve P2P öncelikli düğümlerin kilidini açın.", activateKeyBtn: "Pro Lisansını Aktifleştir",
                         payTrBtn: "PayTR / Kredi Kartı ile Öde (TL)", cryptoPayBtn: "Cryptomus / Kripto ile Öde (USDT/BTC)", allRights: "Tüm hakları saklıdır.", orDivider: "Veya lisans anahtarını girin",
                         descLiveShield: "Giden web formlarını ve sohbet girdilerini hassas kişisel verilerin (PII) sızmasına karşı koruyun."
@@ -730,6 +738,8 @@
                         faq2Q: "¿Qué marcos de cumplimiento son compatibles?", faq2A: "La suite cumple con los estándares GDPR, HIPAA, CCPA y de residencia de datos soberanos empresariales al mantener localizado todo el procesamiento de archivos.",
                         faq3Q: "¿Cómo funciona el manejo de archivos grandes?", faq3A: "Utilizando la API de Streams y la API de Acceso al Sistema de Archivos, los archivos se procesan directamente en el disco en fragmentos de 5 MB seguros para la memoria, evitando el desbordamiento de RAM.",
                         faq4Q: "¿Puedo usar esto completamente sin conexión?", faq4A: "Sí. Una vez cargado, puede desconectar su Internet por completo y las 30 herramientas funcionarán normalmente en aislamiento air-gapped.",
+                        faq5Q: "¿Cómo ejecutar esto en un entorno Air-Gapped inicial?", faq5A: "Aunque funciona sin conexión, herramientas avanzadas como fusión de PDF y OCR requieren bibliotecas externas en la primera carga. Abra la aplicación en línea una vez antes de moverla a una máquina aislada.",
+                        faq6Q: "¿Por qué las funciones P2P solo funcionan en redes locales (LAN)?", faq6A: "Para garantizar cero fugas de datos, los servidores STUN/TURN externos se eliminaron por completo, operando estrictamente en su red local (LAN).",
                         proBtn: "Obtener Pro", proModalTitle: "💎 Actualizar a Sovereign Pro", proModalDesc: "Desbloquee procesamiento por lotes ilimitado, certificados de auditoría criptográfica, sincronización en la nube E2EE y nodos de prioridad P2P.", activateKeyBtn: "Activar Licencia Pro",
                         payTrBtn: "PayTR / Tarjeta de Crédito (TL)", cryptoPayBtn: "Cryptomus / Criptomoneda (USDT/BTC)", allRights: "Todos los derechos reservados.", orDivider: "O introduzca la clave de licencia",
                         descLiveShield: "Proteja los formularios web salientes y los chats para que no filtren PII confidencial."
@@ -756,6 +766,8 @@
                         faq2Q: "Welche Compliance-Frameworks werden unterstützt?", faq2A: "Die Suite entspricht der DSGVO, HIPAA, CCPA und den Standards für die Datenresidenz von Unternehmen, indem die gesamte Dateiverarbeitung lokalisiert wird.",
                         faq3Q: "Wie funktioniert die Verarbeitung großer Dateien?", faq3A: "Mithilfe der Streams-API und der File System Access-API werden Dateien direkt auf die Festplatte in 5 MB speichersicheren Blöcken verarbeitet, wodurch ein RAM-Überlauf verhindert wird.",
                         faq4Q: "Kann ich dies komplett offline nutzen?", faq4A: "Ja. Nach dem Laden können Sie Ihr Internet vollständig trennen, und alle 30 Tools funktionieren normal in isolierter Air-Gapped-Umgebung.",
+                        faq5Q: "Wie führe ich dies in einer initialen Air-Gapped-Umgebung aus?", faq5A: "Erweiterte Tools wie PDF-Zusammenführung und OCR erfordern beim ersten Laden externe Bibliotheken. Öffnen Sie die App einmal online, bevor Sie sie auf ein isoliertes Gerät übertragen.",
+                        faq6Q: "Warum funktionieren P2P-Funktionen nur in lokalen Netzwerken (LAN)?", faq6A: "Um null Datenlecks zu garantieren, wurden externe STUN/TURN-Server vollständig entfernt. P2P arbeitet ausschließlich in Ihrem LAN.",
                         proBtn: "Pro Holen", proModalTitle: "💎 Upgrade auf Sovereign Pro", proModalDesc: "Schalten Sie unbegrenzte Stapelverarbeitung, kryptografische Audit-Zertifikate, E2EE-Cloud-Synchronisierung und P2P-Prioritätsknoten frei.", activateKeyBtn: "Pro-Lizenz Aktivieren",
                         payTrBtn: "PayTR / Kreditkarte (TL)", cryptoPayBtn: "Cryptomus / Krypto (USDT/BTC)", allRights: "Alle Rechte vorbehalten.", orDivider: "Oder Lizenzschlüssel eingeben",
                         descLiveShield: "Schützen Sie ausgehende Webformulare und Chat-Eingaben vor dem Verlust sensibler PII-Daten."
@@ -782,6 +794,8 @@
                         faq2Q: "Quels cadres de conformité sont pris en charge ?", faq2A: "La suite est conforme au RGPD, HIPAA, CCPA et aux normes de résidence des données souveraines de l'entreprise en gardant tout le traitement des fichiers localisé.",
                         faq3Q: "Comment fonctionne la gestion des fichiers volumineux ?", faq3A: "En utilisant l'API Streams et l'API d'accès au système de fichiers, les fichiers sont traités directement sur le disque par blocs de 5 Mo sécurisés pour la mémoire, empêchant le débordement de la RAM.",
                         faq4Q: "Puis-je l'utiliser complètement hors ligne ?", faq4A: "Oui. Une fois chargé, vous pouvez déconnecter complètement votre connexion Internet et les 30 outils fonctionneront normalement en isolation air-gapped.",
+                        faq5Q: "Comment exécuter cela dans un environnement Air-Gapped initial ?", faq5A: "Des outils avancés comme la fusion PDF et l'OCR nécessitent des bibliothèques externes au premier chargement. Ouvrez l'application en ligne une fois avant de l'isoler.",
+                        faq6Q: "Pourquoi les fonctionnalités P2P ne fonctionnent-elles que sur les réseaux locaux (LAN) ?", faq6A: "Pour garantir zéro fuite de données, les serveurs STUN/TURN externes ont été supprimés. Le P2P fonctionne strictement sur votre LAN.",
                         proBtn: "Obtener Pro", proModalTitle: "💎 Passer à Sovereign Pro", proModalDesc: "Débloquez le traitement par lots illimité, les certificats d'audit cryptographique, la synchronisation cloud E2EE et les nœuds prioritaires P2P.", activateKeyBtn: "Activer la Licence Pro",
                         payTrBtn: "PayTR / Carte de Crédit (TL)", cryptoPayBtn: "Cryptomus / Crypto (USDT/BTC)", allRights: "Tous droits réservés.", orDivider: "Ou entrez la clé de licence",
                         descLiveShield: "Protégez les formulaires Web et les entrées de chat sortants contre les fuites de PII."
@@ -808,6 +822,8 @@
                         faq2Q: "支持哪些合规框架？", faq2A: "该套件通过将所有文件处理本地化，符合 GDPR、HIPAA、CCPA 以及企业主权数据驻留标准。",
                         faq3Q: "大文件处理如何工作？", faq3A: "使用 Streams API 和文件系统访问 API，文件以 5MB 的内存安全块直接处理到磁盘上，从而防止 RAM 溢出。",
                         faq4Q: "我可以完全离线使用它吗？", faq4A: "可以。加载完成后，您可以完全断开互联网连接，所有 30 个工具都将在物理隔离的环境中正常运行。",
+                        faq5Q: "如何在初始物理隔离环境运行？", faq5A: "PDF合并和OCR等高级工具首次加载需要外部库。在转移到隔离计算机之前，请先联网打开一次应用以缓存依赖项。",
+                        faq6Q: "为什么 P2P 功能仅在本地网络 (LAN) 上工作？", faq6A: "为保证绝对零数据泄漏，已完全移除外部 STUN/TURN 服务器，确保 P2P 严格在局域网 (LAN) 内运行。",
                         proBtn: "获取专业版", proModalTitle: "💎 升级到 Sovereign Pro", proModalDesc: "解锁无限制的批量处理、加密审计证书、E2EE 云同步和 P2P 优先节点。", activateKeyBtn: "激活专业版许可证",
                         payTrBtn: "PayTR / 信用卡 (TL)", cryptoPayBtn: "Cryptomus / 加密货币 (USDT/BTC)", allRights: "版权所有。", orDivider: "或输入许可证密钥",
                         descLiveShield: "保护出站 Web 表单和聊天输入免遭敏感 PII 泄漏。"
@@ -834,6 +850,8 @@
                         faq2Q: "ما هي أطر الامتثال المدعومة؟", faq2A: "يتوافق الجناح مع معايير إقامة البيانات السيادية للشركات و GDPR و HIPAA و CCPA من خلال الحفاظ على محلية جميع عمليات معالجة الملفات.",
                         faq3Q: "كيف تعمل معالجة الملفات الكبيرة؟", faq3A: "باستخدام واجهة برمجة تطبيقات Streams وواجهة برمجة تطبيقات File System Access، تتم معالجة الملفات مباشرة على القرص في أجزاء آمنة للذاكرة بحجم 5 ميجابايت، مما يمنع تجاوز سعة ذاكرة الوصول العشوائي (RAM).",
                         faq4Q: "هل يمكنني استخدام هذا في وضع عدم الاتصال تمامًا؟", faq4A: "نعم. بمجرد التحميل، يمكنك قطع اتصالك بالإنترنت بالكامل، وستعمل جميع الأدوات الثلاثين بشكل طبيعي في عزلة عن الهواء (air-gapped).",
+                        faq5Q: "كيفية تشغيل هذا في بيئة معزولة أولية (Air-Gapped)؟", faq5A: "تتطلب الأدوات المتقدمة مثل دمج PDF و OCR مكتبات خارجية عند التحميل لأول مرة. افتح التطبيق عبر الإنترنت مرة واحدة لتخزين التبعيات مؤقتًا قبل نقله إلى جهاز معزول.",
+                        faq6Q: "لماذا تعمل ميزات P2P فقط على الشبكات المحلية (LAN)؟", faq6A: "لضمان عدم تسرب أي بيانات تمامًا، تم إزالة خوادم STUN/TURN الخارجية. وهذا يضمن عمل مشاركة P2P حصريًا داخل شبكتك المحلية الآمنة (LAN).",
                         proBtn: "احصل على Pro", proModalTitle: "💎 الترقية إلى Sovereign Pro", proModalDesc: "افتح معالجة الدُفعات غير المحدودة، وشهادات التدقيق المشفرة، والمزامنة السحابية E2EE، والعقد ذات الأولوية P2P.", activateKeyBtn: "تفعيل ترخيص Pro",
                         payTrBtn: "PayTR / بطاقة الائتمان (TL)", cryptoPayBtn: "Cryptomus / تشفير (USDT/BTC)", allRights: "جميع الحقوق محفوظة.", orDivider: "أو أدخل مفتاح الترخيص",
                         descLiveShield: "حماية نماذج الويب الصادرة ومدخلات الدردشة من تسريب معلومات التعريف الشخصية (PII) الحساسة."
@@ -1206,7 +1224,6 @@
                                 return;
                             }
                             
-                            // GÜNCELLENDİ: Metin Şifrelemesinde de Binary Altyapısı Kullanımı
                             if (PrivacyConvert.state.cryptoMode === 'encrypt') {
                                 outputBox.value = "Şifreleniyor (Binary Safe)...";
                                 const textBuffer = new TextEncoder().encode(text).buffer;
@@ -1230,7 +1247,6 @@
                                 PrivacyConvert.ui.showToast('Şifre başarıyla çözüldü!');
                             }
                         }
-                        // GÜNCELLENDİ: GERÇEK PDF BİRLEŞTİRME KODU (pdf-lib)
                         else if (tool === 'pdf-merge') {
                             if (files.length === 0) return PrivacyConvert.ui.showToast('PDF dosyaları seçin', 'warning');
                             PrivacyConvert.ui.updateProgress(40, 'PDF Belgeleri Birleştiriliyor...');
@@ -1250,7 +1266,6 @@
                             PrivacyConvert.ui.updateProgress(100, 'Tamamlandı!');
                             PrivacyConvert.ui.showToast('PDF dosyaları başarıyla birleştirildi!');
                         }
-                        // GÜNCELLENDİ: GERÇEK OCR MOTORU (Tesseract.js)
                         else if (tool === 'ocr-tool') {
                             if (files.length === 0) return PrivacyConvert.ui.showToast('Resim seçin', 'warning');
                             PrivacyConvert.ui.updateProgress(20, 'OCR Motoru Yükleniyor...');
