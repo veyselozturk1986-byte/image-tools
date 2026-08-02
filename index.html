@@ -202,7 +202,7 @@
     <main class="flex-grow max-w-6xl mx-auto w-full px-4 py-8">
         <div class="text-center mb-8">
             <h1 class="text-3xl sm:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-3">
-                <span data-i18n="secureLabel">Secure</span> <span id="mainTitleAccent" class="dynamic-text" data-i18n="toolLiveShield">Live Form PII Shield</span>
+                <span data-i18n="secureLabel">Secure</span> <span id="mainTitleAccent" class="dynamic-text">Live Form PII Shield</span>
             </h1>
             <p id="mainDesc" class="text-slate-500 dark:text-slate-400 text-sm sm:text-base max-w-2xl mx-auto font-medium" data-i18n="descLiveShield">Shield outbound web forms and chat inputs from leaking sensitive PII.</p>
         </div>
@@ -379,7 +379,6 @@
 
     <!-- Tek Dosya Entegre Monolitik Mantıksal Altyapı -->
     <script>
-        // 1. Kriptografi Çekirdeği
         const cryptoCore = {
             async encrypt(text, password) {
                 const enc = new TextEncoder();
@@ -426,7 +425,6 @@
             }
         };
 
-        // 2. Yapay Zeka / PII Maskeleme Çekirdeği
         const aiEngine = {
             maskPII(text) {
                 return text
@@ -439,11 +437,10 @@
             }
         };
 
-        // 3. Akış ve Bellek Güvenli Büyük Dosya İşleme
         const streamCore = {
             async processLargeFile(file, password, mode, progressCallback, toastCallback, urlRegisterCallback) {
                 progressCallback(10, "Dosya okuma akışı başlatılıyor...");
-                const chunkSize = 5 * 1024 * 1024; // 5MB
+                const chunkSize = 5 * 1024 * 1024;
                 let offset = 0;
                 let resultChunks = [];
 
@@ -478,7 +475,6 @@
             }
         };
 
-        // 4. Medya ve EXIF Temizleme Çekirdeği
         const mediaCore = {
             async scrubExif(file, urlRegisterCallback) {
                 return new Promise((resolve) => {
@@ -504,8 +500,7 @@
             }
         };
 
-        // 5. Ana Uygulama Kontrolcüsü (PrivacyConvert)
-        export const PrivacyConvert = {
+        const PrivacyConvert = {
             state: {
                 lang: localStorage.getItem('privacyConvert_lang') || 'en',
                 tool: 'live-pii-shield',
@@ -514,8 +509,7 @@
                 db: null,
                 splitScreenActive: false,
                 objectUrls: new Set(),
-                isPro: localStorage.getItem('privacyConvert_pro') === 'true',
-                webrtc: { pc: null, dc: null }
+                isPro: localStorage.getItem('privacyConvert_pro') === 'true'
             },
 
             registerObjectUrl(url) {
@@ -717,7 +711,7 @@
                         toolVisual: "تنقيح بصري (وجه / ختم)", toolMetaScrubber: "منظف EXIF والبيانات الوصفية", toolOcr: "استخراج نص OCR (عامل)", toolP2p: "مشاركة ملفات P2P",
                         toolOpfs: "قرص ظاهري مشفر OPFS", toolSign: "Ed25519 موقع مستندات", toolAiNer: "منقح AI NER لـ WebGPU", toolChain: "ZK-Rollup / مرساة Blockchain", toolRoom: "غرفة دردشة آمنة E2EE",
                         encryptModeBtn: "تشفير ملف/نص", decryptModeBtn: "فك تشفير ملف/نص", passPlaceholder: "أدخل كلمة المرور الرئيسية...", pasteText: "أدخل نص الإدخال هنا...",
-                        outputLabel: "مخرجات النظام / السجلات:", compareBtn: "مقارنة وإيجاد الفروق", pasteSecondaryText: "نص ثانوي للمقارنة...", cmdPlaceholder: "ابحث في جميع أدوات Sovereign و Pro...",
+                        outputLabel: "مخرجات النظام / السجلات:", compareBtn: "قارنة وإيجاد الفروق", pasteSecondaryText: "نص ثانوي للمقارنة...", cmdPlaceholder: "ابحث في جميع أدوات Sovereign و Pro...",
                         faqTitle: "الأسئلة الشائعة والامتثال للخصوصية",
                         faq1Q: "هل يتم إرسال بياناتي أبدًا إلى خوادم خارجية؟", faq1A: "لا. يعمل نظام PrivacyConvert Sovereign OS بنسبة 100% من جانب العميل في وضع الحماية الخاص بمتصفحك. بفضل تقنية Air-Gapped و WebAssembly، لا تغادر أي بايتات جهازك.",
                         faq2Q: "ما هي أطر الامتثال المدعومة؟", faq2A: "يتوافق الجناح مع معايير إقامة البيانات السيادية للشركات و GDPR و HIPAA و CCPA من خلال الحفاظ على محلية جميع عمليات معالجة الملفات.",
@@ -751,12 +745,11 @@
                     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
 
                     const currentTool = PrivacyConvert.state.tool;
-                    const tabElem = document.getElementById(`tab-${currentTool}`);
-                    if(tabElem) {
-                        const titleSpan = tabElem.querySelector('.truncate') || tabElem.querySelector('span:last-child');
-                        if(titleSpan) {
-                            const mainTitle = document.getElementById('mainTitleAccent');
-                            if(mainTitle) mainTitle.innerText = titleSpan.innerText.trim();
+                    const meta = PrivacyConvert.routing.metaData[currentTool];
+                    if(meta) {
+                        const mainTitle = document.getElementById('mainTitleAccent');
+                        if(mainTitle && meta.titleKey && dict[meta.titleKey]) {
+                            mainTitle.innerText = dict[meta.titleKey];
                         }
                     }
                 }
@@ -764,38 +757,38 @@
 
             routing: {
                 metaData: {
-                    'live-pii-shield': { type: 'text', title: 'Live Form PII Shield' },
-                    'cloud-sync': { type: 'action', title: 'E2EE Cloud Sync', proRequired: true },
-                    'audit-certificate': { type: 'action', title: 'Auditor PDF Certificate', proRequired: true },
-                    'white-label': { type: 'text', title: 'White-Label Branding', proRequired: true },
-                    'webauthn-vault': { type: 'webauthn', title: 'WebAuthn Passkey Vault' },
-                    'steganography': { type: 'interactive-stega', accept: 'image/*', title: 'Image Steganography' },
-                    'self-destruct': { type: 'vault', title: 'Self-Destructing Artifacts' },
-                    'encrypt-tool': { type: 'crypto', title: 'AES-256 Hardware Encryptor' },
-                    'template-market': { type: 'text', title: 'Local Rule Marketplace' },
-                    'zkp-validator': { type: 'text', title: 'Zero-Knowledge Proofs' },
-                    'lora-tuning': { type: 'text', title: 'Local LoRA Fine-Tuning' },
-                    'local-rag': { type: 'text', title: 'Local AI RAG Search' },
-                    'doc-diff': { type: 'text', title: 'Contract Diff Engine' },
-                    'cross-compliance': { type: 'text', title: 'Cross-Framework Compliance' },
-                    'timestamp-anchor': { type: 'file', multiple: true, title: 'OpenTimestamps Anchor' },
-                    'chain-custody': { type: 'file', multiple: true, title: 'Chain of Custody' },
-                    'contract-analyzer': { type: 'text', title: 'Contract Risk Parser' },
-                    'pdf-to-png': { type: 'file', accept: 'application/pdf', title: 'PDF to PNG Converter' },
-                    'pdf-merge': { type: 'file', accept: 'application/pdf', multiple: true, title: 'PDF Merger' },
-                    'pii-redactor': { type: 'text', title: 'Batch PII Redaction', proRequired: true },
-                    'visual-redact': { type: 'interactive-redact', accept: 'image/*', title: 'Visual Redaction' },
-                    'meta-scrubber': { type: 'file', multiple: true, accept: 'image/*', title: 'EXIF & Meta Scrubber' },
-                    'ocr-tool': { type: 'ocr', accept: 'image/*', title: 'OCR Text Extract (Worker)' },
-                    'p2p-share': { type: 'interactive-p2p', title: 'P2P File Share' },
-                    'ai-ner-mask': { type: 'text', title: 'WebGPU AI NER Redactor', proRequired: true },
-                    'opfs-vault': { type: 'interactive-opfs', title: 'OPFS Encrypted Virtual Disk', proRequired: true },
-                    'ed25519-sign': { type: 'text', title: 'Ed25519 Document Signer', proRequired: true },
-                    'blockchain-anchor': { type: 'text', title: 'ZK-Rollup / Blockchain Anchor', proRequired: true },
-                    'secure-room': { type: 'interactive-room', title: 'E2EE Secure Chat Room', proRequired: true }
+                    'live-pii-shield': { type: 'text', titleKey: 'toolLiveShield' },
+                    'cloud-sync': { type: 'action', titleKey: 'toolCloudSync', proRequired: true },
+                    'audit-certificate': { type: 'action', titleKey: 'toolAuditCert', proRequired: true },
+                    'white-label': { type: 'text', titleKey: 'toolWhiteLabel', proRequired: true },
+                    'webauthn-vault': { type: 'webauthn', titleKey: 'toolWebAuthn' },
+                    'steganography': { type: 'interactive-stega', accept: 'image/*', titleKey: 'toolStega' },
+                    'self-destruct': { type: 'vault', titleKey: 'toolDestruct' },
+                    'encrypt-tool': { type: 'crypto', titleKey: 'toolEncrypt' },
+                    'template-market': { type: 'text', titleKey: 'toolMarket' },
+                    'zkp-validator': { type: 'text', titleKey: 'toolZkp' },
+                    'lora-tuning': { type: 'text', titleKey: 'toolLora' },
+                    'local-rag': { type: 'text', titleKey: 'toolLocalRag' },
+                    'doc-diff': { type: 'text', titleKey: 'toolDiff' },
+                    'cross-compliance': { type: 'text', titleKey: 'toolCross' },
+                    'timestamp-anchor': { type: 'file', multiple: true, titleKey: 'toolTimestamp' },
+                    'chain-custody': { type: 'file', multiple: true, titleKey: 'toolCustody' },
+                    'contract-analyzer': { type: 'text', titleKey: 'toolContract' },
+                    'pdf-to-png': { type: 'file', accept: 'application/pdf', titleKey: 'toolPdfPng' },
+                    'pdf-merge': { type: 'file', accept: 'application/pdf', multiple: true, titleKey: 'toolPdfMerge' },
+                    'pii-redactor': { type: 'text', titleKey: 'toolPii', proRequired: true },
+                    'visual-redact': { type: 'interactive-redact', accept: 'image/*', titleKey: 'toolVisual' },
+                    'meta-scrubber': { type: 'file', multiple: true, accept: 'image/*', titleKey: 'toolMetaScrubber' },
+                    'ocr-tool': { type: 'ocr', accept: 'image/*', titleKey: 'toolOcr' },
+                    'p2p-share': { type: 'interactive-p2p', titleKey: 'toolP2p' },
+                    'ai-ner-mask': { type: 'text', titleKey: 'toolAiNer', proRequired: true },
+                    'opfs-vault': { type: 'interactive-opfs', titleKey: 'toolOpfs', proRequired: true },
+                    'ed25519-sign': { type: 'text', titleKey: 'toolSign', proRequired: true },
+                    'blockchain-anchor': { type: 'text', titleKey: 'toolChain', proRequired: true },
+                    'secure-room': { type: 'interactive-room', titleKey: 'toolRoom', proRequired: true }
                 },
                 navigate(toolId) {
-                    const meta = this.metaData[toolId] || { type: 'text', title: toolId };
+                    const meta = this.metaData[toolId] || { type: 'text', titleKey: toolId };
                     if (meta.proRequired && !PrivacyConvert.state.isPro) {
                         PrivacyConvert.ui.showToast('🔒 Pro Özellik: Sınırlı deneme modundasınız!', 'warning');
                     }
@@ -804,15 +797,14 @@
                     const tabElem = document.getElementById(`tab-${toolId}`);
                     if(tabElem) {
                         tabElem.classList.add('bg-slate-100', 'dark:bg-slate-700', 'border-indigo-500');
-                        const titleSpan = tabElem.querySelector('.truncate') || tabElem.querySelector('span:last-child');
-                        if(titleSpan) {
-                            const mainTitle = document.getElementById('mainTitleAccent');
-                            if(mainTitle) mainTitle.innerText = titleSpan.innerText.trim();
-                        }
-                    } else {
-                        const mainTitle = document.getElementById('mainTitleAccent');
-                        if(mainTitle) mainTitle.innerText = meta.title;
                     }
+                    
+                    const dict = PrivacyConvert.i18n.translations[PrivacyConvert.state.lang] || PrivacyConvert.i18n.translations['en'];
+                    const mainTitle = document.getElementById('mainTitleAccent');
+                    if(mainTitle && meta.titleKey && dict[meta.titleKey]) {
+                        mainTitle.innerText = dict[meta.titleKey];
+                    }
+
                     PrivacyConvert.ui.resetWorkspace(meta);
                 }
             },
@@ -931,11 +923,14 @@
                     const results = document.getElementById('cmdResults');
                     results.innerHTML = '';
                     const q = query.toLowerCase();
+                    const dict = PrivacyConvert.i18n.translations[PrivacyConvert.state.lang] || PrivacyConvert.i18n.translations['en'];
+                    
                     Object.entries(PrivacyConvert.routing.metaData).forEach(([id, meta]) => {
-                        if(meta.title.toLowerCase().includes(q)) {
+                        const titleText = dict[meta.titleKey] || meta.titleKey;
+                        if(titleText.toLowerCase().includes(q)) {
                             const btn = document.createElement('button');
                             btn.className = "w-full text-left px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 text-xs font-semibold dark:text-white flex items-center justify-between";
-                            btn.innerHTML = `<span>${meta.title}</span><span class="text-[10px] text-slate-400">${id}</span>`;
+                            btn.innerHTML = `<span>${titleText}</span><span class="text-[10px] text-slate-400">${id}</span>`;
                             btn.onclick = () => {
                                 PrivacyConvert.routing.navigate(id);
                                 document.getElementById('commandPalette').classList.add('hidden');
