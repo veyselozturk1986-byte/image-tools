@@ -16,11 +16,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://unpkg.com/tesseract.js@2.1.4/dist/tesseract.min.js"></script>
     <script>
-        // PDF.js Worker'ı CDN engeline takılmamak ve Air-Gapped çalışmak için Blob Worker olarak tanımlıyoruz
-        const pdfWorkerBlobUrl = URL.createObjectURL(new Blob([
-            `importScripts("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js");`
-        ], { type: "application/javascript" }));
-        pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorkerBlobUrl;
+        // Air-Gapped kararlılığı için PDF.js worker main-thread moduna (disableWorker: true) alındı.
+        // Bu sayede harici CDN worker fetch hataları ve CORS engelleri tamamen ortadan kalkar.
+        pdfjsLib.GlobalWorkerOptions.workerSrc = '';
     </script>
 
     <script>
@@ -327,7 +325,7 @@
             <div class="p-6 sm:p-8 bg-white dark:bg-slate-800 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-700 relative">
                 <button id="clearBtn" onclick="PrivacyConvert.ui.resetCurrentWorkspace()" class="hidden absolute top-6 right-6 text-xs font-bold text-red-500 bg-red-50 dark:bg-red-950/40 px-3 py-2 rounded-lg transition" data-i18n="btnReset">Reset</button>
 
-                <!-- Uzun Formlu Değer ve Fayda Açıklama Paneli (Dinamik ve Çok Dilli) -->
+                <!-- Uzun Formlu Değer ve Fayda Açıklama Paneli -->
                 <div id="toolEnterpriseValueBanner" class="hidden mb-5 p-4 bg-indigo-50/70 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800 rounded-2xl text-xs text-indigo-900 dark:text-indigo-200 space-y-1.5 leading-relaxed">
                     <div class="font-extrabold text-indigo-700 dark:text-indigo-400 flex items-center gap-1.5 text-sm" id="enterpriseBannerTitle"></div>
                     <p id="enterpriseBannerDesc" class="text-[11px] opacity-90"></p>
@@ -440,13 +438,12 @@
         if ('serviceWorker' in navigator) {
             try {
                 const swCode = `
-                    const CACHE_NAME = 'sovereign-cache-v2';
+                    const CACHE_NAME = 'sovereign-cache-v3';
                     const assetsToCache = [
                         '/',
                         'https://cdn.tailwindcss.com',
                         'https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js',
                         'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js',
-                        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js',
                         'https://unpkg.com/tesseract.js@2.1.4/dist/tesseract.min.js',
                         'https://unpkg.com/tesseract.js-core@2.2.0/tesseract-core.wasm.js'
                     ];
@@ -541,7 +538,7 @@
 
         const streamCore = {
             async processLargeFile(file, password, mode, progressCallback, toastCallback, urlCallback) {
-                toastCallback('Büyük dosya akış (streaming) mimarisiyle işleniyor...', 'warning');
+                toastCallback(PrivacyConvert.i18n.get('streamProcessMsg') || 'Büyük dosya akış mimarisiyle işleniyor...', 'warning');
                 progressCallback(20, 'Dosya okunuyor...');
                 const arrayBuffer = await file.arrayBuffer();
                 progressCallback(60, mode === 'encrypt' ? 'Şifreleniyor...' : 'Şifre çözülüyor...');
@@ -613,29 +610,45 @@
                 throw new Error("OPFS bu tarayıcıda desteklenmiyor.");
             },
             async writeFile(name, text) {
-                const root = await this.getRoot();
-                const handle = await root.getFileHandle(name, { create: true });
-                const writable = await handle.createWritable();
-                await writable.write(text);
-                await writable.close();
-                return true;
+                try {
+                    const root = await this.getRoot();
+                    const handle = await root.getFileHandle(name, { create: true });
+                    const writable = await handle.createWritable();
+                    await writable.write(text);
+                    await writable.close();
+                    return true;
+                } catch(e) {
+                    throw new Error("OPFS Yazma Hatası: " + e.message);
+                }
             },
             async readFile(name) {
-                const root = await this.getRoot();
-                const handle = await root.getFileHandle(name);
-                const file = await handle.getFile();
-                return await file.text();
+                try {
+                    const root = await this.getRoot();
+                    const handle = await root.getFileHandle(name);
+                    const file = await handle.getFile();
+                    return await file.text();
+                } catch(e) {
+                    throw new Error("OPFS Okuma Hatası: " + e.message);
+                }
             },
             async listFiles() {
-                const root = await this.getRoot();
-                const files = [];
-                for await (const name of root.keys()) { files.push(name); }
-                return files;
+                try {
+                    const root = await this.getRoot();
+                    const files = [];
+                    for await (const name of root.keys()) { files.push(name); }
+                    return files;
+                } catch(e) {
+                    return [];
+                }
             },
             async deleteFile(name) {
-                const root = await this.getRoot();
-                await root.removeEntry(name);
-                return true;
+                try {
+                    const root = await this.getRoot();
+                    await root.removeEntry(name);
+                    return true;
+                } catch(e) {
+                    throw new Error("OPFS Silme Hatası: " + e.message);
+                }
             }
         };
 
@@ -643,7 +656,9 @@
             pc: null,
             dataChannel: null,
             async init(isInitiator) {
-                this.pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+                // Air-Gapped / LAN uyumu için harici STUN sunucuları kaldırıldı ({ iceServers: [] }).
+                // Tamamen yerel ağ (LAN) ve aynı cihaz içi testler için sıfır bağımlı doğrudan ICE adayları kullanılır.
+                this.pc = new RTCPeerConnection({ iceServers: [] });
                 if (isInitiator) {
                     this.dataChannel = this.pc.createDataChannel("PrivacyConvertSecureChat");
                     this.setupDataChannel();
@@ -865,6 +880,17 @@
                         successDecrypt: "Decryption successful!",
                         successGeneric: "Secure Process Completed!",
                         
+                        // Dinamik UI Çevirileri
+                        webAuthnTitle: "WebAuthn Hardware Passkey Vault", passkeyUserPlaceholder: "Enterprise ID / Username...", btnSavePasskey: "Register Passkey (FIDO2)", btnAuthPasskey: "Authenticate with Passkey", passkeyLogPlaceholder: "WebAuthn Assertion / Attestation logs...",
+                        stegaTitle: "Image Steganography", stegaMsgPlaceholder: "Secret message to hide...", btnStegaHide: "Hide & Download",
+                        visualRedactTitle: "Visual Redaction (Masking)", btnApplyRedact: "Apply Black Box & Redact",
+                        signTitle: "Ed25519 Document Signer", signInputPlaceholder: "Document content to sign...", btnSignDoc: "Generate Key & Sign",
+                        vaultTitle: "IndexedDB Secure Vault", vaultTitlePlaceholder: "Note title...", vaultContentPlaceholder: "Secret note content...", btnSaveVault: "Save Note",
+                        opfsTitle: "OPFS Encrypted Virtual Disk", opfsNamePlaceholder: "File name (e.g. secret.txt)", opfsContentPlaceholder: "File content...", btnOpfsSave: "Save / Write", btnOpfsList: "List Files",
+                        ragTitle: "Local AI RAG Search Engine", ragDocTitlePlaceholder: "Document Title...", ragDocContentPlaceholder: "Paste document content here...", btnRagIndex: "Index Document", ragQueryPlaceholder: "Local RAG Query...", btnRagSearch: "Perform Smart Search",
+                        zkpTitle: "Zero-Knowledge Proof (ZKP) Commitment", zkpSecretPlaceholder: "Your Secret (Secret data)...", btnZkpCommit: "Generate Commitment", zkpVerifySecretPlaceholder: "Verify Secret...", zkpVerifySaltPlaceholder: "Salt Value...", zkpVerifyTargetPlaceholder: "Target Commitment Hash...", btnZkpVerify: "Verify ZKP Proof",
+                        p2pTitle: "E2EE P2P WebRTC Signaling Console", btnP2POffer: "1. Create Offer", btnP2PAnswer: "2. Accept & Answer", p2pSignalBoxPlaceholder: "Paste WebRTC SDP signaling data here...", chatMsgPlaceholder: "Write encrypted message...", btnChatSend: "Send",
+
                         v_live_title: "🛡️ Enterprise Live PII Shield & Form Guardian",
                         v_live_desc: "Automatically intercepts sensitive PII (SSN, credit cards, emails) in web forms and chat interfaces directly inside the browser sandbox, eliminating GDPR/KVKK leakage risks.",
                         v_pii_title: "🕶️ Batch PII Document Redactor & Legal Masking",
@@ -946,6 +972,17 @@
                         successDecrypt: "Şifre başarıyla çözüldü!",
                         successGeneric: "Güvenli İşlem Tamamlandı!",
                         
+                        // Dinamik UI Çevirileri
+                        webAuthnTitle: "WebAuthn Donanım Passkey Kasası", passkeyUserPlaceholder: "Kurumsal Kimlik / Kullanıcı Adı...", btnSavePasskey: "Passkey Kaydet (FIDO2)", btnAuthPasskey: "Passkey ile Kimlik Doğrula", passkeyLogPlaceholder: "WebAuthn Assertion / Attestation Logları...",
+                        stegaTitle: "Görsel Steganografi", stegaMsgPlaceholder: "Gizlenecek gizli mesaj...", btnStegaHide: "Gizle ve İndir",
+                        visualRedactTitle: "Görsel Karartma (Maskeleme)", btnApplyRedact: "Siyah Kutu Uygula ve Karart",
+                        signTitle: "Ed25519 Belge İmzalayıcı", signInputPlaceholder: "İmzalanacak doküman içeriği...", btnSignDoc: "Anahtar Üret ve İmzala",
+                        vaultTitle: "IndexedDB Güvenli Kasa", vaultTitlePlaceholder: "Not başlığı...", vaultContentPlaceholder: "Gizli not içeriği...", btnSaveVault: "Notu Kaydet",
+                        opfsTitle: "OPFS Şifreli Sanal Disk", opfsNamePlaceholder: "Dosya adı (örn: gizli.txt)", opfsContentPlaceholder: "Dosya içeriği...", btnOpfsSave: "Kaydet / Yaz", btnOpfsList: "Listele",
+                        ragTitle: "Yerel AI RAG Arama Motoru", ragDocTitlePlaceholder: "Doküman Başlığı...", ragDocContentPlaceholder: "Doküman içeriğini buraya yapıştırın...", btnRagIndex: "Dokümanı İndeksle", ragQueryPlaceholder: "Yerel RAG Sorgusu...", btnRagSearch: "Akıllı Arama Yap",
+                        zkpTitle: "Sıfır Bilgi İspatı (ZKP) Taahhüt", zkpSecretPlaceholder: "Gizli Veriniz (Sır)...", btnZkpCommit: "Taahhüt Oluştur", zkpVerifySecretPlaceholder: "Sırrı Doğrula...", zkpVerifySaltPlaceholder: "Tuz Değeri...", zkpVerifyTargetPlaceholder: "Hedef Taahhüt Hash...", btnZkpVerify: "ZKP Kanıtını Doğrula",
+                        p2pTitle: "E2EE P2P WebRTC Sinyalleşme Konsolu", btnP2POffer: "1. Offer Oluştur", btnP2PAnswer: "2. Kabul Et & Answer", p2pSignalBoxPlaceholder: "WebRTC SDP sinyal verisini buraya yapıştırın...", chatMsgPlaceholder: "Şifreli mesaj yazın...", btnChatSend: "Gönder",
+
                         v_live_title: "🛡️ Kurumsal Canlı PII Kalkanı ve Form Koruyucusu",
                         v_live_desc: "Web formlarına ve sohbet arayüzlerine girilen hassas kişisel verileri tarayıcı korumalı alanında anında yakalayıp maskeleyerek KVKK/GDPR ihlal risklerini sıfırlar.",
                         v_pii_title: "🕶️ Toplu PII Belge Redaktörü ve Hukuki Maskeleme",
@@ -1020,6 +1057,17 @@
                         proWarning: "🔒 ¡Se requiere licencia Sovereign Pro!", proActivated: "🎉 ¡Licencia activada con éxito!", proInvalidKey: "¡Clave inválida!",
                         errEnterText: "Ingrese texto", errPasswordRequired: "¡Contraseña requerida!",
                         successMasked: "¡Datos enmascarados!", successEncrypt: "¡Cifrado exitoso!", successDecrypt: "¡Descifrado exitoso!", successGeneric: "¡Proceso Completado!",
+                        
+                        webAuthnTitle: "WebAuthn Hardware Passkey Vault", passkeyUserPlaceholder: "Enterprise ID / Username...", btnSavePasskey: "Register Passkey (FIDO2)", btnAuthPasskey: "Authenticate with Passkey", passkeyLogPlaceholder: "Logs...",
+                        stegaTitle: "Image Steganography", stegaMsgPlaceholder: "Secret message...", btnStegaHide: "Hide & Download",
+                        visualRedactTitle: "Visual Redaction", btnApplyRedact: "Apply Black Box",
+                        signTitle: "Ed25519 Signer", signInputPlaceholder: "Document text...", btnSignDoc: "Sign Document",
+                        vaultTitle: "IndexedDB Secure Vault", vaultTitlePlaceholder: "Title...", vaultContentPlaceholder: "Content...", btnSaveVault: "Save Note",
+                        opfsTitle: "OPFS Encrypted Disk", opfsNamePlaceholder: "File name...", opfsContentPlaceholder: "Content...", btnOpfsSave: "Save / Write", btnOpfsList: "List",
+                        ragTitle: "Local AI RAG Search", ragDocTitlePlaceholder: "Title...", ragDocContentPlaceholder: "Content...", btnRagIndex: "Index", ragQueryPlaceholder: "Query...", btnRagSearch: "Search",
+                        zkpTitle: "ZKP Commitment", zkpSecretPlaceholder: "Secret...", btnZkpCommit: "Commit", zkpVerifySecretPlaceholder: "Verify Secret...", zkpVerifySaltPlaceholder: "Salt...", zkpVerifyTargetPlaceholder: "Target Hash...", btnZkpVerify: "Verify",
+                        p2pTitle: "E2EE P2P WebRTC Console", btnP2POffer: "1. Create Offer", btnP2PAnswer: "2. Accept & Answer", p2pSignalBoxPlaceholder: "SDP data...", chatMsgPlaceholder: "Message...", btnChatSend: "Send",
+
                         v_live_title: "🛡️ Escudo PII en Vivo", v_live_desc: "Intercepta PII en formularios web en el sandbox.",
                         v_pii_title: "🕶️ Redacción de PII por Lotes", v_pii_desc: "Analiza contratos y documentos masivamente.",
                         v_cert_title: "📜 Certificado de Auditor", v_cert_desc: "Certificados firmados con SHA-256.",
@@ -1084,6 +1132,17 @@
                         proWarning: "🔒 Sovereign Pro-Lizenz erforderlich!", proActivated: "🎉 Pro-Lizenz aktiviert!", proInvalidKey: "Ungültiger Schlüssel!",
                         errEnterText: "Bitte Text eingeben", errPasswordRequired: "Passwort erforderlich!",
                         successMasked: "Daten maskiert!", successEncrypt: "Verschlüsselt!", successDecrypt: "Entschlüsselt!", successGeneric: "Abgeschlossen!",
+                        
+                        webAuthnTitle: "WebAuthn Passkey Tresor", passkeyUserPlaceholder: "Benutzername...", btnSavePasskey: "Passkey registrieren", btnAuthPasskey: "Authentifizieren", passkeyLogPlaceholder: "Logs...",
+                        stegaTitle: "Bildsteganographie", stegaMsgPlaceholder: "Nachricht...", btnStegaHide: "Verstecken",
+                        visualRedactTitle: "Visuelle Schwärzung", btnApplyRedact: "Schwärzen",
+                        signTitle: "Ed25519 Signierer", signInputPlaceholder: "Dokument...", btnSignDoc: "Signieren",
+                        vaultTitle: "IndexedDB Tresor", vaultTitlePlaceholder: "Titel...", vaultContentPlaceholder: "Inhalt...", btnSaveVault: "Speichern",
+                        opfsTitle: "OPFS Laufwerk", opfsNamePlaceholder: "Dateiname...", opfsContentPlaceholder: "Inhalt...", btnOpfsSave: "Schreiben", btnOpfsList: "Listen",
+                        ragTitle: "Lokale KI-RAG", ragDocTitlePlaceholder: "Titel...", ragDocContentPlaceholder: "Inhalt...", btnRagIndex: "Indexieren", ragQueryPlaceholder: "Abfrage...", btnRagSearch: "Suchen",
+                        zkpTitle: "ZKP Beweis", zkpSecretPlaceholder: "Geheimnis...", btnZkpCommit: "Erstellen", zkpVerifySecretPlaceholder: "Verifizieren...", zkpVerifySaltPlaceholder: "Salt...", zkpVerifyTargetPlaceholder: "Ziel-Hash...", btnZkpVerify: "Prüfen",
+                        p2pTitle: "E2EE P2P Konsole", btnP2POffer: "1. Angebot", btnP2PAnswer: "2. Annehmen", p2pSignalBoxPlaceholder: "SDP...", chatMsgPlaceholder: "Nachricht...", btnChatSend: "Senden",
+
                         v_live_title: "🛡️ Live PII-Schild", v_live_desc: "Fängt PII in Formularen ab.",
                         v_pii_title: "🕶️ Batch-PII-Schwärzung", v_pii_desc: "Dokumentenanalyse.",
                         v_cert_title: "📜 Auditor-Zertifikat", v_cert_desc: "SHA-256 signierte Zertifikate.",
@@ -1148,6 +1207,17 @@
                         proWarning: "🔒 Licence Sovereign Pro requise !", proActivated: "🎉 Licence Pro activée !", proInvalidKey: "Clé invalide !",
                         errEnterText: "Entrez du texte", errPasswordRequired: "Mot de passe requis !",
                         successMasked: "Données masquées !", successEncrypt: "Chiffré !", successDecrypt: "Déchiffré !", successGeneric: "Terminé !",
+                        
+                        webAuthnTitle: "Coffre WebAuthn Passkey", passkeyUserPlaceholder: "Nom d'utilisateur...", btnSavePasskey: "Enregistrer Passkey", btnAuthPasskey: "Authentifier", passkeyLogPlaceholder: "Logs...",
+                        stegaTitle: "Stéganographie", stegaMsgPlaceholder: "Message...", btnStegaHide: "Cacher",
+                        visualRedactTitle: "Rédaction Visuelle", btnApplyRedact: "Flouter",
+                        signTitle: "Signataire Ed25519", signInputPlaceholder: "Document...", btnSignDoc: "Signer",
+                        vaultTitle: "Coffre IndexedDB", vaultTitlePlaceholder: "Titre...", vaultContentPlaceholder: "Contenu...", btnSaveVault: "Enregistrer",
+                        opfsTitle: "Disque OPFS", opfsNamePlaceholder: "Nom...", opfsContentPlaceholder: "Contenu...", btnOpfsSave: "Écrire", btnOpfsList: "Lister",
+                        ragTitle: "Recherche RAG", ragDocTitlePlaceholder: "Titre...", ragDocContentPlaceholder: "Contenu...", btnRagIndex: "Indexer", ragQueryPlaceholder: "Requête...", btnRagSearch: "Rechercher",
+                        zkpTitle: "Preuve ZKP", zkpSecretPlaceholder: "Secret...", btnZkpCommit: "Engager", zkpVerifySecretPlaceholder: "Vérifier Secret...", zkpVerifySaltPlaceholder: "Sel...", zkpVerifyTargetPlaceholder: "Hash Cible...", btnZkpVerify: "Vérifier",
+                        p2pTitle: "Console P2P E2EE", btnP2POffer: "1. Offre", btnP2PAnswer: "2. Accepter", p2pSignalBoxPlaceholder: "SDP...", chatMsgPlaceholder: "Message...", btnChatSend: "Envoyer",
+
                         v_live_title: "🛡️ Bouclier PII", v_live_desc: "Intercepte les PII.",
                         v_pii_title: "🕶️ Rédaction PII", v_pii_desc: "Analyse de documents.",
                         v_cert_title: "📜 Certificat", v_cert_desc: "Signé SHA-256.",
@@ -1212,6 +1282,17 @@
                         proWarning: "🔒 需要 Sovereign Pro 许可证！", proActivated: "🎉 专业版许可证已激活！", proInvalidKey: "无效密钥！",
                         errEnterText: "请输入文本", errPasswordRequired: "需要密码！",
                         successMasked: "数据成功掩码！", successEncrypt: "加密成功！", successDecrypt: "解密成功！", successGeneric: "流程完成！",
+                        
+                        webAuthnTitle: "WebAuthn 密钥库", passkeyUserPlaceholder: "用户名...", btnSavePasskey: "注册通行密钥", btnAuthPasskey: "身份验证", passkeyLogPlaceholder: "日志...",
+                        stegaTitle: "图像隐写术", stegaMsgPlaceholder: "消息...", btnStegaHide: "隐藏",
+                        visualRedactTitle: "视觉遮盖", btnApplyRedact: "打码",
+                        signTitle: "Ed25519 签名器", signInputPlaceholder: "文档...", btnSignDoc: "签署",
+                        vaultTitle: "IndexedDB 安全库", vaultTitlePlaceholder: "标题...", vaultContentPlaceholder: "内容...", btnSaveVault: "保存",
+                        opfsTitle: "OPFS 虚拟磁盘", opfsNamePlaceholder: "文件名...", opfsContentPlaceholder: "内容...", btnOpfsSave: "写入", btnOpfsList: "列出",
+                        ragTitle: "本地 RAG 搜索", ragDocTitlePlaceholder: "标题...", ragDocContentPlaceholder: "内容...", btnRagIndex: "索引", ragQueryPlaceholder: "查询...", btnRagSearch: "搜索",
+                        zkpTitle: "ZKP 证明", zkpSecretPlaceholder: "秘密...", zkpCommit: "生成承诺", zkpVerifySecretPlaceholder: "验证秘密...", zkpVerifySaltPlaceholder: "盐值...", zkpVerifyTargetPlaceholder: "目标哈希...", btnZkpVerify: "验证",
+                        p2pTitle: "E2EE P2P 控制台", btnP2POffer: "1. 创建 Offer", btnP2PAnswer: "2. 接受", p2pSignalBoxPlaceholder: "SDP...", chatMsgPlaceholder: "消息...", btnChatSend: "发送",
+
                         v_live_title: "🛡️ 实时 PII 护盾", v_live_desc: "拦截表单 PII。",
                         v_pii_title: "🕶️ 批量 PII 遮盖", v_pii_desc: "扫描法律合同。",
                         v_cert_title: "📜 审计员证书", v_cert_desc: "SHA-256 签名证书。",
@@ -1276,6 +1357,17 @@
                         proWarning: "🔒 مطلوب ترخيص Sovereign Pro!", proActivated: "🎉 تم تفعيل الترخيص بنجاح!", proInvalidKey: "مفتاح غير صالح!",
                         errEnterText: "الرجاء إدخال النص", errPasswordRequired: "كلمة المرور مطلوبة!",
                         successMasked: "تم إخفاء البيانات!", successEncrypt: "تم التشفير!", successDecrypt: "تم فك التشفير!", successGeneric: "اكتملت العملية!",
+                        
+                        webAuthnTitle: "قبو مفاتيح المرور", passkeyUserPlaceholder: "اسم المستخدم...", btnSavePasskey: "تسجيل مفتاح المرور", btnAuthPasskey: "مصادقة", passkeyLogPlaceholder: "السجلات...",
+                        stegaTitle: "إخفاء الصور", stegaMsgPlaceholder: "الرسالة...", btnStegaHide: "إخفاء",
+                        visualRedactTitle: "تنقيح بصري", btnApplyRedact: "طمس",
+                        signTitle: "موقع Ed25519", signInputPlaceholder: "المستند...", btnSignDoc: "توقيع",
+                        vaultTitle: "قبو IndexedDB", vaultTitlePlaceholder: "العنوان...", vaultContentPlaceholder: "المحتوى...", btnSaveVault: "حفظ",
+                        opfsTitle: "قرص OPFS", opfsNamePlaceholder: "الاسم...", opfsContentPlaceholder: "المحتوى...", btnOpfsSave: "كتابة", btnOpfsList: "عرض",
+                        ragTitle: "بحث RAG", ragDocTitlePlaceholder: "العنوان...", ragDocContentPlaceholder: "المحتوى...", btnRagIndex: "فهرسة", ragQueryPlaceholder: "استعلام...", btnRagSearch: "بحث",
+                        zkpTitle: "إثبات ZKP", zkpSecretPlaceholder: "السر...", btnZkpCommit: "التزام", zkpVerifySecretPlaceholder: "تحقق السر...", zkpVerifySaltPlaceholder: "الملح...", zkpVerifyTargetPlaceholder: "التجزئة...", btnZkpVerify: "تحقق",
+                        p2pTitle: "وحدة تحكم P2P E2EE", btnP2POffer: "1. عرض", btnP2PAnswer: "2. قبول", p2pSignalBoxPlaceholder: "SDP...", chatMsgPlaceholder: "رسالة...", btnChatSend: "إرسال",
+
                         v_live_title: "🛡️ درع PII الحي", v_live_desc: "اعتراض PII في النماذج.",
                         v_pii_title: "🕶️ تنقيح PII", v_pii_desc: "مسح المستندات.",
                         v_cert_title: "📜 شهادة المدقق", v_cert_desc: "شهادات SHA-256.",
@@ -1523,85 +1615,91 @@
                     }
                 },
                 renderWebAuthnUI() {
+                    const lang = PrivacyConvert.state.lang;
                     const container = document.getElementById('interactiveWorkspaceContainer');
                     if(!container) return;
                     container.classList.remove('hidden');
                     container.innerHTML = `
                         <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3">
-                            <h4 class="font-bold text-xs uppercase text-slate-500">WebAuthn Donanım Passkey Kasası</h4>
-                            <input type="text" id="passkeyUser" placeholder="Kurumsal Kimlik / Kullanıcı Adı..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white">
-                            <button onclick="PrivacyConvert.engine.registerPasskey()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl shadow">Passkey Kaydet (FIDO2)</button>
-                            <button onclick="PrivacyConvert.engine.authPasskey()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow">Passkey ile Kimlik Doğrula</button>
-                            <textarea id="passkeyOutput" class="w-full h-28 bg-slate-900 text-emerald-400 text-xs p-3 rounded-xl font-mono" readonly placeholder="WebAuthn Assertion / Attestation Logları..."></textarea>
+                            <h4 class="font-bold text-xs uppercase text-slate-500">${PrivacyConvert.i18n.get('webAuthnTitle', lang)}</h4>
+                            <input type="text" id="passkeyUser" placeholder="${PrivacyConvert.i18n.get('passkeyUserPlaceholder', lang)}" class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white">
+                            <button onclick="PrivacyConvert.engine.registerPasskey()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl shadow">${PrivacyConvert.i18n.get('btnSavePasskey', lang)}</button>
+                            <button onclick="PrivacyConvert.engine.authPasskey()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow">${PrivacyConvert.i18n.get('btnAuthPasskey', lang)}</button>
+                            <textarea id="passkeyOutput" class="w-full h-28 bg-slate-900 text-emerald-400 text-xs p-3 rounded-xl font-mono" readonly placeholder="${PrivacyConvert.i18n.get('passkeyLogPlaceholder', lang)}"></textarea>
                         </div>
                     `;
                 },
                 renderStegaUI() {
+                    const lang = PrivacyConvert.state.lang;
                     const container = document.getElementById('interactiveWorkspaceContainer');
                     if(!container) return;
                     container.classList.remove('hidden');
                     container.innerHTML = `
                         <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3">
-                            <h4 class="font-bold text-xs uppercase text-slate-500">Görsel Steganografi</h4>
+                            <h4 class="font-bold text-xs uppercase text-slate-500">${PrivacyConvert.i18n.get('stegaTitle', lang)}</h4>
                             <input type="file" id="stegaFile" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 dark:file:bg-slate-700 dark:file:text-white"/>
-                            <textarea id="stegaMessage" placeholder="Gizlenecek gizli mesaj..." class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"></textarea>
-                            <button onclick="PrivacyConvert.engine.executeStega()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">Gizle ve İndir</button>
+                            <textarea id="stegaMessage" placeholder="${PrivacyConvert.i18n.get('stegaMsgPlaceholder', lang)}" class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"></textarea>
+                            <button onclick="PrivacyConvert.engine.executeStega()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">${PrivacyConvert.i18n.get('btnStegaHide', lang)}</button>
                         </div>
                     `;
                 },
                 renderRedactUI() {
+                    const lang = PrivacyConvert.state.lang;
                     const container = document.getElementById('interactiveWorkspaceContainer');
                     if(!container) return;
                     container.classList.remove('hidden');
                     container.innerHTML = `
                         <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3 text-center">
-                            <h4 class="font-bold text-xs uppercase text-slate-500">Görsel Karartma (Maskeleme)</h4>
+                            <h4 class="font-bold text-xs uppercase text-slate-500">${PrivacyConvert.i18n.get('visualRedactTitle', lang)}</h4>
                             <input type="file" id="redactFile" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 dark:file:bg-slate-700 dark:file:text-white"/>
                             <canvas id="redactCanvas" class="max-w-full mx-auto rounded-xl border border-slate-300 hidden"></canvas>
-                            <button onclick="PrivacyConvert.engine.executeVisualRedact()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">Siyah Kutu Uygula ve Karart</button>
+                            <button onclick="PrivacyConvert.engine.executeVisualRedact()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">${PrivacyConvert.i18n.get('btnApplyRedact', lang)}</button>
                         </div>
                     `;
                 },
                 renderSignUI() {
+                    const lang = PrivacyConvert.state.lang;
                     const container = document.getElementById('interactiveWorkspaceContainer');
                     if(!container) return;
                     container.classList.remove('hidden');
                     container.innerHTML = `
                         <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3">
-                            <h4 class="font-bold text-xs uppercase text-slate-500">Ed25519 Belge İmzalayıcı</h4>
-                            <textarea id="signInput" placeholder="İmzalanacak doküman içeriği..." class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white font-mono"></textarea>
-                            <button onclick="PrivacyConvert.engine.executeSign()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">Anahtar Üret ve İmzala</button>
+                            <h4 class="font-bold text-xs uppercase text-slate-500">${PrivacyConvert.i18n.get('signTitle', lang)}</h4>
+                            <textarea id="signInput" placeholder="${PrivacyConvert.i18n.get('signInputPlaceholder', lang)}" class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white font-mono"></textarea>
+                            <button onclick="PrivacyConvert.engine.executeSign()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">${PrivacyConvert.i18n.get('btnSignDoc', lang)}</button>
                             <textarea id="signOutput" class="w-full h-24 bg-slate-900 text-emerald-400 text-xs p-3 rounded-xl font-mono" readonly placeholder="ECDSA Signature..."></textarea>
                         </div>
                     `;
                 },
                 renderVaultUI() {
+                    const lang = PrivacyConvert.state.lang;
                     const container = document.getElementById('interactiveWorkspaceContainer'); 
                     if(!container) return; 
                     container.classList.remove('hidden');
                     container.innerHTML = `
                         <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3">
-                            <h4 class="font-bold text-xs uppercase text-slate-500">IndexedDB Güvenli Kasa</h4>
-                            <input type="text" id="vaultTitle" placeholder="Not başlığı..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white">
-                            <textarea id="vaultContent" placeholder="Gizli not içeriği..." class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"></textarea>
-                            <button onclick="PrivacyConvert.engine.saveVaultNote()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl shadow">Notu Kaydet</button>
+                            <h4 class="font-bold text-xs uppercase text-slate-500">${PrivacyConvert.i18n.get('vaultTitle', lang)}</h4>
+                            <input type="text" id="vaultTitle" placeholder="${PrivacyConvert.i18n.get('vaultTitlePlaceholder', lang)}" class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white">
+                            <textarea id="vaultContent" placeholder="${PrivacyConvert.i18n.get('vaultContentPlaceholder', lang)}" class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"></textarea>
+                            <button onclick="PrivacyConvert.engine.saveVaultNote()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl shadow">${PrivacyConvert.i18n.get('btnSaveVault', lang)}</button>
                             <div id="vaultList" class="space-y-2 mt-4 max-h-48 overflow-y-auto"></div>
                         </div>
                     `;
                     PrivacyConvert.engine.loadVaultNotes();
                 },
                 renderOpfsUI() {
+                    const lang = PrivacyConvert.state.lang;
                     const container = document.getElementById('interactiveWorkspaceContainer');
                     if(!container) return;
                     container.classList.remove('hidden');
                     container.innerHTML = `
                         <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3">
-                            <h4 class="font-bold text-xs uppercase text-slate-500">💽 OPFS Şifreli Sanal Disk</h4>
-                            <input type="text" id="opfsFileName" placeholder="Dosya adı (örn: gizli.txt)" class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white">
-                            <textarea id="opfsFileContent" placeholder="Dosya içeriği..." class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white font-mono"></textarea>
+                            <h4 class="font-bold text-xs uppercase text-slate-500">${PrivacyConvert.i18n.get('opfsTitle', lang)}</h4>
+                            <input type="text" id="opfsFileName" placeholder="${PrivacyConvert.i18n.get('opfsNamePlaceholder', lang)}" class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white">
+                            <textarea id="opfsFileContent" placeholder="${PrivacyConvert.i18n.get('opfsContentPlaceholder', lang)}" class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white font-mono"></textarea>
                             <div class="flex gap-2">
-                                <button onclick="PrivacyConvert.engine.opfsSave()" class="flex-1 py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">Kaydet / Yaz</button>
-                                <button onclick="PrivacyConvert.engine.opfsList()" class="flex-1 py-2.5 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white font-bold text-xs rounded-xl">Listele</button>
+                                <button onclick="PrivacyConvert.engine.opfsSave()" class="flex-1 py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">${PrivacyConvert.i18n.get('btnOpfsSave', lang)}</button>
+                                <button onclick="PrivacyConvert.engine.opfsList()" class="flex-1 py-2.5 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white font-bold text-xs rounded-xl">${PrivacyConvert.i18n.get('btnOpfsList', lang)}</button>
                             </div>
                             <div id="opfsFileList" class="space-y-2 mt-3 max-h-40 overflow-y-auto font-mono text-xs"></div>
                         </div>
@@ -1609,57 +1707,60 @@
                     PrivacyConvert.engine.opfsList();
                 },
                 renderRagUI() {
+                    const lang = PrivacyConvert.state.lang;
                     const container = document.getElementById('interactiveWorkspaceContainer');
                     if(!container) return;
                     container.classList.remove('hidden');
                     container.innerHTML = `
                         <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3">
-                            <h4 class="font-bold text-xs uppercase text-slate-500">🤖 Yerel AI RAG Arama Motoru</h4>
-                            <input type="text" id="ragDocTitle" placeholder="Doküman Başlığı..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white">
-                            <textarea id="ragDocContent" placeholder="Doküman içeriğini buraya yapıştırın..." class="w-full h-20 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"></textarea>
-                            <button onclick="PrivacyConvert.engine.ragAddDoc()" class="w-full py-2 bg-slate-200 dark:bg-slate-700 text-xs font-bold rounded-xl dark:text-white">Dokümanı İndeksle</button>
+                            <h4 class="font-bold text-xs uppercase text-slate-500">${PrivacyConvert.i18n.get('ragTitle', lang)}</h4>
+                            <input type="text" id="ragDocTitle" placeholder="${PrivacyConvert.i18n.get('ragDocTitlePlaceholder', lang)}" class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white">
+                            <textarea id="ragDocContent" placeholder="${PrivacyConvert.i18n.get('ragDocContentPlaceholder', lang)}" class="w-full h-20 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"></textarea>
+                            <button onclick="PrivacyConvert.engine.ragAddDoc()" class="w-full py-2 bg-slate-200 dark:bg-slate-700 text-xs font-bold rounded-xl dark:text-white">${PrivacyConvert.i18n.get('btnRagIndex', lang)}</button>
                             <hr class="border-slate-200 dark:border-slate-700">
-                            <input type="text" id="ragQueryInput" placeholder="Yerel RAG Sorgusu..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white">
-                            <button onclick="PrivacyConvert.engine.ragSearch()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">Akıllı Arama Yap</button>
+                            <input type="text" id="ragQueryInput" placeholder="${PrivacyConvert.i18n.get('ragQueryPlaceholder', lang)}" class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white">
+                            <button onclick="PrivacyConvert.engine.ragSearch()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">${PrivacyConvert.i18n.get('btnRagSearch', lang)}</button>
                             <textarea id="ragResultArea" class="w-full h-32 bg-slate-900 text-emerald-400 text-xs p-3 rounded-xl font-mono" readonly placeholder="..."></textarea>
                         </div>
                     `;
                 },
                 renderZkpUI() {
+                    const lang = PrivacyConvert.state.lang;
                     const container = document.getElementById('interactiveWorkspaceContainer');
                     if(!container) return;
                     container.classList.remove('hidden');
                     container.innerHTML = `
                         <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3">
-                            <h4 class="font-bold text-xs uppercase text-slate-500">🛡️ Sıfır Bilgi İspatı (ZKP) Taahhüt</h4>
-                            <input type="text" id="zkpSecret" placeholder="Gizli Veriniz (Sır)..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white">
-                            <button onclick="PrivacyConvert.engine.zkpCommit()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">Taahhüt Oluştur</button>
+                            <h4 class="font-bold text-xs uppercase text-slate-500">${PrivacyConvert.i18n.get('zkpTitle', lang)}</h4>
+                            <input type="text" id="zkpSecret" placeholder="${PrivacyConvert.i18n.get('zkpSecretPlaceholder', lang)}" class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white">
+                            <button onclick="PrivacyConvert.engine.zkpCommit()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">${PrivacyConvert.i18n.get('btnZkpCommit', lang)}</button>
                             <textarea id="zkpResultBox" class="w-full h-24 bg-slate-900 text-emerald-400 text-xs p-3 rounded-xl font-mono" readonly placeholder="..."></textarea>
                             <hr class="border-slate-200 dark:border-slate-700">
-                            <input type="text" id="zkpVerifySecret" placeholder="Sırrı Doğrula..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white">
-                            <input type="text" id="zkpVerifySalt" placeholder="Tuz Değeri..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white font-mono">
-                            <input type="text" id="zkpVerifyTarget" placeholder="Hedef Taahhüt Hash..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white font-mono">
-                            <button onclick="PrivacyConvert.engine.zkpVerify()" class="w-full py-2.5 bg-emerald-600 text-white font-bold text-xs rounded-xl">ZKP Kanıtını Doğrula</button>
+                            <input type="text" id="zkpVerifySecret" placeholder="${PrivacyConvert.i18n.get('zkpVerifySecretPlaceholder', lang)}" class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white">
+                            <input type="text" id="zkpVerifySalt" placeholder="${PrivacyConvert.i18n.get('zkpVerifySaltPlaceholder', lang)}" class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white font-mono">
+                            <input type="text" id="zkpVerifyTarget" placeholder="${PrivacyConvert.i18n.get('zkpVerifyTargetPlaceholder', lang)}" class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white font-mono">
+                            <button onclick="PrivacyConvert.engine.zkpVerify()" class="w-full py-2.5 bg-emerald-600 text-white font-bold text-xs rounded-xl">${PrivacyConvert.i18n.get('btnZkpVerify', lang)}</button>
                         </div>
                     `;
                 },
                 renderP2PUI() {
+                    const lang = PrivacyConvert.state.lang;
                     const container = document.getElementById('interactiveWorkspaceContainer'); 
                     if(!container) return; 
                     container.classList.remove('hidden');
                     container.innerHTML = `
                         <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-4">
-                            <h4 class="font-bold text-xs uppercase text-slate-500">E2EE P2P WebRTC Sinyalleşme Konsolu</h4>
+                            <h4 class="font-bold text-xs uppercase text-slate-500">${PrivacyConvert.i18n.get('p2pTitle', lang)}</h4>
                             <div class="flex gap-2">
-                                <button onclick="PrivacyConvert.engine.startP2POffer()" class="flex-1 py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">1. Offer Oluştur</button>
-                                <button onclick="PrivacyConvert.engine.startP2PAnswer()" class="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl">2. Kabul Et & Answer</button>
+                                <button onclick="PrivacyConvert.engine.startP2POffer()" class="flex-1 py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">${PrivacyConvert.i18n.get('btnP2POffer', lang)}</button>
+                                <button onclick="PrivacyConvert.engine.startP2PAnswer()" class="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl">${PrivacyConvert.i18n.get('btnP2PAnswer', lang)}</button>
                             </div>
-                            <textarea id="p2pSignalBox" placeholder="WebRTC SDP sinyal verisini buraya yapıştırın..." class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs font-mono dark:text-white"></textarea>
+                            <textarea id="p2pSignalBox" placeholder="${PrivacyConvert.i18n.get('p2pSignalBoxPlaceholder', lang)}" class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs font-mono dark:text-white"></textarea>
                             <div id="chatSection" class="hidden space-y-2">
                                 <textarea id="chatLogArea" class="w-full h-32 bg-slate-900 text-emerald-400 text-xs p-3 rounded-xl border-none focus:outline-none resize-none font-mono" readonly placeholder="..."></textarea>
                                 <div class="flex gap-2">
-                                    <input type="text" id="chatMsgInput" placeholder="Şifreli mesaj yazın..." class="flex-1 p-2 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white">
-                                    <button onclick="p2pEngine.send(document.getElementById('chatMsgInput').value)" class="py-2 px-4 dynamic-bg text-white font-bold text-xs rounded-xl">Gönder</button>
+                                    <input type="text" id="chatMsgInput" placeholder="${PrivacyConvert.i18n.get('chatMsgPlaceholder', lang)}" class="flex-1 p-2 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white">
+                                    <button onclick="p2pEngine.send(document.getElementById('chatMsgInput').value)" class="py-2 px-4 dynamic-bg text-white font-bold text-xs rounded-xl">${PrivacyConvert.i18n.get('btnChatSend', lang)}</button>
                                 </div>
                             </div>
                         </div>
@@ -1823,13 +1924,13 @@
                             try {
                                 if (file.type === "application/pdf") {
                                     const arrayBuffer = await file.arrayBuffer();
-                                    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                                    // Air-Gapped kararlılığı için disableWorker: true kullanıldı (Main Thread PDF Parsing)
+                                    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer, disableWorker: true }).promise;
                                     for (let i = 1; i <= pdf.numPages; i++) {
                                         PrivacyConvert.ui.updateProgress(10 + Math.round((i / pdf.numPages) * 60), `Sayfa ${i}/${pdf.numPages} taranıyor...`);
                                         const page = await pdf.getPage(i);
                                         const textContent = await page.getTextContent();
                                         extractedText += textContent.items.map(s => s.str).join(' ') + "\n";
-                                        // UI Thread'in donmasını önlemek için asenkron nefes aldırıyoruz
                                         await new Promise(r => setTimeout(r, 10));
                                     }
                                 } else if (file.type.startsWith("image/")) {
@@ -1856,7 +1957,6 @@
                                 }
                                 
                                 PrivacyConvert.ui.updateProgress(100, 'Tamamlandı!');
-                                // İşlem bittikten sonra UX temizliği
                                 PrivacyConvert.state.files = [];
                             } catch (err) {
                                 outputBox.value = `Hata oluştu: ${err.message}`;
@@ -1977,7 +2077,7 @@
                             PrivacyConvert.ui.updateProgress(20, 'PDF Sayfaları PNGye Dönüştürülüyor...');
                             const file = files[0].file;
                             const arrayBuffer = await file.arrayBuffer();
-                            const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+                            const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer, disableWorker: true });
                             const pdfDoc = await loadingTask.promise;
                             const numPages = pdfDoc.numPages;
 
@@ -2142,9 +2242,13 @@
                     const name = document.getElementById('opfsFileName')?.value;
                     const content = document.getElementById('opfsFileContent')?.value;
                     if(!name || !content) return PrivacyConvert.ui.showToast('Dosya adı ve içerik gerekli!', 'warning');
-                    await opfsEngine.writeFile(name, content);
-                    PrivacyConvert.ui.showToast('OPFS Sanal Diske başarıyla kaydedildi!');
-                    this.opfsList();
+                    try {
+                        await opfsEngine.writeFile(name, content);
+                        PrivacyConvert.ui.showToast('OPFS Sanal Diske başarıyla kaydedildi!');
+                        this.opfsList();
+                    } catch(e) {
+                        PrivacyConvert.ui.showToast(e.message, 'error');
+                    }
                 },
                 async opfsList() {
                     const listDiv = document.getElementById('opfsFileList');
@@ -2153,16 +2257,20 @@
                         const files = await opfsEngine.listFiles();
                         listDiv.innerHTML = files.length ? files.map(f => `<div class="flex justify-between items-center bg-white dark:bg-slate-800 p-2 rounded"><span>📄 ${f}</span><button onclick="PrivacyConvert.engine.opfsRead('${f}')" class="text-indigo-500 font-bold">Oku</button></div>`).join('') : '<span class="text-slate-400">Hiç dosya yok.</span>';
                     } catch(e) {
-                        listDiv.innerHTML = `<span class="text-red-400">OPFS Erişilemedi</span>`;
+                        listDiv.innerHTML = `<span class="text-red-400">OPFS Erişilemedi (Gizli Sekme kısıtlı olabilir)</span>`;
                     }
                 },
                 async opfsRead(name) {
-                    const content = await opfsEngine.readFile(name);
-                    const contentArea = document.getElementById('opfsFileContent');
-                    const nameArea = document.getElementById('opfsFileName');
-                    if(contentArea) contentArea.value = content;
-                    if(nameArea) nameArea.value = name;
-                    PrivacyConvert.ui.showToast(`"${name}" yüklendi.`);
+                    try {
+                        const content = await opfsEngine.readFile(name);
+                        const contentArea = document.getElementById('opfsFileContent');
+                        const nameArea = document.getElementById('opfsFileName');
+                        if(contentArea) contentArea.value = content;
+                        if(nameArea) nameArea.value = name;
+                        PrivacyConvert.ui.showToast(`"${name}" yüklendi.`);
+                    } catch(e) {
+                        PrivacyConvert.ui.showToast(e.message, 'error');
+                    }
                 },
                 async ragAddDoc() {
                     const title = document.getElementById('ragDocTitle')?.value;
