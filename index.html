@@ -74,10 +74,10 @@
             <p class="text-xs text-slate-600 dark:text-slate-300" data-i18n="proModalDesc">Unlock unlimited batch processing, cryptographic audit certificates, E2EE cloud sync, and P2P priority nodes.</p>
             
             <div class="flex flex-col gap-2.5">
-                <a href="#" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-center shadow-md text-xs transition flex items-center justify-center gap-2">
+                <a href="https://www.paytr.com" target="_blank" rel="noopener noreferrer" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-center shadow-md text-xs transition flex items-center justify-center gap-2">
                     🇹🇷 <span data-i18n="payTrBtn">PayTR / Kredi Kartı ile Öde (TL)</span>
                 </a>
-                <a href="#" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-center shadow-md text-xs transition flex items-center justify-center gap-2">
+                <a href="https://cryptomus.com" target="_blank" rel="noopener noreferrer" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-center shadow-md text-xs transition flex items-center justify-center gap-2">
                     🪙 <span data-i18n="cryptoPayBtn">Cryptomus / Kripto ile Öde (USDT/BTC)</span>
                 </a>
             </div>
@@ -517,6 +517,7 @@
 
         const streamCore = {
             async processLargeFile(file, password, mode, progressCallback, toastCallback, urlRegisterCallback) {
+                const dict = PrivacyConvert.i18n.translations[PrivacyConvert.state.lang] || PrivacyConvert.i18n.translations['en'];
                 try {
                     progressCallback(10, "Dosya okunuyor...");
                     const buffer = await file.arrayBuffer();
@@ -542,10 +543,10 @@
                     a.click();
                     
                     progressCallback(100, "Tamamlandı!");
-                    toastCallback('Dosya işlemi başarıyla tamamlandı ve indirildi!', 'success');
+                    toastCallback(dict['fileProcessed'] || 'File process completed successfully!', 'success');
                 } catch(e) {
                     progressCallback(100, "Hata!");
-                    toastCallback("Hata: Parola yanlış veya dosya bozuk.", 'error');
+                    toastCallback(dict['errInvalidPassword'] || "Error: Incorrect password or corrupted file.", 'error');
                 }
             }
         };
@@ -693,7 +694,16 @@
                         errPasswordRequired: "Master password is required!",
                         errSelectPdf: "Please select PDF files",
                         errSelectImage: "Please select image files",
-                        proKeyPlaceholder: "Enter Pro License Key..."
+                        proKeyPlaceholder: "Enter Pro License Key...",
+                        successMasked: "Data successfully masked!",
+                        successEncrypt: "Encryption successful!",
+                        successDecrypt: "Decryption successful!",
+                        successPdfMerge: "PDF files successfully merged!",
+                        successOcr: "Text extracted successfully!",
+                        successExif: "EXIF metadata successfully scrubbed!",
+                        successGeneric: "Secure Process Completed!",
+                        fileProcessed: "File processed and downloaded successfully!",
+                        errInvalidPassword: "Error: Incorrect password or corrupted file."
                     },
                     tr: {
                         accept: "Kabul Et", secureLabel: "Güvenli", dropText: "Göz atmak için tıklayın veya dosyaları buraya sürükleyin (Bellek Korumalı Akış)",
@@ -729,7 +739,16 @@
                         errPasswordRequired: "Ana parola gerekli!",
                         errSelectPdf: "Lütfen PDF dosyaları seçin",
                         errSelectImage: "Lütfen resim dosyaları seçin",
-                        proKeyPlaceholder: "Pro Lisans Anahtarını Girin..."
+                        proKeyPlaceholder: "Pro Lisans Anahtarını Girin...",
+                        successMasked: "Veriler başarıyla maskelendi!",
+                        successEncrypt: "Şifreleme başarılı!",
+                        successDecrypt: "Şifre başarıyla çözüldü!",
+                        successPdfMerge: "PDF dosyaları başarıyla birleştirildi!",
+                        successOcr: "Metin başarıyla çıkarıldı!",
+                        successExif: "EXIF Meta verileri başarıyla temizlendi!",
+                        successGeneric: "Güvenli İşlem Tamamlandı!",
+                        fileProcessed: "Dosya işlemi başarıyla tamamlandı ve indirildi!",
+                        errInvalidPassword: "Hata: Parola yanlış veya dosya bozuk."
                     },
                     es: {
                         accept: "Aceptar", secureLabel: "Seguro", dropText: "Haga clic para buscar o arrastre archivos aquí",
@@ -765,7 +784,16 @@
                         errPasswordRequired: "¡Se requiere contraseña maestra!",
                         errSelectPdf: "Por favor seleccione archivos PDF",
                         errSelectImage: "Por favor seleccione archivos de imagen",
-                        proKeyPlaceholder: "Ingrese la clave de licencia Pro..."
+                        proKeyPlaceholder: "Ingrese la clave de licencia Pro...",
+                        successMasked: "¡Datos enmascarados con éxito!",
+                        successEncrypt: "¡Cifrado exitoso!",
+                        successDecrypt: "¡Descifrado exitoso!",
+                        successPdfMerge: "¡Archivos PDF fusionados con éxito!",
+                        successOcr: "¡Texto extraído con éxito!",
+                        successExif: "¡Metadatos EXIF eliminados con éxito!",
+                        successGeneric: "¡Proceso Seguro Completado!",
+                        fileProcessed: "¡Archivo procesado y descargado con éxito!",
+                        errInvalidPassword: "Error: Contraseña incorrecta o archivo dañado."
                     },
                     de: {
                         accept: "Akzeptieren", secureLabel: "Sicher", dropText: "Klicken Sie zum Durchsuchen oder ziehen Sie Dateien hierher",
@@ -801,7 +829,16 @@
                         errPasswordRequired: "Master-Passwort ist erforderlich!",
                         errSelectPdf: "Bitte wählen Sie PDF-Dateien aus",
                         errSelectImage: "Bitte wählen Sie Bilddateien aus",
-                        proKeyPlaceholder: "Pro-Lizenzschlüssel eingeben..."
+                        proKeyPlaceholder: "Pro-Lizenzschlüssel eingeben...",
+                        successMasked: "Daten erfolgreich maskiert!",
+                        successEncrypt: "Verschlüsselung erfolgreich!",
+                        successDecrypt: "Entschlüsselung erfolgreich!",
+                        successPdfMerge: "PDF-Dateien erfolgreich zusammengeführt!",
+                        successOcr: "Text erfolgreich extrahiert!",
+                        successExif: "EXIF-Metadaten erfolgreich entfernt!",
+                        successGeneric: "Sicherer Prozess Abgeschlossen!",
+                        fileProcessed: "Datei erfolgreich verarbeitet und heruntergeladen!",
+                        errInvalidPassword: "Fehler: Falsches Passwort oder beschädigte Datei."
                     },
                     fr: {
                         accept: "Accepter", secureLabel: "Sécurisé", dropText: "Cliquez pour parcourir ou faites glisser les fichiers ici",
@@ -837,7 +874,16 @@
                         errPasswordRequired: "Le mot de passe principal est requis !",
                         errSelectPdf: "Veuillez sélectionner des fichiers PDF",
                         errSelectImage: "Veuillez sélectionner des fichiers image",
-                        proKeyPlaceholder: "Entrez la clé de licence Pro..."
+                        proKeyPlaceholder: "Entrez la clé de licence Pro...",
+                        successMasked: "Données masquées avec succès !",
+                        successEncrypt: "Chiffrement réussi !",
+                        successDecrypt: "Déchiffrement réussi !",
+                        successPdfMerge: "Fichiers PDF fusionnés avec succès !",
+                        successOcr: "Texte extrait avec succès !",
+                        successExif: "Métadonnées EXIF nettoyées avec succès !",
+                        successGeneric: "Processus Sécurisé Terminé !",
+                        fileProcessed: "Fichier traité et téléchargé avec succès !",
+                        errInvalidPassword: "Erreur : Mot de passe incorrect ou fichier corrompu."
                     },
                     zh: {
                         accept: "接受", secureLabel: "安全", dropText: "点击浏览或将文件拖放到此处（内存安全流）",
@@ -873,7 +919,16 @@
                         errPasswordRequired: "需要主密码！",
                         errSelectPdf: "请选择PDF文件",
                         errSelectImage: "请选择图片文件",
-                        proKeyPlaceholder: "请输入专业版许可证密钥..."
+                        proKeyPlaceholder: "请输入专业版许可证密钥...",
+                        successMasked: "数据成功掩码！",
+                        successEncrypt: "加密成功！",
+                        successDecrypt: "解密成功！",
+                        successPdfMerge: "PDF文件合并成功！",
+                        successOcr: "文本提取成功！",
+                        successExif: "EXIF元数据清理成功！",
+                        successGeneric: "安全流程已完成！",
+                        fileProcessed: "文件处理并下载成功！",
+                        errInvalidPassword: "错误：密码错误或文件损坏。"
                     },
                     ar: {
                         accept: "قبول", secureLabel: "آمن", dropText: "انقر للتصفح أو اسحب الملفات هنا (دفق آمن للذاكرة)",
@@ -909,7 +964,16 @@
                         errPasswordRequired: "كلمة المرور الرئيسية مطلوبة!",
                         errSelectPdf: "الرجاء تحديد ملفات PDF",
                         errSelectImage: "الرجاء تحديد ملفات الصور",
-                        proKeyPlaceholder: "أدخل مفتاح ترخيص Pro..."
+                        proKeyPlaceholder: "أدخل مفتاح ترخيص Pro...",
+                        successMasked: "تم اخفاء البيانات بنجاح!",
+                        successEncrypt: "تم التشفير بنجاح!",
+                        successDecrypt: "تم فك التشفير بنجاح!",
+                        successPdfMerge: "تم دمج ملفات PDF بنجاح!",
+                        successOcr: "تم استخراج النص بنجاح!",
+                        successExif: "تم تنظيف بيانات EXIF بنجاح!",
+                        successGeneric: "اكتملت العملية الآمنة!",
+                        fileProcessed: "تمت معالجة الملف وتنزيله بنجاح!",
+                        errInvalidPassword: "خطأ: كلمة المرور غير صحيحة أو الملف تالف."
                     }
                 },
                 applyLanguage(lang) {
@@ -1239,10 +1303,11 @@
                 },
                 promptBranding() {
                     const name = prompt('Enter custom enterprise intranet company name:', savedCompany);
+                    const dict = PrivacyConvert.i18n.translations[PrivacyConvert.state.lang] || PrivacyConvert.i18n.translations['en'];
                     if(name) {
                         localStorage.setItem('privacyConvert_company', name);
                         document.getElementById('brandNameDisplay').innerText = name;
-                        this.showToast('Markalama başarıyla güncellendi!');
+                        this.showToast(dict['brandUpdated'] || 'Branding updated successfully!');
                     }
                 }
             },
@@ -1264,7 +1329,7 @@
                             outputBox.value = "Yapay Zeka Analiz Ediyor...";
                             const result = tool === 'ai-ner-mask' ? aiEngine.runAiNer(text) : aiEngine.maskPII(text);
                             outputBox.value = `[AI REDACTION SONUCU]\n\n${result}`;
-                            PrivacyConvert.ui.showToast('Veriler başarıyla maskelendi!');
+                            PrivacyConvert.ui.showToast(dict['successMasked'] || 'Data successfully masked!');
                         }
                         else if (tool === 'encrypt-tool') {
                             const pwd = document.getElementById('cryptoPasswordInput')?.value;
@@ -1294,7 +1359,7 @@
                                 for (let i = 0; i < bytes.byteLength; i++) { binaryStr += String.fromCharCode(bytes[i]); }
                                 
                                 outputBox.value = `-----BEGIN ENCRYPTED-----\n${btoa(binaryStr)}\n-----END ENCRYPTED-----`;
-                                PrivacyConvert.ui.showToast('Şifreleme başarılı!');
+                                PrivacyConvert.ui.showToast(dict['successEncrypt'] || 'Encryption successful!');
                             } else {
                                 outputBox.value = "Şifre Çözülüyor (Binary Safe)...";
                                 const cleanBase64 = text.replace(/-----(BEGIN|END).*?-----/g, '').trim();
@@ -1304,7 +1369,7 @@
                                 
                                 const decryptedBuffer = await cryptoCore.decryptBinary(bytes.buffer, pwd);
                                 outputBox.value = new TextDecoder().decode(decryptedBuffer);
-                                PrivacyConvert.ui.showToast('Şifre başarıyla çözüldü!');
+                                PrivacyConvert.ui.showToast(dict['successDecrypt'] || 'Decryption successful!');
                             }
                         }
                         else if (tool === 'pdf-merge') {
@@ -1324,7 +1389,7 @@
                             const url = URL.createObjectURL(blob);
                             const a = document.createElement('a'); a.href = url; a.download = "Birlestirilmis_Belge.pdf"; a.click();
                             PrivacyConvert.ui.updateProgress(100, 'Tamamlandı!');
-                            PrivacyConvert.ui.showToast('PDF dosyaları başarıyla birleştirildi!');
+                            PrivacyConvert.ui.showToast(dict['successPdfMerge'] || 'PDF files successfully merged!');
                         }
                         else if (tool === 'ocr-tool') {
                             if (files.length === 0) return PrivacyConvert.ui.showToast(dict['errSelectImage'] || 'Please select image files', 'warning');
@@ -1338,7 +1403,7 @@
                             }).then(({ data: { text } }) => {
                                 document.getElementById('genericTextArea').value = text;
                                 PrivacyConvert.ui.updateProgress(100, 'OCR Tamamlandı!');
-                                PrivacyConvert.ui.showToast('Metin Çıkarıldı!');
+                                PrivacyConvert.ui.showToast(dict['successOcr'] || 'Text extracted successfully!');
                             });
                             return;
                         }
@@ -1350,12 +1415,12 @@
                                 const l = document.createElement('a'); l.href = cleanUrl; l.download = `clean_${item.file.name}`; l.click();
                             }
                             PrivacyConvert.ui.updateProgress(100, "Done!");
-                            PrivacyConvert.ui.showToast('EXIF Meta verileri başarıyla temizlendi!');
+                            PrivacyConvert.ui.showToast(dict['successExif'] || 'EXIF metadata successfully scrubbed!');
                         }
                         else {
                             if (outputContainer) outputContainer.classList.remove('hidden');
                             outputBox.value = `[SİSTEM LOGU - ${tool.toUpperCase()}]\nİşlem yerel tarayıcı korumalı alanında (Sandbox) başarıyla yürütüldü. Dışarıya 0 bayt veri gönderildi.`;
-                            PrivacyConvert.ui.showToast('Güvenli İşlem Tamamlandı!');
+                            PrivacyConvert.ui.showToast(dict['successGeneric'] || 'Secure Process Completed!');
                         }
                     } catch(e) {
                         PrivacyConvert.ui.showToast(e.message, 'error');
@@ -1372,10 +1437,11 @@
                     PrivacyConvert.ui.showToast('Karşılaştırma tamamlandı!');
                 },
                 runSampleTrial() {
+                    const dict = PrivacyConvert.i18n.translations[PrivacyConvert.state.lang] || PrivacyConvert.i18n.translations['en'];
                     const inputField = document.getElementById('mainInputField');
                     if(inputField) {
                         inputField.value = "Confidential Report: John Doe (john.doe@enterprise.com) phone +905551234567, IP 192.168.1.55 balance $45,000.";
-                        PrivacyConvert.ui.showToast('Örnek veri başarıyla yüklendi!');
+                        PrivacyConvert.ui.showToast(dict['sampleLoaded'] || 'Sample data loaded successfully!');
                     }
                 },
                 async startP2POffer() {
@@ -1407,11 +1473,12 @@
                     }
                 },
                 async opfsSave() {
+                    const dict = PrivacyConvert.i18n.translations[PrivacyConvert.state.lang] || PrivacyConvert.i18n.translations['en'];
                     const name = document.getElementById('opfsFileName')?.value;
                     const content = document.getElementById('opfsFileContent')?.value;
                     if(!name || !content) return PrivacyConvert.ui.showToast('Dosya adı ve içeriği gerekli!', 'warning');
                     await opfsEngine.writeFile(name, content);
-                    PrivacyConvert.ui.showToast('OPFS Sanal Diske Kaydedildi!');
+                    PrivacyConvert.ui.showToast(dict['opfsSaved'] || 'Saved to OPFS Virtual Disk!');
                     this.opfsList();
                 },
                 async opfsList() {
@@ -1442,11 +1509,12 @@
                     this.opfsList();
                 },
                 ragAddDoc() {
+                    const dict = PrivacyConvert.i18n.translations[PrivacyConvert.state.lang] || PrivacyConvert.i18n.translations['en'];
                     const title = document.getElementById('ragDocTitle')?.value;
                     const content = document.getElementById('ragDocContent')?.value;
                     if(!title || !content) return PrivacyConvert.ui.showToast('Başlık ve içerik girin!', 'warning');
                     localRagEngine.addDocument(title, content);
-                    PrivacyConvert.ui.showToast('Doküman yerel olarak indekslendi!');
+                    PrivacyConvert.ui.showToast(dict['ragIndexed'] || 'Document indexed locally!');
                     document.getElementById('ragDocTitle').value = '';
                     document.getElementById('ragDocContent').value = '';
                 },
@@ -1456,6 +1524,7 @@
                     document.getElementById('ragResultArea').value = result;
                 },
                 async zkpCommit() {
+                    const dict = PrivacyConvert.i18n.translations[PrivacyConvert.state.lang] || PrivacyConvert.i18n.translations['en'];
                     const secret = document.getElementById('zkpSecret')?.value;
                     if(!secret) return PrivacyConvert.ui.showToast('Gizli veri girin!', 'warning');
                     const res = await zkpEngine.generateCommitment(secret);
@@ -1463,7 +1532,7 @@
                     document.getElementById('zkpVerifySecret').value = secret;
                     document.getElementById('zkpVerifySalt').value = res.salt;
                     document.getElementById('zkpVerifyTarget').value = res.commitment;
-                    PrivacyConvert.ui.showToast('ZKP Taahhüdü oluşturuldu!');
+                    PrivacyConvert.ui.showToast(dict['zkpCreated'] || 'ZKP Commitment created!');
                 },
                 async zkpVerify() {
                     const secret = document.getElementById('zkpVerifySecret')?.value;
@@ -1477,12 +1546,13 @@
                     }
                 },
                 async saveVaultNote() {
+                    const dict = PrivacyConvert.i18n.translations[PrivacyConvert.state.lang] || PrivacyConvert.i18n.translations['en'];
                     const title = document.getElementById('vaultTitle')?.value; 
                     const content = document.getElementById('vaultContent')?.value;
                     if(!title || !content) return PrivacyConvert.ui.showToast('Alanlar boş bırakılamaz', 'warning');
                     const tx = PrivacyConvert.state.db.transaction('vault', 'readwrite'); 
                     tx.objectStore('vault').add({ title, content, timestamp: new Date().toISOString() });
-                    tx.oncomplete = () => { PrivacyConvert.ui.showToast('Kasaya Kaydedildi!'); this.loadVaultNotes(); };
+                    tx.oncomplete = () => { PrivacyConvert.ui.showToast(dict['vaultSaved'] || 'Saved to Secure Vault!'); this.loadVaultNotes(); };
                 },
                 async loadVaultNotes() {
                     if(!PrivacyConvert.state.db) return;
@@ -1500,8 +1570,9 @@
                     };
                 },
                 async deleteVaultNote(id) { 
+                    const dict = PrivacyConvert.i18n.translations[PrivacyConvert.state.lang] || PrivacyConvert.i18n.translations['en'];
                     PrivacyConvert.state.db.transaction('vault', 'readwrite').objectStore('vault').delete(id).onsuccess = () => { 
-                        PrivacyConvert.ui.showToast('İmha Edildi!'); 
+                        PrivacyConvert.ui.showToast(dict['vaultDestroyed'] || 'Artifact Destroyed!'); 
                         this.loadVaultNotes(); 
                     }; 
                 }
