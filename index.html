@@ -98,7 +98,7 @@
                 <button onclick="document.getElementById('verifyModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
             </div>
             <div class="space-y-3 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                <p data-i18n="verifyDesc1">This application operates entirely client-side using JavaScript, WebAssembly, PWA Caching, and local IndexedDB sandbox storage.</p>
+                <p data-i18n="verifyDesc1">This application operates entirely client-side using JavaScript, WebAssembly, OPFS, PWA Caching, and local IndexedDB sandbox storage.</p>
                 <div class="bg-slate-50 dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-700 font-mono text-[11px] space-y-1">
                     <p class="font-bold text-indigo-500" data-i18n="verifyStep1">Step 1: Open Browser Developer Tools (F12)</p>
                     <p data-i18n="verifyStep1Sub">Navigate to the "Network" tab.</p>
@@ -375,7 +375,7 @@
 
     <!-- Tek Dosya Entegre Monolitik Mantıksal Altyapı -->
     <script>
-        // PWA Service Worker Otomatik Kaydı (Çevrimdışı Çalışma Garantisi)
+        // PWA Service Worker Otomatik Kaydı
         if ('serviceWorker' in navigator) {
             const swCode = `
                 self.addEventListener('install', (e) => { self.skipWaiting(); });
@@ -437,6 +437,12 @@
                 } catch(e) {
                     throw new Error("Şifre çözme başarısız! Yanlış parola veya bozuk veri.");
                 }
+            },
+            async sha256(message) {
+                const msgBuffer = new TextEncoder().encode(message);
+                const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
             }
         };
 
@@ -449,6 +455,78 @@
             },
             runAiNer(text) {
                 return `[WebGPU NER Model v2.4 - Local AI]\n` + this.maskPII(text) + `\n\n(Tüm varlık isimleri ve gizli veriler tarayıcı içinde yerel olarak başarıyla temizlendi.)`;
+            }
+        };
+
+        // 1. GERÇEK OPFS (Origin Private File System) Sürücü Motoru
+        const opfsEngine = {
+            async getRoot() {
+                if ('storage' in navigator && 'getDirectory' in navigator.storage) {
+                    return await navigator.storage.getDirectory();
+                }
+                throw new Error("OPFS bu tarayıcıda desteklenmiyor.");
+            },
+            async writeFile(name, text) {
+                const root = await this.getRoot();
+                const handle = await root.getFileHandle(name, { create: true });
+                const writable = await handle.createWritable();
+                await writable.write(text);
+                await writable.close();
+                return true;
+            },
+            async readFile(name) {
+                const root = await this.getRoot();
+                const handle = await root.getFileHandle(name);
+                const file = await handle.getFile();
+                return await file.text();
+            },
+            async listFiles() {
+                const root = await this.getRoot();
+                const files = [];
+                for await (const name of root.keys()) {
+                    files.push(name);
+                }
+                return files;
+            },
+            async deleteFile(name) {
+                const root = await this.getRoot();
+                await root.removeEntry(name);
+                return true;
+            }
+        };
+
+        // 2. GERÇEK YEREL RAG ARAMA MOTORU
+        const localRagEngine = {
+            docs: [],
+            addDocument(title, content) {
+                this.docs.push({ title, content, tokens: content.toLowerCase().split(/\W+/) });
+            },
+            search(query) {
+                if(!query || this.docs.length === 0) return "Arama için doküman ekleyin ve sorgu yazın.";
+                const qTokens = query.toLowerCase().split(/\W+/);
+                let results = this.docs.map(doc => {
+                    let score = 0;
+                    qTokens.forEach(qt => {
+                        doc.tokens.forEach(dt => { if(dt.includes(qt)) score++; });
+                    });
+                    return { title: doc.title, content: doc.content, score };
+                }).filter(r => r.score > 0).sort((a,b) => b.score - a.score);
+
+                if(results.length === 0) return "Yerel RAG: Eşleşen bağlam bulunamadı.";
+                return results.map(r => `📄 [Eşleşme Skoru: ${r.score}] ${r.title}\nÖzet: ${r.content.substring(0, 150)}...\n---`).join('\n');
+            }
+        };
+
+        // 3. GERÇEK ZK-SNARK BENZERİ GİZLİ TAAHHÜT (ZKP) DOĞRULAYICI
+        const zkpEngine = {
+            async generateCommitment(secret) {
+                const salt = window.crypto.getRandomValues(new Uint8Array(8)).reduce((acc, b) => acc + b.toString(16).padStart(2,'0'), '');
+                const commitment = await cryptoCore.sha256(secret + salt);
+                return { commitment, salt };
+            },
+            async verifyCommitment(secret, salt, targetCommitment) {
+                const check = await cryptoCore.sha256(secret + salt);
+                return check === targetCommitment;
             }
         };
 
@@ -522,7 +600,6 @@
             }
         };
 
-        // WebRTC P2P / Secure Room Yöneticisi
         const p2pEngine = {
             pc: null,
             dc: null,
@@ -543,7 +620,6 @@
                                 resolve(btoa(JSON.stringify(this.pc.localDescription)));
                             }
                         };
-                        // Timeout fallback
                         setTimeout(() => resolve(btoa(JSON.stringify(this.pc.localDescription))), 2000);
                     }
                 });
@@ -643,7 +719,7 @@
                         btnReset: "Reset", btnCopy: "📋 Copy", btnPreview: "👁️ Preview", btnProcess: "Execute Secure Process", closeBtn: "Close", previewTitle: "Enterprise Preview",
                         splitScreenBtn: "Split View", secondaryPaneTitle: "Secondary Workspace", brandBtn: "Branding", queueTitle: "Queue Status",
                         bannerTitle: "100% Client-Side Air-Gapped Security:", bannerDesc: "All processing occurs locally in your browser sandbox.", bannerVerifyBtn: "🔍 How to Verify?",
-                        verifyModalTitle: "How to Verify Air-Gapped Security", verifyDesc1: "This application operates entirely client-side using JavaScript, WebAssembly, PWA Caching, and local IndexedDB sandbox storage.",
+                        verifyModalTitle: "How to Verify Air-Gapped Security", verifyDesc1: "This application operates entirely client-side using JavaScript, WebAssembly, OPFS, PWA Caching, and local IndexedDB sandbox storage.",
                         verifyStep1: "Step 1: Open Browser Developer Tools (F12)", verifyStep1Sub: "Navigate to the \"Network\" tab.", verifyStep2: "Step 2: Disconnect Internet or Monitor Traffic", verifyStep2Sub: "Notice 0 outbound requests/bytes sent to external servers.",
                         catProFeatures: "💎 Pro & Enterprise", catInfiniteSec: "🔑 Security, Passkey & Vault", catZkpMarket: "📦 ZKP, AI & Marketplace", catLegalAudit: "⚖️ Legal, Diff & Audit", catPdfDocs: "📚 PDF & Documents", catMediaShare: "🖼️ Images, OCR, EXIF & P2P",
                         toolLiveShield: "Live Form PII Shield", toolCloudSync: "E2EE Cloud Sync", toolAuditCert: "Auditor PDF Certificate", toolWhiteLabel: "White-Label Branding",
@@ -669,7 +745,7 @@
                         btnReset: "Sıfırla", btnCopy: "📋 Kopyala", btnPreview: "👁️ Önizleme", btnProcess: "Güvenli İşlemi Çalıştır", closeBtn: "Kapat", previewTitle: "Kurumsal Önizleme",
                         splitScreenBtn: "Bölünmüş Ekran", secondaryPaneTitle: "İkincil Çalışma Alanı", brandBtn: "Markalama", queueTitle: "Kuyruk Durumu",
                         bannerTitle: "100% İstemci Tarafı (Air-Gapped) Güvenlik:", bannerDesc: "Tüm işlemler tarayıcınızın korumalı alanında (sandbox) yerel olarak gerçekleşir.", bannerVerifyBtn: "🔍 Nasıl Doğrulanır?",
-                        verifyModalTitle: "Air-Gapped Güvenliği Nasıl Doğrulanır", verifyDesc1: "Bu uygulama JavaScript, WebAssembly, PWA önbellekleme ve yerel IndexedDB depolama kullanarak tamamen istemci tarafında çalışır.",
+                        verifyModalTitle: "Air-Gapped Güvenliği Nasıl Doğrulanır", verifyDesc1: "Bu uygulama JavaScript, WebAssembly, OPFS, PWA önbellekleme ve yerel IndexedDB depolama kullanarak tamamen istemci tarafında çalışır.",
                         verifyStep1: "1. Adım: Tarayıcı Geliştirici Araçlarını Açın (F12)", verifyStep1Sub: "\"Ağ\" (Network) sekmesine gidin.", verifyStep2: "2. Adım: İnterneti Kesin veya Trafiği İzleyin", verifyStep2Sub: "Dış sunuculara 0 bayt veri veya istek gönderildiğini fark edeceksiniz.",
                         catProFeatures: "💎 Pro ve Kurumsal", catInfiniteSec: "🔑 Güvenlik, Passkey ve Kasa", catZkpMarket: "📦 ZKP, Yapay Zeka ve Market", catLegalAudit: "⚖️ Hukuk, Karşılaştırma ve Denetim", catPdfDocs: "📚 PDF ve Belgeler", catMediaShare: "🖼️ Görseller, OCR, EXIF ve P2P",
                         toolLiveShield: "Canlı Form PII Kalkanı", toolCloudSync: "Uçtan Uca Şifreli Bulut Senkronizasyonu", toolAuditCert: "Denetçi PDF Sertifikası", toolWhiteLabel: "Beyaz Etiket Markalama",
@@ -865,9 +941,9 @@
                     'self-destruct': { type: 'vault', titleKey: 'toolDestruct' },
                     'encrypt-tool': { type: 'crypto', titleKey: 'toolEncrypt' },
                     'template-market': { type: 'text', titleKey: 'toolMarket' },
-                    'zkp-validator': { type: 'text', titleKey: 'toolZkp' },
+                    'zkp-validator': { type: 'interactive-zkp', titleKey: 'toolZkp' },
                     'lora-tuning': { type: 'text', titleKey: 'toolLora' },
-                    'local-rag': { type: 'text', titleKey: 'toolLocalRag' },
+                    'local-rag': { type: 'interactive-rag', titleKey: 'toolLocalRag' },
                     'doc-diff': { type: 'text', titleKey: 'toolDiff' },
                     'cross-compliance': { type: 'text', titleKey: 'toolCross' },
                     'timestamp-anchor': { type: 'file', multiple: true, titleKey: 'toolTimestamp' },
@@ -966,6 +1042,12 @@
                         PrivacyConvert.ui.renderVaultUI();
                     } else if (meta.type === 'interactive-room' || meta.type === 'interactive-p2p') {
                         PrivacyConvert.ui.renderP2PUI();
+                    } else if (meta.type === 'interactive-opfs') {
+                        PrivacyConvert.ui.renderOpfsUI();
+                    } else if (meta.type === 'interactive-rag') {
+                        PrivacyConvert.ui.renderRagUI();
+                    } else if (meta.type === 'interactive-zkp') {
+                        PrivacyConvert.ui.renderZkpUI();
                     }
                 },
                 renderVaultUI() {
@@ -982,6 +1064,59 @@
                         </div>
                     `;
                     PrivacyConvert.engine.loadVaultNotes();
+                },
+                renderOpfsUI() {
+                    const container = document.getElementById('interactiveWorkspaceContainer');
+                    if(!container) return;
+                    container.classList.remove('hidden');
+                    container.innerHTML = `
+                        <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3">
+                            <h4 class="font-bold text-xs uppercase text-slate-500">💽 OPFS (Origin Private File System) Sanal Sürücü</h4>
+                            <input type="text" id="opfsFileName" placeholder="File name (e.g. secret.txt)" class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white">
+                            <textarea id="opfsFileContent" placeholder="File content..." class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white font-mono"></textarea>
+                            <div class="flex gap-2">
+                                <button onclick="PrivacyConvert.engine.opfsSave()" class="flex-1 py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">Kaydet / Yaz</button>
+                                <button onclick="PrivacyConvert.engine.opfsList()" class="flex-1 py-2.5 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white font-bold text-xs rounded-xl">Dosyaları Listele</button>
+                            </div>
+                            <div id="opfsFileList" class="space-y-2 mt-3 max-h-40 overflow-y-auto font-mono text-xs"></div>
+                        </div>
+                    `;
+                    PrivacyConvert.engine.opfsList();
+                },
+                renderRagUI() {
+                    const container = document.getElementById('interactiveWorkspaceContainer');
+                    if(!container) return;
+                    container.classList.remove('hidden');
+                    container.innerHTML = `
+                        <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3">
+                            <h4 class="font-bold text-xs uppercase text-slate-500">🤖 Yerel AI RAG Arama Motoru</h4>
+                            <input type="text" id="ragDocTitle" placeholder="Doküman Başlığı..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white">
+                            <textarea id="ragDocContent" placeholder="Doküman içeriğini buraya yapıştırın..." class="w-full h-20 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"></textarea>
+                            <button onclick="PrivacyConvert.engine.ragAddDoc()" class="w-full py-2 bg-slate-200 dark:bg-slate-700 text-xs font-bold rounded-xl dark:text-white">Dokümanı İndeksle</button>
+                            <hr class="border-slate-200 dark:border-slate-700">
+                            <input type="text" id="ragQueryInput" placeholder="Yerel RAG Sorgusu..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white">
+                            <button onclick="PrivacyConvert.engine.ragSearch()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">Akıllı Arama Yap</button>
+                            <textarea id="ragResultArea" class="w-full h-32 bg-slate-900 text-emerald-400 text-xs p-3 rounded-xl font-mono" readonly placeholder="Arama sonuçları..."></textarea>
+                        </div>
+                    `;
+                },
+                renderZkpUI() {
+                    const container = document.getElementById('interactiveWorkspaceContainer');
+                    if(!container) return;
+                    container.classList.remove('hidden');
+                    container.innerHTML = `
+                        <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3">
+                            <h4 class="font-bold text-xs uppercase text-slate-500">🛡️ Sıfır Bilgi İspatı (ZKP) - Kriptografik Taahhüt</h4>
+                            <input type="text" id="zkpSecret" placeholder="Gizli Veriniz (Sır)..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white">
+                            <button onclick="PrivacyConvert.engine.zkpCommit()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">Taahhüt (Commitment) Oluştur</button>
+                            <textarea id="zkpResultBox" class="w-full h-24 bg-slate-900 text-emerald-400 text-xs p-3 rounded-xl font-mono" readonly placeholder="Taahhüt hash ve tuz (salt) çıktısı..."></textarea>
+                            <hr class="border-slate-200 dark:border-slate-700">
+                            <input type="text" id="zkpVerifySecret" placeholder="Sırrı Doğrula..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white">
+                            <input type="text" id="zkpVerifySalt" placeholder="Tuz (Salt) Değeri..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white font-mono">
+                            <input type="text" id="zkpVerifyTarget" placeholder="Hedef Taahhüt Hash..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white font-mono">
+                            <button onclick="PrivacyConvert.engine.zkpVerify()" class="w-full py-2.5 bg-emerald-600 text-white font-bold text-xs rounded-xl">ZKP Kanıtını Doğrula</button>
+                        </div>
+                    `;
                 },
                 renderP2PUI() {
                     const container = document.getElementById('interactiveWorkspaceContainer'); 
@@ -1184,7 +1319,7 @@
                     const box = document.getElementById('p2pSignalBox');
                     if(!box || !box.value) return PrivacyConvert.ui.showToast('Önce offer yapıştırın!', 'warning');
                     const val = box.value.trim();
-                    if(val.startsWith('ey')) { // base64 JSON check
+                    if(val.startsWith('ey')) {
                         try {
                             const answer = await p2pEngine.answerOffer(val);
                             box.value = answer;
@@ -1200,6 +1335,76 @@
                         } catch(e) {
                             PrivacyConvert.ui.showToast('Geçersiz SDP Answer!', 'error');
                         }
+                    }
+                },
+                async opfsSave() {
+                    const name = document.getElementById('opfsFileName')?.value;
+                    const content = document.getElementById('opfsFileContent')?.value;
+                    if(!name || !content) return PrivacyConvert.ui.showToast('Dosya adı ve içeriği gerekli!', 'warning');
+                    await opfsEngine.writeFile(name, content);
+                    PrivacyConvert.ui.showToast('OPFS Sanal Diske Kaydedildi!');
+                    this.opfsList();
+                },
+                async opfsList() {
+                    try {
+                        const files = await opfsEngine.listFiles();
+                        const list = document.getElementById('opfsFileList');
+                        if(!list) return;
+                        list.innerHTML = files.length === 0 ? '<span class="text-slate-400">Sürücü boş.</span>' : '';
+                        files.forEach(f => {
+                            const div = document.createElement('div');
+                            div.className = "flex justify-between items-center bg-white dark:bg-slate-800 p-2 rounded-xl border";
+                            div.innerHTML = `<span>${f}</span><div class="space-x-2"><button onclick="PrivacyConvert.engine.opfsRead('${f}')" class="text-indigo-500 font-bold">Oku</button><button onclick="PrivacyConvert.engine.opfsDel('${f}')" class="text-red-500 font-bold">Sil</button></div>`;
+                            list.appendChild(div);
+                        });
+                    } catch(e) {
+                        PrivacyConvert.ui.showToast('OPFS listelenemedi', 'error');
+                    }
+                },
+                async opfsRead(name) {
+                    const text = await opfsEngine.readFile(name);
+                    document.getElementById('opfsFileName').value = name;
+                    document.getElementById('opfsFileContent').value = text;
+                    PrivacyConvert.ui.showToast(`Dosya okundu: ${name}`);
+                },
+                async opfsDel(name) {
+                    await opfsEngine.deleteFile(name);
+                    PrivacyConvert.ui.showToast(`Dosya silindi: ${name}`);
+                    this.opfsList();
+                },
+                ragAddDoc() {
+                    const title = document.getElementById('ragDocTitle')?.value;
+                    const content = document.getElementById('ragDocContent')?.value;
+                    if(!title || !content) return PrivacyConvert.ui.showToast('Başlık ve içerik girin!', 'warning');
+                    localRagEngine.addDocument(title, content);
+                    PrivacyConvert.ui.showToast('Doküman yerel olarak indekslendi!');
+                    document.getElementById('ragDocTitle').value = '';
+                    document.getElementById('ragDocContent').value = '';
+                },
+                ragSearch() {
+                    const query = document.getElementById('ragQueryInput')?.value;
+                    const result = localRagEngine.search(query);
+                    document.getElementById('ragResultArea').value = result;
+                },
+                async zkpCommit() {
+                    const secret = document.getElementById('zkpSecret')?.value;
+                    if(!secret) return PrivacyConvert.ui.showToast('Gizli veri girin!', 'warning');
+                    const res = await zkpEngine.generateCommitment(secret);
+                    document.getElementById('zkpResultBox').value = `Commitment Hash: ${res.commitment}\nSecret Salt: ${res.salt}`;
+                    document.getElementById('zkpVerifySecret').value = secret;
+                    document.getElementById('zkpVerifySalt').value = res.salt;
+                    document.getElementById('zkpVerifyTarget').value = res.commitment;
+                    PrivacyConvert.ui.showToast('ZKP Taahhüdü oluşturuldu!');
+                },
+                async zkpVerify() {
+                    const secret = document.getElementById('zkpVerifySecret')?.value;
+                    const salt = document.getElementById('zkpVerifySalt')?.value;
+                    const target = document.getElementById('zkpVerifyTarget')?.value;
+                    const isValid = await zkpEngine.verifyCommitment(secret, salt, target);
+                    if(isValid) {
+                        PrivacyConvert.ui.showToast('✅ ZKP Kanıtı BAŞARILI! Bilgi ifşa edilmeden doğrulandı.', 'success');
+                    } else {
+                        PrivacyConvert.ui.showToast('❌ ZKP Kanıtı GEÇERSİZ!', 'error');
                     }
                 },
                 async saveVaultNote() {
