@@ -1319,15 +1319,15 @@
                     'webauthn-vault': { type: 'webauthn', titleKey: 'toolWebAuthn', valueTitleKey: 'v_webauthn_title', valueDescKey: 'v_webauthn_desc' },
                     'steganography': { type: 'interactive-stega', accept: 'image/*', titleKey: 'toolStega', valueTitleKey: 'v_stega_title', valueDescKey: 'v_stega_desc' },
                     'self-destruct': { type: 'vault', titleKey: 'toolDestruct', valueTitleKey: 'v_destruct_title', valueDescKey: 'v_destruct_desc' },
-                    'encrypt-tool': { type: 'crypto', titleKey: 'toolEncrypt', valueTitleKey: 'v_encrypt_title', valueDescKey: 'v_encrypt_desc' },
+                    'encrypt-tool': { type: 'crypto', accept: '*/*', titleKey: 'toolEncrypt', valueTitleKey: 'v_encrypt_title', valueDescKey: 'v_encrypt_desc' },
                     'template-market': { type: 'text', titleKey: 'toolMarket', valueTitleKey: 'v_market_title', valueDescKey: 'v_market_desc' },
                     'zkp-validator': { type: 'interactive-zkp', titleKey: 'toolZkp', valueTitleKey: 'v_zkp_title', valueDescKey: 'v_zkp_desc' },
                     'lora-tuning': { type: 'text', titleKey: 'toolLora', valueTitleKey: 'v_lora_title', valueDescKey: 'v_lora_desc' },
                     'local-rag': { type: 'interactive-rag', titleKey: 'toolLocalRag', valueTitleKey: 'v_rag_title', valueDescKey: 'v_rag_desc' },
                     'doc-diff': { type: 'text', titleKey: 'toolDiff', valueTitleKey: 'v_diff_title', valueDescKey: 'v_diff_desc' },
                     'cross-compliance': { type: 'text', titleKey: 'toolCross', valueTitleKey: 'v_cross_title', valueDescKey: 'v_cross_desc' },
-                    'timestamp-anchor': { type: 'file', multiple: true, titleKey: 'toolTimestamp', valueTitleKey: 'v_timestamp_title', valueDescKey: 'v_timestamp_desc' },
-                    'chain-custody': { type: 'file', multiple: true, titleKey: 'toolCustody', valueTitleKey: 'v_custody_title', valueDescKey: 'v_custody_desc' },
+                    'timestamp-anchor': { type: 'file', multiple: true, accept: '*/*', titleKey: 'toolTimestamp', valueTitleKey: 'v_timestamp_title', valueDescKey: 'v_timestamp_desc' },
+                    'chain-custody': { type: 'file', multiple: true, accept: '*/*', titleKey: 'toolCustody', valueTitleKey: 'v_custody_title', valueDescKey: 'v_custody_desc' },
                     'contract-analyzer': { type: 'text', titleKey: 'toolContract', valueTitleKey: 'v_contract_title', valueDescKey: 'v_contract_desc' },
                     'pdf-to-png': { type: 'file', accept: 'application/pdf', titleKey: 'toolPdfPng', valueTitleKey: 'v_pdfpng_title', valueDescKey: 'v_pdfpng_desc' },
                     'pdf-merge': { type: 'file', accept: 'application/pdf', multiple: true, titleKey: 'toolPdfMerge', valueTitleKey: 'v_pdfmerge_title', valueDescKey: 'v_pdfmerge_desc' },
@@ -1413,7 +1413,13 @@
                     const container = document.getElementById('interactiveWorkspaceContainer');
                     const mainInput = document.getElementById('mainInputField');
                     const outBox = document.getElementById('genericTextArea');
+                    const fileInput = document.getElementById('fileInput');
                     
+                    if (fileInput) {
+                        fileInput.accept = meta.accept || '*/*';
+                        fileInput.value = '';
+                    }
+
                     if(actionArea) actionArea.classList.add('hidden');
                     if(textInputGroup) textInputGroup.classList.add('hidden');
                     if(genericTextBox) genericTextBox.classList.add('hidden');
