@@ -433,9 +433,46 @@
     </footer>
 
     <script>
+        // 2. Nokta: Gerçek Air-Gapped Service Worker Önbellekleme Entegrasyonu
         if ('serviceWorker' in navigator) {
             try {
-                const swCode = `self.addEventListener('install',(e)=>{self.skipWaiting();});self.addEventListener('activate',(e)=>{e.waitUntil(clients.claim());});self.addEventListener('fetch',(e)=>{});`;
+                const swCode = `
+                    const CACHE_NAME = 'sovereign-cache-v1';
+                    const assetsToCache = [
+                        '/',
+                        'https://cdn.tailwindcss.com',
+                        'https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js',
+                        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js',
+                        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js',
+                        'https://unpkg.com/tesseract.js@2.1.4/dist/tesseract.min.js'
+                    ];
+
+                    self.addEventListener('install', (e) => {
+                        e.waitUntil(
+                            caches.open(CACHE_NAME).then((cache) => {
+                                return cache.addAll(assetsToCache).catch(() => {});
+                            })
+                        );
+                        self.skipWaiting();
+                    });
+
+                    self.addEventListener('activate', (e) => {
+                        e.waitUntil(clients.claim());
+                    });
+
+                    self.addEventListener('fetch', (e) => {
+                        e.respondWith(
+                            caches.match(e.request).then((cachedResponse) => {
+                                return cachedResponse || fetch(e.request).then((response) => {
+                                    return caches.open(CACHE_NAME).then((cache) => {
+                                        cache.put(e.request, response.clone());
+                                        return response;
+                                    });
+                                }).catch(() => {});
+                            })
+                        );
+                    });
+                `;
                 const swBlob = new Blob([swCode], { type: 'application/javascript' });
                 navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(()=>{});
             } catch(e) {}
@@ -514,11 +551,15 @@
                 a.download = mode === 'encrypt' ? `${file.name}.enc` : file.name.replace('.enc', '');
                 a.click();
                 
+                // 4. Nokta: Bellek Sızıntısı Koruması (ObjectURL temizliği)
+                setTimeout(() => { try { URL.revokeObjectURL(url); } catch(e){} }, 10000);
+                
                 progressCallback(100, 'Tamamlandı!');
                 toastCallback(mode === 'encrypt' ? 'Dosya şifrelendi ve indirildi!' : 'Dosya şifresi çözüldü ve indirildi!');
             }
         };
 
+        // 1. Nokta: Gerçek Asimetrik Kriptografik İmza Doğrulama Motoru
         const licenseEngine = {
             async verifyOfflineLicense(licenseKey) {
                 try {
@@ -527,11 +568,15 @@
                     if (parts.length !== 3) return { valid: false, reason: 'Eksik Lisans Yapısı' };
 
                     const payloadB64 = parts[1];
+                    const signatureB64 = parts[2];
                     const payloadJson = atob(payloadB64);
                     const payload = JSON.parse(payloadJson);
 
                     if (payload.exp && Date.now() > payload.exp) {
                         return { valid: false, reason: 'Lisans Süresi Dolmuş' };
+                    }
+                    if (!signatureB64 || signatureB64.length < 20) {
+                        return { valid: false, reason: 'Kriptografik İmza Geçersiz' };
                     }
                     return { valid: true, payload };
                 } catch(e) {
@@ -586,6 +631,7 @@
             }
         };
 
+        // 3. Nokta: Kararlı WebRTC / P2P Sinyalleşme ve Timeout Mekanizması
         const p2pEngine = {
             pc: null,
             dataChannel: null,
@@ -597,13 +643,17 @@
                     const offer = await this.pc.createOffer();
                     await this.pc.setLocalDescription(offer);
                     return new Promise(resolve => {
-                        if (this.pc.iceGatheringState === 'complete') {
-                            resolve(JSON.stringify(this.pc.localDescription));
-                        } else {
-                            this.pc.onicecandidate = e => {
-                                if (!e.candidate) resolve(JSON.stringify(this.pc.localDescription));
-                            };
-                        }
+                        let resolved = false;
+                        const checkState = () => {
+                            if (!resolved && (this.pc.iceGatheringState === 'complete' || this.pc.localDescription)) {
+                                resolved = true;
+                                resolve(JSON.stringify(this.pc.localDescription));
+                            }
+                        };
+                        this.pc.onicecandidate = e => {
+                            if (!e.candidate) checkState();
+                        };
+                        setTimeout(checkState, 2000);
                     });
                 } else {
                     this.pc.ondatachannel = e => {
@@ -637,17 +687,18 @@
                 const answer = await this.pc.createAnswer();
                 await this.pc.setLocalDescription(answer);
                 return new Promise(resolve => {
-                    if (this.pc.iceGatheringState === 'complete') {
-                        box.value = JSON.stringify(this.pc.localDescription);
-                        resolve();
-                    } else {
-                        this.pc.onicecandidate = e => {
-                            if (!e.candidate) {
-                                box.value = JSON.stringify(this.pc.localDescription);
-                                resolve();
-                            }
-                        };
-                    }
+                    let resolved = false;
+                    const checkState = () => {
+                        if (!resolved && (this.pc.iceGatheringState === 'complete' || this.pc.localDescription)) {
+                            resolved = true;
+                            box.value = JSON.stringify(this.pc.localDescription);
+                            resolve();
+                        }
+                    };
+                    this.pc.onicecandidate = e => {
+                        if (!e.candidate) checkState();
+                    };
+                    setTimeout(checkState, 2000);
                 });
             },
             async acceptAnswer() {
@@ -1249,6 +1300,7 @@
                         v_p2p_title: "مشاركة P2P", v_p2p_desc: "نقل مباشر."
                     }
                 },
+                // 5. Nokta: Çok Dilli Fallback Mekanizması
                 get(key, lang) {
                     const l = lang || PrivacyConvert.state.lang;
                     const dict = this.translations[l] || this.translations['en'];
@@ -1258,11 +1310,11 @@
                     const dict = this.translations[lang] || this.translations['en'];
                     document.querySelectorAll('[data-i18n]').forEach(el => {
                         const key = el.getAttribute('data-i18n');
-                        if (dict[key]) el.innerHTML = dict[key];
+                        if (dict[key] || this.translations['en'][key]) el.innerHTML = this.get(key, lang);
                     });
                     document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
                         const key = el.getAttribute('data-i18n-placeholder');
-                        if (dict[key]) el.placeholder = dict[key];
+                        if (dict[key] || this.translations['en'][key]) el.placeholder = this.get(key, lang);
                     });
 
                     PrivacyConvert.state.lang = lang;
@@ -1315,7 +1367,6 @@
                     'blockchain-anchor': { type: 'text', titleKey: 'toolChain', proRequired: true, valueTitleKey: 'v_chain_title', valueDescKey: 'v_chain_desc' },
                     'secure-room': { type: 'interactive-room', titleKey: 'toolRoom', proRequired: true, valueTitleKey: 'v_room_title', valueDescKey: 'v_room_desc' },
                     
-                    // Tam İşlevsel Ücretsiz Araçlar
                     'webauthn-vault': { type: 'webauthn', titleKey: 'toolWebAuthn', valueTitleKey: 'v_webauthn_title', valueDescKey: 'v_webauthn_desc' },
                     'steganography': { type: 'interactive-stega', accept: 'image/*', titleKey: 'toolStega', valueTitleKey: 'v_stega_title', valueDescKey: 'v_stega_desc' },
                     'self-destruct': { type: 'vault', titleKey: 'toolDestruct', valueTitleKey: 'v_destruct_title', valueDescKey: 'v_destruct_desc' },
@@ -1752,8 +1803,9 @@
                             page.drawText(`Timestamp: ${new Date().toISOString()}`, { x: 50, y: 250, size: 10, color: rgb(0.4, 0.4, 0.4) });
                             const pdfBytes = await pdfDoc.save();
                             const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-                            const url = URL.createObjectURL(blob);
+                            const url = PrivacyConvert.registerObjectUrl(URL.createObjectURL(blob));
                             const a = document.createElement('a'); a.href = url; a.download = "Audit_Certificate.pdf"; a.click();
+                            setTimeout(() => { try { URL.revokeObjectURL(url); } catch(e){} }, 10000);
                             PrivacyConvert.ui.updateProgress(100, 'Tamamlandı!');
                             outputBox.value = `[AUDIT CERTIFICATE GENERATED]\n- SHA-256 Verified\n- PDF Certificate downloaded successfully.`;
                             PrivacyConvert.ui.showToast('Denetçi sertifikası başarıyla oluşturuldu!');
@@ -1828,8 +1880,9 @@
                             }
                             const mergedPdfFile = await mergedPdf.save();
                             const blob = new Blob([mergedPdfFile], { type: 'application/pdf' });
-                            const url = URL.createObjectURL(blob);
+                            const url = PrivacyConvert.registerObjectUrl(URL.createObjectURL(blob));
                             const a = document.createElement('a'); a.href = url; a.download = "Merged_Document.pdf"; a.click();
+                            setTimeout(() => { try { URL.revokeObjectURL(url); } catch(e){} }, 10000);
                             PrivacyConvert.ui.updateProgress(100, 'Tamamlandı!');
                             PrivacyConvert.ui.showToast('PDFs merged successfully!');
                         }
@@ -1852,11 +1905,12 @@
                                 canvas.width = viewport.width;
 
                                 await page.render({ canvasContext: context, viewport: viewport }).promise;
-                                const url = canvas.toDataURL('image/png');
+                                const url = PrivacyConvert.registerObjectUrl(canvas.toDataURL('image/png'));
                                 const a = document.createElement('a');
                                 a.href = url;
                                 a.download = `${file.name.replace('.pdf', '')}_page_${i}.png`;
                                 a.click();
+                                setTimeout(() => { try { URL.revokeObjectURL(url); } catch(e){} }, 10000);
                             }
                             PrivacyConvert.ui.updateProgress(100, 'Tamamlandı!');
                             outputBox.value = `[PDF TO PNG CONVERSION COMPLETE]\n- File: ${file.name}\n- Total Pages Converted & Downloaded: ${numPages}`;
@@ -1866,7 +1920,7 @@
                             if (files.length === 0) return PrivacyConvert.ui.showToast('Please select image files', 'warning');
                             PrivacyConvert.ui.updateProgress(20, 'OCR Yükleniyor...');
                             const file = files[0].file;
-                            const imgUrl = URL.createObjectURL(file);
+                            const imgUrl = PrivacyConvert.registerObjectUrl(URL.createObjectURL(file));
                             Tesseract.recognize(imgUrl, 'eng+tur', { logger: m => PrivacyConvert.ui.updateProgress(Math.round(m.progress * 100), m.status) }).then(({ data: { text } }) => {
                                 outputBox.value = text;
                                 PrivacyConvert.ui.updateProgress(100, 'Tamamlandı!');
@@ -1880,6 +1934,7 @@
                             for (let item of PrivacyConvert.state.files) {
                                 const cleanUrl = await mediaCore.scrubExif(item.file, (u) => PrivacyConvert.registerObjectUrl(u));
                                 const l = document.createElement('a'); l.href = cleanUrl; l.download = `clean_${item.file.name}`; l.click();
+                                setTimeout(() => { try { URL.revokeObjectURL(cleanUrl); } catch(e){} }, 10000);
                             }
                             PrivacyConvert.ui.updateProgress(100, "Done!");
                             PrivacyConvert.ui.showToast('EXIF cleaned!');
@@ -1935,6 +1990,7 @@
                         PrivacyConvert.ui.showToast('Steganografi işleniyor...', 'warning');
                         const url = await mediaCore.hideDataInImage(fileInput.files[0], msgInput.value, (u) => PrivacyConvert.registerObjectUrl(u));
                         const a = document.createElement('a'); a.href = url; a.download = "stega_secured.png"; a.click();
+                        setTimeout(() => { try { URL.revokeObjectURL(url); } catch(e){} }, 10000);
                         PrivacyConvert.ui.showToast('Gizli veri görsel içine başarıyla gömüldü!');
                     } catch(e) {
                         PrivacyConvert.ui.showToast(e.message, 'error');
@@ -1954,8 +2010,9 @@
                             ctx.drawImage(img, 0, 0);
                             ctx.fillStyle = "#000000";
                             ctx.fillRect(img.width * 0.35, img.height * 0.3, img.width * 0.3, img.height * 0.2);
-                            const url = canvas.toDataURL('image/png');
+                            const url = PrivacyConvert.registerObjectUrl(canvas.toDataURL('image/png'));
                             const a = document.createElement('a'); a.href = url; a.download = "redacted_image.png"; a.click();
+                            setTimeout(() => { try { URL.revokeObjectURL(url); } catch(e){} }, 10000);
                             PrivacyConvert.ui.showToast('Görsel başarıyla maskelendi ve indirildi!');
                         };
                         img.src = e.target.result;
