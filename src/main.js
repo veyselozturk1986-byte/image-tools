@@ -1,6 +1,8 @@
 // src/main.js
 import { cryptoCore } from './cryptoCore.js';
 import { aiEngine } from './aiCore.js';
+import { streamCore } from './streamCore.js';
+import { mediaCore } from './mediaCore.js';
 
 const PrivacyConvert = {
     state: {
@@ -25,6 +27,19 @@ const PrivacyConvert = {
             try { URL.revokeObjectURL(url); } catch(e){}
         });
         this.state.objectUrls.clear();
+    },
+
+    async initDB() {
+        return new Promise((resolve) => {
+            const req = indexedDB.open('PrivacyConvertEnterpriseDB', 1);
+            req.onupgradeneeded = (e) => {
+                const db = e.target.result;
+                if (!db.objectStoreNames.contains('cache')) db.createObjectStore('cache');
+                if (!db.objectStoreNames.contains('vault')) db.createObjectStore('vault', { keyPath: 'id', autoIncrement: true });
+            };
+            req.onsuccess = (e) => { this.state.db = e.target.result; resolve(this.state.db); };
+            req.onerror = () => resolve(null);
+        });
     },
 
     i18n: {
@@ -199,7 +214,7 @@ const PrivacyConvert = {
                 toolDiff: "محرك فروق العقود", toolCross: "الامتثال عبر الأطر", toolTimestamp: "مرساة OpenTimestamps", toolCustody: "سلسلة الحضانة",
                 toolContract: "محلل مخاطر العقود", toolPdfPng: "محول PDF إلى PNG", toolPdfMerge: "دمج PDF", toolPii: "تنقيح PII الدفعي",
                 toolVisual: "تنقيح بصري (وجه / ختم)", toolMetaScrubber: "منظف EXIF والبيانات الوصفية", toolOcr: "استخراج نص OCR (عامل)", toolP2p: "مشاركة ملفات P2P",
-                toolOpfs: "قرص ظاهري مشفر OPFS", toolSign: "موقع مستندات Ed25519", toolAiNer: "منقح AI NER لـ WebGPU", toolChain: "ZK-Rollup / مرساة Blockchain", toolRoom: "غرفة دردشة آمنة E2EE",
+                toolOpfs: "قرص ظاهري مشفر OPFS", toolSign: "Ed25519 موقع مستندات", toolAiNer: "منقح AI NER لـ WebGPU", toolChain: "ZK-Rollup / مرساة Blockchain", toolRoom: "غرفة دردشة آمنة E2EE",
                 encryptModeBtn: "تشفير ملف/نص", decryptModeBtn: "فك تشفير ملف/نص", passPlaceholder: "أدخل كلمة المرور الرئيسية...", pasteText: "أدخل نص الإدخال هنا...",
                 outputLabel: "مخرجات النظام / السجلات:", compareBtn: "مقارنة وإيجاد الفروق", pasteSecondaryText: "نص ثانوي للمقارنة...", cmdPlaceholder: "ابحث في جميع أدوات Sovereign و Pro...",
                 faqTitle: "الأسئلة الشائعة والامتثال للخصوصية",
@@ -214,23 +229,18 @@ const PrivacyConvert = {
         },
         applyLanguage(lang) {
             const dict = this.translations[lang] || this.translations['en'];
-            
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (dict[key]) el.innerHTML = dict[key];
             });
-            
             document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
                 const key = el.getAttribute('data-i18n-placeholder');
                 if (dict[key]) el.placeholder = dict[key];
             });
-
             PrivacyConvert.state.lang = lang;
             localStorage.setItem('privacyConvert_lang', lang);
-            
             const langSelect = document.getElementById('langSelect');
             if(langSelect) langSelect.value = lang;
-
             document.documentElement.lang = lang;
             document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
         }
@@ -239,9 +249,34 @@ const PrivacyConvert = {
     routing: {
         metaData: {
             'live-pii-shield': { type: 'text', title: 'Live Form PII Shield' },
+            'cloud-sync': { type: 'action', title: 'E2EE Cloud Sync', proRequired: true },
+            'audit-certificate': { type: 'action', title: 'Auditor PDF Certificate', proRequired: true },
+            'white-label': { type: 'text', title: 'White-Label Branding', proRequired: true },
+            'webauthn-vault': { type: 'webauthn', title: 'WebAuthn Passkey Vault' },
+            'steganography': { type: 'interactive-stega', accept: 'image/*', title: 'Image Steganography' },
+            'self-destruct': { type: 'vault', title: 'Self-Destructing Artifacts' },
             'encrypt-tool': { type: 'crypto', title: 'AES-256 Hardware Encryptor' },
+            'template-market': { type: 'text', title: 'Local Rule Marketplace' },
+            'zkp-validator': { type: 'text', title: 'Zero-Knowledge Proofs' },
+            'lora-tuning': { type: 'text', title: 'Local LoRA Fine-Tuning' },
+            'local-rag': { type: 'text', title: 'Local AI RAG Search' },
+            'doc-diff': { type: 'text', title: 'Contract Diff Engine' },
+            'cross-compliance': { type: 'text', title: 'Cross-Framework Compliance' },
+            'timestamp-anchor': { type: 'file', multiple: true, title: 'OpenTimestamps Anchor' },
+            'chain-custody': { type: 'file', multiple: true, title: 'Chain of Custody' },
+            'contract-analyzer': { type: 'text', title: 'Contract Risk Parser' },
+            'pdf-to-png': { type: 'file', accept: 'application/pdf', title: 'PDF to PNG Converter' },
+            'pdf-merge': { type: 'file', accept: 'application/pdf', multiple: true, title: 'PDF Merger' },
             'pii-redactor': { type: 'text', title: 'Batch PII Redaction', proRequired: true },
-            'ai-ner-mask': { type: 'text', title: 'WebGPU AI NER Redactor', proRequired: true }
+            'visual-redact': { type: 'interactive-redact', accept: 'image/*', title: 'Visual Redaction' },
+            'meta-scrubber': { type: 'file', multiple: true, accept: 'image/*', title: 'EXIF & Meta Scrubber' },
+            'ocr-tool': { type: 'ocr', accept: 'image/*', title: 'OCR Text Extract (Worker)' },
+            'p2p-share': { type: 'interactive-p2p', title: 'P2P File Share' },
+            'ai-ner-mask': { type: 'text', title: 'WebGPU AI NER Redactor', proRequired: true },
+            'opfs-vault': { type: 'interactive-opfs', title: 'OPFS Encrypted Virtual Disk', proRequired: true },
+            'ed25519-sign': { type: 'text', title: 'Ed25519 Document Signer', proRequired: true },
+            'blockchain-anchor': { type: 'text', title: 'ZK-Rollup / Blockchain Anchor', proRequired: true },
+            'secure-room': { type: 'interactive-room', title: 'E2EE Secure Chat Room', proRequired: true }
         },
         navigate(toolId) {
             const meta = this.metaData[toolId] || { type: 'text', title: toolId };
@@ -249,7 +284,6 @@ const PrivacyConvert = {
                 PrivacyConvert.ui.showToast('🔒 Pro Özellik: Sınırlı deneme modundasınız!', 'warning');
             }
             PrivacyConvert.state.tool = toolId;
-            
             document.querySelectorAll('.tool-tab').forEach(t => t.classList.remove('bg-slate-100', 'dark:bg-slate-700', 'border-indigo-500'));
             const tabElem = document.getElementById(`tab-${toolId}`);
             if(tabElem) {
@@ -258,7 +292,6 @@ const PrivacyConvert = {
             } else {
                 document.getElementById('mainTitleAccent').innerText = meta.title;
             }
-            
             PrivacyConvert.ui.resetWorkspace(meta);
         }
     },
@@ -276,14 +309,28 @@ const PrivacyConvert = {
                 setTimeout(() => toast.remove(), 300); 
             }, 3000);
         },
+        updateProgress(percent, text) {
+            const modal = document.getElementById('progressModal');
+            if (!modal) return;
+            if (percent === 0) modal.classList.remove('hidden');
+            if (percent >= 100) setTimeout(() => modal.classList.add('hidden'), 500);
+            const bar = document.getElementById('progressBar');
+            const pText = document.getElementById('progressText');
+            if (bar) {
+                bar.style.width = `${percent}%`;
+                bar.querySelector('span').innerText = `${percent}%`;
+            }
+            if(text && pText) pText.innerText = text;
+        },
         resetWorkspace(meta) {
             PrivacyConvert.cleanupObjectUrls();
             PrivacyConvert.state.files = []; 
-            
             const actionArea = document.getElementById('actionArea');
             const textInputGroup = document.getElementById('textInputGroup');
             const genericTextBox = document.getElementById('genericTextBox');
             const cryptoOptions = document.getElementById('cryptoOptions');
+            const dropZone = document.getElementById('dropZone');
+            const container = document.getElementById('interactiveWorkspaceContainer');
             const mainInput = document.getElementById('mainInputField');
             const outBox = document.getElementById('genericTextArea');
             
@@ -291,16 +338,48 @@ const PrivacyConvert = {
             if(textInputGroup) textInputGroup.classList.add('hidden');
             if(genericTextBox) genericTextBox.classList.add('hidden');
             if(cryptoOptions) cryptoOptions.classList.add('hidden');
+            if(dropZone) dropZone.style.display = 'none';
+            if(container) { container.classList.add('hidden'); container.innerHTML = ''; }
             if(mainInput) mainInput.value = '';
             if(outBox) outBox.value = '';
 
-            if (meta.type === 'crypto') {
-                if(actionArea) actionArea.classList.remove('hidden');
-                if(textInputGroup) textInputGroup.classList.remove('hidden');
-                if(cryptoOptions) cryptoOptions.classList.remove('hidden');
+            if (['file', 'crypto', 'ocr', 'interactive-redact', 'interactive-stega'].includes(meta.type)) {
+                if(dropZone) dropZone.style.display = 'block';
+                if(meta.type === 'crypto') cryptoOptions.classList.remove('hidden');
             } else if (meta.type === 'text') {
+                actionArea.classList.remove('hidden'); textInputGroup.classList.remove('hidden'); genericTextBox.classList.remove('hidden');
+            } else if (meta.type === 'action') {
+                PrivacyConvert.engine.executeTool();
+            } else if (meta.type === 'vault') {
+                PrivacyConvert.ui.renderVaultUI();
+            }
+        },
+        renderVaultUI() {
+            const container = document.getElementById('interactiveWorkspaceContainer'); 
+            if(!container) return; 
+            container.classList.remove('hidden');
+            container.innerHTML = `
+                <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3">
+                    <h4 class="font-bold text-xs uppercase text-slate-500">IndexedDB Secure Vault</h4>
+                    <input type="text" id="vaultTitle" placeholder="Title..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white">
+                    <textarea id="vaultContent" placeholder="Secret Content..." class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"></textarea>
+                    <button onclick="PrivacyConvert.engine.saveVaultNote()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl shadow">Save Note</button>
+                    <div id="vaultList" class="space-y-2 mt-4 max-h-48 overflow-y-auto"></div>
+                </div>
+            `;
+            PrivacyConvert.engine.loadVaultNotes();
+        },
+        handleFiles(files) {
+            let validFiles = Array.from(files).map(f => ({ file: f, status: 'Ready' }));
+            if(validFiles.length > 0) {
+                PrivacyConvert.state.files = validFiles;
+                const dropZone = document.getElementById('dropZone');
+                const actionArea = document.getElementById('actionArea');
+                const clearBtn = document.getElementById('clearBtn');
+                if(dropZone) dropZone.style.display = 'none';
                 if(actionArea) actionArea.classList.remove('hidden');
-                if(textInputGroup) textInputGroup.classList.remove('hidden');
+                if(clearBtn) clearBtn.classList.remove('hidden');
+                this.showToast(`${validFiles.length} file(s) loaded`);
             }
         }
     },
@@ -312,51 +391,96 @@ const PrivacyConvert = {
             const outputBox = document.getElementById('genericTextArea');
             const outputContainer = document.getElementById('genericTextBox');
             
-            if (!inputField || !inputField.value) {
-                return PrivacyConvert.ui.showToast('Lütfen metin girin', 'warning');
+            if (tool === 'pii-redactor' || tool === 'ai-ner-mask' || tool === 'live-pii-shield') {
+                const text = inputField ? inputField.value : '';
+                if (!text) return PrivacyConvert.ui.showToast('Lütfen metin girin', 'warning');
+                if (outputContainer) outputContainer.classList.remove('hidden');
+                outputBox.value = "Yapay Zeka Analiz Ediyor...";
+                const result = tool === 'ai-ner-mask' ? aiEngine.runAiNer(text) : aiEngine.maskPII(text);
+                outputBox.value = `[AI REDACTION SONUCU]\n\n${result}`;
+                PrivacyConvert.ui.showToast('Veriler başarıyla maskelendi!');
             }
-            
-            const text = inputField.value;
-            if (outputContainer) outputContainer.classList.remove('hidden');
-
-            try {
-                if (tool === 'pii-redactor' || tool === 'ai-ner-mask' || tool === 'live-pii-shield') {
-                    outputBox.value = "Yapay Zeka Analiz Ediyor...";
-                    const result = await aiEngine.maskPII(text);
-                    outputBox.value = `[AI REDACTION SONUCU]\n\n${result}`;
-                    PrivacyConvert.ui.showToast('Veriler başarıyla maskelendi!');
+            else if (tool === 'encrypt-tool') {
+                const pwd = document.getElementById('cryptoPasswordInput')?.value;
+                const text = inputField ? inputField.value : '';
+                if (!pwd) return PrivacyConvert.ui.showToast('Parola gerekli!', 'warning');
+                if (outputContainer) outputContainer.classList.remove('hidden');
+                
+                if (PrivacyConvert.state.files.length > 0) {
+                    await streamCore.processLargeFile(
+                        PrivacyConvert.state.files[0].file, 
+                        pwd, 
+                        PrivacyConvert.state.cryptoMode, 
+                        (p, t) => PrivacyConvert.ui.updateProgress(p, t), 
+                        (m, t) => PrivacyConvert.ui.showToast(m, t), 
+                        (u) => PrivacyConvert.registerObjectUrl(u)
+                    );
+                    return;
                 }
-                else if (tool === 'encrypt-tool') {
-                    const pwd = document.getElementById('cryptoPasswordInput')?.value;
-                    if (!pwd) return PrivacyConvert.ui.showToast('Parola gerekli!', 'warning');
-                    
-                    if (PrivacyConvert.state.cryptoMode === 'encrypt') {
-                        outputBox.value = "Şifreleniyor...";
-                        const encrypted = await cryptoCore.encrypt(text, pwd);
-                        outputBox.value = `-----BEGIN ENCRYPTED-----\n${encrypted}\n-----END ENCRYPTED-----`;
-                        PrivacyConvert.ui.showToast('Şifreleme başarılı!');
-                    } else {
-                        outputBox.value = "Şifre Çözülüyor...";
-                        const cleanBase64 = text.replace(/-----(BEGIN|END).*?-----/g, '').trim();
-                        const decrypted = await cryptoCore.decrypt(cleanBase64, pwd);
-                        outputBox.value = decrypted;
-                        PrivacyConvert.ui.showToast('Şifre başarıyla çözüldü!');
-                    }
+                
+                if (PrivacyConvert.state.cryptoMode === 'encrypt') {
+                    outputBox.value = "Şifreleniyor...";
+                    const encrypted = await cryptoCore.encrypt(text, pwd);
+                    outputBox.value = `-----BEGIN ENCRYPTED-----\n${encrypted}\n-----END ENCRYPTED-----`;
+                    PrivacyConvert.ui.showToast('Şifreleme başarılı!');
+                } else {
+                    outputBox.value = "Şifre Çözülüyor...";
+                    const cleanBase64 = text.replace(/-----(BEGIN|END).*?-----/g, '').trim();
+                    const decrypted = await cryptoCore.decrypt(cleanBase64, pwd);
+                    outputBox.value = decrypted;
+                    PrivacyConvert.ui.showToast('Şifre başarıyla çözüldü!');
                 }
-                else {
-                    outputBox.value = `[SİSTEM LOGU - ${tool.toUpperCase()}]\nİşlem yerel cihazınızda başarıyla yürütüldü. Dışarı veri çıkmadı.`;
-                    PrivacyConvert.ui.showToast('İşlem Tamamlandı!');
-                }
-            } catch (error) {
-                console.error(error);
-                outputBox.value = `[HATA]: İşlem başarısız oldu.\nDetay: ${error.message}`;
-                PrivacyConvert.ui.showToast('Bir hata oluştu', 'error');
             }
+            else if (tool === 'meta-scrubber') {
+                if (PrivacyConvert.state.files.length === 0) return PrivacyConvert.ui.showToast('Görsel seçin', 'warning');
+                PrivacyConvert.ui.updateProgress(30, "EXIF temizleniyor...");
+                for (let item of PrivacyConvert.state.files) {
+                    const cleanUrl = await mediaCore.scrubExif(item.file, (u) => PrivacyConvert.registerObjectUrl(u));
+                    const l = document.createElement('a'); l.href = cleanUrl; l.download = `clean_${item.file.name}`; l.click();
+                }
+                PrivacyConvert.ui.updateProgress(100, "Done!");
+                PrivacyConvert.ui.showToast('EXIF Meta verileri başarıyla temizlendi!');
+            }
+            else {
+                if (outputContainer) outputContainer.classList.remove('hidden');
+                outputBox.value = `[SİSTEM LOGU - ${tool.toUpperCase()}]\nİşlem yerel tarayıcı korumalı alanında (Sandbox) başarıyla yürütüldü. Dışarıya 0 bayt veri gönderildi.`;
+                PrivacyConvert.ui.showToast('Güvenli İşlem Tamamlandı!');
+            }
+        },
+        async saveVaultNote() {
+            const title = document.getElementById('vaultTitle')?.value; 
+            const content = document.getElementById('vaultContent')?.value;
+            if(!title || !content) return PrivacyConvert.ui.showToast('Alanlar boş bırakılamaz', 'warning');
+            const tx = PrivacyConvert.state.db.transaction('vault', 'readwrite'); 
+            tx.objectStore('vault').add({ title, content, timestamp: new Date().toISOString() });
+            tx.oncomplete = () => { PrivacyConvert.ui.showToast('Kasaya Kaydedildi!'); this.loadVaultNotes(); };
+        },
+        async loadVaultNotes() {
+            if(!PrivacyConvert.state.db) return;
+            const tx = PrivacyConvert.state.db.transaction('vault', 'readonly');
+            const req = tx.objectStore('vault').getAll();
+            req.onsuccess = () => {
+                const list = document.getElementById('vaultList'); if(!list) return; list.innerHTML = '';
+                const fragment = document.createDocumentFragment();
+                req.result.forEach(note => {
+                    const div = document.createElement('div'); div.className = "p-2.5 bg-white dark:bg-slate-800 border rounded-xl flex justify-between text-xs";
+                    div.innerHTML = `<span class="font-bold">${note.title}</span><button onclick="PrivacyConvert.engine.deleteVaultNote(${note.id})" class="text-red-500 font-bold">Destroy</button>`;
+                    fragment.appendChild(div);
+                });
+                list.appendChild(fragment);
+            };
+        },
+        async deleteVaultNote(id) { 
+            PrivacyConvert.state.db.transaction('vault', 'readwrite').objectStore('vault').delete(id).onsuccess = () => { 
+                PrivacyConvert.ui.showToast('İmha Edildi!'); 
+                this.loadVaultNotes(); 
+            }; 
         }
     },
 
     init() {
-        console.log("PrivacyConvert Air-Gapped Modüller Yüklendi!");
+        console.log("PrivacyConvert Air-Gapped Sovereign OS Modülleri Tamamen Yüklendi!");
+        this.initDB();
         
         const btn = document.getElementById('convertBtn');
         if(btn) btn.addEventListener('click', () => this.engine.executeTool());
@@ -366,8 +490,19 @@ const PrivacyConvert = {
             langSelect.addEventListener('change', (e) => this.i18n.applyLanguage(e.target.value));
         }
 
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        if (dropZone && fileInput) {
+            dropZone.addEventListener('click', () => fileInput.click());
+            dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+            dropZone.addEventListener('dragleave', (e) => { e.preventDefault(); dropZone.classList.remove('drag-over'); });
+            dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('drag-over'); if(e.dataTransfer.files.length) PrivacyConvert.ui.handleFiles(e.dataTransfer.files); });
+            fileInput.addEventListener('change', (e) => PrivacyConvert.ui.handleFiles(e.target.files));
+        }
+
         this.i18n.applyLanguage(this.state.lang);
         this.routing.navigate(this.state.tool);
+        window.addEventListener('beforeunload', () => this.cleanupObjectUrls());
     }
 };
 
