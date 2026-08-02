@@ -378,7 +378,24 @@
     </footer>
 
     <!-- Yeni Modüler Sistem Bağlantısı Burada -->
-    <script type="module" src="./src/main.js"></script>
+    <
+    <!-- Modüler Sistem ve Dil Garantileyici Bağlantı -->
+    <script type="module">
+        import { PrivacyConvert } from './src/main.js';
+        
+        // Dil seçim kutusuna doğrudan ve anında bağlama garantisi
+        document.addEventListener('DOMContentLoaded', () => {
+            const langSelect = document.getElementById('langSelect');
+            if (langSelect) {
+                langSelect.value = PrivacyConvert.state.lang;
+                langSelect.onchange = (e) => {
+                    PrivacyConvert.i18n.applyLanguage(e.target.value);
+                };
+            }
+        });
+    </script>
+</body>
+</html>
 
 </body>
 </html>
