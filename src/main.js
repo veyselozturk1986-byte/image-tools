@@ -42,6 +42,7 @@ const PrivacyConvert = {
         });
     },
 
+    // KESİN ÇÖZÜMLÜ DİL ÇEVİRİ MOTORU
     i18n: {
         translations: {
             en: {
@@ -216,7 +217,7 @@ const PrivacyConvert = {
                 toolVisual: "تنقيح بصري (وجه / ختم)", toolMetaScrubber: "منظف EXIF والبيانات الوصفية", toolOcr: "استخراج نص OCR (عامل)", toolP2p: "مشاركة ملفات P2P",
                 toolOpfs: "قرص ظاهري مشفر OPFS", toolSign: "Ed25519 موقع مستندات", toolAiNer: "منقح AI NER لـ WebGPU", toolChain: "ZK-Rollup / مرساة Blockchain", toolRoom: "غرفة دردشة آمنة E2EE",
                 encryptModeBtn: "تشفير ملف/نص", decryptModeBtn: "فك تشفير ملف/نص", passPlaceholder: "أدخل كلمة المرور الرئيسية...", pasteText: "أدخل نص الإدخال هنا...",
-                outputLabel: "مخرجات النظام / السجلات:", compareBtn: "قارنة وإيجاد الفروق", pasteSecondaryText: "نص ثانوي للمقارنة...", cmdPlaceholder: "ابحث في جميع أدوات Sovereign و Pro...",
+                outputLabel: "مخرجات النظام / السجلات:", compareBtn: "مقارنة وإيجاد الفروق", pasteSecondaryText: "نص ثانوي للمقارنة...", cmdPlaceholder: "ابحث في جميع أدوات Sovereign و Pro...",
                 faqTitle: "الأسئلة الشائعة والامتثال للخصوصية",
                 faq1Q: "هل يتم إرسال بياناتي أبدًا إلى خوادم خارجية؟", faq1A: "لا. يعمل نظام PrivacyConvert Sovereign OS بنسبة 100% من جانب العميل في وضع الحماية الخاص بمتصفحك. بفضل تقنية Air-Gapped و WebAssembly، لا تغادر أي بايتات جهازك.",
                 faq2Q: "ما هي أطر الامتثال المدعومة؟", faq2A: "يتوافق الجناح مع معايير إقامة البيانات السيادية للشركات و GDPR و HIPAA و CCPA من خلال الحفاظ على محلية جميع عمليات معالجة الملفات.",
@@ -248,7 +249,6 @@ const PrivacyConvert = {
 
             document.documentElement.lang = lang;
             document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-            console.log("Dil başarıyla değiştirildi:", lang);
         }
     },
 
@@ -490,14 +490,13 @@ const PrivacyConvert = {
         
         const btn = document.getElementById('convertBtn');
         if(btn) btn.addEventListener('click', () => this.engine.executeTool());
-        
-        const langSelect = document.getElementById('langSelect');
-        if (langSelect) {
-            // Dil değişimini doğrudan ve güvenli bir şekilde PrivacyConvert üzerinden bağlıyoruz
-            langSelect.addEventListener('change', (e) => {
+
+        // KESİN ÇÖZÜM: Global Event Delegation (Sayfanın herhangi bir yerindeki langSelect değişimini yakalar)
+        document.addEventListener('change', (e) => {
+            if (e.target && e.target.id === 'langSelect') {
                 PrivacyConvert.i18n.applyLanguage(e.target.value);
-            });
-        }
+            }
+        });
 
         const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('fileInput');
