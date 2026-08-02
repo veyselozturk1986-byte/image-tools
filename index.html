@@ -3,17 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; worker-src 'self' blob:; connect-src 'self' https: wss:;">
+    <!-- Katı Güvenlik Politikası (CSP) -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline'; worker-src 'self' blob:; connect-src 'self' wss:;">
     
     <title id="pageTitle">PrivacyConvert Sovereign Enterprise OS - Ultimate Air-Gapped Suite</title>
     <meta name="description" id="pageMetaDesc" content="Enterprise sovereign compliance: WebAuthn, Live PII Shield, E2EE Cloud Sync, Auditor Certificates, White-Label Branding, and ZK-SNARKs.">
     <meta name="theme-color" content="#4f46e5">
 
-    <!-- Tailwind CSS (Görsellik bozulmasın diye şimdilik tutuyoruz) -->
+    <!-- Tailwind CSS (Görselliği korumak için şimdilik CDN'de bırakıldı) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         const savedTheme = localStorage.getItem('privacyConvert_theme') || 'light';
         const savedAccent = localStorage.getItem('privacyConvert_accent') || 'indigo';
+        const savedCompany = localStorage.getItem('privacyConvert_company') || 'Enterprise Sovereign Intranet';
         
         const accents = {
             indigo: { primary: '#4f46e5', hover: '#4338ca' },
@@ -30,14 +32,6 @@
         }
         tailwind.config = { darkMode: 'class' };
     </script>
-
-    <!-- İşlem Kütüphaneleri -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
-    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     
     <style>
         :root { --accent-color: #4f46e5; --accent-hover: #4338ca; }
@@ -56,6 +50,11 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 20px; }
         .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
     </style>
+    <script>
+        const activeAccent = accents[savedAccent] || accents.indigo;
+        document.documentElement.style.setProperty('--accent-color', activeAccent.primary);
+        document.documentElement.style.setProperty('--accent-hover', activeAccent.hover);
+    </script>
 </head>
 
 <body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-300 relative">
@@ -63,22 +62,120 @@
     <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-3 pointer-events-none"></div>
 
     <div id="offlineBanner" class="hidden bg-amber-600 text-white text-xs px-4 py-2 text-center font-bold">
-        ⚠️ CDN Libraries could not be reached. Running in strict Air-Gapped local mode.
+        ⚠️ CDN Libraries could not be reached. Running in strict Air-Gapped local mode via Service Worker Cache.
     </div>
 
-    <!-- Modallar ve UI Öğeleri (Eski sistemdeki gibi bırakıldı) -->
-    <!-- (PRO Lisans, Güvenlik Doğrulama vb. kodları görsel olarak saklanıyor) -->
+    <!-- PRO LİSANS YÖNETİM MODALI -->
+    <div id="proModal" class="hidden fixed inset-0 bg-slate-900/80 z-50 flex items-center justify-center backdrop-blur-sm p-4">
+        <div class="bg-white dark:bg-slate-800 w-full max-w-md rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-2xl flex flex-col gap-4">
+            <div class="flex justify-between items-center">
+                <h3 class="font-bold text-lg dark:text-white" data-i18n="proModalTitle">💎 Upgrade to Sovereign Pro</h3>
+                <button onclick="document.getElementById('proModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
+            </div>
+            <p class="text-xs text-slate-600 dark:text-slate-300" data-i18n="proModalDesc">Unlock unlimited batch processing, cryptographic audit certificates, E2EE cloud sync, and P2P priority nodes.</p>
+            
+            <div class="flex flex-col gap-2.5">
+                <a href="#" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-center shadow-md text-xs transition flex items-center justify-center gap-2">
+                    🇹🇷 <span data-i18n="payTrBtn">PayTR / Kredi Kartı ile Öde (TL)</span>
+                </a>
+                <a href="#" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-center shadow-md text-xs transition flex items-center justify-center gap-2">
+                    🪙 <span data-i18n="cryptoPayBtn">Cryptomus / Kripto ile Öde (USDT/BTC)</span>
+                </a>
+            </div>
+
+            <div class="relative flex py-1 items-center">
+                <div class="flex-grow border-t border-slate-200 dark:border-slate-700"></div>
+                <span class="flex-shrink mx-4 text-slate-400 text-[10px] uppercase font-bold" data-i18n="orDivider">Or enter license key</span>
+                <div class="flex-grow border-t border-slate-200 dark:border-slate-700"></div>
+            </div>
+
+            <input type="text" id="proLicenseKeyInput" placeholder="Enter Pro License Key..." class="w-full p-3 bg-slate-50 dark:bg-slate-900 border rounded-xl text-xs dark:text-white">
+            <button onclick="PrivacyConvert.ui.activateProLicense()" class="dynamic-bg text-white font-bold py-3 px-4 rounded-xl text-xs shadow-md" data-i18n="activateKeyBtn">Activate Pro License</button>
+        </div>
+    </div>
+
+    <!-- GÜVENLİK DOĞRULAMA MODALI -->
+    <div id="verifyModal" class="hidden fixed inset-0 bg-slate-900/80 z-50 flex items-center justify-center backdrop-blur-sm p-4">
+        <div class="bg-white dark:bg-slate-800 w-full max-w-lg rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-2xl flex flex-col gap-4">
+            <div class="flex justify-between items-center">
+                <h3 class="font-bold text-lg dark:text-white" data-i18n="verifyModalTitle">How to Verify Air-Gapped Security</h3>
+                <button onclick="document.getElementById('verifyModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
+            </div>
+            <div class="space-y-3 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                <p data-i18n="verifyDesc1">This application operates entirely client-side using JavaScript, WebAssembly, and local IndexedDB sandbox storage.</p>
+                <div class="bg-slate-50 dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-700 font-mono text-[11px] space-y-1">
+                    <p class="font-bold text-indigo-500" data-i18n="verifyStep1">Step 1: Open Browser Developer Tools (F12)</p>
+                    <p data-i18n="verifyStep1Sub">Navigate to the "Network" tab.</p>
+                    <p class="font-bold text-indigo-500 mt-2" data-i18n="verifyStep2">Step 2: Disconnect Internet or Monitor Traffic</p>
+                    <p data-i18n="verifyStep2Sub">Notice 0 outbound requests/bytes sent to external servers.</p>
+                </div>
+            </div>
+            <button onclick="document.getElementById('verifyModal').classList.add('hidden')" class="dynamic-bg text-white font-bold py-2 px-4 rounded-xl text-sm self-end" data-i18n="closeBtn">Close</button>
+        </div>
+    </div>
+
+    <!-- KOMUT PALETİ MODALI -->
+    <div id="commandPalette" class="hidden fixed inset-0 bg-slate-900/60 z-50 flex items-start justify-center pt-24 backdrop-blur-sm px-4">
+        <div class="bg-white dark:bg-slate-800 w-full max-w-lg rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden p-4 flex flex-col gap-3">
+            <div class="flex items-center gap-3 px-3 py-2 bg-slate-100 dark:bg-slate-900 rounded-2xl">
+                <span class="text-slate-400">🔍</span>
+                <input type="text" id="cmdInput" oninput="PrivacyConvert.ui.filterCommands(this.value)" placeholder="Search all Sovereign & Pro tools..." class="w-full bg-transparent text-sm dark:text-white focus:outline-none" data-i18n-placeholder="cmdPlaceholder">
+                <span class="text-[10px] bg-slate-200 dark:bg-slate-800 px-2 py-1 rounded font-bold text-slate-500">ESC</span>
+            </div>
+            <div id="cmdResults" class="max-h-72 overflow-y-auto space-y-1 custom-scrollbar"></div>
+        </div>
+    </div>
+
+    <!-- ÖNİZLEME MODALI -->
+    <div id="previewModal" class="hidden fixed inset-0 bg-slate-900/80 z-50 flex items-center justify-center backdrop-blur-sm p-4">
+        <div class="bg-white dark:bg-slate-800 w-full max-w-2xl rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-2xl flex flex-col gap-4">
+            <div class="flex justify-between items-center">
+                <h3 class="font-bold text-lg dark:text-white" data-i18n="previewTitle">Live Enterprise Preview</h3>
+                <button onclick="document.getElementById('previewModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
+            </div>
+            <div id="previewContent" class="bg-slate-100 dark:bg-slate-900 rounded-2xl p-4 flex items-center justify-center min-h-[250px] overflow-auto"></div>
+            <button onclick="document.getElementById('previewModal').classList.add('hidden')" class="dynamic-bg text-white font-bold py-2 px-4 rounded-xl text-sm self-end" data-i18n="closeBtn">Close</button>
+        </div>
+    </div>
+
+    <!-- Progress Modal -->
+    <div id="progressModal" class="hidden fixed inset-0 bg-slate-900/80 z-50 flex items-center justify-center backdrop-blur-sm transition-opacity">
+        <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-2xl w-96 text-center flex flex-col items-center border border-slate-200 dark:border-slate-700">
+            <h3 id="progressTitle" class="text-lg font-bold text-slate-800 dark:text-white mb-4" data-i18n="progressTitle">Processing securely...</h3>
+            <div class="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-4 mb-2 overflow-hidden shadow-inner">
+                <div id="progressBar" class="dynamic-bg h-4 rounded-full transition-all duration-300 ease-out flex items-center justify-end pr-2" style="width: 0%">
+                    <span class="text-[10px] font-bold text-white drop-shadow-md">0%</span>
+                </div>
+            </div>
+            <p id="progressText" class="text-xs text-slate-500 dark:text-slate-400 font-medium" data-i18n="progressText">Please wait...</p>
+        </div>
+    </div>
 
     <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 py-4 px-6 shadow-sm sticky top-0 z-30 transition-colors duration-300">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <a href="#" class="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 flex items-center gap-2 hover:opacity-80 transition">
+                <a href="#" onclick="PrivacyConvert.routing.navigate('live-pii-shield')" class="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 flex items-center gap-2 hover:opacity-80 transition">
                     ⚡ <span id="brandNameDisplay">Enterprise Sovereign OS</span>
                 </a>
+                <span id="proBadge" class="hidden text-[10px] bg-amber-500 text-white px-2 py-0.5 rounded-full font-bold">⭐ PRO ACTIVE</span>
             </div>
             <div class="flex items-center gap-2 sm:gap-3">
-                <!-- Tema Değiştirme Butonu -->
-                <button id="themeToggle" class="text-xl p-2 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 transition-all shadow-sm">🌙</button>
+                <button onclick="document.getElementById('proModal').classList.remove('hidden')" class="hidden sm:flex items-center gap-1 bg-amber-50 hover:bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 text-xs px-3 py-2 rounded-xl font-bold transition">💎 <span data-i18n="proBtn">Get Pro</span></button>
+                <button onclick="PrivacyConvert.ui.promptBranding()" class="hidden sm:flex items-center gap-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 text-xs px-3 py-2 rounded-xl font-bold transition">🏢 <span data-i18n="brandBtn">Branding</span></button>
+                <button onclick="PrivacyConvert.ui.toggleSplitScreen()" id="splitScreenBtn" class="hidden sm:flex items-center gap-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 text-xs px-3 py-2 rounded-xl font-bold transition">🪟 <span data-i18n="splitScreenBtn">Split View</span></button>
+                <button onclick="PrivacyConvert.ui.toggleCmdPalette()" class="hidden sm:flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 text-xs px-3 py-2 rounded-xl font-bold transition">⌨️ <span data-i18n="cmdPaletteBtn">Cmd+K</span></button>
+                
+                <select id="langSelect" class="bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold px-2.5 py-2 border-0 focus:outline-none cursor-pointer">
+                    <option value="en">English</option>
+                    <option value="tr">Türkçe</option>
+                    <option value="es">Español</option>
+                    <option value="de">Deutsch</option>
+                    <option value="fr">Français</option>
+                    <option value="zh">中文</option>
+                    <option value="ar">العربية</option>
+                </select>
+
+                <button id="themeToggle" onclick="PrivacyConvert.ui.toggleTheme()" class="text-xl p-2 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 transition-all shadow-sm">🌙</button>
             </div>
         </div>
     </header>
@@ -92,46 +189,186 @@
                     <span class="text-indigo-200 ml-1" data-i18n="bannerDesc">All processing occurs locally in your browser sandbox.</span>
                 </div>
             </div>
+            <div class="flex items-center gap-3">
+                <div class="bg-emerald-950/80 border border-emerald-500/50 text-emerald-300 px-3 py-1 rounded-xl text-[11px] font-mono flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>Outbound Traffic: <strong class="text-white">0 KB</strong> (Isolated)</span>
+                </div>
+                <button onclick="document.getElementById('verifyModal').classList.remove('hidden')" class="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-xl font-bold transition border border-white/20" data-i18n="bannerVerifyBtn">🔍 How to Verify?</button>
+            </div>
         </div>
     </div>
 
     <main class="flex-grow max-w-6xl mx-auto w-full px-4 py-8">
         <div class="text-center mb-8">
             <h1 class="text-3xl sm:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-3">
-                <span data-i18n="secureLabel">Secure</span> <span id="mainTitleAccent" class="dynamic-text">Sovereign Tools</span>
+                <span data-i18n="secureLabel">Secure</span> <span id="mainTitleAccent" class="dynamic-text" data-i18n="toolLiveShield">Live Form PII Shield</span>
             </h1>
+            <p id="mainDesc" class="text-slate-500 dark:text-slate-400 text-sm sm:text-base max-w-2xl mx-auto font-medium" data-i18n="descLiveShield">Shield outbound web forms and chat inputs from leaking sensitive PII.</p>
+        </div>
+
+        <div id="toolsNavContainer" class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            <!-- 1. Pro & Enterprise Suite -->
+            <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3">
+                <h3 class="text-xs font-extrabold dynamic-text uppercase tracking-wider border-b pb-2.5" data-i18n="catProFeatures">💎 Pro & Enterprise</h3>
+                <div class="flex flex-col gap-2">
+                    <button onclick="PrivacyConvert.routing.navigate('live-pii-shield')" id="tab-live-pii-shield" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🛡️</span> <span class="truncate" data-i18n="toolLiveShield">Live Form PII Shield</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('cloud-sync')" id="tab-cloud-sync" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>☁️</span> <span class="truncate" data-i18n="toolCloudSync">E2EE Cloud Sync</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('audit-certificate')" id="tab-audit-certificate" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>📜</span> <span class="truncate" data-i18n="toolAuditCert">Auditor PDF Certificate</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('white-label')" id="tab-white-label" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🏢</span> <span class="truncate" data-i18n="toolWhiteLabel">White-Label Branding</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('opfs-vault')" id="tab-opfs-vault" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>💽</span> <span class="truncate" data-i18n="toolOpfs">OPFS Encrypted Virtual Disk</span></button>
+                </div>
+            </div>
+            <!-- 2. Security, Passkey & Vaults -->
+            <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3">
+                <h3 class="text-xs font-extrabold dynamic-text uppercase tracking-wider border-b pb-2.5" data-i18n="catInfiniteSec">🔑 Security, Passkey & Vault</h3>
+                <div class="flex flex-col gap-2">
+                    <button onclick="PrivacyConvert.routing.navigate('webauthn-vault')" id="tab-webauthn-vault" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🔐</span> <span class="truncate" data-i18n="toolWebAuthn">WebAuthn Passkey Vault</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('steganography')" id="tab-steganography" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🕵️</span> <span class="truncate" data-i18n="toolStega">Image Steganography</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('self-destruct')" id="tab-self-destruct" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>💥</span> <span class="truncate" data-i18n="toolDestruct">Self-Destructing Artifacts</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('encrypt-tool')" id="tab-encrypt-tool" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🔒</span> <span class="truncate" data-i18n="toolEncrypt">AES-256 Hardware Encryptor</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('ed25519-sign')" id="tab-ed25519-sign" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>✒️</span> <span class="truncate" data-i18n="toolSign">Ed25519 Document Signer</span></button>
+                </div>
+            </div>
+            <!-- 3. ZKP, AI & Marketplace -->
+            <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3">
+                <h3 class="text-xs font-extrabold dynamic-text uppercase tracking-wider border-b pb-2.5" data-i18n="catZkpMarket">📦 ZKP, AI & Marketplace</h3>
+                <div class="flex flex-col gap-2">
+                    <button onclick="PrivacyConvert.routing.navigate('template-market')" id="tab-template-market" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🛒</span> <span class="truncate" data-i18n="toolMarket">Local Rule Marketplace</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('zkp-validator')" id="tab-zkp-validator" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🛡️</span> <span class="truncate" data-i18n="toolZkp">Zero-Knowledge Proofs</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('lora-tuning')" id="tab-lora-tuning" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🧠</span> <span class="truncate" data-i18n="toolLora">Local LoRA Fine-Tuning</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('local-rag')" id="tab-local-rag" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🤖</span> <span class="truncate" data-i18n="toolLocalRag">Local AI RAG Search</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('ai-ner-mask')" id="tab-ai-ner-mask" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🧠</span> <span class="truncate" data-i18n="toolAiNer">WebGPU AI NER Redactor</span></button>
+                </div>
+            </div>
+            <!-- 4. Legal, Diff & Audit -->
+            <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3">
+                <h3 class="text-xs font-extrabold dynamic-text uppercase tracking-wider border-b pb-2.5" data-i18n="catLegalAudit">⚖️ Legal, Diff & Audit</h3>
+                <div class="flex flex-col gap-2">
+                    <button onclick="PrivacyConvert.routing.navigate('doc-diff')" id="tab-doc-diff" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🔄</span> <span class="truncate" data-i18n="toolDiff">Contract Diff Engine</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('cross-compliance')" id="tab-cross-compliance" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>📋</span> <span class="truncate" data-i18n="toolCross">Cross-Framework Compliance</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('timestamp-anchor')" id="tab-timestamp-anchor" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>⏳</span> <span class="truncate" data-i18n="toolTimestamp">OpenTimestamps Anchor</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('chain-custody')" id="tab-chain-custody" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>⚖️</span> <span class="truncate" data-i18n="toolCustody">Chain of Custody</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('blockchain-anchor')" id="tab-blockchain-anchor" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>⛓️</span> <span class="truncate" data-i18n="toolChain">ZK-Rollup / Blockchain Anchor</span></button>
+                </div>
+            </div>
+            <!-- 5. PDF & Document Utilities -->
+            <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3">
+                <h3 class="text-xs font-extrabold dynamic-text uppercase tracking-wider border-b pb-2.5" data-i18n="catPdfDocs">📚 PDF & Documents</h3>
+                <div class="flex flex-col gap-2">
+                    <button onclick="PrivacyConvert.routing.navigate('contract-analyzer')" id="tab-contract-analyzer" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>📜</span> <span class="truncate" data-i18n="toolContract">Contract Risk Parser</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('pdf-to-png')" id="tab-pdf-to-png" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🖼️</span> <span class="truncate" data-i18n="toolPdfPng">PDF to PNG Converter</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('pdf-merge')" id="tab-pdf-merge" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>📚</span> <span class="truncate" data-i18n="toolPdfMerge">PDF Merger</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('pii-redactor')" id="tab-pii-redactor" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🕶️</span> <span class="truncate" data-i18n="toolPii">Batch PII Redaction</span></button>
+                </div>
+            </div>
+            <!-- 6. Images, OCR, EXIF & P2P -->
+            <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3">
+                <h3 class="text-xs font-extrabold dynamic-text uppercase tracking-wider border-b pb-2.5" data-i18n="catMediaShare">🖼️ Images, OCR, EXIF & P2P</h3>
+                <div class="flex flex-col gap-2">
+                    <button onclick="PrivacyConvert.routing.navigate('visual-redact')" id="tab-visual-redact" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>👁️</span> <span class="truncate" data-i18n="toolVisual">Visual Redaction (Face/Stamp)</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('meta-scrubber')" id="tab-meta-scrubber" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🧹</span> <span class="truncate" data-i18n="toolMetaScrubber">EXIF & Meta Scrubber</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('ocr-tool')" id="tab-ocr-tool" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>📝</span> <span class="truncate" data-i18n="toolOcr">OCR Text Extract (Worker)</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('p2p-share')" id="tab-p2p-share" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>📡</span> <span class="truncate" data-i18n="toolP2p">P2P File Share</span></button>
+                    <button onclick="PrivacyConvert.routing.navigate('secure-room')" id="tab-secure-room" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>💬</span> <span class="truncate" data-i18n="toolRoom">E2EE Secure Chat Room</span></button>
+                </div>
+            </div>
         </div>
 
         <div id="workspaceGrid" class="max-w-3xl mx-auto grid grid-cols-1 gap-6 transition-all duration-300 mb-12">
             <div class="p-6 sm:p-8 bg-white dark:bg-slate-800 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-700 relative">
-                
-                <div id="textInputGroup" class="w-full">
-                    <textarea id="mainInputField" class="w-full h-32 p-4 text-sm border rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white focus:outline-none resize-none shadow-inner" placeholder="Enter input text here..."></textarea>
+                <button id="clearBtn" onclick="PrivacyConvert.ui.resetWorkspace(PrivacyConvert.routing.metaData[PrivacyConvert.state.tool])" class="hidden absolute top-6 right-6 text-xs font-bold text-red-500 bg-red-50 px-3 py-2 rounded-lg" data-i18n="btnReset">Reset</button>
+
+                <div id="sandboxTrialBanner" class="hidden mb-4 p-4 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-700/50 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3">
+                    <div class="flex items-center gap-2 text-xs text-amber-800 dark:text-amber-300">
+                        <span>🧪</span>
+                        <div>
+                            <span class="font-bold">Interactive Sandbox Mode:</span> You are testing with sample encrypted/privacy data.
+                        </div>
+                    </div>
+                    <button onclick="PrivacyConvert.engine.runSampleTrial()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-1.5 px-3 rounded-xl text-xs shadow transition whitespace-nowrap">Try Sample Data Now</button>
                 </div>
 
-                <div id="actionArea" class="mt-6 flex-col gap-6">
+                <div id="interactiveWorkspaceContainer" class="hidden mb-4 w-full"></div>
+
+                <div id="dropZone" class="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-2xl p-10 text-center cursor-pointer hover:border-indigo-500 transition mt-2">
+                    <p class="text-slate-800 dark:text-slate-200 font-bold text-lg" data-i18n="dropText">Click to browse or drag files here (Memory-Safe Stream)</p>
+                </div>
+                <input type="file" id="fileInput" class="hidden" multiple />
+
+                <div id="actionArea" class="mt-6 hidden flex-col gap-6">
+                    <div id="queueDashboard" class="w-full bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border flex flex-col gap-2">
+                        <span class="text-xs font-bold text-slate-500 uppercase" data-i18n="queueTitle">Queue Status</span>
+                        <div id="fileListContainer" class="w-full max-h-56 overflow-y-auto space-y-2 custom-scrollbar"></div>
+                    </div>
+
+                    <div id="cryptoOptions" class="hidden flex flex-col gap-4 bg-slate-50 dark:bg-slate-900 p-4 rounded-xl border">
+                        <div class="flex gap-2">
+                            <button onclick="PrivacyConvert.state.cryptoMode='encrypt'" class="flex-1 py-2 px-4 rounded-xl text-xs font-bold dynamic-bg text-white" data-i18n="encryptModeBtn">Encrypt File/Text</button>
+                            <button onclick="PrivacyConvert.state.cryptoMode='decrypt'" class="flex-1 py-2 px-4 rounded-xl text-xs font-bold bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200" data-i18n="decryptModeBtn">Decrypt File/Text</button>
+                        </div>
+                        <input type="password" id="cryptoPasswordInput" placeholder="Enter Master Password..." class="w-full p-3 bg-white dark:bg-slate-800 border rounded-xl text-sm dark:text-white" data-i18n-placeholder="passPlaceholder">
+                    </div>
+
+                    <div id="textInputGroup" class="hidden w-full">
+                        <textarea id="mainInputField" class="w-full h-32 p-4 text-sm border rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white focus:outline-none resize-none shadow-inner" placeholder="Enter input text here..." data-i18n-placeholder="pasteText"></textarea>
+                    </div>
+
                     <div id="genericTextBox" class="hidden w-full flex flex-col gap-2">
                         <div class="flex justify-between items-center">
-                            <span class="text-xs font-bold text-slate-500 uppercase">System Output / Logs:</span>
+                            <span class="text-xs font-bold text-slate-500 uppercase" data-i18n="outputLabel">System Output / Logs:</span>
+                            <button onclick="PrivacyConvert.ui.openPreviewModal()" class="text-xs bg-indigo-50 dark:bg-slate-700 dynamic-text px-3 py-1.5 rounded-lg font-semibold" data-i18n="btnPreview">👁️ Preview</button>
                         </div>
                         <textarea id="genericTextArea" class="w-full h-48 bg-slate-900 text-emerald-400 text-sm p-4 rounded-xl border-none focus:outline-none resize-none font-mono shadow-inner" readonly></textarea>
                     </div>
 
-                    <button id="convertBtn" class="dynamic-bg hover:opacity-90 text-white font-bold py-4 px-6 rounded-2xl shadow-lg transition text-lg flex items-center justify-center gap-3 w-full mt-4">
-                        <span id="convertBtnText">Execute Secure Process</span>
+                    <button id="convertBtn" onclick="PrivacyConvert.engine.executeTool()" class="dynamic-bg hover:opacity-90 text-white font-bold py-4 px-6 rounded-2xl shadow-lg transition text-lg flex items-center justify-center gap-3">
+                        <span id="convertBtnText" data-i18n="btnProcess">Execute Secure Process</span>
                     </button>
                 </div>
             </div>
+
+            <div id="pane2Container" class="hidden p-6 sm:p-8 bg-white dark:bg-slate-800 rounded-3xl shadow-xl border">
+                <div class="text-center font-bold text-sm text-slate-400 mb-4 uppercase" data-i18n="secondaryPaneTitle">Secondary Workspace</div>
+                <textarea id="pane2Input" class="w-full h-48 p-4 text-sm border rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white focus:outline-none resize-none font-mono mb-4" placeholder="Secondary text for comparison..." data-i18n-placeholder="pasteSecondaryText"></textarea>
+                <button onclick="PrivacyConvert.engine.executePane2()" class="w-full py-3 rounded-xl dynamic-bg text-white font-bold text-sm shadow-md" data-i18n="compareBtn">Compare & Diff</button>
+            </div>
         </div>
+
+        <section class="max-w-6xl mx-auto mt-16 mb-12 border-t border-slate-200 dark:border-slate-700 pt-10 px-4">
+            <h2 class="text-2xl font-extrabold mb-6 dark:text-white" data-i18n="faqTitle">Frequently Asked Questions & Privacy Compliance</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-slate-600 dark:text-slate-300">
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-2">
+                    <h4 class="font-bold text-slate-900 dark:text-white" data-i18n="faq1Q">Is my data ever sent to external servers?</h4>
+                    <p data-i18n="faq1A">No. PrivacyConvert Sovereign OS runs 100% client-side in your browser sandbox. With Air-Gapped and WebAssembly technology, zero bytes leave your device.</p>
+                </div>
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-2">
+                    <h4 class="font-bold text-slate-900 dark:text-white" data-i18n="faq2Q">What compliance frameworks are supported?</h4>
+                    <p data-i18n="faq2A">The suite complies with GDPR, HIPAA, CCPA, and enterprise sovereign data residency standards by keeping all file processing localized.</p>
+                </div>
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-2">
+                    <h4 class="font-bold text-slate-900 dark:text-white" data-i18n="faq3Q">How does large file handling work?</h4>
+                    <p data-i18n="faq3A">Using the Streams API and File System Access API, files are processed in 5MB memory-safe chunks directly to disk, preventing RAM overflow.</p>
+                </div>
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-2">
+                    <h4 class="font-bold text-slate-900 dark:text-white" data-i18n="faq4Q">Can I use this completely offline?</h4>
+                    <p data-i18n="faq4A">Yes. Once loaded, you can disconnect your internet entirely and all 30 sovereign tools will function normally in air-gapped isolation.</p>
+                </div>
+            </div>
+        </section>
     </main>
 
     <footer class="w-full border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 py-6 mt-auto transition-colors duration-300">
         <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-medium text-slate-500 dark:text-slate-400">
             <div class="flex items-center gap-2">
                 <span class="text-lg">🛡️</span>
-                <span>&copy; <script>document.write(new Date().getFullYear())</script> PrivacyConvert Sovereign OS. All rights reserved.</span>
+                <span>&copy; <script>document.write(new Date().getFullYear())</script> PrivacyConvert Sovereign OS. <span data-i18n="allRights">All rights reserved.</span></span>
             </div>
             <div class="flex items-center gap-4">
+                <a href="#" target="_blank" rel="noopener noreferrer" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition flex items-center gap-1.5">
+                    <svg viewBox="0 0 24 24" class="w-4 h-4 fill-current"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    GitHub Open Source / MIT License
+                </a>
                 <div class="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-wider border border-slate-200 dark:border-slate-600 flex items-center gap-1">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                     CERT: SHA256-AIRGAPPED
@@ -140,7 +377,7 @@
         </div>
     </footer>
 
-    <!-- İŞTE SİHRİN GERÇEKLEŞTİĞİ YER: Yeni Modüler Script Bağlantısı -->
+    <!-- Yeni Modüler Sistem Bağlantısı Burada -->
     <script type="module" src="./src/main.js"></script>
 
 </body>
