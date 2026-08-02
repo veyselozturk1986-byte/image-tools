@@ -860,7 +860,7 @@
                         toolMarket: "Yerel Kural Pazarı", toolZkp: "Sıfır Bilgi İspatları (ZKP)", toolLora: "Yerel LoRA İnce Ayarı", toolLocalRag: "Yerel AI RAG Taraması",
                         toolDiff: "Sözleşme Karşılaştırma Motoru", toolCross: "Çapraz Çerçeve Uyumluluğu", toolTimestamp: "OpenTimestamps Çapası", toolCustody: "Gözetim Zinciri",
                         toolContract: "Sözleşme Risk Ayrıştırıcısı", toolPdfPng: "PDF'den PNG'ye Dönüştürücü", toolPdfMerge: "PDF Birleştirici", toolPii: "Toplu PII (Kişisel Veri) Karartma",
-                        toolVisual: "Görsel Karartma (Yüz/Mühür)", toolMetaScrubber: "EXIF و Meta Veri Temizleyici", toolOcr: "OCR Metin Çıkarımı (Worker)", toolP2p: "P2P (Eşler Arası) Dosya Paylaşımı",
+                        toolVisual: "Görsel Karartma (Yüz/Mühür)", toolMetaScrubber: "EXIF ve Meta Veri Temizleyici", toolOcr: "OCR Metin Çıkarımı (Worker)", toolP2p: "P2P (Eşler Arası) Dosya Paylaşımı",
                         toolOpfs: "OPFS Şifreli Sanal Disk", toolSign: "Ed25519 Belge İmzalayıcı", toolAiNer: "WebGPU AI NER Redaktörü", toolChain: "ZK-Rollup / Blockchain Çapası", toolRoom: "E2EE Güvenli Sohbet Odası",
                         encryptModeBtn: "Dosya/Metin Şifrele", decryptModeBtn: "Dosya/Metin Şifresini Çöz", passPlaceholder: "Ana Parolayı Girin...", pasteText: "Girdi metnini buraya yazın...",
                         outputLabel: "Sistem Çıktısı / Loglar:", compareBtn: "Karşılaştır ve Farkı Bul", pasteSecondaryText: "Karşılaştırma için ikincil metin...", cmdPlaceholder: "Tüm Sovereign ve Pro araçlarını ara...",
@@ -1249,6 +1249,11 @@
                         v_p2p_title: "مشاركة P2P", v_p2p_desc: "نقل مباشر."
                     }
                 },
+                get(key, lang) {
+                    const l = lang || PrivacyConvert.state.lang;
+                    const dict = this.translations[l] || this.translations['en'];
+                    return dict[key] || this.translations['en'][key] || key;
+                },
                 applyLanguage(lang) {
                     const dict = this.translations[lang] || this.translations['en'];
                     document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -1273,16 +1278,20 @@
                     const meta = PrivacyConvert.routing.metaData[currentTool];
                     if(meta) {
                         const mainTitle = document.getElementById('mainTitleAccent');
-                        if(mainTitle && meta.titleKey && dict[meta.titleKey]) {
-                            mainTitle.innerText = dict[meta.titleKey];
+                        const mainDesc = document.getElementById('mainDesc');
+                        if(mainTitle && meta.titleKey) {
+                            mainTitle.innerText = PrivacyConvert.i18n.get(meta.titleKey, lang);
+                        }
+                        if(mainDesc && meta.valueDescKey) {
+                            mainDesc.innerText = PrivacyConvert.i18n.get(meta.valueDescKey, lang);
                         }
 
                         const banner = document.getElementById('toolEnterpriseValueBanner');
                         const bTitle = document.getElementById('enterpriseBannerTitle');
                         const bDesc = document.getElementById('enterpriseBannerDesc');
-                        if (meta.valueTitleKey && meta.valueDescKey && dict[meta.valueTitleKey] && dict[meta.valueDescKey]) {
-                            bTitle.innerText = dict[meta.valueTitleKey];
-                            bDesc.innerText = dict[meta.valueDescKey];
+                        if (meta.valueTitleKey && meta.valueDescKey) {
+                            bTitle.innerText = PrivacyConvert.i18n.get(meta.valueTitleKey, lang);
+                            bDesc.innerText = PrivacyConvert.i18n.get(meta.valueDescKey, lang);
                             banner.classList.remove('hidden');
                         } else {
                             banner.classList.add('hidden');
@@ -1329,10 +1338,10 @@
                 },
                 navigate(toolId) {
                     const meta = this.metaData[toolId] || { type: 'text', titleKey: toolId };
-                    const dict = PrivacyConvert.i18n.translations[PrivacyConvert.state.lang] || PrivacyConvert.i18n.translations['en'];
+                    const lang = PrivacyConvert.state.lang;
                     
                     if (meta.proRequired && !PrivacyConvert.state.isPro) {
-                        PrivacyConvert.ui.showToast(dict['proWarning'] || '🔒 Pro Feature: Sovereign Pro license required!', 'warning');
+                        PrivacyConvert.ui.showToast(PrivacyConvert.i18n.get('proWarning', lang), 'warning');
                         document.getElementById('proModal').classList.remove('hidden');
                         return;
                     }
@@ -1344,16 +1353,20 @@
                     }
                     
                     const mainTitle = document.getElementById('mainTitleAccent');
-                    if(mainTitle && meta.titleKey && dict[meta.titleKey]) {
-                        mainTitle.innerText = dict[meta.titleKey];
+                    const mainDesc = document.getElementById('mainDesc');
+                    if(mainTitle && meta.titleKey) {
+                        mainTitle.innerText = PrivacyConvert.i18n.get(meta.titleKey, lang);
+                    }
+                    if(mainDesc && meta.valueDescKey) {
+                        mainDesc.innerText = PrivacyConvert.i18n.get(meta.valueDescKey, lang);
                     }
 
                     const banner = document.getElementById('toolEnterpriseValueBanner');
                     const bTitle = document.getElementById('enterpriseBannerTitle');
                     const bDesc = document.getElementById('enterpriseBannerDesc');
-                    if (meta.valueTitleKey && meta.valueDescKey && dict[meta.valueTitleKey] && dict[meta.valueDescKey]) {
-                        bTitle.innerText = dict[meta.valueTitleKey];
-                        bDesc.innerText = dict[meta.valueDescKey];
+                    if (meta.valueTitleKey && meta.valueDescKey) {
+                        bTitle.innerText = PrivacyConvert.i18n.get(meta.valueTitleKey, lang);
+                        bDesc.innerText = PrivacyConvert.i18n.get(meta.valueDescKey, lang);
                         banner.classList.remove('hidden');
                     } else {
                         banner.classList.add('hidden');
@@ -1623,10 +1636,10 @@
                     const results = document.getElementById('cmdResults');
                     results.innerHTML = '';
                     const q = query.toLowerCase();
-                    const dict = PrivacyConvert.i18n.translations[PrivacyConvert.state.lang] || PrivacyConvert.i18n.translations['en'];
+                    const lang = PrivacyConvert.state.lang;
                     
                     Object.entries(PrivacyConvert.routing.metaData).forEach(([id, meta]) => {
-                        const titleText = dict[meta.titleKey] || meta.titleKey;
+                        const titleText = PrivacyConvert.i18n.get(meta.titleKey, lang);
                         if(titleText.toLowerCase().includes(q)) {
                             const btn = document.createElement('button');
                             btn.className = "w-full text-left px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 text-xs font-semibold dark:text-white flex items-center justify-between";
@@ -1647,7 +1660,7 @@
                     modal.classList.remove('hidden');
                 },
                 simulatePayment(gateway) {
-                    const dict = PrivacyConvert.i18n.translations[PrivacyConvert.state.lang] || PrivacyConvert.i18n.translations['en'];
+                    const lang = PrivacyConvert.state.lang;
                     PrivacyConvert.ui.showToast(`${gateway} ödeme ağ geçidine bağlanılıyor...`, 'warning');
                     setTimeout(() => {
                         PrivacyConvert.state.isPro = true;
@@ -1656,12 +1669,12 @@
                         if(badge) badge.classList.remove('hidden');
                         const modal = document.getElementById('proModal');
                         if(modal) modal.classList.add('hidden');
-                        this.showToast(dict['proActivated'] || '🎉 Pro license activated successfully!', 'success');
+                        this.showToast(PrivacyConvert.i18n.get('proActivated', lang), 'success');
                     }, 1200);
                 },
                 async activateProLicense() {
                     const keyInput = document.getElementById('proLicenseKeyInput')?.value.trim();
-                    const dict = PrivacyConvert.i18n.translations[PrivacyConvert.state.lang] || PrivacyConvert.i18n.translations['en'];
+                    const lang = PrivacyConvert.state.lang;
                     
                     if (!keyInput) {
                         return PrivacyConvert.ui.showToast('Lütfen lisans anahtarını girin', 'error');
@@ -1676,9 +1689,9 @@
                         if(badge) badge.classList.remove('hidden');
                         const modal = document.getElementById('proModal');
                         if(modal) modal.classList.add('hidden');
-                        this.showToast(dict['proActivated'] || '🎉 Asymmetric Offline Pro license verified & activated!', 'success');
+                        this.showToast(PrivacyConvert.i18n.get('proActivated', lang), 'success');
                     } else {
-                        this.showToast((dict['proInvalidKey'] || 'Invalid license key!') + ` (${verification.reason})`, 'error');
+                        this.showToast(PrivacyConvert.i18n.get('proInvalidKey', lang) + ` (${verification.reason})`, 'error');
                     }
                 },
                 promptBranding() {
@@ -1696,10 +1709,10 @@
                     try {
                         const tool = PrivacyConvert.state.tool;
                         const meta = PrivacyConvert.routing.metaData[tool];
-                        const dict = PrivacyConvert.i18n.translations[PrivacyConvert.state.lang] || PrivacyConvert.i18n.translations['en'];
+                        const lang = PrivacyConvert.state.lang;
 
                         if (meta && meta.proRequired && !PrivacyConvert.state.isPro) {
-                            PrivacyConvert.ui.showToast(dict['proWarning'] || '🔒 Pro Feature: Sovereign Pro license required!', 'warning');
+                            PrivacyConvert.ui.showToast(PrivacyConvert.i18n.get('proWarning', lang), 'warning');
                             document.getElementById('proModal').classList.remove('hidden');
                             return;
                         }
@@ -1713,7 +1726,7 @@
 
                         if (tool === 'pii-redactor' || tool === 'ai-ner-mask' || tool === 'live-pii-shield') {
                             const text = inputField ? inputField.value : '';
-                            if (!text) return PrivacyConvert.ui.showToast(dict['errEnterText'] || 'Please enter text', 'warning');
+                            if (!text) return PrivacyConvert.ui.showToast(PrivacyConvert.i18n.get('errEnterText', lang), 'warning');
                             outputBox.value = "AI Analiz Ediliyor...";
                             const result = tool === 'ai-ner-mask' ? aiEngine.runAiNer(text) : aiEngine.maskPII(text);
                             outputBox.value = `[AI REDACTION REPORT]\n\n${result}`;
@@ -1742,7 +1755,7 @@
                         else if (tool === 'encrypt-tool') {
                             const pwd = document.getElementById('cryptoPasswordInput')?.value;
                             const text = inputField ? inputField.value : '';
-                            if (!pwd) return PrivacyConvert.ui.showToast(dict['errPasswordRequired'] || 'Master password is required!', 'warning');
+                            if (!pwd) return PrivacyConvert.ui.showToast(PrivacyConvert.i18n.get('errPasswordRequired', lang), 'warning');
                             if (files.length > 0) {
                                 await streamCore.processLargeFile(files[0].file, pwd, PrivacyConvert.state.cryptoMode, (p, t) => PrivacyConvert.ui.updateProgress(p, t), (m, t) => PrivacyConvert.ui.showToast(m, t), (u) => PrivacyConvert.registerObjectUrl(u));
                                 return;
