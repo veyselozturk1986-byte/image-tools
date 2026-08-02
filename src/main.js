@@ -248,6 +248,17 @@ export const PrivacyConvert = {
 
             document.documentElement.lang = lang;
             document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+
+            // Aktif aracın başlığını dil değişimine göre anında güncelle
+            const currentTool = PrivacyConvert.state.tool;
+            const tabElem = document.getElementById(`tab-${currentTool}`);
+            if(tabElem) {
+                const titleSpan = tabElem.querySelector('.truncate') || tabElem.querySelector('span:last-child');
+                if(titleSpan) {
+                    const mainTitle = document.getElementById('mainTitleAccent');
+                    if(mainTitle) mainTitle.innerText = titleSpan.innerText.trim();
+                }
+            }
         }
     },
 
@@ -293,7 +304,10 @@ export const PrivacyConvert = {
             const tabElem = document.getElementById(`tab-${toolId}`);
             if(tabElem) {
                 tabElem.classList.add('bg-slate-100', 'dark:bg-slate-700', 'border-indigo-500');
-                document.getElementById('mainTitleAccent').innerText = tabElem.innerText.replace(/^[^\w\s]+/, '').trim();
+                const titleSpan = tabElem.querySelector('.truncate') || tabElem.querySelector('span:last-child');
+                if(titleSpan) {
+                    document.getElementById('mainTitleAccent').innerText = titleSpan.innerText.trim();
+                }
             } else {
                 document.getElementById('mainTitleAccent').innerText = meta.title;
             }
@@ -493,9 +507,9 @@ export const PrivacyConvert = {
         const langSelect = document.getElementById('langSelect');
         if (langSelect) {
             langSelect.value = this.state.lang;
-            langSelect.addEventListener('change', (e) => {
-                this.i18n.applyLanguage(e.target.value);
-            });
+            langSelect.onchange = (e) => {
+                PrivacyConvert.i18n.applyLanguage(e.target.value);
+            };
         }
 
         const dropZone = document.getElementById('dropZone');
