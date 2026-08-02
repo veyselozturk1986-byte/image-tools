@@ -10,7 +10,7 @@
     <meta name="description" id="pageMetaDesc" content="Enterprise sovereign compliance: WebAuthn, Live PII Shield, E2EE Cloud Sync, Auditor Certificates, White-Label Branding, and ZK-SNARKs.">
     <meta name="theme-color" content="#4f46e5">
 
-    <!-- Tailwind CSS (Görselliği korumak için şimdilik CDN'de bırakıldı) -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         const savedTheme = localStorage.getItem('privacyConvert_theme') || 'light';
@@ -212,72 +212,72 @@
             <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3">
                 <h3 class="text-xs font-extrabold dynamic-text uppercase tracking-wider border-b pb-2.5" data-i18n="catProFeatures">💎 Pro & Enterprise</h3>
                 <div class="flex flex-col gap-2">
-                    <button onclick="PrivacyConvert.routing.navigate('live-pii-shield')" id="tab-live-pii-shield" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🛡️</span> <span class="truncate" data-i18n="toolLiveShield">Live Form PII Shield</span></button>
-                    <button onclick="PrivacyConvert.routing.navigate('cloud-sync')" id="tab-cloud-sync" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>☁️</span> <span class="truncate" data-i18n="toolCloudSync">E2EE Cloud Sync</span></button>
-                    <button onclick="PrivacyConvert.routing.navigate('audit-certificate')" id="tab-audit-certificate" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>📜</span> <span class="truncate" data-i18n="toolAuditCert">Auditor PDF Certificate</span></button>
-                    <button onclick="PrivacyConvert.routing.navigate('white-label')" id="tab-white-label" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🏢</span> <span class="truncate" data-i18n="toolWhiteLabel">White-Label Branding</span></button>
-                    <button onclick="PrivacyConvert.routing.navigate('opfs-vault')" id="tab-opfs-vault" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>💽</span> <span class="truncate" data-i18n="toolOpfs">OPFS Encrypted Virtual Disk</span></button>
+                    <button id="tab-live-pii-shield" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🛡️</span> <span class="truncate" data-i18n="toolLiveShield">Live Form PII Shield</span></button>
+                    <button id="tab-cloud-sync" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>☁️</span> <span class="truncate" data-i18n="toolCloudSync">E2EE Cloud Sync</span></button>
+                    <button id="tab-audit-certificate" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>📜</span> <span class="truncate" data-i18n="toolAuditCert">Auditor PDF Certificate</span></button>
+                    <button id="tab-white-label" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🏢</span> <span class="truncate" data-i18n="toolWhiteLabel">White-Label Branding</span></button>
+                    <button id="tab-opfs-vault" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>💽</span> <span class="truncate" data-i18n="toolOpfs">OPFS Encrypted Virtual Disk</span></button>
                 </div>
             </div>
             <!-- 2. Security, Passkey & Vaults -->
             <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3">
                 <h3 class="text-xs font-extrabold dynamic-text uppercase tracking-wider border-b pb-2.5" data-i18n="catInfiniteSec">🔑 Security, Passkey & Vault</h3>
                 <div class="flex flex-col gap-2">
-                    <button onclick="PrivacyConvert.routing.navigate('webauthn-vault')" id="tab-webauthn-vault" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🔐</span> <span class="truncate" data-i18n="toolWebAuthn">WebAuthn Passkey Vault</span></button>
-                    <button onclick="PrivacyConvert.routing.navigate('steganography')" id="tab-steganography" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🕵️</span> <span class="truncate" data-i18n="toolStega">Image Steganography</span></button>
-                    <button onclick="PrivacyConvert.routing.navigate('self-destruct')" id="tab-self-destruct" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>💥</span> <span class="truncate" data-i18n="toolDestruct">Self-Destructing Artifacts</span></button>
-                    <button onclick="PrivacyConvert.routing.navigate('encrypt-tool')" id="tab-encrypt-tool" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🔒</span> <span class="truncate" data-i18n="toolEncrypt">AES-256 Hardware Encryptor</span></button>
-                    <button onclick="PrivacyConvert.routing.navigate('ed25519-sign')" id="tab-ed25519-sign" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>✒️</span> <span class="truncate" data-i18n="toolSign">Ed25519 Document Signer</span></button>
+                    <button id="tab-webauthn-vault" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🔐</span> <span class="truncate" data-i18n="toolWebAuthn">WebAuthn Passkey Vault</span></button>
+                    <button id="tab-steganography" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🕵️</span> <span class="truncate" data-i18n="toolStega">Image Steganography</span></button>
+                    <button id="tab-self-destruct" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>💥</span> <span class="truncate" data-i18n="toolDestruct">Self-Destructing Artifacts</span></button>
+                    <button id="tab-encrypt-tool" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🔒</span> <span class="truncate" data-i18n="toolEncrypt">AES-256 Hardware Encryptor</span></button>
+                    <button id="tab-ed25519-sign" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>✒️</span> <span class="truncate" data-i18n="toolSign">Ed25519 Document Signer</span></button>
                 </div>
             </div>
             <!-- 3. ZKP, AI & Marketplace -->
             <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3">
                 <h3 class="text-xs font-extrabold dynamic-text uppercase tracking-wider border-b pb-2.5" data-i18n="catZkpMarket">📦 ZKP, AI & Marketplace</h3>
                 <div class="flex flex-col gap-2">
-                    <button onclick="PrivacyConvert.routing.navigate('template-market')" id="tab-template-market" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🛒</span> <span class="truncate" data-i18n="toolMarket">Local Rule Marketplace</span></button>
-                    <button onclick="PrivacyConvert.routing.navigate('zkp-validator')" id="tab-zkp-validator" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🛡️</span> <span class="truncate" data-i18n="toolZkp">Zero-Knowledge Proofs</span></button>
-                    <button onclick="PrivacyConvert.routing.navigate('lora-tuning')" id="tab-lora-tuning" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🧠</span> <span class="truncate" data-i18n="toolLora">Local LoRA Fine-Tuning</span></button>
-                    <button onclick="PrivacyConvert.routing.navigate('local-rag')" id="tab-local-rag" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🤖</span> <span class="truncate" data-i18n="toolLocalRag">Local AI RAG Search</span></button>
-                    <button onclick="PrivacyConvert.routing.navigate('ai-ner-mask')" id="tab-ai-ner-mask" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🧠</span> <span class="truncate" data-i18n="toolAiNer">WebGPU AI NER Redactor</span></button>
+                    <button id="tab-template-market" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🛒</span> <span class="truncate" data-i18n="toolMarket">Local Rule Marketplace</span></button>
+                    <button id="tab-zkp-validator" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🛡️</span> <span class="truncate" data-i18n="toolZkp">Zero-Knowledge Proofs</span></button>
+                    <button id="tab-lora-tuning" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🧠</span> <span class="truncate" data-i18n="toolLora">Local LoRA Fine-Tuning</span></button>
+                    <button id="tab-local-rag" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🤖</span> <span class="truncate" data-i18n="toolLocalRag">Local AI RAG Search</span></button>
+                    <button id="tab-ai-ner-mask" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🧠</span> <span class="truncate" data-i18n="toolAiNer">WebGPU AI NER Redactor</span></button>
                 </div>
             </div>
             <!-- 4. Legal, Diff & Audit -->
             <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3">
                 <h3 class="text-xs font-extrabold dynamic-text uppercase tracking-wider border-b pb-2.5" data-i18n="catLegalAudit">⚖️ Legal, Diff & Audit</h3>
                 <div class="flex flex-col gap-2">
-                    <button onclick="PrivacyConvert.routing.navigate('doc-diff')" id="tab-doc-diff" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🔄</span> <span class="truncate" data-i18n="toolDiff">Contract Diff Engine</span></button>
-                    <button onclick="PrivacyConvert.routing.navigate('cross-compliance')" id="tab-cross-compliance" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>📋</span> <span class="truncate" data-i18n="toolCross">Cross-Framework Compliance</span></button>
-                    <button onclick="PrivacyConvert.routing.navigate('timestamp-anchor')" id="tab-timestamp-anchor" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>⏳</span> <span class="truncate" data-i18n="toolTimestamp">OpenTimestamps Anchor</span></button>
-                    <button onclick="PrivacyConvert.routing.navigate('chain-custody')" id="tab-chain-custody" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>⚖️</span> <span class="truncate" data-i18n="toolCustody">Chain of Custody</span></button>
-                    <button onclick="PrivacyConvert.routing.navigate('blockchain-anchor')" id="tab-blockchain-anchor" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>⛓️</span> <span class="truncate" data-i18n="toolChain">ZK-Rollup / Blockchain Anchor</span></button>
+                    <button id="tab-doc-diff" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🔄</span> <span class="truncate" data-i18n="toolDiff">Contract Diff Engine</span></button>
+                    <button id="tab-cross-compliance" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>📋</span> <span class="truncate" data-i18n="toolCross">Cross-Framework Compliance</span></button>
+                    <button id="tab-timestamp-anchor" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>⏳</span> <span class="truncate" data-i18n="toolTimestamp">OpenTimestamps Anchor</span></button>
+                    <button id="tab-chain-custody" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>⚖️</span> <span class="truncate" data-i18n="toolCustody">Chain of Custody</span></button>
+                    <button id="tab-blockchain-anchor" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>⛓️</span> <span class="truncate" data-i18n="toolChain">ZK-Rollup / Blockchain Anchor</span></button>
                 </div>
             </div>
             <!-- 5. PDF & Document Utilities -->
             <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3">
                 <h3 class="text-xs font-extrabold dynamic-text uppercase tracking-wider border-b pb-2.5" data-i18n="catPdfDocs">📚 PDF & Documents</h3>
                 <div class="flex flex-col gap-2">
-                    <button onclick="PrivacyConvert.routing.navigate('contract-analyzer')" id="tab-contract-analyzer" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>📜</span> <span class="truncate" data-i18n="toolContract">Contract Risk Parser</span></button>
-                    <button onclick="PrivacyConvert.routing.navigate('pdf-to-png')" id="tab-pdf-to-png" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🖼️</span> <span class="truncate" data-i18n="toolPdfPng">PDF to PNG Converter</span></button>
-                    <button onclick="PrivacyConvert.routing.navigate('pdf-merge')" id="tab-pdf-merge" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>📚</span> <span class="truncate" data-i18n="toolPdfMerge">PDF Merger</span></button>
-                    <button onclick="PrivacyConvert.routing.navigate('pii-redactor')" id="tab-pii-redactor" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🕶️</span> <span class="truncate" data-i18n="toolPii">Batch PII Redaction</span></button>
+                    <button id="tab-contract-analyzer" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>📜</span> <span class="truncate" data-i18n="toolContract">Contract Risk Parser</span></button>
+                    <button id="tab-pdf-to-png" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🖼️</span> <span class="truncate" data-i18n="toolPdfPng">PDF to PNG Converter</span></button>
+                    <button id="tab-pdf-merge" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>📚</span> <span class="truncate" data-i18n="toolPdfMerge">PDF Merger</span></button>
+                    <button id="tab-pii-redactor" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🕶️</span> <span class="truncate" data-i18n="toolPii">Batch PII Redaction</span></button>
                 </div>
             </div>
             <!-- 6. Images, OCR, EXIF & P2P -->
             <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3">
                 <h3 class="text-xs font-extrabold dynamic-text uppercase tracking-wider border-b pb-2.5" data-i18n="catMediaShare">🖼️ Images, OCR, EXIF & P2P</h3>
                 <div class="flex flex-col gap-2">
-                    <button onclick="PrivacyConvert.routing.navigate('visual-redact')" id="tab-visual-redact" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>👁️</span> <span class="truncate" data-i18n="toolVisual">Visual Redaction (Face/Stamp)</span></button>
-                    <button onclick="PrivacyConvert.routing.navigate('meta-scrubber')" id="tab-meta-scrubber" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🧹</span> <span class="truncate" data-i18n="toolMetaScrubber">EXIF & Meta Scrubber</span></button>
-                    <button onclick="PrivacyConvert.routing.navigate('ocr-tool')" id="tab-ocr-tool" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>📝</span> <span class="truncate" data-i18n="toolOcr">OCR Text Extract (Worker)</span></button>
-                    <button onclick="PrivacyConvert.routing.navigate('p2p-share')" id="tab-p2p-share" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>📡</span> <span class="truncate" data-i18n="toolP2p">P2P File Share</span></button>
-                    <button onclick="PrivacyConvert.routing.navigate('secure-room')" id="tab-secure-room" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>💬</span> <span class="truncate" data-i18n="toolRoom">E2EE Secure Chat Room</span></button>
+                    <button id="tab-visual-redact" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>👁️</span> <span class="truncate" data-i18n="toolVisual">Visual Redaction (Face/Stamp)</span></button>
+                    <button id="tab-meta-scrubber" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>🧹</span> <span class="truncate" data-i18n="toolMetaScrubber">EXIF & Meta Scrubber</span></button>
+                    <button id="tab-ocr-tool" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>📝</span> <span class="truncate" data-i18n="toolOcr">OCR Text Extract (Worker)</span></button>
+                    <button id="tab-p2p-share" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>📡</span> <span class="truncate" data-i18n="toolP2p">P2P File Share</span></button>
+                    <button id="tab-secure-room" class="tool-tab flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-2xl transition shadow-sm border"><span>💬</span> <span class="truncate" data-i18n="toolRoom">E2EE Secure Chat Room</span></button>
                 </div>
             </div>
         </div>
 
         <div id="workspaceGrid" class="max-w-3xl mx-auto grid grid-cols-1 gap-6 transition-all duration-300 mb-12">
             <div class="p-6 sm:p-8 bg-white dark:bg-slate-800 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-700 relative">
-                <button id="clearBtn" onclick="PrivacyConvert.ui.resetWorkspace(PrivacyConvert.routing.metaData[PrivacyConvert.state.tool])" class="hidden absolute top-6 right-6 text-xs font-bold text-red-500 bg-red-50 px-3 py-2 rounded-lg" data-i18n="btnReset">Reset</button>
+                <button id="clearBtn" class="hidden absolute top-6 right-6 text-xs font-bold text-red-500 bg-red-50 px-3 py-2 rounded-lg" data-i18n="btnReset">Reset</button>
 
                 <div id="sandboxTrialBanner" class="hidden mb-4 p-4 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-700/50 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3">
                     <div class="flex items-center gap-2 text-xs text-amber-800 dark:text-amber-300">
@@ -322,7 +322,7 @@
                         <textarea id="genericTextArea" class="w-full h-48 bg-slate-900 text-emerald-400 text-sm p-4 rounded-xl border-none focus:outline-none resize-none font-mono shadow-inner" readonly></textarea>
                     </div>
 
-                    <button id="convertBtn" onclick="PrivacyConvert.engine.executeTool()" class="dynamic-bg hover:opacity-90 text-white font-bold py-4 px-6 rounded-2xl shadow-lg transition text-lg flex items-center justify-center gap-3">
+                    <button id="convertBtn" class="dynamic-bg hover:opacity-90 text-white font-bold py-4 px-6 rounded-2xl shadow-lg transition text-lg flex items-center justify-center gap-3">
                         <span id="convertBtnText" data-i18n="btnProcess">Execute Secure Process</span>
                     </button>
                 </div>
@@ -377,25 +377,7 @@
         </div>
     </footer>
 
-    <!-- Yeni Modüler Sistem Bağlantısı Burada -->
-    <
-    <!-- Modüler Sistem ve Dil Garantileyici Bağlantı -->
-    <script type="module">
-        import { PrivacyConvert } from './src/main.js';
-        
-        // Dil seçim kutusuna doğrudan ve anında bağlama garantisi
-        document.addEventListener('DOMContentLoaded', () => {
-            const langSelect = document.getElementById('langSelect');
-            if (langSelect) {
-                langSelect.value = PrivacyConvert.state.lang;
-                langSelect.onchange = (e) => {
-                    PrivacyConvert.i18n.applyLanguage(e.target.value);
-                };
-            }
-        });
-    </script>
-</body>
-</html>
-
+    <!-- Modüler Sistem Yükleyicisi -->
+    <script type="module" src="./src/main.js"></script>
 </body>
 </html>
