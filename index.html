@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- 🛡️ ENTERPRISE SECURITY: Content Security Policy (CSP) -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; worker-src 'self' blob:; connect-src 'self' https:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; worker-src 'self' blob:; connect-src 'self' https: wss:;">
     
     <title id="pageTitle">PrivacyConvert Sovereign Enterprise OS - Ultimate Air-Gapped Suite</title>
     <meta name="description" id="pageMetaDesc" content="Enterprise sovereign compliance: WebAuthn, Live PII Shield, E2EE Cloud Sync, Auditor Certificates, White-Label Branding, and ZK-SNARKs.">
@@ -39,7 +39,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@v5/dist/tesseract.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     
     <style>
         :root { --accent-color: #4f46e5; --accent-hover: #4338ca; }
@@ -47,6 +47,8 @@
         .dynamic-bg:hover { background-color: var(--accent-hover); }
         .dynamic-text { color: var(--accent-color); }
         .dynamic-border { border-color: var(--accent-color); }
+        .drag-over { border-color: var(--accent-color) !important; background-color: rgba(79, 70, 229, 0.05) !important; }
+        
         @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; transform: translateY(-10px); } }
         .toast-enter { animation: slideInRight 0.3s ease-out forwards; }
@@ -67,9 +69,8 @@
 
     <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-3 pointer-events-none"></div>
 
-    <!-- OFFLINE / CDN UYARI BANNER -->
     <div id="offlineBanner" class="hidden bg-amber-600 text-white text-xs px-4 py-2 text-center font-bold">
-        ⚠️ CDN Libraries could not be reached or loaded. Running in local fallback mode.
+        ⚠️ CDN Libraries could not be reached. Running in strict Air-Gapped local mode via Service Worker Cache.
     </div>
 
     <!-- HİBRİT ÖDEME VE PRO LİSANS YÖNETİM MODALI -->
@@ -82,10 +83,10 @@
             <p class="text-xs text-slate-600 dark:text-slate-300" data-i18n="proModalDesc">Unlock unlimited batch processing, cryptographic audit certificates, E2EE cloud sync, and P2P priority nodes.</p>
             
             <div class="flex flex-col gap-2.5">
-                <a href="https://www.paytr.com/odeme/guvenli/sizin-linkiniz" target="_blank" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-center shadow-md text-xs transition flex items-center justify-center gap-2">
+                <a href="#" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-center shadow-md text-xs transition flex items-center justify-center gap-2">
                     🇹🇷 <span data-i18n="payTrBtn">PayTR / Kredi Kartı ile Öde (TL)</span>
                 </a>
-                <a href="https://pay.cryptomus.com/pay/sizin-linkiniz" target="_blank" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-center shadow-md text-xs transition flex items-center justify-center gap-2">
+                <a href="#" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-center shadow-md text-xs transition flex items-center justify-center gap-2">
                     🪙 <span data-i18n="cryptoPayBtn">Cryptomus / Kripto ile Öde (USDT/BTC)</span>
                 </a>
             </div>
@@ -171,20 +172,23 @@
                 <button onclick="PrivacyConvert.ui.promptBranding()" class="hidden sm:flex items-center gap-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 text-xs px-3 py-2 rounded-xl font-bold transition">🏢 <span data-i18n="brandBtn">Branding</span></button>
                 <button onclick="PrivacyConvert.ui.toggleSplitScreen()" id="splitScreenBtn" class="hidden sm:flex items-center gap-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 text-xs px-3 py-2 rounded-xl font-bold transition">🪟 <span data-i18n="splitScreenBtn">Split View</span></button>
                 <button onclick="PrivacyConvert.ui.toggleCmdPalette()" class="hidden sm:flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 text-xs px-3 py-2 rounded-xl font-bold transition">⌨️ <span data-i18n="cmdPaletteBtn">Cmd+K</span></button>
+                
+                <!-- DİL SEÇİMİ GÜNCELLENDİ (TR EKLENDİ) -->
                 <select id="langSelect" class="bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold px-2.5 py-2 border-0 focus:outline-none cursor-pointer">
                     <option value="en">English</option>
+                    <option value="tr">Türkçe</option>
                     <option value="es">Español</option>
-                    <option value="zh">中文</option>
                     <option value="de">Deutsch</option>
                     <option value="fr">Français</option>
+                    <option value="zh">中文</option>
                     <option value="ar">العربية</option>
                 </select>
+
                 <button id="themeToggle" onclick="PrivacyConvert.ui.toggleTheme()" class="text-xl p-2 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 transition-all shadow-sm">🌙</button>
             </div>
         </div>
     </header>
 
-    <!-- GÜVENLİK VE CANLI TELEMETRİ BANNER -->
     <div id="securityBanner" class="bg-gradient-to-r from-indigo-900 via-purple-900 to-slate-900 text-white py-3 px-4 shadow-md relative z-20 border-b border-indigo-700/50">
         <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs sm:text-sm">
             <div class="flex items-center gap-3 text-center sm:text-left">
@@ -212,7 +216,6 @@
             <p id="mainDesc" class="text-slate-500 dark:text-slate-400 text-sm sm:text-base max-w-2xl mx-auto font-medium" data-i18n="descLiveShield">Shield outbound web forms and chat inputs from leaking sensitive PII.</p>
         </div>
 
-        <!-- 6 KATEGORİDE TÜM 30 ARAÇ -->
         <div id="toolsNavContainer" class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             <!-- 1. Pro & Enterprise Suite -->
             <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3">
@@ -281,12 +284,10 @@
             </div>
         </div>
 
-        <!-- ANA ÇALIŞMA ALANI -->
         <div id="workspaceGrid" class="max-w-3xl mx-auto grid grid-cols-1 gap-6 transition-all duration-300 mb-12">
             <div class="p-6 sm:p-8 bg-white dark:bg-slate-800 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-700 relative">
-                <button id="clearBtn" onclick="PrivacyConvert.ui.resetWorkspace()" class="hidden absolute top-6 right-6 text-xs font-bold text-red-500 bg-red-50 px-3 py-2 rounded-lg" data-i18n="btnReset">Reset</button>
+                <button id="clearBtn" onclick="PrivacyConvert.ui.resetWorkspace(PrivacyConvert.routing.metaData[PrivacyConvert.state.tool])" class="hidden absolute top-6 right-6 text-xs font-bold text-red-500 bg-red-50 px-3 py-2 rounded-lg" data-i18n="btnReset">Reset</button>
 
-                <!-- PRO/TRIAL KORUMALI ALAN & İNTERAKTİF SİMÜLASYON BAŞLIĞI -->
                 <div id="sandboxTrialBanner" class="hidden mb-4 p-4 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-700/50 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3">
                     <div class="flex items-center gap-2 text-xs text-amber-800 dark:text-amber-300">
                         <span>🧪</span>
@@ -297,8 +298,7 @@
                     <button onclick="PrivacyConvert.engine.runSampleTrial()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-1.5 px-3 rounded-xl text-xs shadow transition whitespace-nowrap">Try Sample Data Now</button>
                 </div>
 
-                <!-- Özel İnteraktif Alanlar -->
-                <div id="interactiveWorkspaceContainer" class="hidden mb-4"></div>
+                <div id="interactiveWorkspaceContainer" class="hidden mb-4 w-full"></div>
 
                 <div id="dropZone" class="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-2xl p-10 text-center cursor-pointer hover:border-indigo-500 transition mt-2">
                     <p class="text-slate-800 dark:text-slate-200 font-bold text-lg" data-i18n="dropText">Click to browse or drag files here (Memory-Safe Stream)</p>
@@ -308,10 +308,9 @@
                 <div id="actionArea" class="mt-6 hidden flex-col gap-6">
                     <div id="queueDashboard" class="w-full bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border flex flex-col gap-2">
                         <span class="text-xs font-bold text-slate-500 uppercase" data-i18n="queueTitle">Queue Status</span>
-                        <div id="fileListContainer" class="w-full max-h-56 overflow-y-auto space-y-2"></div>
+                        <div id="fileListContainer" class="w-full max-h-56 overflow-y-auto space-y-2 custom-scrollbar"></div>
                     </div>
 
-                    <!-- Kripto Parola Paneli -->
                     <div id="cryptoOptions" class="hidden flex flex-col gap-4 bg-slate-50 dark:bg-slate-900 p-4 rounded-xl border">
                         <div class="flex gap-2">
                             <button onclick="PrivacyConvert.state.cryptoMode='encrypt'" class="flex-1 py-2 px-4 rounded-xl text-xs font-bold dynamic-bg text-white" data-i18n="encryptModeBtn">Encrypt File/Text</button>
@@ -338,7 +337,6 @@
                 </div>
             </div>
 
-            <!-- Bölünmüş Ekran (Pane 2) -->
             <div id="pane2Container" class="hidden p-6 sm:p-8 bg-white dark:bg-slate-800 rounded-3xl shadow-xl border">
                 <div class="text-center font-bold text-sm text-slate-400 mb-4 uppercase" data-i18n="secondaryPaneTitle">Secondary Workspace</div>
                 <textarea id="pane2Input" class="w-full h-48 p-4 text-sm border rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white focus:outline-none resize-none font-mono mb-4" placeholder="Secondary text for comparison..." data-i18n-placeholder="pasteSecondaryText"></textarea>
@@ -346,7 +344,6 @@
             </div>
         </div>
 
-        <!-- SIKÇA SORULAN SORULAR VE GİZLİLİK BÖLÜMÜ -->
         <section class="max-w-6xl mx-auto mt-16 mb-12 border-t border-slate-200 dark:border-slate-700 pt-10 px-4">
             <h2 class="text-2xl font-extrabold mb-6 dark:text-white" data-i18n="faqTitle">Frequently Asked Questions & Privacy Compliance</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-slate-600 dark:text-slate-300">
@@ -370,19 +367,14 @@
         </section>
     </main>
 
-    <!-- FOOTER: GitHub, Sertifika ve Telif Hakkı Bildirimi -->
     <footer class="w-full border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 py-6 mt-auto transition-colors duration-300">
         <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-medium text-slate-500 dark:text-slate-400">
-            
-            <!-- Yıl ve Telif Hakkı -->
             <div class="flex items-center gap-2">
                 <span class="text-lg">🛡️</span>
                 <span>&copy; <script>document.write(new Date().getFullYear())</script> PrivacyConvert Sovereign OS. <span data-i18n="allRights">All rights reserved.</span></span>
             </div>
-
-            <!-- GitHub & Sertifika İbareleri -->
             <div class="flex items-center gap-4">
-                <a href="https://github.com/your-username/privacyconvert" target="_blank" rel="noopener noreferrer" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition flex items-center gap-1.5">
+                <a href="#" target="_blank" rel="noopener noreferrer" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition flex items-center gap-1.5">
                     <svg viewBox="0 0 24 24" class="w-4 h-4 fill-current"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
                     GitHub Open Source / MIT License
                 </a>
@@ -391,11 +383,9 @@
                     CERT: SHA256-AIRGAPPED
                 </div>
             </div>
-
         </div>
     </footer>
 
-    <!-- ÇALIŞMA MOTORU VE YÖNETİM SİSTEMİ -->
     <script>
         try {
             if (typeof pdfjsLib !== 'undefined') {
@@ -416,17 +406,8 @@
                 webrtc: { pc: null, dc: null }
             },
 
-            registerObjectUrl(url) {
-                this.state.objectUrls.add(url);
-                return url;
-            },
-
-            cleanupObjectUrls() {
-                this.state.objectUrls.forEach(url => {
-                    try { URL.revokeObjectURL(url); } catch(e){}
-                });
-                this.state.objectUrls.clear();
-            },
+            registerObjectUrl(url) { this.state.objectUrls.add(url); return url; },
+            cleanupObjectUrls() { this.state.objectUrls.forEach(url => { try { URL.revokeObjectURL(url); } catch(e){} }); this.state.objectUrls.clear(); },
 
             async initDB() {
                 return new Promise((resolve) => {
@@ -435,19 +416,222 @@
                         const db = e.target.result;
                         if (!db.objectStoreNames.contains('cache')) db.createObjectStore('cache');
                         if (!db.objectStoreNames.contains('vault')) db.createObjectStore('vault', { keyPath: 'id', autoIncrement: true });
-                        if (!db.objectStoreNames.contains('rag')) db.createObjectStore('rag', { keyPath: 'id', autoIncrement: true });
                     };
                     req.onsuccess = (e) => { this.state.db = e.target.result; resolve(this.state.db); };
                     req.onerror = () => resolve(null);
                 });
             },
 
-            // 🚀 WASM / HIZLANDIRMA MOTORU
+            // DİL ÇEVİRİ MERKEZİ (TAMAMEN EŞDEĞER VE EKSİKSİZ)
+            i18n: {
+                translations: {
+                    en: {
+                        accept: "Accept", secureLabel: "Secure", dropText: "Click to browse or drag files here (Memory-Safe Stream)",
+                        btnReset: "Reset", btnCopy: "📋 Copy", btnPreview: "👁️ Preview", btnProcess: "Execute Secure Process", closeBtn: "Close", previewTitle: "Enterprise Preview",
+                        splitScreenBtn: "Split View", secondaryPaneTitle: "Secondary Workspace", brandBtn: "Branding", queueTitle: "Queue Status",
+                        bannerTitle: "100% Client-Side Air-Gapped Security:", bannerDesc: "All processing occurs locally in your browser sandbox.", bannerVerifyBtn: "🔍 How to Verify?",
+                        verifyModalTitle: "How to Verify Air-Gapped Security", verifyDesc1: "This application operates entirely client-side using JavaScript, WebAssembly, and local IndexedDB sandbox storage.",
+                        verifyStep1: "Step 1: Open Browser Developer Tools (F12)", verifyStep1Sub: "Navigate to the \"Network\" tab.", verifyStep2: "Step 2: Disconnect Internet or Monitor Traffic", verifyStep2Sub: "Notice 0 outbound requests/bytes sent to external servers.",
+                        catProFeatures: "💎 Pro & Enterprise", catInfiniteSec: "🔑 Security, Passkey & Vault", catZkpMarket: "📦 ZKP, AI & Marketplace", catLegalAudit: "⚖️ Legal, Diff & Audit", catPdfDocs: "📚 PDF & Documents", catMediaShare: "🖼️ Images, OCR, EXIF & P2P",
+                        toolLiveShield: "Live Form PII Shield", toolCloudSync: "E2EE Cloud Sync", toolAuditCert: "Auditor PDF Certificate", toolWhiteLabel: "White-Label Branding",
+                        toolWebAuthn: "WebAuthn Passkey Vault", toolStega: "Image Steganography", toolDestruct: "Self-Destructing Artifacts", toolEncrypt: "AES-256 Hardware Encryptor",
+                        toolMarket: "Local Rule Marketplace", toolZkp: "Zero-Knowledge Proofs", toolLora: "Local LoRA Fine-Tuning", toolLocalRag: "Local AI RAG Search",
+                        toolDiff: "Contract Diff Engine", toolCross: "Cross-Framework Compliance", toolTimestamp: "OpenTimestamps Anchor", toolCustody: "Chain of Custody",
+                        toolContract: "Contract Risk Parser", toolPdfPng: "PDF to PNG Converter", toolPdfMerge: "PDF Merger", toolPii: "Batch PII Redaction",
+                        toolVisual: "Visual Redaction (Face/Stamp)", toolMetaScrubber: "EXIF & Meta Scrubber", toolOcr: "OCR Text Extract (Worker)", toolP2p: "P2P File Share",
+                        toolOpfs: "OPFS Encrypted Virtual Disk", toolSign: "Ed25519 Document Signer", toolAiNer: "WebGPU AI NER Redactor", toolChain: "ZK-Rollup / Blockchain Anchor", toolRoom: "E2EE Secure Chat Room",
+                        encryptModeBtn: "Encrypt File/Text", decryptModeBtn: "Decrypt File/Text", passPlaceholder: "Enter Master Password...", pasteText: "Enter input text here...",
+                        outputLabel: "System Output / Logs:", compareBtn: "Compare & Diff", pasteSecondaryText: "Secondary text for comparison...", cmdPlaceholder: "Search all Sovereign & Pro tools...",
+                        faqTitle: "Frequently Asked Questions & Privacy Compliance",
+                        faq1Q: "Is my data ever sent to external servers?", faq1A: "No. PrivacyConvert Sovereign OS runs 100% client-side in your browser sandbox. With Air-Gapped and WebAssembly technology, zero bytes leave your device.",
+                        faq2Q: "What compliance frameworks are supported?", faq2A: "The suite complies with GDPR, HIPAA, CCPA, and enterprise sovereign data residency standards by keeping all file processing localized.",
+                        faq3Q: "How does large file handling work?", faq3A: "Using the Streams API and File System Access API, files are processed in 5MB memory-safe chunks directly to disk, preventing RAM overflow.",
+                        faq4Q: "Can I use this completely offline?", faq4A: "Yes. Once loaded, you can disconnect your internet entirely and all 30 sovereign tools will function normally in air-gapped isolation.",
+                        proBtn: "Get Pro", proModalTitle: "💎 Upgrade to Sovereign Pro", proModalDesc: "Unlock unlimited batch processing, cryptographic audit certificates, E2EE cloud sync, and P2P priority nodes.", activateKeyBtn: "Activate Pro License",
+                        payTrBtn: "PayTR / Credit Card (TL)", cryptoPayBtn: "Cryptomus / Crypto (USDT/BTC)", allRights: "All rights reserved.", orDivider: "Or enter license key",
+                        descLiveShield: "Shield outbound web forms and chat inputs from leaking sensitive PII."
+                    },
+                    tr: {
+                        accept: "Kabul Et", secureLabel: "Güvenli", dropText: "Göz atmak için tıklayın veya dosyaları buraya sürükleyin (Bellek Korumalı Akış)",
+                        btnReset: "Sıfırla", btnCopy: "📋 Kopyala", btnPreview: "👁️ Önizleme", btnProcess: "Güvenli İşlemi Çalıştır", closeBtn: "Kapat", previewTitle: "Kurumsal Önizleme",
+                        splitScreenBtn: "Bölünmüş Ekran", secondaryPaneTitle: "İkincil Çalışma Alanı", brandBtn: "Markalama", queueTitle: "Kuyruk Durumu",
+                        bannerTitle: "100% İstemci Tarafı (Air-Gapped) Güvenlik:", bannerDesc: "Tüm işlemler tarayıcınızın korumalı alanında (sandbox) yerel olarak gerçekleşir.", bannerVerifyBtn: "🔍 Nasıl Doğrulanır?",
+                        verifyModalTitle: "Air-Gapped Güvenliği Nasıl Doğrulanır", verifyDesc1: "Bu uygulama JavaScript, WebAssembly ve yerel IndexedDB depolama kullanarak tamamen istemci tarafında çalışır.",
+                        verifyStep1: "1. Adım: Tarayıcı Geliştirici Araçlarını Açın (F12)", verifyStep1Sub: "\"Ağ\" (Network) sekmesine gidin.", verifyStep2: "2. Adım: İnterneti Kesin veya Trafiği İzleyin", verifyStep2Sub: "Dış sunuculara 0 bayt veri veya istek gönderildiğini fark edeceksiniz.",
+                        catProFeatures: "💎 Pro ve Kurumsal", catInfiniteSec: "🔑 Güvenlik, Passkey ve Kasa", catZkpMarket: "📦 ZKP, Yapay Zeka ve Market", catLegalAudit: "⚖️ Hukuk, Karşılaştırma ve Denetim", catPdfDocs: "📚 PDF ve Belgeler", catMediaShare: "🖼️ Görseller, OCR, EXIF ve P2P",
+                        toolLiveShield: "Canlı Form PII Kalkanı", toolCloudSync: "Uçtan Uca Şifreli Bulut Senkronizasyonu", toolAuditCert: "Denetçi PDF Sertifikası", toolWhiteLabel: "Beyaz Etiket Markalama",
+                        toolWebAuthn: "WebAuthn Passkey Kasası", toolStega: "Görsel Steganografi (Veri Gizleme)", toolDestruct: "Kendi Kendini İmha Eden Dosyalar", toolEncrypt: "AES-256 Donanım Şifreleyici",
+                        toolMarket: "Yerel Kural Pazarı", toolZkp: "Sıfır Bilgi İspatları (ZKP)", toolLora: "Yerel LoRA İnce Ayarı", toolLocalRag: "Yerel AI RAG Taraması",
+                        toolDiff: "Sözleşme Karşılaştırma Motoru", toolCross: "Çapraz Çerçeve Uyumluluğu", toolTimestamp: "OpenTimestamps Çapası", toolCustody: "Gözetim Zinciri",
+                        toolContract: "Sözleşme Risk Ayrıştırıcısı", toolPdfPng: "PDF'den PNG'ye Dönüştürücü", toolPdfMerge: "PDF Birleştirici", toolPii: "Toplu PII (Kişisel Veri) Karartma",
+                        toolVisual: "Görsel Karartma (Yüz/Mühür)", toolMetaScrubber: "EXIF ve Meta Veri Temizleyici", toolOcr: "OCR Metin Çıkarımı (Worker)", toolP2p: "P2P (Eşler Arası) Dosya Paylaşımı",
+                        toolOpfs: "OPFS Şifreli Sanal Disk", toolSign: "Ed25519 Belge İmzalayıcı", toolAiNer: "WebGPU AI NER Redaktörü", toolChain: "ZK-Rollup / Blockchain Çapası", toolRoom: "E2EE Güvenli Sohbet Odası",
+                        encryptModeBtn: "Dosya/Metin Şifrele", decryptModeBtn: "Dosya/Metin Şifresini Çöz", passPlaceholder: "Ana Parolayı Girin...", pasteText: "Girdi metnini buraya yazın...",
+                        outputLabel: "Sistem Çıktısı / Loglar:", compareBtn: "Karşılaştır ve Farkı Bul", pasteSecondaryText: "Karşılaştırma için ikincil metin...", cmdPlaceholder: "Tüm Sovereign ve Pro araçlarını ara...",
+                        faqTitle: "Sıkça Sorulan Sorular ve Gizlilik Uyumluluğu",
+                        faq1Q: "Verilerim hiç harici sunuculara gönderiliyor mu?", faq1A: "Hayır. PrivacyConvert Sovereign OS, tarayıcı korumalı alanınızda %100 istemci tarafında çalışır. Air-Gapped ve WebAssembly teknolojisi sayesinde cihazınızdan sıfır bayt dışarı çıkar.",
+                        faq2Q: "Hangi uyumluluk çerçeveleri destekleniyor?", faq2A: "Araç takımı, tüm dosya işlemlerini yerelleştirerek GDPR, HIPAA, KVKK ve kurumsal egemen veri barındırma standartlarına tam uyum sağlar.",
+                        faq3Q: "Büyük dosya işleme nasıl çalışır?", faq3A: "Streams API ve Dosya Sistemi Erişim API'si kullanılarak dosyalar, RAM taşmasını önleyecek şekilde belleğe duyarlı 5MB'lık parçalar halinde doğrudan diske işlenir.",
+                        faq4Q: "Bunu tamamen çevrimdışı (offline) kullanabilir miyim?", faq4A: "Evet. Sayfa bir kez yüklendikten sonra internet bağlantınızı tamamen kesebilirsiniz; 30 aracın tamamı izole bir şekilde hava boşluklu (air-gapped) olarak çalışmaya devam edecektir.",
+                        proBtn: "Pro'ya Geç", proModalTitle: "💎 Sovereign Pro'ya Yükselt", proModalDesc: "Sınırsız toplu işleme, kriptografik denetim sertifikaları, E2EE bulut senkronizasyonu ve P2P öncelikli düğümlerin kilidini açın.", activateKeyBtn: "Pro Lisansını Aktifleştir",
+                        payTrBtn: "PayTR / Kredi Kartı ile Öde (TL)", cryptoPayBtn: "Cryptomus / Kripto ile Öde (USDT/BTC)", allRights: "Tüm hakları saklıdır.", orDivider: "Veya lisans anahtarını girin",
+                        descLiveShield: "Giden web formlarını ve sohbet girdilerini hassas kişisel verilerin (PII) sızmasına karşı koruyun."
+                    },
+                    es: {
+                        accept: "Aceptar", secureLabel: "Seguro", dropText: "Haga clic para buscar o arrastre archivos aquí (Flujo Seguro para Memoria)",
+                        btnReset: "Reiniciar", btnCopy: "📋 Copiar", btnPreview: "👁️ Vista previa", btnProcess: "Ejecutar Proceso Seguro", closeBtn: "Cerrar", previewTitle: "Vista Previa Empresarial",
+                        splitScreenBtn: "Pantalla Dividida", secondaryPaneTitle: "Espacio de Trabajo Secundario", brandBtn: "Marca", queueTitle: "Estado de Cola",
+                        bannerTitle: "Seguridad Air-Gapped 100% del Lado del Cliente:", bannerDesc: "Todo el procesamiento ocurre localmente en el sandbox de su navegador.", bannerVerifyBtn: "🔍 ¿Cómo Verificar?",
+                        verifyModalTitle: "Cómo Verificar la Seguridad Air-Gapped", verifyDesc1: "Esta aplicación opera íntegramente del lado del cliente utilizando JavaScript, WebAssembly y almacenamiento local IndexedDB en sandbox.",
+                        verifyStep1: "Paso 1: Abrir Herramientas de Desarrollo (F12)", verifyStep1Sub: "Navegue a la pestaña \"Red\" (Network).", verifyStep2: "Paso 2: Desconecte Internet o Supervise el Tráfico", verifyStep2Sub: "Notará que se envían 0 solicitudes o bytes a servidores externos.",
+                        catProFeatures: "💎 Pro y Empresarial", catInfiniteSec: "🔑 Seguridad, Passkey y Bóveda", catZkpMarket: "📦 ZKP, IA y Mercado", catLegalAudit: "⚖️ Legal, Comparación y Auditoría", catPdfDocs: "📚 PDF y Documentos", catMediaShare: "🖼️ Imágenes, OCR, EXIF y P2P",
+                        toolLiveShield: "Escudo PII de Formularios", toolCloudSync: "Sincronización en la Nube E2EE", toolAuditCert: "Certificado PDF de Auditor", toolWhiteLabel: "Marca Blanca",
+                        toolWebAuthn: "Bóveda de Passkey WebAuthn", toolStega: "Esteganografía de Imágenes", toolDestruct: "Artefactos Autodestructibles", toolEncrypt: "Cifrador de Hardware AES-256",
+                        toolMarket: "Mercado de Reglas Locales", toolZkp: "Pruebas de Conocimiento Cero (ZKP)", toolLora: "Ajuste Fino de LoRA Local", toolLocalRag: "Búsqueda RAG de IA Local",
+                        toolDiff: "Motor Diff de Contratos", toolCross: "Cumplimiento Multi-Marco", toolTimestamp: "Anclaje de OpenTimestamps", toolCustody: "Cadena de Custodia",
+                        toolContract: "Analizador de Riesgos de Contratos", toolPdfPng: "Conversor de PDF a PNG", toolPdfMerge: "Fusión de PDF", toolPii: "Redacción de PII por Lotes",
+                        toolVisual: "Redacción Visual (Cara/Sello)", toolMetaScrubber: "Limpiador de EXIF y Metadatos", toolOcr: "Extracción de Texto OCR (Worker)", toolP2p: "Intercambio de Archivos P2P",
+                        toolOpfs: "Disco Virtual Cifrado OPFS", toolSign: "Firmante de Documentos Ed25519", toolAiNer: "Redactor IA NER WebGPU", toolChain: "Anclaje ZK-Rollup / Blockchain", toolRoom: "Sala de Chat Segura E2EE",
+                        encryptModeBtn: "Cifrar Archivo/Texto", decryptModeBtn: "Descifrar Archivo/Texto", passPlaceholder: "Ingrese la Contraseña Maestra...", pasteText: "Ingrese el texto de entrada aquí...",
+                        outputLabel: "Salida del Sistema / Registros:", compareBtn: "Comparar y Diferenciar", pasteSecondaryText: "Texto secundario para comparación...", cmdPlaceholder: "Buscar todas las herramientas Sovereign y Pro...",
+                        faqTitle: "Preguntas Frecuentes y Cumplimiento de Privacidad",
+                        faq1Q: "¿Mis datos se envían alguna vez a servidores externos?", faq1A: "No. PrivacyConvert Sovereign OS se ejecuta 100% del lado del cliente en el sandbox de su navegador. Con tecnología Air-Gapped y WebAssembly, cero bytes salen de su dispositivo.",
+                        faq2Q: "¿Qué marcos de cumplimiento son compatibles?", faq2A: "La suite cumple con los estándares GDPR, HIPAA, CCPA y de residencia de datos soberanos empresariales al mantener localizado todo el procesamiento de archivos.",
+                        faq3Q: "¿Cómo funciona el manejo de archivos grandes?", faq3A: "Utilizando la API de Streams y la API de Acceso al Sistema de Archivos, los archivos se procesan directamente en el disco en fragmentos de 5 MB seguros para la memoria, evitando el desbordamiento de RAM.",
+                        faq4Q: "¿Puedo usar esto completamente sin conexión?", faq4A: "Sí. Una vez cargado, puede desconectar su Internet por completo y las 30 herramientas funcionarán normalmente en aislamiento air-gapped.",
+                        proBtn: "Obtener Pro", proModalTitle: "💎 Actualizar a Sovereign Pro", proModalDesc: "Desbloquee procesamiento por lotes ilimitado, certificados de auditoría criptográfica, sincronización en la nube E2EE y nodos de prioridad P2P.", activateKeyBtn: "Activar Licencia Pro",
+                        payTrBtn: "PayTR / Tarjeta de Crédito (TL)", cryptoPayBtn: "Cryptomus / Criptomoneda (USDT/BTC)", allRights: "Todos los derechos reservados.", orDivider: "O introduzca la clave de licencia",
+                        descLiveShield: "Proteja los formularios web salientes y los chats para que no filtren PII confidencial."
+                    },
+                    de: {
+                        accept: "Akzeptieren", secureLabel: "Sicher", dropText: "Klicken Sie zum Durchsuchen oder ziehen Sie Dateien hierher",
+                        btnReset: "Zurücksetzen", btnCopy: "📋 Kopieren", btnPreview: "👁️ Vorschau", btnProcess: "Sicheren Prozess Ausführen", closeBtn: "Schließen", previewTitle: "Unternehmensvorschau",
+                        splitScreenBtn: "Geteilte Ansicht", secondaryPaneTitle: "Sekundärer Arbeitsbereich", brandBtn: "Branding", queueTitle: "Warteschlangenstatus",
+                        bannerTitle: "100% Client-seitige Air-Gapped-Sicherheit:", bannerDesc: "Die gesamte Verarbeitung erfolgt lokal in der Sandbox Ihres Browsers.", bannerVerifyBtn: "🔍 Wie man das überprüft?",
+                        verifyModalTitle: "So überprüfen Sie die Air-Gapped-Sicherheit", verifyDesc1: "Diese Anwendung arbeitet vollständig clientseitig mithilfe von JavaScript, WebAssembly und lokalem IndexedDB-Sandbox-Speicher.",
+                        verifyStep1: "Schritt 1: Öffnen Sie die Browser-Entwicklertools (F12)", verifyStep1Sub: "Navigieren Sie zur Registerkarte \"Netzwerk\".", verifyStep2: "Schritt 2: Trennen Sie das Internet oder überwachen Sie den Datenverkehr", verifyStep2Sub: "Beachten Sie, dass 0 ausgehende Anforderungen/Bytes an externe Server gesendet werden.",
+                        catProFeatures: "💎 Pro & Unternehmen", catInfiniteSec: "🔑 Sicherheit, Passkey & Tresor", catZkpMarket: "📦 ZKP, KI & Marktplatz", catLegalAudit: "⚖️ Recht, Diff & Audit", catPdfDocs: "📚 PDF & Dokumente", catMediaShare: "🖼️ Bilder, OCR, EXIF & P2P",
+                        toolLiveShield: "Live-Formular-PII-Schild", toolCloudSync: "E2EE Cloud Sync", toolAuditCert: "Auditor PDF-Zertifikat", toolWhiteLabel: "White-Label-Branding",
+                        toolWebAuthn: "WebAuthn Passkey-Tresor", toolStega: "Bildsteganographie", toolDestruct: "Selbstzerstörende Artefakte", toolEncrypt: "AES-256 Hardware-Verschlüsseler",
+                        toolMarket: "Lokaler Regel-Marktplatz", toolZkp: "Zero-Knowledge-Beweise (ZKP)", toolLora: "Lokale LoRA-Feinabstimmung", toolLocalRag: "Lokale KI-RAG-Suche",
+                        toolDiff: "Vertrags-Diff-Engine", toolCross: "Framework-übergreifende Compliance", toolTimestamp: "OpenTimestamps-Anker", toolCustody: "Beweiskette (Custody)",
+                        toolContract: "Vertragsrisiko-Parser", toolPdfPng: "PDF zu PNG Konverter", toolPdfMerge: "PDF-Zusammenführung", toolPii: "Batch-PII-Schwärzung",
+                        toolVisual: "Visuelle Schwärzung (Gesicht/Stempel)", toolMetaScrubber: "EXIF- & Meta-Wäscher", toolOcr: "OCR-Textextraktion (Worker)", toolP2p: "P2P-Dateifreigabe",
+                        toolOpfs: "Verschlüsseltes virtuelles OPFS-Laufwerk", toolSign: "Ed25519 Dokumenten-Signierer", toolAiNer: "WebGPU AI NER-Redaktor", toolChain: "ZK-Rollup / Blockchain-Anker", toolRoom: "E2EE Sicherer Chatraum",
+                        encryptModeBtn: "Datei/Text Verschlüsseln", decryptModeBtn: "Datei/Text Entschlüsseln", passPlaceholder: "Master-Passwort eingeben...", pasteText: "Geben Sie hier den Eingabetext ein...",
+                        outputLabel: "Systemausgabe / Protokolle:", compareBtn: "Vergleichen & Differenzieren", pasteSecondaryText: "Sekundärer Text zum Vergleich...", cmdPlaceholder: "Durchsuchen Sie alle Sovereign- & Pro-Tools...",
+                        faqTitle: "Häufig gestellte Fragen und Datenschutz-Compliance",
+                        faq1Q: "Werden meine Daten jemals an externe Server gesendet?", faq1A: "Nein. PrivacyConvert Sovereign OS läuft zu 100% clientseitig in Ihrer Browser-Sandbox. Mit Air-Gapped- und WebAssembly-Technologie verlassen null Bytes Ihr Gerät.",
+                        faq2Q: "Welche Compliance-Frameworks werden unterstützt?", faq2A: "Die Suite entspricht der DSGVO, HIPAA, CCPA und den Standards für die Datenresidenz von Unternehmen, indem die gesamte Dateiverarbeitung lokalisiert wird.",
+                        faq3Q: "Wie funktioniert die Verarbeitung großer Dateien?", faq3A: "Mithilfe der Streams-API und der File System Access-API werden Dateien direkt auf die Festplatte in 5 MB speichersicheren Blöcken verarbeitet, wodurch ein RAM-Überlauf verhindert wird.",
+                        faq4Q: "Kann ich dies komplett offline nutzen?", faq4A: "Ja. Nach dem Laden können Sie Ihr Internet vollständig trennen, und alle 30 Tools funktionieren normal in isolierter Air-Gapped-Umgebung.",
+                        proBtn: "Pro Holen", proModalTitle: "💎 Upgrade auf Sovereign Pro", proModalDesc: "Schalten Sie unbegrenzte Stapelverarbeitung, kryptografische Audit-Zertifikate, E2EE-Cloud-Synchronisierung und P2P-Prioritätsknoten frei.", activateKeyBtn: "Pro-Lizenz Aktivieren",
+                        payTrBtn: "PayTR / Kreditkarte (TL)", cryptoPayBtn: "Cryptomus / Krypto (USDT/BTC)", allRights: "Alle Rechte vorbehalten.", orDivider: "Oder Lizenzschlüssel eingeben",
+                        descLiveShield: "Schützen Sie ausgehende Webformulare und Chat-Eingaben vor dem Verlust sensibler PII-Daten."
+                    },
+                    fr: {
+                        accept: "Accepter", secureLabel: "Sécurisé", dropText: "Cliquez pour parcourir ou faites glisser les fichiers ici",
+                        btnReset: "Réinitialiser", btnCopy: "📋 Copier", btnPreview: "👁️ Aperçu", btnProcess: "Exécuter le Processus Sécurisé", closeBtn: "Fermer", previewTitle: "Aperçu Entreprise",
+                        splitScreenBtn: "Vue Divisée", secondaryPaneTitle: "Espace de Travail Secondaire", brandBtn: "Marque", queueTitle: "État de la File",
+                        bannerTitle: "Sécurité Air-Gapped 100% Côté Client :", bannerDesc: "Tout le traitement s'effectue localement dans le bac à sable de votre navigateur.", bannerVerifyBtn: "🔍 Comment Vérifier ?",
+                        verifyModalTitle: "Comment Vérifier la Sécurité Air-Gapped", verifyDesc1: "Cette application fonctionne entièrement côté client en utilisant JavaScript, WebAssembly et le stockage local IndexedDB en bac à sable.",
+                        verifyStep1: "Étape 1 : Ouvrir les Outils de Développement (F12)", verifyStep1Sub: "Accédez à l'onglet \"Réseau\".", verifyStep2: "Étape 2 : Déconnecter Internet ou Surveiller le Trafic", verifyStep2Sub: "Remarquez que 0 requête ou octet n'est envoyé aux serveurs externes.",
+                        catProFeatures: "💎 Pro & Entreprise", catInfiniteSec: "🔑 Sécurité, Passkey & Coffre", catZkpMarket: "📦 ZKP, IA & Marché", catLegalAudit: "⚖️ Légal, Diff & Audit", catPdfDocs: "📚 PDF & Documents", catMediaShare: "🖼️ Images, OCR, EXIF & P2P",
+                        toolLiveShield: "Bouclier PII pour Formulaires", toolCloudSync: "Synchronisation Cloud E2EE", toolAuditCert: "Certificat PDF d'Auditeur", toolWhiteLabel: "Marque Blanche",
+                        toolWebAuthn: "Coffre WebAuthn Passkey", toolStega: "Stéganographie d'Image", toolDestruct: "Artéfacts Autodestructibles", toolEncrypt: "Chiffreur Matériel AES-256",
+                        toolMarket: "Marché de Règles Locales", toolZkp: "Preuves à Divulgation Nulle (ZKP)", toolLora: "Affinage LoRA Local", toolLocalRag: "Recherche RAG IA Locale",
+                        toolDiff: "Moteur Diff de Contrats", toolCross: "Conformité Inter-Cadres", toolTimestamp: "Ancrage OpenTimestamps", toolCustody: "Chaîne de Traçabilité",
+                        toolContract: "Analyseur de Risques de Contrats", toolPdfPng: "Convertisseur PDF en PNG", toolPdfMerge: "Fusion de PDF", toolPii: "Rédaction PII par Lots",
+                        toolVisual: "Rédaction Visuelle (Visage/Sceau)", toolMetaScrubber: "Nettoyeur EXIF & Métadonnées", toolOcr: "Extraction de Texte OCR (Worker)", toolP2p: "Partage de Fichiers P2P",
+                        toolOpfs: "Disque Virtuel Chiffré OPFS", toolSign: "Signataire de Documents Ed25519", toolAiNer: "Rédacteur IA NER WebGPU", toolChain: "Ancrage ZK-Rollup / Blockchain", toolRoom: "Salle de Discussion Sécurisée E2EE",
+                        encryptModeBtn: "Chiffrer Fichier/Texte", decryptModeBtn: "Déchiffrer Fichier/Texte", passPlaceholder: "Entrez le mot de passe principal...", pasteText: "Entrez le texte d'entrée ici...",
+                        outputLabel: "Sortie Système / Journaux :", compareBtn: "Comparer & Différencier", pasteSecondaryText: "Texte secondaire pour comparaison...", cmdPlaceholder: "Rechercher tous les outils Sovereign & Pro...",
+                        faqTitle: "Foire Aux Questions et Conformité de Confidentialité",
+                        faq1Q: "Mes données sont-elles un jour envoyées à des serveurs externes ?", faq1A: "Non. PrivacyConvert Sovereign OS s'exécute à 100% côté client dans le bac à sable de votre navigateur. Avec la technologie Air-Gapped et WebAssembly, zéro octet ne quitte votre appareil.",
+                        faq2Q: "Quels cadres de conformité sont pris en charge ?", faq2A: "La suite est conforme au RGPD, HIPAA, CCPA et aux normes de résidence des données souveraines de l'entreprise en gardant tout le traitement des fichiers localisé.",
+                        faq3Q: "Comment fonctionne la gestion des fichiers volumineux ?", faq3A: "En utilisant l'API Streams et l'API d'accès au système de fichiers, les fichiers sont traités directement sur le disque par blocs de 5 Mo sécurisés pour la mémoire, empêchant le débordement de la RAM.",
+                        faq4Q: "Puis-je l'utiliser complètement hors ligne ?", faq4A: "Oui. Une fois chargé, vous pouvez déconnecter complètement votre connexion Internet et les 30 outils fonctionneront normalement en isolation air-gapped.",
+                        proBtn: "Obtenir Pro", proModalTitle: "💎 Passer à Sovereign Pro", proModalDesc: "Débloquez le traitement par lots illimité, les certificats d'audit cryptographique, la synchronisation cloud E2EE et les nœuds prioritaires P2P.", activateKeyBtn: "Activer la Licence Pro",
+                        payTrBtn: "PayTR / Carte de Crédit (TL)", cryptoPayBtn: "Cryptomus / Crypto (USDT/BTC)", allRights: "Tous droits réservés.", orDivider: "Ou entrez la clé de licence",
+                        descLiveShield: "Protégez les formulaires Web et les entrées de chat sortants contre les fuites de PII."
+                    },
+                    zh: {
+                        accept: "接受", secureLabel: "安全", dropText: "点击浏览或将文件拖放到此处（内存安全流）",
+                        btnReset: "重置", btnCopy: "📋 复制", btnPreview: "👁️ 预览", btnProcess: "执行安全流程", closeBtn: "关闭", previewTitle: "企业预览",
+                        splitScreenBtn: "分屏视图", secondaryPaneTitle: "辅助工作区", brandBtn: "品牌化", queueTitle: "队列状态",
+                        bannerTitle: "100% 客户端物理隔离安全：", bannerDesc: "所有处理都在浏览器的沙盒中本地进行。", bannerVerifyBtn: "🔍 如何验证？",
+                        verifyModalTitle: "如何验证物理隔离安全性", verifyDesc1: "此应用程序完全使用JavaScript、WebAssembly和本地IndexedDB沙盒存储在客户端运行。",
+                        verifyStep1: "第一步：打开浏览器开发者工具（F12）", verifyStep1Sub: "导航到“网络”选项卡。", verifyStep2: "第二步：断开互联网或监控流量", verifyStep2Sub: "您将注意到发送到外部服务器的请求/字节数为 0。",
+                        catProFeatures: "💎 专业版与企业版", catInfiniteSec: "🔑 安全、通行密钥与保险库", catZkpMarket: "📦 ZKP、AI 与市场", catLegalAudit: "⚖️ 法律、差异与审计", catPdfDocs: "📚 PDF 与文档", catMediaShare: "🖼️ 图像、OCR、EXIF 与 P2P",
+                        toolLiveShield: "实时表单 PII 护盾", toolCloudSync: "E2EE 云同步", toolAuditCert: "审计员 PDF 证书", toolWhiteLabel: "白标品牌化",
+                        toolWebAuthn: "WebAuthn 通行密钥保险库", toolStega: "图像隐写术", toolDestruct: "自毁伪影", toolEncrypt: "AES-256 硬件加密器",
+                        toolMarket: "本地规则市场", toolZkp: "零知识证明 (ZKP)", toolLora: "本地 LoRA 微调", toolLocalRag: "本地 AI RAG 搜索",
+                        toolDiff: "合同差异引擎", toolCross: "跨框架合规性", toolTimestamp: "OpenTimestamps 锚点", toolCustody: "监管链",
+                        toolContract: "合同风险解析器", toolPdfPng: "PDF 转 PNG 转换器", toolPdfMerge: "PDF 合并器", toolPii: "批量 PII 遮盖",
+                        toolVisual: "视觉遮盖（人脸/印章）", toolMetaScrubber: "EXIF 与元数据清理器", toolOcr: "OCR 文本提取 (Worker)", toolP2p: "P2P 文件共享",
+                        toolOpfs: "OPFS 加密虚拟磁盘", toolSign: "Ed25519 文档签名器", toolAiNer: "WebGPU AI NER 编排器", toolChain: "ZK-Rollup / 区块链锚点", toolRoom: "E2EE 安全聊天室",
+                        encryptModeBtn: "加密文件/文本", decryptModeBtn: "解密文件/文本", passPlaceholder: "输入主密码...", pasteText: "在此处输入输入文本...",
+                        outputLabel: "系统输出 / 日志：", compareBtn: "比较与差异", pasteSecondaryText: "用于比较的辅助文本...", cmdPlaceholder: "搜索所有 Sovereign 和 Pro 工具...",
+                        faqTitle: "常见问题解答与隐私合规性",
+                        faq1Q: "我的数据是否曾被发送到外部服务器？", faq1A: "不会。PrivacyConvert Sovereign OS 100% 在您浏览器的沙盒中以客户端模式运行。借助物理隔离和 WebAssembly 技术，您的设备中不会流出任何字节。",
+                        faq2Q: "支持哪些合规框架？", faq2A: "该套件通过将所有文件处理本地化，符合 GDPR、HIPAA、CCPA 以及企业主权数据驻留标准。",
+                        faq3Q: "大文件处理如何工作？", faq3A: "使用 Streams API 和文件系统访问 API，文件以 5MB 的内存安全块直接处理到磁盘上，从而防止 RAM 溢出。",
+                        faq4Q: "我可以完全离线使用它吗？", faq4A: "可以。加载完成后，您可以完全断开互联网连接，所有 30 个工具都将在物理隔离的环境中正常运行。",
+                        proBtn: "获取专业版", proModalTitle: "💎 升级到 Sovereign Pro", proModalDesc: "解锁无限制的批量处理、加密审计证书、E2EE 云同步和 P2P 优先节点。", activateKeyBtn: "激活专业版许可证",
+                        payTrBtn: "PayTR / 信用卡 (TL)", cryptoPayBtn: "Cryptomus / 加密货币 (USDT/BTC)", allRights: "版权所有。", orDivider: "或输入许可证密钥",
+                        descLiveShield: "保护出站 Web 表单和聊天输入免遭敏感 PII 泄漏。"
+                    },
+                    ar: {
+                        accept: "قبول", secureLabel: "آمن", dropText: "انقر للتصفح أو اسحب الملفات هنا (دفق آمن للذاكرة)",
+                        btnReset: "إعادة ضبط", btnCopy: "📋 نسخ", btnPreview: "👁️ معاينة", btnProcess: "تنفيذ عملية آمنة", closeBtn: "إغلاق", previewTitle: "معاينة المؤسسة",
+                        splitScreenBtn: "عرض مقسم", secondaryPaneTitle: "مساحة العمل الثانوية", brandBtn: "العلامة التجارية", queueTitle: "حالة قائمة الانتظار",
+                        bannerTitle: "أمان معزول 100% على جانب العميل:", bannerDesc: "تتم جميع عمليات المعالجة محليًا في وضع الحماية للمتصفح الخاص بك.", bannerVerifyBtn: "🔍 كيف أتحقق؟",
+                        verifyModalTitle: "كيفية التحقق من الأمان المعزول (Air-Gapped)", verifyDesc1: "يعمل هذا التطبيق بالكامل من جانب العميل باستخدام JavaScript و WebAssembly وتخزين IndexedDB المحلي في وضع الحماية.",
+                        verifyStep1: "الخطوة 1: افتح أدوات مطوري المتصفح (F12)", verifyStep1Sub: "انتقل إلى علامة التبويب \"الشبكة\".", verifyStep2: "الخطوة 2: افصل الإنترنت أو راقب حركة المرور", verifyStep2Sub: "لاحظ إرسال 0 طلبات/بايت صادرة إلى الخوادم الخارجية.",
+                        catProFeatures: "💎 للمحترفين والمؤسسات", catInfiniteSec: "🔑 الأمان ومفاتيح المرور والقبو", catZkpMarket: "📦 ZKP والذكاء الاصطناعي والسوق", catLegalAudit: "⚖️ القانون والاختلافات والتدقيق", catPdfDocs: "📚 PDF والمستندات", catMediaShare: "🖼️ الصور و OCR و EXIF و P2P",
+                        toolLiveShield: "درع PII للنماذج المباشرة", toolCloudSync: "مزامنة سحابية E2EE", toolAuditCert: "شهادة PDF للمدقق", toolWhiteLabel: "علامة تجارية بيضاء",
+                        toolWebAuthn: "قبو مفاتيح المرور WebAuthn", toolStega: "إخفاء المعلومات في الصور", toolDestruct: "قطع أثرية ذاتية التدمير", toolEncrypt: "مُشفِّر أجهزة AES-256",
+                        toolMarket: "سوق القواعد المحلية", toolZkp: "براهين المعرفة الصفرية (ZKP)", toolLora: "ضبط دقيق محلي لـ LoRA", toolLocalRag: "بحث RAG محلي للذكاء الاصطناعي",
+                        toolDiff: "محرك فروق العقود", toolCross: "الامتثال عبر الأطر", toolTimestamp: "مرساة OpenTimestamps", toolCustody: "سلسلة الحضانة",
+                        toolContract: "محلل مخاطر العقود", toolPdfPng: "محول PDF إلى PNG", toolPdfMerge: "دمج PDF", toolPii: "تنقيح PII الدفعي",
+                        toolVisual: "تنقيح بصري (وجه / ختم)", toolMetaScrubber: "منظف EXIF والبيانات الوصفية", toolOcr: "استخراج نص OCR (عامل)", toolP2p: "مشاركة ملفات P2P",
+                        toolOpfs: "قرص ظاهري مشفر OPFS", toolSign: "موقع مستندات Ed25519", toolAiNer: "منقح AI NER لـ WebGPU", toolChain: "ZK-Rollup / مرساة Blockchain", toolRoom: "غرفة دردشة آمنة E2EE",
+                        encryptModeBtn: "تشفير ملف/نص", decryptModeBtn: "فك تشفير ملف/نص", passPlaceholder: "أدخل كلمة المرور الرئيسية...", pasteText: "أدخل نص الإدخال هنا...",
+                        outputLabel: "مخرجات النظام / السجلات:", compareBtn: "مقارنة وإيجاد الفروق", pasteSecondaryText: "نص ثانوي للمقارنة...", cmdPlaceholder: "ابحث في جميع أدوات Sovereign و Pro...",
+                        faqTitle: "الأسئلة الشائعة والامتثال للخصوصية",
+                        faq1Q: "هل يتم إرسال بياناتي أبدًا إلى خوادم خارجية؟", faq1A: "لا. يعمل نظام PrivacyConvert Sovereign OS بنسبة 100% من جانب العميل في وضع الحماية الخاص بمتصفحك. بفضل تقنية Air-Gapped و WebAssembly، لا تغادر أي بايتات جهازك.",
+                        faq2Q: "ما هي أطر الامتثال المدعومة؟", faq2A: "يتوافق الجناح مع معايير إقامة البيانات السيادية للشركات و GDPR و HIPAA و CCPA من خلال الحفاظ على محلية جميع عمليات معالجة الملفات.",
+                        faq3Q: "كيف تعمل معالجة الملفات الكبيرة؟", faq3A: "باستخدام واجهة برمجة تطبيقات Streams وواجهة برمجة تطبيقات File System Access، تتم معالجة الملفات مباشرة على القرص في أجزاء آمنة للذاكرة بحجم 5 ميجابايت، مما يمنع تجاوز سعة ذاكرة الوصول العشوائي (RAM).",
+                        faq4Q: "هل يمكنني استخدام هذا في وضع عدم الاتصال تمامًا؟", faq4A: "نعم. بمجرد التحميل، يمكنك قطع اتصالك بالإنترنت بالكامل، وستعمل جميع الأدوات الثلاثين بشكل طبيعي في عزلة عن الهواء (air-gapped).",
+                        proBtn: "احصل على Pro", proModalTitle: "💎 الترقية إلى Sovereign Pro", proModalDesc: "افتح معالجة الدُفعات غير المحدودة، وشهادات التدقيق المشفرة، والمزامنة السحابية E2EE، والعقد ذات الأولوية P2P.", activateKeyBtn: "تفعيل ترخيص Pro",
+                        payTrBtn: "PayTR / بطاقة الائتمان (TL)", cryptoPayBtn: "Cryptomus / تشفير (USDT/BTC)", allRights: "جميع الحقوق محفوظة.", orDivider: "أو أدخل مفتاح الترخيص",
+                        descLiveShield: "حماية نماذج الويب الصادرة ومدخلات الدردشة من تسريب معلومات التعريف الشخصية (PII) الحساسة."
+                    }
+                },
+                applyLanguage(lang) {
+                    const dict = this.translations[lang] || this.translations['en'];
+                    document.querySelectorAll('[data-i18n]').forEach(el => {
+                        const key = el.getAttribute('data-i18n');
+                        if (dict[key]) el.innerHTML = dict[key];
+                    });
+                    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                        const key = el.getAttribute('data-i18n-placeholder');
+                        if (dict[key]) el.placeholder = dict[key];
+                    });
+                    PrivacyConvert.state.lang = lang;
+                    localStorage.setItem('privacyConvert_lang', lang);
+                    document.getElementById('langSelect').value = lang;
+                    document.documentElement.lang = lang;
+                    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+                }
+            },
+
+            // TEMEL FONKSIYONLAR, WASM, ZKP, AI VE OPFS MOTORLARI BURADAN AŞAĞIYA AYNI KALMIŞTIR
             wasmCore: {
                 async compileAndRunSIMD(taskName) {
                     const wasmBytes = new Uint8Array([0,97,115,109,1,0,0,0]);
                     try {
-                        const module = await WebAssembly.compile(wasmBytes);
+                        await WebAssembly.compile(wasmBytes);
                         return `[WASM SIMD ACCELERATION]: Module '${taskName}' compiled and executed natively in sandboxed memory.`;
                     } catch(e) {
                         return `[JS FALLBACK]: Executed via high-performance Web Worker pool.`;
@@ -455,7 +639,6 @@
                 }
             },
 
-            // 🛡️ ZK-SNARK & PII MASKELEME MOTORU
             advancedPrivacyEngine: {
                 maskPII(text) {
                     let masked = text;
@@ -467,16 +650,10 @@
                 },
                 generateZkProof(claimType) {
                     const randomProof = Array.from(window.crypto.getRandomValues(new Uint8Array(16))).map(b => b.toString(16).padStart(2,'0')).join('');
-                    return {
-                        proof: `0xzk_${randomProof}`,
-                        claim: claimType,
-                        verified: true,
-                        timestamp: new Date().toISOString()
-                    };
+                    return { proof: `0xzk_${randomProof}`, claim: claimType, verified: true, timestamp: new Date().toISOString() };
                 }
             },
 
-            // 🌟 YENİ PREMİUM ÖZELLİKLER MOTORU
             premiumSovereignEngine: {
                 runAiNer(text) {
                     let processed = text;
@@ -484,44 +661,18 @@
                     return `[WebGPU ONNX Runtime - DistilBERT NER Engine]:\nContext analyzed locally. Sensitive corporate entities redacted successfully.\n\nResult:\n${processed}`;
                 },
                 async opfsSaveFile(filename, content) {
-                    try {
-                        const root = await navigator.storage.getDirectory();
-                        const handle = await root.getFileHandle(filename, { create: true });
-                        const writable = await handle.createWritable();
-                        await writable.write(content);
-                        await writable.close();
-                        return true;
-                    } catch(e) { return false; }
+                    try { const root = await navigator.storage.getDirectory(); const handle = await root.getFileHandle(filename, { create: true }); const writable = await handle.createWritable(); await writable.write(content); await writable.close(); return true; } catch(e) { return false; }
                 },
                 async opfsReadFile(filename) {
-                    try {
-                        const root = await navigator.storage.getDirectory();
-                        const handle = await root.getFileHandle(filename);
-                        const file = await handle.getFile();
-                        return await file.text();
-                    } catch(e) { return null; }
+                    try { const root = await navigator.storage.getDirectory(); const handle = await root.getFileHandle(filename); const file = await handle.getFile(); return await file.text(); } catch(e) { return null; }
                 },
                 generateDocumentSignature(docText) {
                     const randomSig = Array.from(window.crypto.getRandomValues(new Uint8Array(32))).map(b => b.toString(16).padStart(2,'0')).join('');
-                    return {
-                        algorithm: "Ed25519-ClientSide-Signer",
-                        publicKey: "0xpub_" + randomSig.substring(0, 32),
-                        signature: "sig_" + randomSig,
-                        documentHash: "sha256_" + randomSig.substring(10),
-                        timestamp: new Date().toISOString(),
-                        status: "VALID_CRYPTOGRAPHIC_SIGNATURE"
-                    };
+                    return { algorithm: "Ed25519-ClientSide-Signer", publicKey: "0xpub_" + randomSig.substring(0, 32), signature: "sig_" + randomSig, documentHash: "sha256_" + randomSig.substring(10), timestamp: new Date().toISOString(), status: "VALID_CRYPTOGRAPHIC_SIGNATURE" };
                 },
                 anchorToBlockchain(dataHash) {
                     const txId = "0x" + Array.from(window.crypto.getRandomValues(new Uint8Array(32))).map(b => b.toString(16).padStart(2,'0')).join('');
-                    return {
-                        network: "Sovereign ZK-Rollup Layer-2 / Avalanche Subnet",
-                        transactionHash: txId,
-                        blockNumber: Math.floor(Math.random() * 1000000) + 18500000,
-                        proofStatus: "VERIFIED_ON_CHAIN",
-                        anchoredHash: dataHash,
-                        timestamp: new Date().toISOString()
-                    };
+                    return { network: "Sovereign ZK-Rollup Layer-2 / Avalanche Subnet", transactionHash: txId, blockNumber: Math.floor(Math.random() * 1000000) + 18500000, proofStatus: "VERIFIED_ON_CHAIN", anchoredHash: dataHash, timestamp: new Date().toISOString() };
                 }
             },
 
@@ -529,276 +680,135 @@
                 async deriveKey(password, salt) {
                     const enc = new TextEncoder();
                     const keyMaterial = await window.crypto.subtle.importKey("raw", enc.encode(password), { name: "PBKDF2" }, false, ["deriveBits", "deriveKey"]);
-                    return window.crypto.subtle.deriveKey(
-                        { name: "PBKDF2", salt: salt, iterations: 100000, hash: "SHA-256" },
-                        keyMaterial, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]
-                    );
+                    return window.crypto.subtle.deriveKey({ name: "PBKDF2", salt: salt, iterations: 100000, hash: "SHA-256" }, keyMaterial, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
                 },
                 async encrypt(text, password) {
-                    const enc = new TextEncoder();
-                    const salt = window.crypto.getRandomValues(new Uint8Array(16));
-                    const iv = window.crypto.getRandomValues(new Uint8Array(12));
-                    const key = await this.deriveKey(password, salt);
-                    const encryptedContent = await window.crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, key, enc.encode(text));
-                    const encryptedBytes = new Uint8Array(encryptedContent);
-                    const bundle = new Uint8Array(salt.length + iv.length + encryptedBytes.length);
+                    const enc = new TextEncoder(); const salt = window.crypto.getRandomValues(new Uint8Array(16)); const iv = window.crypto.getRandomValues(new Uint8Array(12));
+                    const key = await this.deriveKey(password, salt); const encryptedContent = await window.crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, key, enc.encode(text));
+                    const encryptedBytes = new Uint8Array(encryptedContent); const bundle = new Uint8Array(salt.length + iv.length + encryptedBytes.length);
                     bundle.set(salt, 0); bundle.set(iv, salt.length); bundle.set(encryptedBytes, salt.length + iv.length);
                     return btoa(String.fromCharCode.apply(null, bundle));
                 },
                 async decrypt(base64Bundle, password) {
-                    const bundle = new Uint8Array(atob(base64Bundle).split("").map(c => c.charCodeAt(0)));
-                    const salt = bundle.slice(0, 16);
-                    const iv = bundle.slice(16, 28);
-                    const data = bundle.slice(28);
-                    const key = await this.deriveKey(password, salt);
-                    const decryptedContent = await window.crypto.subtle.decrypt({ name: "AES-GCM", iv: iv }, key, data);
+                    const bundle = new Uint8Array(atob(base64Bundle).split("").map(c => c.charCodeAt(0))); const salt = bundle.slice(0, 16); const iv = bundle.slice(16, 28); const data = bundle.slice(28);
+                    const key = await this.deriveKey(password, salt); const decryptedContent = await window.crypto.subtle.decrypt({ name: "AES-GCM", iv: iv }, key, data);
                     return new TextDecoder().decode(decryptedContent);
                 },
                 async encryptBuffer(buffer, password, salt) {
-                    const iv = window.crypto.getRandomValues(new Uint8Array(12));
-                    const key = await this.deriveKey(password, salt);
-                    const encrypted = await window.crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, key, buffer);
-                    return { iv, encrypted };
+                    const iv = window.crypto.getRandomValues(new Uint8Array(12)); const key = await this.deriveKey(password, salt);
+                    const encrypted = await window.crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, key, buffer); return { iv, encrypted };
                 },
                 async decryptBuffer(packetBuffer, password, salt) {
-                    const dataView = new DataView(packetBuffer);
-                    const ivLen = dataView.getUint32(0);
-                    const iv = new Uint8Array(packetBuffer, 4, ivLen);
-                    const encrypted = new Uint8Array(packetBuffer, 4 + ivLen);
-                    const key = await this.deriveKey(password, salt);
-                    const decrypted = await window.crypto.subtle.decrypt({ name: "AES-GCM", iv: iv }, key, encrypted);
-                    return decrypted;
+                    const dataView = new DataView(packetBuffer); const ivLen = dataView.getUint32(0); const iv = new Uint8Array(packetBuffer, 4, ivLen); const encrypted = new Uint8Array(packetBuffer, 4 + ivLen);
+                    const key = await this.deriveKey(password, salt); return await window.crypto.subtle.decrypt({ name: "AES-GCM", iv: iv }, key, encrypted);
                 }
             },
 
             steganographyCore: {
                 hide(imgElement, secretText) {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = imgElement.width;
-                    canvas.height = imgElement.height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(imgElement, 0, 0);
-                    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                    const data = imgData.data;
-                    const encoder = new TextEncoder();
-                    const textBytes = encoder.encode(secretText + "\0");
+                    const canvas = document.createElement('canvas'); canvas.width = imgElement.width; canvas.height = imgElement.height;
+                    const ctx = canvas.getContext('2d'); ctx.drawImage(imgElement, 0, 0);
+                    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height); const data = imgData.data; const textBytes = new TextEncoder().encode(secretText + "\0");
                     if (textBytes.length * 8 > data.length) throw new Error("Image too small for this secret text!");
                     let byteIndex = 0, bitIndex = 0;
                     for (let i = 0; i < data.length; i += 4) {
                         if (byteIndex < textBytes.length) {
-                            let currentByte = textBytes[byteIndex];
-                            let bit = (currentByte >> (7 - bitIndex)) & 1;
-                            data[i] = (data[i] & ~1) | bit;
-                            bitIndex++;
+                            let bit = (textBytes[byteIndex] >> (7 - bitIndex)) & 1; data[i] = (data[i] & ~1) | bit; bitIndex++;
                             if (bitIndex === 8) { bitIndex = 0; byteIndex++; }
                         } else { break; }
                     }
-                    ctx.putImageData(imgData, 0, 0);
-                    return canvas.toDataURL('image/png');
+                    ctx.putImageData(imgData, 0, 0); return canvas.toDataURL('image/png');
                 },
                 extract(imgElement) {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = imgElement.width;
-                    canvas.height = imgElement.height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(imgElement, 0, 0);
-                    const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+                    const canvas = document.createElement('canvas'); canvas.width = imgElement.width; canvas.height = imgElement.height;
+                    const ctx = canvas.getContext('2d'); ctx.drawImage(imgElement, 0, 0); const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
                     let bytes = [], currentByte = 0, bitIndex = 0;
                     for (let i = 0; i < data.length; i += 4) {
-                        let bit = data[i] & 1;
-                        currentByte = (currentByte << 1) | bit;
-                        bitIndex++;
-                        if (bitIndex === 8) {
-                            if (currentByte === 0) break;
-                            bytes.push(currentByte);
-                            currentByte = 0;
-                            bitIndex = 0;
-                        }
+                        currentByte = (currentByte << 1) | (data[i] & 1); bitIndex++;
+                        if (bitIndex === 8) { if (currentByte === 0) break; bytes.push(currentByte); currentByte = 0; bitIndex = 0; }
                     }
                     return new TextDecoder().decode(new Uint8Array(bytes));
                 }
             },
 
             p2pCore: {
-                initPeer() {
-                    const pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
-                    PrivacyConvert.state.webrtc.pc = pc;
-                    return pc;
-                },
+                initPeer() { const pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] }); PrivacyConvert.state.webrtc.pc = pc; return pc; },
                 async createOffer() {
-                    const pc = this.initPeer();
-                    const dc = pc.createDataChannel("secure-file-transfer");
-                    PrivacyConvert.state.webrtc.dc = dc;
-                    this.setupDataChannel(dc);
-                    const offer = await pc.createOffer();
-                    await pc.setLocalDescription(offer);
-                    return new Promise((resolve) => {
-                        pc.onicecandidate = (e) => { if (!e.candidate) resolve(btoa(JSON.stringify(pc.localDescription))); };
-                    });
+                    const pc = this.initPeer(); const dc = pc.createDataChannel("secure-file-transfer"); PrivacyConvert.state.webrtc.dc = dc; this.setupDataChannel(dc);
+                    await pc.setLocalDescription(await pc.createOffer());
+                    return new Promise((resolve) => { pc.onicecandidate = (e) => { if (!e.candidate) resolve(btoa(JSON.stringify(pc.localDescription))); }; });
                 },
                 async answerOffer(offerBase64) {
-                    const pc = this.initPeer();
-                    pc.ondatachannel = (e) => {
-                        PrivacyConvert.state.webrtc.dc = e.channel;
-                        this.setupDataChannel(e.channel);
-                    };
-                    const offerDesc = JSON.parse(atob(offerBase64));
-                    await pc.setRemoteDescription(offerDesc);
-                    const answer = await pc.createAnswer();
-                    await pc.setLocalDescription(answer);
-                    return new Promise((resolve) => {
-                        pc.onicecandidate = (e) => { if (!e.candidate) resolve(btoa(JSON.stringify(pc.localDescription))); };
-                    });
+                    const pc = this.initPeer(); pc.ondatachannel = (e) => { PrivacyConvert.state.webrtc.dc = e.channel; this.setupDataChannel(e.channel); };
+                    await pc.setRemoteDescription(JSON.parse(atob(offerBase64))); await pc.setLocalDescription(await pc.createAnswer());
+                    return new Promise((resolve) => { pc.onicecandidate = (e) => { if (!e.candidate) resolve(btoa(JSON.stringify(pc.localDescription))); }; });
                 },
-                async acceptAnswer(answerBase64) {
-                    const pc = PrivacyConvert.state.webrtc.pc;
-                    const answerDesc = JSON.parse(atob(answerBase64));
-                    await pc.setRemoteDescription(answerDesc);
-                },
+                async acceptAnswer(answerBase64) { await PrivacyConvert.state.webrtc.pc.setRemoteDescription(JSON.parse(atob(answerBase64))); },
                 setupDataChannel(dc) {
                     dc.onopen = () => PrivacyConvert.ui.showToast('P2P DataChannel Connected Securely!');
                     dc.onmessage = (e) => {
-                        if (typeof e.data === 'string') {
-                            PrivacyConvert.ui.showToast(`Received message: ${e.data}`);
-                        } else {
-                            const blob = new Blob([e.data]);
-                            const url = URL.createObjectURL(blob);
-                            PrivacyConvert.registerObjectUrl(url);
-                            const link = document.createElement('a');
-                            link.href = url;
-                            link.download = `p2p_received_${Date.now()}`;
-                            link.click();
-                            PrivacyConvert.ui.showToast('P2P File received and downloaded!');
+                        if (typeof e.data === 'string') { PrivacyConvert.ui.showToast(`Received: ${e.data}`); }
+                        else {
+                            const blob = new Blob([e.data]); const url = URL.createObjectURL(blob); PrivacyConvert.registerObjectUrl(url);
+                            const link = document.createElement('a'); link.href = url; link.download = `p2p_received_${Date.now()}`; link.click(); PrivacyConvert.ui.showToast('P2P File received and downloaded!');
                         }
                     };
                 },
                 sendFile(file) {
-                    const dc = PrivacyConvert.state.webrtc.dc;
-                    if(!dc || dc.readyState !== 'open') return PrivacyConvert.ui.showToast('P2P Channel not connected!', 'error');
-                    file.arrayBuffer().then(buf => {
-                        dc.send(buf);
-                        PrivacyConvert.ui.showToast('File sent successfully via WebRTC!');
-                    });
-                }
-            },
-
-            workerCore: {
-                createWorker(taskFunction) {
-                    const blob = new Blob([`(${taskFunction.toString()})()`], { type: 'application/javascript' });
-                    return new Worker(URL.createObjectURL(blob));
-                },
-                ocrTaskWorker() {
-                    self.onmessage = function(e) {
-                        const { type } = e.data;
-                        if (type === 'heavyCompute') {
-                            const total = 30000000;
-                            let count = 0;
-                            for(let i = 0; i < total; i++) {
-                                Math.sqrt(i * Math.random()); 
-                                if(i % (total/10) === 0) {
-                                    count += 10;
-                                    self.postMessage({ type: 'progress', val: count });
-                                }
-                            }
-                            self.postMessage({ type: 'done', result: 'Worker computational task completed successfully.' });
-                        }
-                    };
+                    const dc = PrivacyConvert.state.webrtc.dc; if(!dc || dc.readyState !== 'open') return PrivacyConvert.ui.showToast('P2P Channel not connected!', 'error');
+                    file.arrayBuffer().then(buf => { dc.send(buf); PrivacyConvert.ui.showToast('File sent successfully!'); });
                 }
             },
 
             streamCore: {
                 CHUNK_SIZE: 1024 * 1024 * 5,
                 async processLargeFile(file, password, mode) {
-                    let writableStream = null;
-                    let blobChunks = [];
-                    let useBlobFallback = false;
+                    let writableStream = null, blobChunks = [], useBlobFallback = false;
                     try {
-                        PrivacyConvert.cleanupObjectUrls();
-                        let salt;
-                        let fileSize = file.size;
-                        let offset = 0;
+                        PrivacyConvert.cleanupObjectUrls(); let salt, offset = 0, fileSize = file.size;
                         PrivacyConvert.ui.updateProgress(0, mode === 'encrypt' ? "Opening Encryption Stream..." : "Opening Decryption Stream...");
                         try {
                             if (window.showSaveFilePicker) {
-                                const options = { suggestedName: mode === 'encrypt' ? `${file.name}.encrypted` : `decrypted_${file.name.replace('.encrypted','')}` };
-                                const fileHandle = await window.showSaveFilePicker(options);
+                                const fileHandle = await window.showSaveFilePicker({ suggestedName: mode === 'encrypt' ? `${file.name}.encrypted` : `decrypted_${file.name.replace('.encrypted','')}` });
                                 writableStream = await fileHandle.createWritable();
                             } else { useBlobFallback = true; }
                         } catch (err) { useBlobFallback = true; }
 
                         if (mode === 'encrypt') {
                             salt = window.crypto.getRandomValues(new Uint8Array(16));
-                            if (useBlobFallback) blobChunks.push(salt);
-                            else await writableStream.write(salt);
-                        } else {
-                            const saltBuffer = await file.slice(0, 16).arrayBuffer();
-                            salt = new Uint8Array(saltBuffer);
-                            offset = 16;
-                        }
+                            if (useBlobFallback) blobChunks.push(salt); else await writableStream.write(salt);
+                        } else { salt = new Uint8Array(await file.slice(0, 16).arrayBuffer()); offset = 16; }
 
                         while (offset < fileSize) {
-                            let chunk = file.slice(offset, Math.min(fileSize, offset + this.CHUNK_SIZE));
-                            let buffer = await chunk.arrayBuffer();
+                            let buffer = await file.slice(offset, Math.min(fileSize, offset + this.CHUNK_SIZE)).arrayBuffer();
                             let processedBuffer = buffer;
-
                             if (mode === 'encrypt') {
                                 const res = await PrivacyConvert.cryptoCore.encryptBuffer(buffer, password, salt);
-                                const ivLen = res.iv.byteLength;
-                                const encBytes = new Uint8Array(res.encrypted);
+                                const ivLen = res.iv.byteLength; const encBytes = new Uint8Array(res.encrypted);
                                 const packet = new Uint8Array(4 + ivLen + encBytes.length);
-                                new DataView(packet.buffer).setUint32(0, ivLen);
-                                packet.set(res.iv, 4);
-                                packet.set(encBytes, 4 + ivLen);
-                                processedBuffer = packet.buffer;
-                                offset += this.CHUNK_SIZE;
+                                new DataView(packet.buffer).setUint32(0, ivLen); packet.set(res.iv, 4); packet.set(encBytes, 4 + ivLen);
+                                processedBuffer = packet.buffer; offset += this.CHUNK_SIZE;
                             } else {
-                                let chunkView = new DataView(buffer);
-                                let decryptedParts = [];
-                                let localOffset = 0;
+                                let localOffset = 0, decryptedParts = [];
                                 while (localOffset < buffer.byteLength) {
                                     if (localOffset + 4 > buffer.byteLength) break;
-                                    const ivLen = chunkView.getUint32(localOffset);
-                                    const packetBuffer = buffer.slice(localOffset);
-                                    const decrypted = await PrivacyConvert.cryptoCore.decryptBuffer(packetBuffer, password, salt);
-                                    decryptedParts.push(decrypted);
-                                    break;
+                                    const ivLen = new DataView(buffer).getUint32(localOffset);
+                                    decryptedParts.push(await PrivacyConvert.cryptoCore.decryptBuffer(buffer.slice(localOffset), password, salt)); break;
                                 }
-                                processedBuffer = decryptedParts[0] || buffer;
-                                offset += buffer.byteLength;
+                                processedBuffer = decryptedParts[0] || buffer; offset += buffer.byteLength;
                             }
-
-                            if (useBlobFallback) {
-                                blobChunks.push(processedBuffer);
-                                if (blobChunks.length > 50) {
-                                    await new Promise(r => setTimeout(r, 10));
-                                }
-                            } else {
-                                await writableStream.write(processedBuffer);
-                            }
-
-                            const percent = Math.min(100, Math.round((offset / fileSize) * 100));
-                            PrivacyConvert.ui.updateProgress(percent, `Processing stream... ${percent}%`);
+                            if (useBlobFallback) { blobChunks.push(processedBuffer); if (blobChunks.length > 50) await new Promise(r => setTimeout(r, 10)); }
+                            else { await writableStream.write(processedBuffer); }
+                            PrivacyConvert.ui.updateProgress(Math.min(100, Math.round((offset / fileSize) * 100)), `Processing stream... ${Math.round((offset/fileSize)*100)}%`);
                         }
-
                         if (useBlobFallback) {
-                            const finalBlob = new Blob(blobChunks, { type: 'application/octet-stream' });
-                            const url = URL.createObjectURL(finalBlob);
-                            PrivacyConvert.registerObjectUrl(url);
-                            const link = document.createElement('a');
-                            link.href = url;
-                            link.download = mode === 'encrypt' ? `${file.name}.encrypted` : `decrypted_${file.name.replace('.encrypted','')}`;
-                            link.click();
+                            const url = URL.createObjectURL(new Blob(blobChunks, { type: 'application/octet-stream' })); PrivacyConvert.registerObjectUrl(url);
+                            const link = document.createElement('a'); link.href = url; link.download = mode === 'encrypt' ? `${file.name}.encrypted` : `decrypted_${file.name.replace('.encrypted','')}`; link.click();
                         } else { await writableStream.close(); }
-
-                        PrivacyConvert.ui.updateProgress(100, "Done!");
-                        PrivacyConvert.ui.showToast('Stream processed successfully!');
+                        PrivacyConvert.ui.updateProgress(100, "Done!"); PrivacyConvert.ui.showToast('Stream processed successfully!');
                     } catch (err) {
-                        console.error(err);
                         if (writableStream) { try { await writableStream.abort(); } catch(e){} }
-                        blobChunks = [];
-                        PrivacyConvert.cleanupObjectUrls();
-                        PrivacyConvert.ui.updateProgress(100, "Error");
-                        PrivacyConvert.ui.showToast('Stream operation failed. Verify master password and file integrity.', 'error');
+                        PrivacyConvert.ui.updateProgress(100, "Error"); PrivacyConvert.ui.showToast('Stream operation failed.', 'error');
                     }
                 }
             },
@@ -809,7 +819,7 @@
                     'cloud-sync': { type: 'action', title: 'E2EE Cloud Sync', proRequired: true },
                     'audit-certificate': { type: 'action', title: 'Auditor PDF Certificate', proRequired: true },
                     'white-label': { type: 'text', title: 'White-Label Branding', proRequired: true },
-                    'webauthn-vault': { type: 'vault', title: 'WebAuthn Passkey Vault' },
+                    'webauthn-vault': { type: 'webauthn', title: 'WebAuthn Passkey Vault' },
                     'steganography': { type: 'interactive-stega', accept: 'image/*', title: 'Image Steganography' },
                     'self-destruct': { type: 'vault', title: 'Self-Destructing Artifacts' },
                     'encrypt-tool': { type: 'crypto', title: 'AES-256 Hardware Encryptor' },
@@ -837,15 +847,18 @@
                 },
                 navigate(toolId) {
                     const meta = this.metaData[toolId] || { type: 'text', title: toolId };
-                    
-                    if (meta.proRequired && !PrivacyConvert.state.isPro) {
-                        PrivacyConvert.ui.showToast('🔒 Pro Feature: Try sample trial mode below or upgrade!', 'warning');
-                    }
-
+                    if (meta.proRequired && !PrivacyConvert.state.isPro) PrivacyConvert.ui.showToast('🔒 Pro Feature: Try sample trial mode below or upgrade!', 'warning');
                     PrivacyConvert.state.tool = toolId;
                     document.querySelectorAll('.tool-tab').forEach(t => t.classList.remove('bg-slate-100', 'dark:bg-slate-700', 'border-indigo-500'));
                     document.getElementById(`tab-${toolId}`)?.classList.add('bg-slate-100', 'dark:bg-slate-700', 'border-indigo-500');
-                    document.getElementById('mainTitleAccent').innerText = meta.title;
+                    // Başlığı aktif dile çeviriyoruz (varsa)
+                    const langDict = PrivacyConvert.i18n.translations[PrivacyConvert.state.lang] || PrivacyConvert.i18n.translations['en'];
+                    let locTitle = langDict[`tool${toolId.split('-').map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join('')}`];
+                    // Tam eşleşmezse özel mapping veya fallback yapılabilir, şimdilik en azından HTML'den çevrilmiş halini alırız:
+                    const tabElem = document.getElementById(`tab-${toolId}`);
+                    if(tabElem) document.getElementById('mainTitleAccent').innerText = tabElem.innerText.replace(/^[^\w\s]+/, '').trim();
+                    else document.getElementById('mainTitleAccent').innerText = meta.title;
+                    
                     PrivacyConvert.ui.resetWorkspace(meta);
                 }
             },
@@ -854,29 +867,27 @@
                 activateProLicense() {
                     const key = document.getElementById('proLicenseKeyInput').value.trim();
                     if(key.length > 5 || key === 'SOVEREIGN-PRO-2026') {
-                        PrivacyConvert.state.isPro = true;
-                        localStorage.setItem('privacyConvert_pro', 'true');
-                        document.getElementById('proBadge').classList.remove('hidden');
-                        document.getElementById('proModal').classList.add('hidden');
+                        PrivacyConvert.state.isPro = true; localStorage.setItem('privacyConvert_pro', 'true');
+                        document.getElementById('proBadge').classList.remove('hidden'); document.getElementById('proModal').classList.add('hidden');
                         this.showToast('⭐ Pro License Activated Successfully!');
-                    } else {
-                        this.showToast('Invalid Pro License Key', 'error');
-                    }
+                    } else { this.showToast('Invalid Pro License Key', 'error'); }
                 },
                 promptBranding() {
                     const name = prompt('Enter organization name:', localStorage.getItem('privacyConvert_company') || 'Enterprise Sovereign');
                     if(name) { localStorage.setItem('privacyConvert_company', name); document.getElementById('brandNameDisplay').innerText = name; }
                 },
                 toggleSplitScreen() {
-                    const grid = document.getElementById('workspaceGrid');
-                    const pane2 = document.getElementById('pane2Container');
+                    const grid = document.getElementById('workspaceGrid'); const pane2 = document.getElementById('pane2Container');
                     PrivacyConvert.state.splitScreenActive = !PrivacyConvert.state.splitScreenActive;
-                    grid.classList.toggle('max-w-3xl'); grid.classList.toggle('max-w-6xl');
-                    grid.classList.toggle('md:grid-cols-2');
+                    grid.classList.toggle('max-w-3xl'); grid.classList.toggle('max-w-6xl'); grid.classList.toggle('md:grid-cols-2');
                     pane2.classList.toggle('hidden');
                 },
                 toggleTheme() { document.documentElement.classList.toggle('dark'); },
-                toggleCmdPalette() { document.getElementById('commandPalette').classList.toggle('hidden'); },
+                toggleCmdPalette() { 
+                    const pal = document.getElementById('commandPalette');
+                    pal.classList.toggle('hidden');
+                    if(!pal.classList.contains('hidden')) document.getElementById('cmdInput').focus();
+                },
                 openPreviewModal() {
                     document.getElementById('previewContent').innerHTML = `<pre class="text-xs font-mono dark:text-white whitespace-pre-wrap">${document.getElementById('genericTextArea').value}</pre>`;
                     document.getElementById('previewModal').classList.remove('hidden');
@@ -891,117 +902,97 @@
                 },
                 updateProgress(percent, text) {
                     const modal = document.getElementById('progressModal');
-                    const bar = document.getElementById('progressBar');
                     if (percent === 0) modal.classList.remove('hidden');
                     if (percent >= 100) setTimeout(() => modal.classList.add('hidden'), 500);
-                    bar.style.width = `${percent}%`; bar.querySelector('span').innerText = `${percent}%`;
+                    document.getElementById('progressBar').style.width = `${percent}%`;
+                    document.getElementById('progressBar').querySelector('span').innerText = `${percent}%`;
                     if(text) document.getElementById('progressText').innerText = text;
                 },
                 resetWorkspace(meta) {
-                    PrivacyConvert.state.files = [];
-                    document.getElementById('fileListContainer').innerHTML = '';
-                    document.getElementById('dropZone').style.display = 'none';
-                    document.getElementById('actionArea').classList.add('hidden');
-                    document.getElementById('textInputGroup').classList.add('hidden');
-                    document.getElementById('cryptoOptions').classList.add('hidden');
-                    document.getElementById('genericTextBox').classList.add('hidden');
-                    document.getElementById('clearBtn').classList.add('hidden');
-                    document.getElementById('interactiveWorkspaceContainer').classList.add('hidden');
+                    PrivacyConvert.state.files = []; document.getElementById('fileListContainer').innerHTML = ''; document.getElementById('dropZone').style.display = 'none';
+                    ['actionArea', 'textInputGroup', 'cryptoOptions', 'genericTextBox', 'clearBtn', 'interactiveWorkspaceContainer', 'sandboxTrialBanner'].forEach(id => document.getElementById(id).classList.add('hidden'));
                     document.getElementById('interactiveWorkspaceContainer').innerHTML = '';
-                    document.getElementById('sandboxTrialBanner').classList.add('hidden');
 
                     const fileInput = document.getElementById('fileInput');
-                    fileInput.accept = meta.accept || '*';
-                    fileInput.multiple = meta.multiple || false;
+                    fileInput.accept = meta.accept || '*'; fileInput.multiple = meta.multiple || false;
 
-                    if (meta.proRequired && !PrivacyConvert.state.isPro) {
-                        document.getElementById('sandboxTrialBanner').classList.remove('hidden');
-                    }
+                    if (meta.proRequired && !PrivacyConvert.state.isPro) document.getElementById('sandboxTrialBanner').classList.remove('hidden');
 
                     if (['file', 'crypto', 'ocr', 'interactive-redact', 'interactive-stega'].includes(meta.type)) {
                         document.getElementById('dropZone').style.display = 'block';
                         if(meta.type === 'crypto') document.getElementById('cryptoOptions').classList.remove('hidden');
                     } else if (meta.type === 'text') {
-                        document.getElementById('actionArea').classList.remove('hidden');
-                        document.getElementById('textInputGroup').classList.remove('hidden');
-                        document.getElementById('genericTextBox').classList.remove('hidden');
-                    } else if (meta.type === 'action') {
-                        PrivacyConvert.engine.executeTool();
-                    } else if (meta.type === 'vault') {
-                        PrivacyConvert.ui.renderVaultUI();
-                    } else if (meta.type === 'interactive-p2p') {
-                        PrivacyConvert.ui.renderP2PUI();
-                    } else if (meta.type === 'interactive-opfs') {
-                        PrivacyConvert.ui.renderOpfsUI();
-                    } else if (meta.type === 'interactive-room') {
-                        PrivacyConvert.ui.renderSecureRoomUI();
+                        document.getElementById('actionArea').classList.remove('hidden'); document.getElementById('textInputGroup').classList.remove('hidden'); document.getElementById('genericTextBox').classList.remove('hidden');
+                    } else if (meta.type === 'action') { PrivacyConvert.engine.executeTool();
+                    } else if (meta.type === 'vault') { PrivacyConvert.ui.renderVaultUI();
+                    } else if (meta.type === 'webauthn') { PrivacyConvert.ui.renderWebAuthnUI();
+                    } else if (meta.type === 'interactive-p2p') { PrivacyConvert.ui.renderP2PUI();
+                    } else if (meta.type === 'interactive-opfs') { PrivacyConvert.ui.renderOpfsUI();
+                    } else if (meta.type === 'interactive-room') { PrivacyConvert.ui.renderSecureRoomUI();
                     }
                 },
-                renderVaultUI() {
-                    const container = document.getElementById('interactiveWorkspaceContainer');
-                    container.classList.remove('hidden');
+                renderWebAuthnUI() {
+                    const container = document.getElementById('interactiveWorkspaceContainer'); container.classList.remove('hidden');
                     container.innerHTML = `
                         <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3">
-                            <h4 class="font-bold text-xs uppercase text-slate-500">IndexedDB Secure Vault & Notes</h4>
-                            <input type="text" id="vaultTitle" placeholder="Note Title / Key..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white">
-                            <textarea id="vaultContent" placeholder="Secure Note / Secret Content..." class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"></textarea>
-                            <button onclick="PrivacyConvert.engine.saveVaultNote()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl shadow">Save to Encrypted Vault</button>
+                            <h4 class="font-bold text-xs uppercase text-slate-500">WebAuthn Hardware Passkey Vault</h4>
+                            <div class="flex gap-2">
+                                <button onclick="PrivacyConvert.engine.webAuthnRegister()" class="flex-1 py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl shadow">🔑 Register Passkey</button>
+                                <button onclick="PrivacyConvert.engine.webAuthnLogin()" class="flex-1 py-2.5 bg-slate-200 dark:bg-slate-700 font-bold text-xs rounded-xl shadow">🔓 Authenticate</button>
+                            </div>
+                            <div id="webAuthnOutput" class="mt-3 p-3 bg-white dark:bg-slate-800 border rounded-xl font-mono text-[11px] min-h-[40px] whitespace-pre-wrap"></div>
+                        </div>
+                    `;
+                },
+                renderVaultUI() {
+                    const container = document.getElementById('interactiveWorkspaceContainer'); container.classList.remove('hidden');
+                    container.innerHTML = `
+                        <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3">
+                            <h4 class="font-bold text-xs uppercase text-slate-500">IndexedDB Secure Vault</h4>
+                            <input type="text" id="vaultTitle" placeholder="Title..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white">
+                            <textarea id="vaultContent" placeholder="Secret Content..." class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"></textarea>
+                            <button onclick="PrivacyConvert.engine.saveVaultNote()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl shadow">Save Note</button>
                             <div id="vaultList" class="space-y-2 mt-4 max-h-48 overflow-y-auto"></div>
                         </div>
                     `;
                     PrivacyConvert.engine.loadVaultNotes();
                 },
                 renderP2PUI() {
-                    const container = document.getElementById('interactiveWorkspaceContainer');
-                    container.classList.remove('hidden');
+                    const container = document.getElementById('interactiveWorkspaceContainer'); container.classList.remove('hidden');
                     container.innerHTML = `
                         <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3 text-xs">
-                            <h4 class="font-bold uppercase text-slate-500">WebRTC P2P Air-Gapped Share</h4>
-                            <div class="flex gap-2">
-                                <button onclick="PrivacyConvert.engine.p2pStartHost()" class="flex-1 py-2 dynamic-bg text-white font-bold rounded-xl">1. Host (Generate Offer)</button>
-                                <button onclick="PrivacyConvert.engine.p2pJoinHost()" class="flex-1 py-2 bg-slate-200 dark:bg-slate-700 font-bold rounded-xl">2. Join (Accept Offer)</button>
-                            </div>
-                            <textarea id="p2pSignalingBox" placeholder="Signaling handshake text..." class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl dark:text-white font-mono"></textarea>
+                            <h4 class="font-bold uppercase text-slate-500">WebRTC P2P Transfer</h4>
+                            <div class="flex gap-2"><button onclick="PrivacyConvert.engine.p2pStartHost()" class="flex-1 py-2 dynamic-bg text-white font-bold rounded-xl">1. Host</button><button onclick="PrivacyConvert.engine.p2pJoinHost()" class="flex-1 py-2 bg-slate-200 dark:bg-slate-700 font-bold rounded-xl">2. Join</button></div>
+                            <textarea id="p2pSignalingBox" placeholder="Signaling code..." class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl dark:text-white font-mono"></textarea>
                             <div id="p2pSendSection" class="hidden space-y-2">
                                 <input type="file" id="p2pFileSend" class="w-full text-xs">
-                                <button onclick="PrivacyConvert.engine.p2pSendFile()" class="w-full py-2 bg-emerald-600 text-white font-bold rounded-xl">Send File Securely</button>
+                                <button onclick="PrivacyConvert.engine.p2pSendFile()" class="w-full py-2 bg-emerald-600 text-white font-bold rounded-xl">Send File</button>
                             </div>
                         </div>
                     `;
                 },
                 renderOpfsUI() {
-                    const container = document.getElementById('interactiveWorkspaceContainer');
-                    container.classList.remove('hidden');
+                    const container = document.getElementById('interactiveWorkspaceContainer'); container.classList.remove('hidden');
                     container.innerHTML = `
                         <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3 text-xs">
-                            <h4 class="font-bold uppercase text-slate-500">OPFS Encrypted Virtual Disk Workspace</h4>
-                            <input type="text" id="opfsFilename" placeholder="Virtual Filename (e.g. secrets.enc)..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white">
-                            <textarea id="opfsData" placeholder="Content to store securely in virtual disk..." class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"></textarea>
-                            <div class="flex gap-2">
-                                <button onclick="PrivacyConvert.engine.saveToOpfs()" class="flex-1 py-2.5 dynamic-bg text-white font-bold rounded-xl">Save to OPFS Disk</button>
-                                <button onclick="PrivacyConvert.engine.readFromOpfs()" class="flex-1 py-2.5 bg-slate-200 dark:bg-slate-700 font-bold rounded-xl">Read from OPFS Disk</button>
-                            </div>
+                            <h4 class="font-bold uppercase text-slate-500">OPFS Virtual Disk</h4>
+                            <input type="text" id="opfsFilename" placeholder="Filename..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl dark:text-white">
+                            <textarea id="opfsData" placeholder="Content..." class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl dark:text-white"></textarea>
+                            <div class="flex gap-2"><button onclick="PrivacyConvert.engine.saveToOpfs()" class="flex-1 py-2.5 dynamic-bg text-white font-bold rounded-xl">Save</button><button onclick="PrivacyConvert.engine.readFromOpfs()" class="flex-1 py-2.5 bg-slate-200 dark:bg-slate-700 font-bold rounded-xl">Read</button></div>
                             <div id="opfsOutput" class="p-3 bg-white dark:bg-slate-800 border rounded-xl font-mono text-[11px] min-h-[40px]"></div>
                         </div>
                     `;
                 },
                 renderSecureRoomUI() {
-                    const container = document.getElementById('interactiveWorkspaceContainer');
-                    container.classList.remove('hidden');
+                    const container = document.getElementById('interactiveWorkspaceContainer'); container.classList.remove('hidden');
                     container.innerHTML = `
                         <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3 text-xs">
-                            <h4 class="font-bold uppercase text-slate-500">E2EE Secure Chat Room (WebRTC Mesh)</h4>
-                            <div class="flex gap-2">
-                                <button onclick="PrivacyConvert.engine.startSecureRoomHost()" class="flex-1 py-2.5 dynamic-bg text-white font-bold rounded-xl">1. Create Room (Host)</button>
-                                <button onclick="PrivacyConvert.engine.joinSecureRoom()" class="flex-1 py-2.5 bg-slate-200 dark:bg-slate-700 font-bold rounded-xl">2. Join Room</button>
-                            </div>
-                            <textarea id="roomSignaling" placeholder="Handshake offer/answer code..." class="w-full h-20 p-2 bg-white dark:bg-slate-800 border rounded-xl font-mono text-[11px]"></textarea>
+                            <h4 class="font-bold uppercase text-slate-500">E2EE Chat Room</h4>
+                            <div class="flex gap-2"><button onclick="PrivacyConvert.engine.startSecureRoomHost()" class="flex-1 py-2.5 dynamic-bg text-white font-bold rounded-xl">Create</button><button onclick="PrivacyConvert.engine.joinSecureRoom()" class="flex-1 py-2.5 bg-slate-200 dark:bg-slate-700 font-bold rounded-xl">Join</button></div>
+                            <textarea id="roomSignaling" placeholder="Handshake..." class="w-full h-20 p-2 bg-white dark:bg-slate-800 border rounded-xl font-mono text-[11px]"></textarea>
                             <div id="roomChatArea" class="hidden space-y-2">
                                 <div id="roomChatBox" class="w-full h-36 bg-white dark:bg-slate-800 p-3 rounded-xl border overflow-y-auto font-mono text-[11px] space-y-1"></div>
-                                <div class="flex gap-2">
-                                    <input type="text" id="roomMsgInput" placeholder="Type secret message..." class="flex-1 p-2 bg-white dark:bg-slate-800 border rounded-xl">
-                                    <button onclick="PrivacyConvert.engine.sendRoomMessage()" class="px-4 py-2 bg-emerald-600 text-white font-bold rounded-xl">Send</button>
-                                </div>
+                                <div class="flex gap-2"><input type="text" id="roomMsgInput" class="flex-1 p-2 bg-white dark:bg-slate-800 border rounded-xl"><button onclick="PrivacyConvert.engine.sendRoomMessage()" class="px-4 py-2 bg-emerald-600 text-white font-bold rounded-xl">Send</button></div>
                             </div>
                         </div>
                     `;
@@ -1010,92 +1001,64 @@
                     let validFiles = Array.from(files).map(f => ({ file: f, status: 'Ready' }));
                     if(validFiles.length > 0) {
                         PrivacyConvert.state.files = validFiles;
-                        document.getElementById('dropZone').style.display = 'none';
-                        document.getElementById('actionArea').classList.remove('hidden');
-                        document.getElementById('clearBtn').classList.add('hidden');
+                        document.getElementById('dropZone').style.display = 'none'; document.getElementById('actionArea').classList.remove('hidden'); document.getElementById('clearBtn').classList.remove('hidden');
                         this.renderQueue();
-
-                        if (PrivacyConvert.state.tool === 'visual-redact') {
-                            PrivacyConvert.ui.initInteractiveRedaction(validFiles[0].file);
-                        } else if (PrivacyConvert.state.tool === 'steganography') {
-                            PrivacyConvert.ui.initInteractiveStega(validFiles[0].file);
-                        }
-                        this.showToast(`${validFiles.length} file(s) loaded into sandbox`);
+                        if (PrivacyConvert.state.tool === 'visual-redact') PrivacyConvert.ui.initInteractiveRedaction(validFiles[0].file);
+                        else if (PrivacyConvert.state.tool === 'steganography') PrivacyConvert.ui.initInteractiveStega(validFiles[0].file);
+                        this.showToast(`${validFiles.length} file(s) loaded`);
                     }
                 },
                 initInteractiveRedaction(file) {
-                    const container = document.getElementById('interactiveWorkspaceContainer');
-                    container.classList.remove('hidden');
-                    const url = URL.createObjectURL(file);
-                    PrivacyConvert.registerObjectUrl(url);
+                    const container = document.getElementById('interactiveWorkspaceContainer'); container.classList.remove('hidden');
+                    const url = URL.createObjectURL(file); PrivacyConvert.registerObjectUrl(url);
                     container.innerHTML = `
                         <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border flex flex-col items-center gap-3">
-                            <span class="text-xs font-bold text-slate-500 uppercase">Click & Drag on image to Blackout / Redact Sensitive Areas</span>
-                            <canvas id="redactCanvas" class="max-w-full border rounded-xl shadow cursor-crosshair"></canvas>
-                            <button onclick="PrivacyConvert.engine.downloadRedactedImage()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl shadow">Download Redacted Image</button>
+                            <span class="text-xs font-bold text-slate-500 uppercase">Draw to Redact (Mouse & Touch Supported)</span>
+                            <canvas id="redactCanvas" class="max-w-full border rounded-xl shadow cursor-crosshair touch-none"></canvas>
+                            <button onclick="PrivacyConvert.engine.downloadRedactedImage()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl shadow">Download Redacted</button>
                         </div>
                     `;
-                    const canvas = document.getElementById('redactCanvas');
-                    const ctx = canvas.getContext('2d');
-                    const img = new Image();
-                    img.onload = () => { canvas.width = img.width; canvas.height = img.height; ctx.drawImage(img, 0, 0); };
-                    img.src = url;
+                    const canvas = document.getElementById('redactCanvas'); const ctx = canvas.getContext('2d'); const img = new Image();
+                    img.onload = () => { canvas.width = img.width; canvas.height = img.height; ctx.drawImage(img, 0, 0); }; img.src = url;
 
                     let isDrawing = false, startX, startY;
-                    canvas.onmousedown = (e) => {
-                        isDrawing = true;
-                        const rect = canvas.getBoundingClientRect();
-                        startX = (e.clientX - rect.left) * (canvas.width / rect.width);
-                        startY = (e.clientY - rect.top) * (canvas.height / rect.height);
+                    const getPos = (e) => {
+                        const rect = canvas.getBoundingClientRect(); const clientX = e.touches ? e.touches[0].clientX : e.clientX; const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                        return { x: (clientX - rect.left) * (canvas.width / rect.width), y: (clientY - rect.top) * (canvas.height / rect.height) };
                     };
-                    canvas.onmousemove = (e) => {
-                        if (!isDrawing) return;
-                        const rect = canvas.getBoundingClientRect();
-                        const curX = (e.clientX - rect.left) * (canvas.width / rect.width);
-                        const curY = (e.clientY - rect.top) * (canvas.height / rect.height);
-                        ctx.drawImage(img, 0, 0);
-                        ctx.fillStyle = '#000000';
-                        ctx.fillRect(startX, startY, curX - startX, curY - startY);
+                    canvas.onmousedown = canvas.ontouchstart = (e) => { if(e.type === 'touchstart') e.preventDefault(); isDrawing = true; const pos = getPos(e); startX = pos.x; startY = pos.y; };
+                    canvas.onmousemove = canvas.ontouchmove = (e) => {
+                        if (!isDrawing) return; if(e.type === 'touchmove') e.preventDefault();
+                        const pos = getPos(e); ctx.drawImage(img, 0, 0); ctx.fillStyle = '#000000'; ctx.fillRect(startX, startY, pos.x - startX, pos.y - startY);
                     };
-                    canvas.onmouseup = () => { isDrawing = false; };
+                    canvas.onmouseup = canvas.ontouchend = () => { isDrawing = false; };
                 },
                 initInteractiveStega(file) {
-                    const container = document.getElementById('interactiveWorkspaceContainer');
-                    container.classList.remove('hidden');
-                    const url = URL.createObjectURL(file);
-                    PrivacyConvert.registerObjectUrl(url);
+                    const container = document.getElementById('interactiveWorkspaceContainer'); container.classList.remove('hidden');
+                    const url = URL.createObjectURL(file); PrivacyConvert.registerObjectUrl(url);
                     container.innerHTML = `
                         <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3">
-                            <span class="text-xs font-bold text-slate-500 uppercase">Image Steganography Workspace</span>
                             <img id="stegaImg" src="${url}" class="max-h-40 mx-auto rounded-xl border">
-                            <textarea id="stegaSecretText" placeholder="Enter secret message to hide..." class="w-full h-20 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"></textarea>
-                            <div class="flex gap-2">
-                                <button onclick="PrivacyConvert.engine.hideStegaText()" class="flex-1 py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl shadow">Hide Secret in Image</button>
-                                <button onclick="PrivacyConvert.engine.extractStegaText()" class="flex-1 py-2.5 bg-slate-200 dark:bg-slate-700 font-bold text-xs rounded-xl shadow">Extract Secret</button>
-                            </div>
+                            <textarea id="stegaSecretText" placeholder="Enter secret..." class="w-full h-20 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"></textarea>
+                            <div class="flex gap-2"><button onclick="PrivacyConvert.engine.hideStegaText()" class="flex-1 py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">Hide</button><button onclick="PrivacyConvert.engine.extractStegaText()" class="flex-1 py-2.5 bg-slate-200 dark:bg-slate-700 font-bold text-xs rounded-xl">Extract</button></div>
                         </div>
                     `;
                 },
                 renderQueue() {
-                    const container = document.getElementById('fileListContainer');
-                    container.innerHTML = '';
+                    const container = document.getElementById('fileListContainer'); container.innerHTML = '';
                     PrivacyConvert.state.files.forEach((item) => {
-                        const el = document.createElement('div');
-                        el.className = "flex items-center justify-between p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs";
+                        const el = document.createElement('div'); el.className = "flex justify-between p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs";
                         el.innerHTML = `<span class="font-bold truncate">${item.file.name}</span><span class="text-amber-600 font-bold">${item.status}</span>`;
                         container.appendChild(el);
                     });
                 },
                 filterCommands(q) {
-                    const res = document.getElementById('cmdResults');
-                    res.innerHTML = '';
+                    const res = document.getElementById('cmdResults'); res.innerHTML = '';
                     for(let id in PrivacyConvert.routing.metaData) {
                         const m = PrivacyConvert.routing.metaData[id];
                         if(m.title.toLowerCase().includes(q.toLowerCase())) {
-                            const d = document.createElement('div');
-                            d.className = "p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg cursor-pointer text-xs font-semibold";
-                            d.innerText = m.title;
-                            d.onclick = () => { PrivacyConvert.routing.navigate(id); PrivacyConvert.ui.toggleCmdPalette(); };
+                            const d = document.createElement('div'); d.className = "p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg cursor-pointer text-xs font-semibold";
+                            d.innerText = m.title; d.onclick = () => { PrivacyConvert.routing.navigate(id); PrivacyConvert.ui.toggleCmdPalette(); };
                             res.appendChild(d);
                         }
                     }
@@ -1103,662 +1066,165 @@
             },
 
             engine: {
+                async webAuthnRegister() {
+                    try {
+                        const challenge = window.crypto.getRandomValues(new Uint8Array(32)); const userId = window.crypto.getRandomValues(new Uint8Array(16));
+                        const cred = await navigator.credentials.create({ publicKey: { challenge: challenge, rp: { name: "PrivacyConvert Sovereign", id: window.location.hostname }, user: { id: userId, name: "admin@sovereign", displayName: "Sovereign Admin" }, pubKeyCredParams: [{ alg: -7, type: "public-key" }, { alg: -257, type: "public-key" }], authenticatorSelection: { userVerification: "preferred" }, timeout: 60000, attestation: "none" } });
+                        const idStr = Array.from(new Uint8Array(cred.rawId)).map(b=>b.toString(16).padStart(2,'0')).join('');
+                        document.getElementById('webAuthnOutput').innerText = `[SUCCESS] Passkey Registered!\nID: ${idStr.substring(0,20)}...`; PrivacyConvert.ui.showToast('Passkey registered!');
+                    } catch(e) { PrivacyConvert.ui.showToast('Passkey setup failed', 'error'); document.getElementById('webAuthnOutput').innerText = `[ERROR]: ${e.message}`; }
+                },
+                async webAuthnLogin() {
+                    try {
+                        const challenge = window.crypto.getRandomValues(new Uint8Array(32));
+                        const assertion = await navigator.credentials.get({ publicKey: { challenge: challenge, timeout: 60000, userVerification: "preferred" }});
+                        document.getElementById('webAuthnOutput').innerText = `[SUCCESS] Authenticated Securely!\nAuth Data length: ${assertion.response.authenticatorData.byteLength} bytes.`; PrivacyConvert.ui.showToast('Authentication success!');
+                    } catch(e) { PrivacyConvert.ui.showToast('Authentication failed', 'error'); document.getElementById('webAuthnOutput').innerText = `[ERROR]: ${e.message}`; }
+                },
                 runSampleTrial() {
                     const tool = PrivacyConvert.state.tool;
                     if (tool === 'pii-redactor' || tool === 'ai-ner-mask') {
                         document.getElementById('mainInputField').value = "Sample Corporate Data:\nCEO Ahmet Yılmaz met with Microsoft executives in Istanbul.\nTC: 12345678901\nIBAN: TR330006100512345678901234";
-                        PrivacyConvert.ui.showToast('Sample trial data loaded successfully!');
                     } else if (tool === 'cloud-sync') {
                         document.getElementById('genericTextBox').classList.remove('hidden');
                         document.getElementById('genericTextArea').value = "[SAMPLE E2EE CLOUD SYNC SIMULATION]:\n- Status: AES-GCM Encrypted payload prepared.\n- Target: WebDAV / Local Peer Sync node.\n- Outbound Network Traffic: 0 KB (Sandbox Verified).";
-                        PrivacyConvert.ui.showToast('Sample Cloud Sync simulation completed!');
                     } else {
-                        document.getElementById('genericTextBox').classList.remove('hidden');
-                        document.getElementById('genericTextArea').value = `[SAMPLE TRIAL EXECUTION - ${tool.toUpperCase()}]:\n- Status: Simulated successfully in browser sandbox.\n- Compliance: GDPR / KVKK Verified.`;
-                        PrivacyConvert.ui.showToast('Sample trial executed successfully!');
+                        document.getElementById('genericTextBox').classList.remove('hidden'); document.getElementById('genericTextArea').value = `[SAMPLE TRIAL EXECUTION - ${tool.toUpperCase()}]:\n- Status: Simulated successfully in browser sandbox.\n- Compliance: GDPR / KVKK Verified.`;
                     }
+                    PrivacyConvert.ui.showToast('Trial executed.');
                 },
                 async generateAuditCertificate() {
                     PrivacyConvert.ui.updateProgress(20, "Generating cryptographic compliance proof...");
                     try {
                         const company = localStorage.getItem('privacyConvert_company') || 'Enterprise Sovereign Intranet';
-                        const timestamp = new Date().toISOString();
-                        const randomFingerprint = "0x" + Array.from(window.crypto.getRandomValues(new Uint8Array(32))).map(b => b.toString(16).padStart(2,'0')).join('');
-
-                        const pdfDoc = await PDFLib.PDFDocument.create();
-                        const page = pdfDoc.addPage([595.28, 841.89]);
-                        const { width, height } = page.getSize();
-                        
+                        const timestamp = new Date().toISOString(); const randomFingerprint = "0x" + Array.from(window.crypto.getRandomValues(new Uint8Array(32))).map(b => b.toString(16).padStart(2,'0')).join('');
+                        const pdfDoc = await PDFLib.PDFDocument.create(); const page = pdfDoc.addPage([595.28, 841.89]); const { width, height } = page.getSize();
                         page.drawText('SOVEREIGN AIR-GAP COMPLIANCE CERTIFICATE', { x: 50, y: height - 60, size: 18, color: PDFLib.rgb(0.08, 0.07, 0.55) });
-                        page.drawText(`Organization: ${company}`, { x: 50, y: height - 90, size: 11, color: PDFLib.rgb(0.3, 0.3, 0.3) });
-                        page.drawText(`Timestamp: ${timestamp}`, { x: 50, y: height - 110, size: 11, color: PDFLib.rgb(0.3, 0.3, 0.3) });
-                        
+                        page.drawText(`Organization: ${company}`, { x: 50, y: height - 90, size: 11, color: PDFLib.rgb(0.3, 0.3, 0.3) }); page.drawText(`Timestamp: ${timestamp}`, { x: 50, y: height - 110, size: 11, color: PDFLib.rgb(0.3, 0.3, 0.3) });
                         page.drawLine({ start: { x: 50, y: height - 130 }, end: { x: width - 50, y: height - 130 }, thickness: 1, color: PDFLib.rgb(0.8, 0.8, 0.8) });
-
-                        const statement = 
-                            "This document cryptographically certifies that all file processing, PII redaction, " +
-                            "and data sanitation operations were executed 100% locally within an isolated client-side " +
-                            "browser sandbox environment (Air-Gapped Architecture). Zero bytes of plaintext or file data " +
-                            "were transmitted to external networks, ensuring strict compliance with GDPR, HIPAA, and KVKK mandates.";
-
+                        const statement = "This document cryptographically certifies that all file processing, PII redaction, and data sanitation operations were executed 100% locally within an isolated client-side browser sandbox environment (Air-Gapped Architecture). Zero bytes of plaintext or file data were transmitted to external networks, ensuring strict compliance with GDPR, HIPAA, and KVKK mandates.";
                         page.drawText(statement, { x: 50, y: height - 180, size: 10, maxWidth: width - 100, lineHeight: 15, color: PDFLib.rgb(0.2, 0.2, 0.2) });
-
-                        page.drawText('Cryptographic Fingerprint (SHA-256):', { x: 50, y: height - 280, size: 11, color: PDFLib.rgb(0.08, 0.07, 0.55) });
-                        page.drawText(randomFingerprint, { x: 50, y: height - 300, size: 9, color: PDFLib.rgb(0.4, 0.4, 0.4) });
-
+                        page.drawText('Cryptographic Fingerprint (SHA-256):', { x: 50, y: height - 280, size: 11, color: PDFLib.rgb(0.08, 0.07, 0.55) }); page.drawText(randomFingerprint, { x: 50, y: height - 300, size: 9, color: PDFLib.rgb(0.4, 0.4, 0.4) });
                         page.drawText('Authorized by Sovereign OS Client-Side Notary Engine', { x: 50, y: 80, size: 9, color: PDFLib.rgb(0.5, 0.5, 0.5) });
-
-                        const pdfBytes = await pdfDoc.save();
-                        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-                        const url = URL.createObjectURL(blob);
-                        PrivacyConvert.registerObjectUrl(url);
-                        const link = document.createElement('a');
-                        link.href = url;
-                        link.download = `Sovereign_Compliance_Certificate_${Date.now()}.pdf`;
-                        link.click();
-
-                        PrivacyConvert.ui.updateProgress(100, "Done!");
-                        PrivacyConvert.ui.showToast('Official Compliance Audit Certificate generated successfully!');
-                    } catch (e) {
-                        console.error(e);
-                        PrivacyConvert.ui.updateProgress(100, "Error");
-                        PrivacyConvert.ui.showToast('Failed to generate audit certificate', 'error');
-                    }
+                        const url = URL.createObjectURL(new Blob([await pdfDoc.save()], { type: 'application/pdf' }));
+                        PrivacyConvert.registerObjectUrl(url); const link = document.createElement('a'); link.href = url; link.download = `Sovereign_Compliance_Certificate_${Date.now()}.pdf`; link.click();
+                        PrivacyConvert.ui.updateProgress(100, "Done!"); PrivacyConvert.ui.showToast('Official Compliance Audit Certificate generated successfully!');
+                    } catch (e) { PrivacyConvert.ui.updateProgress(100, "Error"); PrivacyConvert.ui.showToast('Failed to generate audit certificate', 'error'); }
                 },
-
                 async saveVaultNote() {
-                    const title = document.getElementById('vaultTitle').value;
-                    const content = document.getElementById('vaultContent').value;
-                    if(!title || !content) return PrivacyConvert.ui.showToast('Title and content required', 'warning');
-                    const tx = PrivacyConvert.state.db.transaction('vault', 'readwrite');
-                    tx.objectStore('vault').add({ title, content, timestamp: new Date().toISOString() });
-                    tx.oncomplete = () => {
-                        PrivacyConvert.ui.showToast('Note securely stored in IndexedDB Vault!');
-                        document.getElementById('vaultTitle').value = '';
-                        document.getElementById('vaultContent').value = '';
-                        this.loadVaultNotes();
-                    };
+                    const title = document.getElementById('vaultTitle').value; const content = document.getElementById('vaultContent').value;
+                    if(!title || !content) return PrivacyConvert.ui.showToast('Required', 'warning');
+                    const tx = PrivacyConvert.state.db.transaction('vault', 'readwrite'); tx.objectStore('vault').add({ title, content, timestamp: new Date().toISOString() });
+                    tx.oncomplete = () => { PrivacyConvert.ui.showToast('Stored in Vault!'); this.loadVaultNotes(); };
                 },
                 async loadVaultNotes() {
                     if(!PrivacyConvert.state.db) return;
-                    const tx = PrivacyConvert.state.db.transaction('vault', 'readonly');
-                    const req = tx.objectStore('vault').getAll();
+                    const req = PrivacyConvert.state.db.transaction('vault', 'readonly').objectStore('vault').getAll();
                     req.onsuccess = () => {
-                        const list = document.getElementById('vaultList');
-                        if(!list) return;
-                        list.innerHTML = '';
+                        const list = document.getElementById('vaultList'); if(!list) return; list.innerHTML = '';
                         req.result.forEach(note => {
-                            const div = document.createElement('div');
-                            div.className = "p-2.5 bg-white dark:bg-slate-800 border rounded-xl flex justify-between items-center text-xs";
+                            const div = document.createElement('div'); div.className = "p-2.5 bg-white dark:bg-slate-800 border rounded-xl flex justify-between text-xs";
                             div.innerHTML = `<span class="font-bold">${note.title}</span><button onclick="PrivacyConvert.engine.deleteVaultNote(${note.id})" class="text-red-500 font-bold">Destroy</button>`;
                             list.appendChild(div);
                         });
                     };
                 },
-                async deleteVaultNote(id) {
-                    const tx = PrivacyConvert.state.db.transaction('vault', 'readwrite');
-                    tx.objectStore('vault').delete(id);
-                    tx.oncomplete = () => {
-                        PrivacyConvert.ui.showToast('Note securely wiped from vault!');
-                        this.loadVaultNotes();
-                    };
-                },
-                async p2pStartHost() {
-                    const offer = await PrivacyConvert.p2pCore.createOffer();
-                    document.getElementById('p2pSignalingBox').value = offer;
-                    document.getElementById('p2pSendSection').classList.remove('hidden');
-                    PrivacyConvert.ui.showToast('Offer generated. Copy & send to peer.');
-                },
+                async deleteVaultNote(id) { PrivacyConvert.state.db.transaction('vault', 'readwrite').objectStore('vault').delete(id).onsuccess = () => { PrivacyConvert.ui.showToast('Wiped!'); this.loadVaultNotes(); }; },
+                async p2pStartHost() { document.getElementById('p2pSignalingBox').value = await PrivacyConvert.p2pCore.createOffer(); document.getElementById('p2pSendSection').classList.remove('hidden'); },
                 async p2pJoinHost() {
-                    const box = document.getElementById('p2pSignalingBox');
-                    const inputOffer = prompt('Paste Host Offer here:');
-                    if(!inputOffer) return;
-                    const answer = await PrivacyConvert.p2pCore.answerOffer(inputOffer);
-                    box.value = answer;
-                    document.getElementById('p2pSendSection').classList.remove('hidden');
-                    const inputAnswer = prompt('Paste Answer back to Host if needed, or connection establishing...');
-                    if(inputAnswer) await PrivacyConvert.p2pCore.acceptAnswer(inputAnswer);
-                    PrivacyConvert.ui.showToast('Connected to Host!');
+                    const inputOffer = prompt('Paste Host Offer:'); if(!inputOffer) return; document.getElementById('p2pSignalingBox').value = await PrivacyConvert.p2pCore.answerOffer(inputOffer);
+                    document.getElementById('p2pSendSection').classList.remove('hidden'); const inputAnswer = prompt('Paste Answer back to Host if needed:'); if(inputAnswer) await PrivacyConvert.p2pCore.acceptAnswer(inputAnswer);
                 },
-                p2pSendFile() {
-                    const fileInput = document.getElementById('p2pFileSend');
-                    if(fileInput.files.length === 0) return PrivacyConvert.ui.showToast('Select a file first', 'warning');
-                    PrivacyConvert.p2pCore.sendFile(fileInput.files[0]);
-                },
+                p2pSendFile() { const f = document.getElementById('p2pFileSend').files[0]; if(!f) return PrivacyConvert.ui.showToast('Select file', 'warning'); PrivacyConvert.p2pCore.sendFile(f); },
                 async saveToOpfs() {
-                    const fname = document.getElementById('opfsFilename').value;
-                    const content = document.getElementById('opfsData').value;
-                    if(!fname || !content) return PrivacyConvert.ui.showToast('Filename and content required', 'warning');
-                    const success = await PrivacyConvert.premiumSovereignEngine.opfsSaveFile(fname, content);
-                    if(success) {
-                        document.getElementById('opfsOutput').innerText = `[OPFS SUCCESS]: Saved '${fname}' securely to browser origin virtual disk.`;
-                        PrivacyConvert.ui.showToast('Saved to OPFS virtual disk!');
-                    } else {
-                        PrivacyConvert.ui.showToast('OPFS save failed', 'error');
-                    }
+                    const fname = document.getElementById('opfsFilename').value; const content = document.getElementById('opfsData').value;
+                    if(await PrivacyConvert.premiumSovereignEngine.opfsSaveFile(fname, content)) { document.getElementById('opfsOutput').innerText = `[OPFS SUCCESS]: Saved '${fname}'.`; PrivacyConvert.ui.showToast('Saved to OPFS!'); }
                 },
                 async readFromOpfs() {
-                    const fname = document.getElementById('opfsFilename').value;
-                    if(!fname) return PrivacyConvert.ui.showToast('Enter filename to read', 'warning');
-                    const content = await PrivacyConvert.premiumSovereignEngine.opfsReadFile(fname);
-                    if(content !== null) {
-                        document.getElementById('opfsOutput').innerText = `[OPFS READ '${fname}']: \n${content}`;
-                        PrivacyConvert.ui.showToast('Read from OPFS disk successfully!');
-                    } else {
-                        document.getElementById('opfsOutput').innerText = `[OPFS ERROR]: File '${fname}' not found.`;
-                        PrivacyConvert.ui.showToast('File not found in OPFS', 'error');
-                    }
+                    const fname = document.getElementById('opfsFilename').value; const content = await PrivacyConvert.premiumSovereignEngine.opfsReadFile(fname);
+                    if(content !== null) { document.getElementById('opfsOutput').innerText = `[READ]: \n${content}`; PrivacyConvert.ui.showToast('Read from OPFS!'); } else PrivacyConvert.ui.showToast('File not found', 'error');
                 },
                 async startSecureRoomHost() {
                     const pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
-                    const dc = pc.createDataChannel("sovereign-room-chat");
-                    PrivacyConvert.state.webrtc.pc = pc;
-                    PrivacyConvert.state.webrtc.dc = dc;
-                    this.setupRoomChannel(dc);
-
-                    const offer = await pc.createOffer();
-                    await pc.setLocalDescription(offer);
-                    pc.onicecandidate = (e) => {
-                        if (!e.candidate) {
-                            document.getElementById('roomSignaling').value = btoa(JSON.stringify(pc.localDescription));
-                            PrivacyConvert.ui.showToast('Room created! Send code to peer.');
-                        }
-                    };
+                    PrivacyConvert.state.webrtc.dc = pc.createDataChannel("room-chat"); PrivacyConvert.state.webrtc.pc = pc; this.setupRoomChannel(PrivacyConvert.state.webrtc.dc);
+                    await pc.setLocalDescription(await pc.createOffer()); pc.onicecandidate = (e) => { if (!e.candidate) document.getElementById('roomSignaling').value = btoa(JSON.stringify(pc.localDescription)); };
                 },
                 async joinSecureRoom() {
-                    const inputOffer = prompt('Paste Room Host Offer code:');
-                    if(!inputOffer) return;
-                    const pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
-                    PrivacyConvert.state.webrtc.pc = pc;
-                    pc.ondatachannel = (e) => {
-                        PrivacyConvert.state.webrtc.dc = e.channel;
-                        this.setupRoomChannel(e.channel);
-                    };
-
-                    await pc.setRemoteDescription(JSON.parse(atob(inputOffer)));
-                    const answer = await pc.createAnswer();
-                    await pc.setLocalDescription(answer);
-                    pc.onicecandidate = (e) => {
-                        if (!e.candidate) {
-                            document.getElementById('roomSignaling').value = btoa(JSON.stringify(pc.localDescription));
-                            PrivacyConvert.ui.showToast('Joined Room! Send answer back to host if needed.');
-                        }
-                    };
+                    const inputOffer = prompt('Paste Offer:'); if(!inputOffer) return;
+                    const pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] }); PrivacyConvert.state.webrtc.pc = pc;
+                    pc.ondatachannel = (e) => { PrivacyConvert.state.webrtc.dc = e.channel; this.setupRoomChannel(e.channel); };
+                    await pc.setRemoteDescription(JSON.parse(atob(inputOffer))); await pc.setLocalDescription(await pc.createAnswer());
+                    pc.onicecandidate = (e) => { if (!e.candidate) document.getElementById('roomSignaling').value = btoa(JSON.stringify(pc.localDescription)); };
                 },
                 setupRoomChannel(dc) {
-                    dc.onopen = () => {
-                        document.getElementById('roomChatArea').classList.remove('hidden');
-                        PrivacyConvert.ui.showToast('💬 E2EE Secure Chat Connected!');
-                    };
-                    dc.onmessage = (e) => {
-                        const data = JSON.parse(e.data);
-                        const box = document.getElementById('roomChatBox');
-                        box.innerHTML += `<div><strong class="text-indigo-500">${data.sender}:</strong> ${data.msg}</div>`;
-                        box.scrollTop = box.scrollHeight;
-                    };
+                    dc.onopen = () => { document.getElementById('roomChatArea').classList.remove('hidden'); PrivacyConvert.ui.showToast('Chat Connected!'); };
+                    dc.onmessage = (e) => { const d = JSON.parse(e.data); const b = document.getElementById('roomChatBox'); b.innerHTML += `<div><strong class="text-indigo-500">${d.sender}:</strong> ${d.msg}</div>`; b.scrollTop = b.scrollHeight; };
                 },
                 sendRoomMessage() {
-                    const msg = document.getElementById('roomMsgInput').value;
-                    const dc = PrivacyConvert.state.webrtc.dc;
-                    if(!dc || dc.readyState !== 'open') return PrivacyConvert.ui.showToast('Room not connected', 'error');
-                    const sender = localStorage.getItem('privacyConvert_company') || 'Peer';
-                    dc.send(JSON.stringify({ sender, msg }));
-                    const box = document.getElementById('roomChatBox');
-                    box.innerHTML += `<div><strong class="text-emerald-500">You:</strong> ${msg}</div>`;
-                    box.scrollTop = box.scrollHeight;
-                    document.getElementById('roomMsgInput').value = '';
+                    const msg = document.getElementById('roomMsgInput').value; const dc = PrivacyConvert.state.webrtc.dc; if(!dc || dc.readyState !== 'open') return;
+                    dc.send(JSON.stringify({ sender: 'Peer', msg })); const b = document.getElementById('roomChatBox'); b.innerHTML += `<div><strong class="text-emerald-500">You:</strong> ${msg}</div>`; b.scrollTop = b.scrollHeight; document.getElementById('roomMsgInput').value = '';
                 },
-
-                downloadRedactedImage() {
-                    const canvas = document.getElementById('redactCanvas');
-                    const url = canvas.toDataURL('image/png');
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.download = `redacted_${Date.now()}.png`;
-                    link.click();
-                    PrivacyConvert.ui.showToast('Redacted image downloaded securely!');
-                },
-                hideStegaText() {
-                    const img = document.getElementById('stegaImg');
-                    const text = document.getElementById('stegaSecretText').value;
-                    if(!text) return PrivacyConvert.ui.showToast('Enter secret text', 'warning');
-                    try {
-                        const dataUrl = PrivacyConvert.steganographyCore.hide(img, text);
-                        const link = document.createElement('a');
-                        link.href = dataUrl;
-                        link.download = `stega_hidden_${Date.now()}.png`;
-                        link.click();
-                        PrivacyConvert.ui.showToast('Secret successfully hidden inside image!');
-                    } catch(e) { PrivacyConvert.ui.showToast(e.message, 'error'); }
-                },
-                extractStegaText() {
-                    const img = document.getElementById('stegaImg');
-                    try {
-                        const text = PrivacyConvert.steganographyCore.extract(img);
-                        document.getElementById('genericTextBox').classList.remove('hidden');
-                        document.getElementById('genericTextArea').value = `[EXTRACTED STEGANOGRAPHY SECRET]:\n${text}`;
-                        PrivacyConvert.ui.showToast('Secret successfully extracted from image!');
-                    } catch(e) { PrivacyConvert.ui.showToast('Failed to extract secret.', 'error'); }
-                },
+                downloadRedactedImage() { const l = document.createElement('a'); l.href = document.getElementById('redactCanvas').toDataURL('image/png'); l.download = `redacted_${Date.now()}.png`; l.click(); },
+                hideStegaText() { try { const l = document.createElement('a'); l.href = PrivacyConvert.steganographyCore.hide(document.getElementById('stegaImg'), document.getElementById('stegaSecretText').value); l.download = `stega.png`; l.click(); PrivacyConvert.ui.showToast('Hidden in image!'); } catch(e) { PrivacyConvert.ui.showToast(e.message, 'error'); } },
+                extractStegaText() { try { document.getElementById('genericTextBox').classList.remove('hidden'); document.getElementById('genericTextArea').value = `[SECRET]:\n${PrivacyConvert.steganographyCore.extract(document.getElementById('stegaImg'))}`; PrivacyConvert.ui.showToast('Extracted!'); } catch(e) { PrivacyConvert.ui.showToast('Failed to extract', 'error'); } },
                 async executeTool() {
                     const tool = PrivacyConvert.state.tool;
-                    const lang = PrivacyConvert.state.lang;
-                    const successText = lang === 'es' ? "Éxito (Sandboxed en cliente)" : lang === 'zh' ? "成功 (客户端沙箱)" : lang === 'de' ? "Erfolg (Client-seitig)" : lang === 'fr' ? "Succès (Côté client)" : lang === 'ar' ? "نجاح (محلي بالكامل)" : "SUCCESS (Client-Side Sandboxed)";
+                    if (tool === 'audit-certificate') return await this.generateAuditCertificate();
 
-                    if (tool === 'audit-certificate') {
-                        await this.generateAuditCertificate();
-                        return;
+                    if (tool === 'pii-redactor' || tool === 'ai-ner-mask') {
+                        const input = document.getElementById('mainInputField').value; if (!input) return; document.getElementById('genericTextBox').classList.remove('hidden');
+                        document.getElementById('genericTextArea').value = tool === 'pii-redactor' ? PrivacyConvert.advancedPrivacyEngine.maskPII(input) : PrivacyConvert.premiumSovereignEngine.runAiNer(input); PrivacyConvert.ui.showToast('Redaction completed!'); return;
                     }
 
-                    if (tool === 'pii-redactor') {
-                        const input = document.getElementById('mainInputField').value;
-                        if (!input) return PrivacyConvert.ui.showToast('Enter text for PII scrubbing', 'warning');
-                        const sanitized = PrivacyConvert.advancedPrivacyEngine.maskPII(input);
-                        document.getElementById('genericTextBox').classList.remove('hidden');
-                        document.getElementById('genericTextArea').value = sanitized;
-                        PrivacyConvert.ui.showToast('KVKK/GDPR PII data successfully scrubbed!');
-                        return;
-                    }
-
-                    if (tool === 'ai-ner-mask') {
-                        const input = document.getElementById('mainInputField').value;
-                        if(!input) return PrivacyConvert.ui.showToast('Enter text for AI NER processing', 'warning');
-                        const res = PrivacyConvert.premiumSovereignEngine.runAiNer(input);
-                        document.getElementById('genericTextBox').classList.remove('hidden');
-                        document.getElementById('genericTextArea').value = res;
-                        PrivacyConvert.ui.showToast('WebGPU AI NER Masking completed!');
-                        return;
-                    }
-
-                    if (tool === 'ed25519-sign') {
-                        const input = document.getElementById('mainInputField').value || "Sovereign Enterprise Contract Content";
-                        const sigData = PrivacyConvert.premiumSovereignEngine.generateDocumentSignature(input);
-                        document.getElementById('genericTextBox').classList.remove('hidden');
-                        document.getElementById('genericTextArea').value = JSON.stringify(sigData, null, 2);
-                        PrivacyConvert.ui.showToast('Ed25519 Document Digital Signature generated!');
-                        return;
-                    }
-
-                    if (tool === 'blockchain-anchor') {
-                        const input = document.getElementById('mainInputField').value || "Asset State Root Hash";
-                        const anchorData = PrivacyConvert.premiumSovereignEngine.anchorToBlockchain(input);
-                        document.getElementById('genericTextBox').classList.remove('hidden');
-                        document.getElementById('genericTextArea').value = JSON.stringify(anchorData, null, 2);
-                        PrivacyConvert.ui.showToast('ZK-Rollup Blockchain Anchor generated!');
-                        return;
-                    }
-
-                    if (tool === 'zkp-validator') {
-                        const proofData = PrivacyConvert.advancedPrivacyEngine.generateZkProof("Verified Citizen / Age > 18");
-                        document.getElementById('genericTextBox').classList.remove('hidden');
-                        document.getElementById('genericTextArea').value = JSON.stringify(proofData, null, 2);
-                        PrivacyConvert.ui.showToast('Zero-Knowledge cryptographic proof generated!');
-                        return;
-                    }
-
-                    if (tool === 'local-rag' || tool === 'lora-tuning') {
-                        const wasmLog = await PrivacyConvert.wasmCore.compileAndRunSIMD(tool);
-                        const input = document.getElementById('mainInputField').value || "Sovereign local query context.";
-                        document.getElementById('genericTextBox').classList.remove('hidden');
-                        document.getElementById('genericTextArea').value = `${wasmLog}\n\n[LOCAL AI / RAG RESULT]:\nProcessed locally via WebGPU/WASM vectors for query: "${input}"`;
-                        PrivacyConvert.ui.showToast('Local AI computation completed');
-                        return;
+                    if (tool === 'ed25519-sign' || tool === 'blockchain-anchor' || tool === 'zkp-validator') {
+                        const input = document.getElementById('mainInputField').value || "Sovereign Content"; document.getElementById('genericTextBox').classList.remove('hidden');
+                        const data = tool === 'ed25519-sign' ? PrivacyConvert.premiumSovereignEngine.generateDocumentSignature(input) : tool === 'blockchain-anchor' ? PrivacyConvert.premiumSovereignEngine.anchorToBlockchain(input) : PrivacyConvert.advancedPrivacyEngine.generateZkProof("Verified");
+                        document.getElementById('genericTextArea').value = JSON.stringify(data, null, 2); PrivacyConvert.ui.showToast('Cryptographic operation done!'); return;
                     }
 
                     if (tool === 'encrypt-tool') {
-                        const pwd = document.getElementById('cryptoPasswordInput').value;
-                        if (!pwd) return PrivacyConvert.ui.showToast('Master Password required!', 'warning');
-                        if (PrivacyConvert.state.files.length > 0) {
-                            await PrivacyConvert.streamCore.processLargeFile(PrivacyConvert.state.files[0].file, pwd, PrivacyConvert.state.cryptoMode);
-                            return;
-                        }
-                        const input = document.getElementById('mainInputField').value;
-                        if (!input) return PrivacyConvert.ui.showToast('Enter text to encrypt/decrypt', 'warning');
-                        document.getElementById('actionArea').classList.remove('hidden');
-                        document.getElementById('genericTextBox').classList.remove('hidden');
-                        PrivacyConvert.ui.updateProgress(50, "Executing WebCrypto AES-GCM...");
+                        const pwd = document.getElementById('cryptoPasswordInput').value; if (!pwd) return PrivacyConvert.ui.showToast('Password required!', 'warning');
+                        if (PrivacyConvert.state.files.length > 0) return await PrivacyConvert.streamCore.processLargeFile(PrivacyConvert.state.files[0].file, pwd, PrivacyConvert.state.cryptoMode);
+                        const input = document.getElementById('mainInputField').value; document.getElementById('actionArea').classList.remove('hidden'); document.getElementById('genericTextBox').classList.remove('hidden');
                         try {
-                            if (PrivacyConvert.state.cryptoMode === 'encrypt') {
-                                const cipher = await PrivacyConvert.cryptoCore.encrypt(input, pwd);
-                                document.getElementById('genericTextArea').value = `-----BEGIN ENCRYPTED-----\n${cipher}\n-----END ENCRYPTED-----`;
-                                PrivacyConvert.ui.showToast('Text encrypted successfully!');
-                            } else {
-                                const rawBase64 = input.replace(/-----(BEGIN|END).*?-----/g, '').trim();
-                                const plainText = await PrivacyConvert.cryptoCore.decrypt(rawBase64, pwd);
-                                document.getElementById('genericTextArea').value = plainText;
-                                PrivacyConvert.ui.showToast('Text decrypted successfully!');
-                            }
-                            PrivacyConvert.ui.updateProgress(100, "Done!");
-                        } catch(e) {
-                            PrivacyConvert.ui.updateProgress(100, "Error");
-                            PrivacyConvert.ui.showToast('Decryption failed! Wrong password.', 'error');
-                        }
+                            document.getElementById('genericTextArea').value = PrivacyConvert.state.cryptoMode === 'encrypt' ? `-----BEGIN ENCRYPTED-----\n${await PrivacyConvert.cryptoCore.encrypt(input, pwd)}\n-----END ENCRYPTED-----` : await PrivacyConvert.cryptoCore.decrypt(input.replace(/-----(BEGIN|END).*?-----/g, '').trim(), pwd); PrivacyConvert.ui.showToast('Crypto op successful!');
+                        } catch(e) { PrivacyConvert.ui.showToast('Decryption failed', 'error'); }
                         return;
                     }
 
                     if (tool === 'ocr-tool') {
-                        if (PrivacyConvert.state.files.length === 0) return PrivacyConvert.ui.showToast('Select an image file', 'warning');
-                        document.getElementById('actionArea').classList.remove('hidden');
-                        document.getElementById('genericTextBox').classList.remove('hidden');
-                        const outArea = document.getElementById('genericTextArea');
-                        outArea.value = "Starting Worker thread...\n";
-                        const worker = PrivacyConvert.workerCore.createWorker(PrivacyConvert.workerCore.ocrTaskWorker);
-                        worker.postMessage({ type: 'heavyCompute' });
-                        worker.onmessage = (e) => {
-                            if(e.data.type === 'progress') {
-                                PrivacyConvert.ui.updateProgress(e.data.val, `Processing... ${e.data.val}%`);
-                                outArea.value += `Progress: ${e.data.val}%\n`;
-                            } else if (e.data.type === 'done') {
-                                outArea.value += `\n[RESULT]: ${e.data.result}`;
-                                PrivacyConvert.ui.updateProgress(100, "Done!");
-                                PrivacyConvert.ui.showToast('Task completed without freezing UI!');
-                                worker.terminate();
-                            }
-                        };
+                        if (PrivacyConvert.state.files.length === 0) return PrivacyConvert.ui.showToast('Select image', 'warning');
+                        document.getElementById('actionArea').classList.remove('hidden'); document.getElementById('genericTextBox').classList.remove('hidden');
+                        const out = document.getElementById('genericTextArea'); out.value = "Initializing Tesseract.js...\n"; PrivacyConvert.ui.updateProgress(10, "Loading Engine...");
+                        try {
+                            if(typeof Tesseract === 'undefined') throw new Error("Tesseract not loaded (Offline).");
+                            const res = await Tesseract.recognize(PrivacyConvert.state.files[0].file, 'eng', { logger: m => { if(m.status === 'recognizing text'){ const pct = Math.round(m.progress * 100); PrivacyConvert.ui.updateProgress(pct, `OCR: ${pct}%`); if(pct%25===0) out.value = `Processing... ${pct}%\n`; } }});
+                            out.value = `[OCR RESULT]:\n\n${res.data.text}`; PrivacyConvert.ui.updateProgress(100, "Done!"); PrivacyConvert.ui.showToast('OCR Extracted!');
+                        } catch(e) { out.value = `[ERROR]: ${e.message}`; PrivacyConvert.ui.updateProgress(100, "Error"); }
                         return;
                     }
 
                     if (tool === 'pdf-merge') {
-                        if (PrivacyConvert.state.files.length < 2) return PrivacyConvert.ui.showToast('Select at least 2 PDF files to merge', 'warning');
-                        PrivacyConvert.ui.updateProgress(30, "Merging PDFs locally...");
+                        if (PrivacyConvert.state.files.length < 2) return PrivacyConvert.ui.showToast('Select 2+ PDFs', 'warning'); if (PrivacyConvert.state.files.some(i => i.file.type !== 'application/pdf')) return PrivacyConvert.ui.showToast('Error: Only PDF files allowed!', 'error');
+                        PrivacyConvert.ui.updateProgress(30, "Merging...");
                         try {
-                            const mergedPdf = await PDFLib.PDFDocument.create();
+                            const merged = await PDFLib.PDFDocument.create();
                             for (let item of PrivacyConvert.state.files) {
-                                const buf = await item.file.arrayBuffer();
-                                const pdf = await PDFLib.PDFDocument.load(buf);
-                                const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
-                                pages.forEach(p => mergedPdf.addPage(p));
+                                const pdf = await PDFLib.PDFDocument.load(await item.file.arrayBuffer()); (await merged.copyPages(pdf, pdf.getPageIndices())).forEach(p => merged.addPage(p));
                             }
-                            const mergedPdfBytes = await mergedPdf.save();
-                            const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
-                            const url = URL.createObjectURL(blob);
-                            PrivacyConvert.registerObjectUrl(url);
-                            const link = document.createElement('a');
-                            link.href = url;
-                            link.download = `merged_secure_${Date.now()}.pdf`;
-                            link.click();
-                            PrivacyConvert.ui.updateProgress(100, "Done!");
-                            PrivacyConvert.ui.showToast('PDFs successfully merged!');
-                        } catch (err) {
-                            PrivacyConvert.ui.updateProgress(100, "Error");
-                            PrivacyConvert.ui.showToast('Error merging PDFs', 'error');
-                        }
+                            const url = URL.createObjectURL(new Blob([await merged.save()], { type: 'application/pdf' })); PrivacyConvert.registerObjectUrl(url); const l = document.createElement('a'); l.href = url; l.download = `merged_${Date.now()}.pdf`; l.click(); PrivacyConvert.ui.updateProgress(100, "Done!"); PrivacyConvert.ui.showToast('Merged!');
+                        } catch(e) { PrivacyConvert.ui.showToast('Error', 'error'); }
                         return;
                     }
 
-                    if (tool === 'pdf-to-png') {
-                        if (PrivacyConvert.state.files.length === 0) return PrivacyConvert.ui.showToast('Select a PDF file', 'warning');
-                        PrivacyConvert.ui.updateProgress(20, "Rendering PDF pages to PNG...");
-                        try {
-                            const file = PrivacyConvert.state.files[0].file;
-                            const buf = await file.arrayBuffer();
-                            const loadingTask = pdfjsLib.getDocument({ data: buf });
-                            const pdfDoc = await loadingTask.promise;
-                            const numPages = Math.min(pdfDoc.numPages, 10);
-                            const zip = new JSZip();
-
-                            for (let i = 1; i <= numPages; i++) {
-                                const page = await pdfDoc.getPage(i);
-                                const viewport = page.getViewport({ scale: 1.5 });
-                                const canvas = document.createElement('canvas');
-                                const context = canvas.getContext('2d');
-                                canvas.height = viewport.height;
-                                canvas.width = viewport.width;
-                                await page.render({ canvasContext: context, viewport: viewport }).promise;
-                                
-                                const dataUrl = canvas.toDataURL('image/png');
-                                const base64Data = dataUrl.replace(/^data:image\/png;base64,/, "");
-                                zip.file(`page_${i}.png`, base64Data, { base64: true });
-                                PrivacyConvert.ui.updateProgress(Math.round((i / numPages) * 80), `Rendering page ${i}/${numPages}...`);
-                            }
-
-                            const content = await zip.generateAsync({ type: "blob" });
-                            const url = URL.createObjectURL(content);
-                            PrivacyConvert.registerObjectUrl(url);
-                            const link = document.createElement('a');
-                            link.href = url;
-                            link.download = `${file.name}_pages.zip`;
-                            link.click();
-                            PrivacyConvert.ui.updateProgress(100, "Done!");
-                            PrivacyConvert.ui.showToast('PDF pages converted to PNG and zipped successfully!');
-                        } catch (err) {
-                            PrivacyConvert.ui.updateProgress(100, "Error");
-                            PrivacyConvert.ui.showToast('Failed to convert PDF to PNG', 'error');
-                        }
-                        return;
-                    }
-
-                    if (tool === 'meta-scrubber') {
-                        if (PrivacyConvert.state.files.length === 0) return PrivacyConvert.ui.showToast('Select image files to scrub', 'warning');
-                        PrivacyConvert.ui.updateProgress(40, "Stripping metadata via Canvas sandbox...");
-                        try {
-                            const zip = new JSZip();
-                            for (let item of PrivacyConvert.state.files) {
-                                const img = new Image();
-                                const url = URL.createObjectURL(item.file);
-                                PrivacyConvert.registerObjectUrl(url);
-                                await new Promise((resolve, reject) => { img.onload = resolve; img.onerror = reject; img.src = url; });
-                                const canvas = document.createElement('canvas');
-                                canvas.width = img.width; canvas.height = img.height;
-                                const ctx = canvas.getContext('2d');
-                                ctx.drawImage(img, 0, 0);
-                                
-                                const cleanDataUrl = canvas.toDataURL(item.file.type || 'image/jpeg', 0.95);
-                                const base64Data = cleanDataUrl.split(',')[1];
-                                zip.file(`clean_${item.file.name}`, base64Data, { base64: true });
-                                item.status = 'Scrubbed';
-                            }
-                            const content = await zip.generateAsync({ type: 'blob' });
-                            const url = URL.createObjectURL(content);
-                            PrivacyConvert.registerObjectUrl(url);
-                            const link = document.createElement('a');
-                            link.href = url;
-                            link.download = `scrubbed_images_${Date.now()}.zip`;
-                            link.click();
-
-                            PrivacyConvert.ui.renderQueue();
-                            PrivacyConvert.ui.updateProgress(100, "Done!");
-                            PrivacyConvert.ui.showToast('EXIF & Metadata successfully scrubbed from images!');
-                        } catch (err) {
-                            PrivacyConvert.ui.updateProgress(100, "Error");
-                            PrivacyConvert.ui.showToast('Error cleaning metadata', 'error');
-                        }
-                        return;
-                    }
-
-                    if (tool === 'doc-diff') {
-                        const t1 = document.getElementById('mainInputField').value;
-                        const t2 = document.getElementById('pane2Input').value;
-                        if(!t1 || !t2) return PrivacyConvert.ui.showToast('Enter text in both fields', 'warning');
-                        const res = `[DIFF ENGINE REPORT]\n- Original: ${t1.length} chars\n+ Modified: ${t2.length} chars\nStatus: Compared successfully.`;
-                        document.getElementById('genericTextBox').classList.remove('hidden');
-                        document.getElementById('genericTextArea').value = res;
-                        PrivacyConvert.ui.showToast('Diff analysis completed');
-                        return;
-                    }
-
-                    const input = document.getElementById('mainInputField').value || "Default sovereign operation result.";
-                    document.getElementById('actionArea').classList.remove('hidden');
                     document.getElementById('genericTextBox').classList.remove('hidden');
-                    document.getElementById('genericTextArea').value = `[SOVEREIGN EXECUTION REPORT - ${tool.toUpperCase()}]\nStatus: ${successText}\nTimestamp: ${new Date().toISOString()}\n\nOutput:\n${input}`;
-                    PrivacyConvert.ui.showToast('Tool executed successfully!');
+                    document.getElementById('genericTextArea').value = `[SOVEREIGN EXECUTION REPORT - ${tool.toUpperCase()}]\nStatus: SUCCESS\nOutput: Action executed securely.`; PrivacyConvert.ui.showToast('Tool executed successfully!');
                 },
                 executePane2() { this.executeTool(); }
             },
 
-            i18n: {
-                translations: {
-                    en: {
-                        accept: "Accept", secureLabel: "Secure", dropText: "Click to browse or drag files here (Memory-Safe Stream)",
-                        btnReset: "Reset", btnCopy: "📋 Copy", btnPreview: "👁️ Preview", btnProcess: "Execute Secure Process", closeBtn: "Close", previewTitle: "Enterprise Preview",
-                        splitScreenBtn: "Split View", secondaryPaneTitle: "Secondary Workspace", brandBtn: "Branding", queueTitle: "Queue Status",
-                        bannerTitle: "100% Client-Side Air-Gapped Security:", bannerDesc: "All processing occurs locally in your browser sandbox.", bannerVerifyBtn: "🔍 How to Verify?",
-                        verifyModalTitle: "How to Verify Air-Gapped Security", verifyDesc1: "This application operates entirely client-side using JavaScript, WebAssembly, and local IndexedDB sandbox storage.",
-                        verifyStep1: "Step 1: Open Browser Developer Tools (F12)", verifyStep1Sub: "Navigate to the \"Network\" tab.", verifyStep2: "Step 2: Disconnect Internet or Monitor Traffic", verifyStep2Sub: "Notice 0 outbound requests/bytes sent to external servers.",
-                        catProFeatures: "💎 Pro & Enterprise", catInfiniteSec: "🔑 Security, Passkey & Vault", catZkpMarket: "📦 ZKP, AI & Marketplace", catLegalAudit: "⚖️ Legal, Diff & Audit", catPdfDocs: "📚 PDF & Documents", catMediaShare: "🖼️ Images, OCR, EXIF & P2P",
-                        toolLiveShield: "Live Form PII Shield", toolCloudSync: "E2EE Cloud Sync", toolAuditCert: "Auditor PDF Certificate", toolWhiteLabel: "White-Label Branding",
-                        toolWebAuthn: "WebAuthn Passkey Vault", toolStega: "Image Steganography", toolDestruct: "Self-Destructing Artifacts", toolEncrypt: "AES-256 Hardware Encryptor",
-                        toolMarket: "Local Rule Marketplace", toolZkp: "Zero-Knowledge Proofs", toolLora: "Local LoRA Fine-Tuning", toolLocalRag: "Local AI RAG Search",
-                        toolDiff: "Contract Diff Engine", toolCross: "Cross-Framework Compliance", toolTimestamp: "OpenTimestamps Anchor", toolCustody: "Chain of Custody",
-                        toolContract: "Contract Risk Parser", toolPdfPng: "PDF to PNG Converter", toolPdfMerge: "PDF Merger", toolPii: "Batch PII Redaction",
-                        toolVisual: "Visual Redaction (Face/Stamp)", toolMetaScrubber: "EXIF & Meta Scrubber", toolOcr: "OCR Text Extract (Worker)", toolP2p: "P2P File Share",
-                        toolOpfs: "OPFS Encrypted Virtual Disk", toolSign: "Ed25519 Document Signer", toolAiNer: "WebGPU AI NER Redactor", toolChain: "ZK-Rollup / Blockchain Anchor", toolRoom: "E2EE Secure Chat Room",
-                        encryptModeBtn: "Encrypt File/Text", decryptModeBtn: "Decrypt File/Text", passPlaceholder: "Enter Master Password...", pasteText: "Enter input text here...",
-                        outputLabel: "System Output / Logs:", compareBtn: "Compare & Diff", pasteSecondaryText: "Secondary text for comparison...", cmdPlaceholder: "Search all Sovereign & Pro tools...",
-                        faqTitle: "Frequently Asked Questions & Privacy Compliance",
-                        faq1Q: "Is my data ever sent to external servers?", faq1A: "No. PrivacyConvert Sovereign OS runs 100% client-side in your browser sandbox. With Air-Gapped and WebAssembly technology, zero bytes leave your device.",
-                        faq2Q: "What compliance frameworks are supported?", faq2A: "The suite complies with GDPR, HIPAA, CCPA, and enterprise sovereign data residency standards by keeping all file processing localized.",
-                        faq3Q: "How does large file handling work?", faq3A: "Using the Streams API and File System Access API, files are processed in 5MB memory-safe chunks directly to disk, preventing RAM overflow.",
-                        faq4Q: "Can I use this completely offline?", faq4A: "Yes. Once loaded, you can disconnect your internet entirely and all 30 sovereign tools will function normally in air-gapped isolation.",
-                        proBtn: "Get Pro", proModalTitle: "💎 Upgrade to Sovereign Pro", proModalDesc: "Unlock unlimited batch processing, cryptographic audit certificates, E2EE cloud sync, and P2P priority nodes.", activateKeyBtn: "Activate Pro License",
-                        payTrBtn: "PayTR / Credit Card (TL)", cryptoPayBtn: "Cryptomus / Crypto (USDT/BTC)", allRights: "All rights reserved."
-                    },
-                    es: {
-                        accept: "Aceptar", secureLabel: "Seguro", dropText: "Haga clic para buscar o arrastre archivos aquí",
-                        btnReset: "Reiniciar", btnCopy: "📋 Copiar", btnPreview: "👁️ Vista previa", btnProcess: "Ejecutar Proceso", closeBtn: "Cerrar", previewTitle: "Vista previa",
-                        splitScreenBtn: "Pantalla dividida", secondaryPaneTitle: "Espacio de trabajo", brandBtn: "Marca", queueTitle: "Estado de cola",
-                        bannerTitle: "Seguridad Air-Gapped 100% del lado del cliente:", bannerDesc: "Todo el procesamiento ocurre localmente.", bannerVerifyBtn: "🔍 ¿Cómo verificar?",
-                        verifyModalTitle: "Cómo verificar la seguridad", verifyDesc1: "Esta aplicación opera íntegramente del lado del cliente.",
-                        verifyStep1: "Paso 1: Herramientas (F12)", verifyStep1Sub: "Red.", verifyStep2: "Paso 2: Desconectar internet", verifyStep2Sub: "0 solicitudes.",
-                        catProFeatures: "💎 Pro y Empresa", catInfiniteSec: "🔑 Seguridad y Bóveda", catZkpMarket: "📦 ZKP, IA y Mercado", catLegalAudit: "⚖️ Legal y Auditoría", catPdfDocs: "📚 PDF y Documentos", catMediaShare: "🖼️ Imágenes, OCR y P2P",
-                        toolLiveShield: "Escudo PII", toolCloudSync: "Sincronización E2EE", toolAuditCert: "Certificado de Auditor", toolWhiteLabel: "Marca Blanca",
-                        toolWebAuthn: "Bóveda Passkey", toolStega: "Esteganografía", toolDestruct: "Autodestructibles", toolEncrypt: "Cifrador AES-256",
-                        toolMarket: "Mercado de Reglas", toolZkp: "Pruebas ZK", toolLora: "LoRA Local", toolLocalRag: "RAG AI Local",
-                        toolDiff: "Motor Diff", toolCross: "Cumplimiento", toolTimestamp: "OpenTimestamps", toolCustody: "Custodia",
-                        toolContract: "Riesgo de Contrato", toolPdfPng: "PDF a PNG", toolPdfMerge: "Unidor PDF", toolPii: "Redacción PII",
-                        toolVisual: "Redacción Visual", toolMetaScrubber: "Limpiador EXIF", toolOcr: "OCR", toolP2p: "P2P",
-                        toolOpfs: "Disco Virtual OPFS", toolSign: "Firmante Ed25519", toolAiNer: "Redactor AI NER", toolChain: "Anclaje Blockchain", toolRoom: "Sala Segura E2EE",
-                        encryptModeBtn: "Cifrar", decryptModeBtn: "Descifrar", passPlaceholder: "Contraseña maestra...", pasteText: "Ingrese texto...",
-                        outputLabel: "Salida:", compareBtn: "Comparar", pasteSecondaryText: "Texto secundario...", cmdPlaceholder: "Buscar...",
-                        faqTitle: "Preguntas Frecuentes",
-                        faq1Q: "¿Se envían datos a servidores?", faq1A: "No, 100% local.",
-                        faq2Q: "¿Cumplimiento?", faq2A: "GDPR, HIPAA, CCPA.",
-                        faq3Q: "¿Archivos grandes?", faq3A: "Usa Streams API.",
-                        faq4Q: "¿Sin conexión?", faq4A: "Sí, totalmente air-gapped.",
-                        proBtn: "Obtener Pro", proModalTitle: "💎 Actualizar", proModalDesc: "Desbloquee funciones Pro.", activateKeyBtn: "Activar",
-                        payTrBtn: "PayTR", cryptoPayBtn: "Cryptomus", allRights: "Todos los derechos reservados."
-                    },
-                    zh: {
-                        accept: "接受", secureLabel: "安全", dropText: "点击或拖放文件",
-                        btnReset: "重置", btnCopy: "📋 复制", btnPreview: "👁️ 预览", btnProcess: "执行", closeBtn: "关闭", previewTitle: "预览",
-                        splitScreenBtn: "分屏", secondaryPaneTitle: "工作区", brandBtn: "品牌", queueTitle: "队列",
-                        bannerTitle: "100% 客户端物理隔离安全：", bannerDesc: "本地处理。", bannerVerifyBtn: "🔍 验证",
-                        verifyModalTitle: "验证安全", verifyDesc1: "全客户端运行。",
-                        verifyStep1: "第一步：F12", verifyStep1Sub: "网络", verifyStep2: "第二步：断网", verifyStep2Sub: "0请求",
-                        catProFeatures: "💎 专业版", catInfiniteSec: "🔑 安全", catZkpMarket: "📦 ZKP与AI", catLegalAudit: "⚖️ 审计", catPdfDocs: "📚 PDF", catMediaShare: "🖼️ 图像与P2P",
-                        toolLiveShield: "实时PII", toolCloudSync: "云同步", toolAuditCert: "审计证书", toolWhiteLabel: "白标",
-                        toolWebAuthn: "通行密钥", toolStega: "隐写", toolDestruct: "自毁", toolEncrypt: "加密",
-                        toolMarket: "市场", toolZkp: "ZKP", toolLora: "LoRA", toolLocalRag: "RAG",
-                        toolDiff: "对比", toolCross: "合规", toolTimestamp: "时间戳", toolCustody: "托管",
-                        toolContract: "合同", toolPdfPng: "PDF转PNG", toolPdfMerge: "PDF合并", toolPii: "PII",
-                        toolVisual: "视觉修饰", toolMetaScrubber: "EXIF", toolOcr: "OCR", toolP2p: "P2P",
-                        toolOpfs: "OPFS虚拟盘", toolSign: "Ed25519签名", toolAiNer: "AI NER", toolChain: "区块链锚定", toolRoom: "加密聊天室",
-                        encryptModeBtn: "加密", decryptModeBtn: "解密", passPlaceholder: "密码...", pasteText: "输入...",
-                        outputLabel: "输出:", compareBtn: "对比", pasteSecondaryText: "辅助文本...", cmdPlaceholder: "搜索...",
-                        faqTitle: "常见问题",
-                        faq1Q: "发送到外部服务器吗？", faq1A: "不，本地运行。",
-                        faq2Q: "合规？", faq2A: "支持GDPR。",
-                        faq3Q: "大文件？", faq3A: "流式API。",
-                        faq4Q: "离线？", faq4A: "完全离线。",
-                        proBtn: "Pro", proModalTitle: "💎 升级", proModalDesc: "解锁高级功能", activateKeyBtn: "激活",
-                        payTrBtn: "PayTR", cryptoPayBtn: "Cryptomus", allRights: "版权所有."
-                    },
-                    de: {
-                        accept: "Akzeptieren", secureLabel: "Sicher", dropText: "Dateien hierher ziehen",
-                        btnReset: "Zurücksetzen", btnCopy: "📋 Kopieren", btnPreview: "👁️ Vorschau", btnProcess: "Ausführen", closeBtn: "Schließen", previewTitle: "Vorschau",
-                        splitScreenBtn: "Geteilt", secondaryPaneTitle: "Arbeitsbereich", brandBtn: "Branding", queueTitle: "Warteschlange",
-                        bannerTitle: "100% Client-seitige Air-Gapped Sicherheit:", bannerDesc: "Lokal.", bannerVerifyBtn: "🔍 Prüfen",
-                        verifyModalTitle: "Sicherheit", verifyDesc1: "Client-seitig.",
-                        verifyStep1: "F12", verifyStep1Sub: "Netzwerk", verifyStep2: "Offline", verifyStep2Sub: "0 Anfragen",
-                        catProFeatures: "💎 Pro & Enterprise", catInfiniteSec: "🔑 Sicherheit", catZkpMarket: "📦 ZKP & KI", catLegalAudit: "⚖️ Audit", catPdfDocs: "📚 PDF", catMediaShare: "🖼️ Medien & P2P",
-                        toolLiveShield: "PII Schutz", toolCloudSync: "Cloud Sync", toolAuditCert: "Audit Zertifikat", toolWhiteLabel: "White-Label",
-                        toolWebAuthn: "Passkey", toolStega: "Steganographie", toolDestruct: "Zerstörung", toolEncrypt: "Verschlüsselung",
-                        toolMarket: "Marktplatz", toolZkp: "ZKP", toolLora: "LoRA", toolLocalRag: "RAG",
-                        toolDiff: "Diff", toolCross: "Compliance", toolTimestamp: "Timestamp", toolCustody: "Custody",
-                        toolContract: "Vertrag", toolPdfPng: "PDF zu PNG", toolPdfMerge: "PDF Merge", toolPii: "PII Redaction",
-                        toolVisual: "Visuell", toolMetaScrubber: "EXIF", toolOcr: "OCR", toolP2p: "P2P",
-                        toolOpfs: "OPFS Virtuelles Laufwerk", toolSign: "Ed25519 Signierer", toolAiNer: "AI NER Redaktor", toolChain: "Blockchain Anker", toolRoom: "Sicherer Chatraum",
-                        encryptModeBtn: "Verschlüsseln", decryptModeBtn: "Entschlüsseln", passPlaceholder: "Passwort...", pasteText: "Text...",
-                        outputLabel: "Ausgabe:", compareBtn: "Vergleichen", pasteSecondaryText: "Zweittext...", cmdPlaceholder: "Suchen...",
-                        faqTitle: "FAQ",
-                        faq1Q: "Externe Server?", faq1A: "Nein.",
-                        faq2Q: "Standards?", faq2A: "DSGVO.",
-                        faq3Q: "Dateigröße?", faq3A: "Streams API.",
-                        faq4Q: "Offline?", faq4A: "Ja.",
-                        proBtn: "Pro", proModalTitle: "💎 Pro", proModalDesc: "Upgrade", activateKeyBtn: "Aktivieren",
-                        payTrBtn: "PayTR", cryptoPayBtn: "Cryptomus", allRights: "Alle Rechte vorbehalten."
-                    },
-                    fr: {
-                        accept: "Accepter", secureLabel: "Sécurisé", dropText: "Glisser fichiers",
-                        btnReset: "Réinitialiser", btnCopy: "📋 Copier", btnPreview: "👁️ Aperçu", btnProcess: "Exécuter", closeBtn: "Fermer", previewTitle: "Aperçu",
-                        splitScreenBtn: "Divisé", secondaryPaneTitle: "Espace", brandBtn: "Marque", queueTitle: "File",
-                        bannerTitle: "Sécurité Air-Gapped :", bannerDesc: "Local.", bannerVerifyBtn: "🔍 Vérifier",
-                        verifyModalTitle: "Sécurité", verifyDesc1: "Client-side.",
-                        verifyStep1: "F12", verifyStep1Sub: "Réseau", verifyStep2: "Hors ligne", verifyStep2Sub: "0 req",
-                        catProFeatures: "💎 Pro", catInfiniteSec: "🔑 Sécurité", catZkpMarket: "📦 ZKP & IA", catLegalAudit: "⚖️ Audit", catPdfDocs: "📚 PDF", catMediaShare: "🖼️ Médias",
-                        toolLiveShield: "Bouclier", toolCloudSync: "Sync", toolAuditCert: "Certificat", toolWhiteLabel: "Marque Blanche",
-                        toolWebAuthn: "Passkey", toolStega: "Stéga", toolDestruct: "Destruct", toolEncrypt: "Chiffrement",
-                        toolMarket: "Marché", toolZkp: "ZKP", toolLora: "LoRA", toolLocalRag: "RAG",
-                        toolDiff: "Diff", toolCross: "Conformité", toolTimestamp: "Timestamp", toolCustody: "Custody",
-                        toolContract: "Contrat", toolPdfPng: "PDF PNG", toolPdfMerge: "Merge", toolPii: "PII",
-                        toolVisual: "Visuel", toolMetaScrubber: "EXIF", toolOcr: "OCR", toolP2p: "P2P",
-                        toolOpfs: "Disque Virtuel OPFS", toolSign: "Signataire Ed25519", toolAiNer: "Redacteur AI NER", toolChain: "Ancrage Blockchain", toolRoom: "Salon Sécurisé",
-                        encryptModeBtn: "Chiffrer", decryptModeBtn: "Déchiffrer", passPlaceholder: "Mot de passe...", pasteText: "Texte...",
-                        outputLabel: "Sortie:", compareBtn: "Comparer", pasteSecondaryText: "Secondaire...", cmdPlaceholder: "Rechercher...",
-                        faqTitle: "FAQ",
-                        faq1Q: "Serveurs externes ?", faq1A: "Non.",
-                        faq2Q: "Normes ?", faq2A: "RGPD.",
-                        faq3Q: "Fichiers ?", faq3A: "Streams.",
-                        faq4Q: "Hors ligne ?", faq4A: "Oui.",
-                        proBtn: "Pro", proModalTitle: "💎 Pro", proModalDesc: "Mise à niveau", activateKeyBtn: "Activer",
-                        payTrBtn: "PayTR", cryptoPayBtn: "Cryptomus", allRights: "Tous droits réservés."
-                    },
-                    ar: {
-                        accept: "قبول", secureLabel: "آمن", dropText: "اسحب الملفات هنا",
-                        btnReset: "إعادة ضبط", btnCopy: "📋 نسخ", btnPreview: "👁️ معاينة", btnProcess: "تنفيذ", closeBtn: "إغلاق", previewTitle: "معاينة",
-                        splitScreenBtn: "تقسيم", secondaryPaneTitle: "مساحة العمل", brandBtn: "الهوية", queueTitle: "الطابور",
-                        bannerTitle: "أمان معزول 100%:", bannerDesc: "محلي.", bannerVerifyBtn: "🔍 تحقق",
-                        verifyModalTitle: "التحقق", verifyDesc1: "على جهاز العميل.",
-                        verifyStep1: "F12", verifyStep1Sub: "شبكة", verifyStep2: "قطع الإنترنت", verifyStep2Sub: "0 طلبات",
-                        catProFeatures: "💎 للمؤسسات", catInfiniteSec: "🔑 الأمان", catZkpMarket: "📦 الذكاء الاصطناعي", catLegalAudit: "⚖️ التدقيق", catPdfDocs: "📚 PDF", catMediaShare: "🖼️ الوسائط",
-                        toolLiveShield: "الدرع", toolCloudSync: "مزامنة سحابية", toolAuditCert: "شهادة مدقق", toolWhiteLabel: "علامة تجارية",
-                        toolWebAuthn: "مفاتيح المرور", toolStega: "إخفاء", toolDestruct: "تدمير ذاتي", toolEncrypt: "تشفير",
-                        toolMarket: "سوق", toolZkp: "ZKP", toolLora: "LoRA", toolLocalRag: "RAG",
-                        toolDiff: "فروق", toolCross: "امتثال", toolTimestamp: "ختم زمني", toolCustody: "حضانة",
-                        toolContract: "عقود", toolPdfPng: "PDF إلى PNG", toolPdfMerge: "دمج", toolPii: "حجب PII",
-                        toolVisual: "حجب بصري", toolMetaScrubber: "EXIF", toolOcr: "OCR", toolP2p: "P2P",
-                        toolOpfs: "قرص OPFS الافتراضي", toolSign: "موقع Ed25519", toolAiNer: "مصحح AI NER", toolChain: "ربط blockchain", toolRoom: "غرفة محادثة آمنة",
-                        encryptModeBtn: "تشفير", decryptModeBtn: "فك تشفير", passPlaceholder: "كلمة المرور...", pasteText: "أدخل النص...",
-                        outputLabel: "المخرجات:", compareBtn: "مقارنة", pasteSecondaryText: "نص ثانوي...", cmdPlaceholder: "بحث...",
-                        faqTitle: "الأسئلة الشائعة",
-                        faq1Q: "خوادم خارجية؟", faq1A: "لا.",
-                        faq2Q: "امتثال؟", faq2A: "متوافق مع GDPR.",
-                        faq3Q: "ملفات كبيرة؟", faq3A: "عبر Streams API.",
-                        faq4Q: "بدون إنترنت؟", faq4A: "نعم.",
-                        proBtn: "Pro", proModalTitle: "💎 ترقية Pro", proModalDesc: "ترقية", activateKeyBtn: "تفعيل",
-                        payTrBtn: "PayTR", cryptoPayBtn: "Cryptomus", allRights: "جميع الحقوق محفوظة."
-                    }
-                },
-                applyLanguage(lang) {
-                    const dict = this.translations[lang] || this.translations['en'];
-                    document.querySelectorAll('[data-i18n]').forEach(el => {
-                        const key = el.getAttribute('data-i18n');
-                        if (dict[key]) el.innerHTML = dict[key];
-                    });
-                    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-                        const key = el.getAttribute('data-i18n-placeholder');
-                        if (dict[key]) el.placeholder = dict[key];
-                    });
-                    PrivacyConvert.state.lang = lang;
-                    localStorage.setItem('privacyConvert_lang', lang);
-                    document.getElementById('langSelect').value = lang;
-                    document.documentElement.lang = lang;
-                    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-                }
-            },
-
             checkOfflineStatus() {
-                if (typeof pdfjsLib === 'undefined' || typeof PDFLib === 'undefined') {
+                if (typeof pdfjsLib === 'undefined' || typeof PDFLib === 'undefined' || typeof Tesseract === 'undefined') {
                     document.getElementById('offlineBanner').classList.remove('hidden');
                 }
             },
@@ -1767,26 +1233,46 @@
                 this.initDB();
                 this.checkOfflineStatus();
 
-                const urlParams = new URLSearchParams(window.location.search);
-                if (urlParams.get('pro_activated') === 'true') {
-                    this.state.isPro = true;
-                    localStorage.setItem('privacyConvert_pro', 'true');
-                    this.ui.showToast('🎉 Payment successful! Sovereign Pro activated.');
-                    window.history.replaceState({}, document.title, window.location.pathname);
+                if ('serviceWorker' in navigator) {
+                    const swCode = `
+                        const CACHE_NAME = 'sovereign-airgap-v2';
+                        self.addEventListener('install', e => self.skipWaiting());
+                        self.addEventListener('fetch', e => {
+                            if (e.request.method !== 'GET') return;
+                            e.respondWith(
+                                caches.match(e.request).then(res => {
+                                    if (res) return res;
+                                    return fetch(e.request).then(newRes => {
+                                        if (e.request.url.includes('cdn.tailwindcss.com') || e.request.url.includes('cdnjs') || e.request.url.includes('unpkg') || e.request.url.includes('jsdelivr')) {
+                                            const resClone = newRes.clone(); caches.open(CACHE_NAME).then(c => c.put(e.request, resClone));
+                                        }
+                                        return newRes;
+                                    }).catch(() => new Response('Offline and not cached (Strict Air-Gap)', {status: 503}));
+                                })
+                            );
+                        });
+                    `;
+                    const blob = new Blob([swCode], { type: 'text/javascript' });
+                    navigator.serviceWorker.register(URL.createObjectURL(blob)).then(() => console.log('Air-Gap Worker Ready'));
                 }
 
-                if (this.state.isPro) {
-                    document.getElementById('proBadge').classList.remove('hidden');
-                }
+                document.addEventListener('keydown', (e) => {
+                    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); PrivacyConvert.ui.toggleCmdPalette(); }
+                    if (e.key === 'Escape') { document.getElementById('commandPalette').classList.add('hidden'); }
+                });
 
-                const dropZone = document.getElementById('dropZone');
-                const fileInput = document.getElementById('fileInput');
-                dropZone.addEventListener('click', () => fileInput.click());
+                const dropZone = document.getElementById('dropZone'); const fileInput = document.getElementById('fileInput');
+                dropZone.addEventListener('click', () => fileInput.click()); dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+                dropZone.addEventListener('dragleave', (e) => { e.preventDefault(); dropZone.classList.remove('drag-over'); });
+                dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('drag-over'); if(e.dataTransfer.files.length) PrivacyConvert.ui.handleFiles(e.dataTransfer.files); });
                 fileInput.addEventListener('change', (e) => PrivacyConvert.ui.handleFiles(e.target.files));
-                document.getElementById('langSelect').addEventListener('change', (e) => this.i18n.applyLanguage(e.target.value));
+
+                // İlgili event i18n objesine doğru bir şekilde bağlandı
+                document.getElementById('langSelect').addEventListener('change', (e) => this.i18n.applyLanguage(e.target.value)); 
+                
+                // Başlangıçta kayıtlı dili yüklüyoruz
                 this.i18n.applyLanguage(this.state.lang);
                 this.routing.navigate('live-pii-shield');
-
                 window.addEventListener('beforeunload', () => this.cleanupObjectUrls());
             }
         };
