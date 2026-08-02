@@ -249,7 +249,6 @@ export const PrivacyConvert = {
             document.documentElement.lang = lang;
             document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
 
-            // Aktif aracın başlığını dil değişimine göre anında güncelle
             const currentTool = PrivacyConvert.state.tool;
             const tabElem = document.getElementById(`tab-${currentTool}`);
             if(tabElem) {
@@ -306,10 +305,12 @@ export const PrivacyConvert = {
                 tabElem.classList.add('bg-slate-100', 'dark:bg-slate-700', 'border-indigo-500');
                 const titleSpan = tabElem.querySelector('.truncate') || tabElem.querySelector('span:last-child');
                 if(titleSpan) {
-                    document.getElementById('mainTitleAccent').innerText = titleSpan.innerText.trim();
+                    const mainTitle = document.getElementById('mainTitleAccent');
+                    if(mainTitle) mainTitle.innerText = titleSpan.innerText.trim();
                 }
             } else {
-                document.getElementById('mainTitleAccent').innerText = meta.title;
+                const mainTitle = document.getElementById('mainTitleAccent');
+                if(mainTitle) mainTitle.innerText = meta.title;
             }
             PrivacyConvert.ui.resetWorkspace(meta);
         }
@@ -523,7 +524,9 @@ export const PrivacyConvert = {
         }
 
         this.i18n.applyLanguage(this.state.lang);
-        this.routing.navigate(this.state.tool);
+        if(this.routing && typeof this.routing.navigate === 'function') {
+            this.routing.navigate(this.state.tool);
+        }
         window.addEventListener('beforeunload', () => this.cleanupObjectUrls());
     }
 };
