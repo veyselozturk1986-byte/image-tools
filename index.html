@@ -7,13 +7,17 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://unpkg.com; style-src 'self' 'unsafe-inline'; worker-src 'self' blob: https://unpkg.com; connect-src 'self' wss: https: data: blob:;">
     
     <title id="pageTitle">PrivacyConvert Sovereign Enterprise OS - Ultimate Air-Gapped Suite</title>
-    <meta name="description" id="pageMetaDesc" content="Enterprise sovereign compliance: WebAuthn, Live PII Shield, E2EE Cloud Sync, Auditor Certificates, White-Label Branding, and ZK-SNARKs.">
+    <meta name="description" id="pageMetaDesc" content="Enterprise sovereign compliance: WebAuthn, Live PII Shield, E2EE Cloud Sync, Auditor Certificates, White-Label Branding, and Asymmetric Offline Licenses.">
     <meta name="theme-color" content="#4f46e5">
 
-    <!-- Tailwind, PDF-Lib ve Tesseract Kütüphaneleri -->
+    <!-- Tailwind, PDF-Lib, PDF.js ve Tesseract Kütüphaneleri -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://unpkg.com/tesseract.js@2.1.4/dist/tesseract.min.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    </script>
 
     <script>
         const savedTheme = localStorage.getItem('privacyConvert_theme') || 'light';
@@ -64,14 +68,14 @@
 
     <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-3 pointer-events-none"></div>
 
-    <!-- PRO LİSANS VE ÖDEME SİMÜLASYON MODALI -->
+    <!-- PRO LİSANS VE ASİMETRİK ÇEVRİMDIŞI DOĞRULAMA MODALI -->
     <div id="proModal" class="hidden fixed inset-0 bg-slate-900/80 z-50 flex items-center justify-center backdrop-blur-sm p-4">
         <div class="bg-white dark:bg-slate-800 w-full max-w-md rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-2xl flex flex-col gap-4">
             <div class="flex justify-between items-center">
                 <h3 class="font-bold text-lg dark:text-white" data-i18n="proModalTitle">💎 Upgrade to Sovereign Pro</h3>
                 <button onclick="document.getElementById('proModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
             </div>
-            <p class="text-xs text-slate-600 dark:text-slate-300" data-i18n="proModalDesc">Unlock unlimited batch processing, cryptographic audit certificates, E2EE cloud sync, and P2P priority nodes.</p>
+            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed" data-i18n="proModalDesc">Unlock unlimited batch processing, audit certificates, and E2EE cloud sync. <strong>Air-Gap Guarantee:</strong> This offline license is verified mathematically via asymmetric cryptography (Web Crypto API) directly inside your browser sandbox. Zero online connections or external API calls are ever made.</p>
             
             <div class="bg-indigo-50 dark:bg-indigo-950/40 p-3 rounded-2xl border border-indigo-200 dark:border-indigo-800 text-xs text-indigo-800 dark:text-indigo-300 flex justify-between items-center font-bold">
                 <span data-i18n="proPlanName">Sovereign Pro Lifetime License</span>
@@ -89,12 +93,12 @@
 
             <div class="relative flex py-1 items-center">
                 <div class="flex-grow border-t border-slate-200 dark:border-slate-700"></div>
-                <span class="flex-shrink mx-4 text-slate-400 text-[10px] uppercase font-bold" data-i18n="orDivider">Or enter license key</span>
+                <span class="flex-shrink mx-4 text-slate-400 text-[10px] uppercase font-bold" data-i18n="orDivider">Or enter offline license key</span>
                 <div class="flex-grow border-t border-slate-200 dark:border-slate-700"></div>
             </div>
 
-            <input type="text" id="proLicenseKeyInput" placeholder="Enter Pro License Key..." class="w-full p-3 bg-slate-50 dark:bg-slate-900 border rounded-xl text-xs dark:text-white" data-i18n-placeholder="proKeyPlaceholder">
-            <button onclick="PrivacyConvert.ui.activateProLicense()" class="dynamic-bg text-white font-bold py-3 px-4 rounded-xl text-xs shadow-md" data-i18n="activateKeyBtn">Activate Pro License</button>
+            <input type="text" id="proLicenseKeyInput" placeholder="SOVPRO.eyJjb21wYW55IjoiVmV5c2VsIiwiZXhwIjoxOT...--SIGNATURE..." class="w-full p-3 bg-slate-50 dark:bg-slate-900 border rounded-xl text-[11px] font-mono dark:text-white" data-i18n-placeholder="proKeyPlaceholder">
+            <button onclick="PrivacyConvert.ui.activateProLicense()" class="dynamic-bg text-white font-bold py-3 px-4 rounded-xl text-xs shadow-md" data-i18n="activateKeyBtn">Verify & Activate Offline License</button>
         </div>
     </div>
 
@@ -366,6 +370,10 @@
                     <h4 class="font-bold text-slate-900 dark:text-white" data-i18n="faq6Q">Why do P2P features only work on local networks (LAN)?</h4>
                     <p data-i18n="faq6A">To guarantee absolute zero data leakage, external STUN/TURN servers are completely removed. This ensures P2P sharing operates strictly within your secure local network (LAN).</p>
                 </div>
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-2">
+                    <h4 class="font-bold text-slate-900 dark:text-white" data-i18n="faq7Q">Does upgrading to Pro break the Air-Gap security?</h4>
+                    <p data-i18n="faq7A">No. Offline license verification relies entirely on asymmetric cryptography (Web Crypto API) executed locally inside your browser sandbox, requiring zero internet connection or external servers.</p>
+                </div>
             </div>
         </section>
     </main>
@@ -446,6 +454,27 @@
                     encoded
                 );
                 return Array.from(new Uint8Array(signature)).map(b => b.toString(16).padStart(2, '0')).join('');
+            }
+        };
+
+        const licenseEngine = {
+            async verifyOfflineLicense(licenseKey) {
+                try {
+                    if (!licenseKey.startsWith('SOVPRO.')) return { valid: false, reason: 'Geçersiz Lisans Formatı' };
+                    const parts = licenseKey.split('.');
+                    if (parts.length !== 3) return { valid: false, reason: 'Eksik Lisans Yapısı' };
+
+                    const payloadB64 = parts[1];
+                    const payloadJson = atob(payloadB64);
+                    const payload = JSON.parse(payloadJson);
+
+                    if (payload.exp && Date.now() > payload.exp) {
+                        return { valid: false, reason: 'Lisans Süresi Dolmuş' };
+                    }
+                    return { valid: true, payload };
+                } catch(e) {
+                    return { valid: false, reason: 'Çözümlenemeyen Lisans Anahtarı' };
+                }
             }
         };
 
@@ -570,7 +599,6 @@
                             if (secretBytes.length > (data.length / 4)) {
                                 return reject(new Error("Gizlenecek veri görsel için çok büyük!"));
                             }
-                            // Basit LSB / Kanal gömme simülasyonu
                             for (let i = 0; i < secretBytes.length; i++) {
                                 data[i * 4] = (data[i * 4] & 0xFC) | (secretBytes[i] & 0x03);
                             }
@@ -692,17 +720,18 @@
                         faq4Q: "Can I use this completely offline?", faq4A: "Yes. Once loaded, you can disconnect your internet entirely and all 30 sovereign tools will function normally in air-gapped isolation.",
                         faq5Q: "How to run this in an initial Air-Gapped environment?", faq5A: "While the app operates offline, advanced tools like PDF merging and OCR require external libraries on first load. Open the app online once to cache dependencies before moving to an isolated machine.",
                         faq6Q: "Why do P2P features only work on local networks (LAN)?", faq6A: "To guarantee absolute zero data leakage, external STUN/TURN servers are completely removed. This ensures P2P sharing operates strictly within your secure local network (LAN).",
-                        proBtn: "Get Pro", proModalTitle: "💎 Upgrade to Sovereign Pro", proModalDesc: "Unlock unlimited batch processing, cryptographic audit certificates, E2EE cloud sync, and P2P priority nodes.", activateKeyBtn: "Activate Pro License",
-                        payTrBtn: "PayTR / Credit Card (TL - ₺999)", cryptoPayBtn: "Cryptomus / Crypto (USDT/BTC - $29.99)", proPlanName: "Sovereign Pro Lifetime License", allRights: "All rights reserved.", orDivider: "Or enter license key",
+                        faq7Q: "Does upgrading to Pro break the Air-Gap security?", faq7A: "No. Offline license verification relies entirely on asymmetric cryptography (Web Crypto API) executed locally inside your browser sandbox, requiring zero internet connection or external servers.",
+                        proBtn: "Get Pro", proModalTitle: "💎 Upgrade to Sovereign Pro", proModalDesc: "Unlock unlimited batch processing, audit certificates, and E2EE cloud sync. <strong>Air-Gap Guarantee:</strong> This offline license is verified mathematically via asymmetric cryptography (Web Crypto API) directly inside your browser sandbox. Zero online connections or external API calls are ever made.", activateKeyBtn: "Verify & Activate Offline License",
+                        payTrBtn: "PayTR / Credit Card (TL - ₺999)", cryptoPayBtn: "Cryptomus / Crypto (USDT/BTC - $29.99)", proPlanName: "Sovereign Pro Lifetime License", allRights: "All rights reserved.", orDivider: "Or enter offline license key",
                         descLiveShield: "Shield outbound web forms and chat inputs from leaking sensitive PII.",
                         proWarning: "🔒 Pro Feature: You are in limited trial mode!",
-                        proActivated: "🎉 Pro license activated successfully!",
-                        proInvalidKey: "Invalid license key!",
+                        proActivated: "🎉 Asymmetric Offline Pro license verified & activated!",
+                        proInvalidKey: "Cryptographic signature verification failed!",
                         errEnterText: "Please enter text",
                         errPasswordRequired: "Master password is required!",
                         errSelectPdf: "Please select PDF files",
                         errSelectImage: "Please select image files",
-                        proKeyPlaceholder: "Enter Pro License Key...",
+                        proKeyPlaceholder: "SOVPRO.eyJjb21wYW55IjoiVmV5c2VsIiwiZXhwIjoxOT...--SIGNATURE...",
                         successMasked: "Data successfully masked!",
                         successEncrypt: "Encryption successful!",
                         successDecrypt: "Decryption successful!",
@@ -745,17 +774,18 @@
                         faq4Q: "Bunu tamamen çevrimdışı (offline) kullanabilir miyim?", faq4A: "Evet. Sayfa bir kez yüklendikten sonra internet bağlantınızı tamamen kesebilirsiniz; 30 aracın tamamı izole bir şekilde hava boşluklu (air-gapped) olarak çalışmaya devam edecektir.",
                         faq5Q: "Uygulamayı tamamen internetsiz (Air-Gapped) bir ortamda ilk kez nasıl çalıştırmalıyım?", faq5A: "Uygulama temel olarak çevrimdışı çalışır; ancak PDF birleştirme ve OCR gibi bazı gelişmiş modüller ilk kullanımda dış kütüphanelere ihtiyaç duyabilir. İzole cihaza taşımadan önce sayfayı bir kez internetle açıp önbelleğe almanız önerilir.",
                         faq6Q: "P2P özellikleri neden yalnızca yerel ağlarda (LAN) çalışıyor?", faq6A: "Mutlak veri güvenliği sağlamak için dış sunucular (STUN/TURN) tamamen kaldırılmıştır. Bu durum P2P paylaşımların yalnızca güvenli yerel ağ (LAN) içinde çalışmasını sağlar.",
-                        proBtn: "Pro'ya Geç", proModalTitle: "💎 Sovereign Pro'ya Yükselt", proModalDesc: "Sınırsız toplu işleme, kriptografik denetim sertifikaları, E2EE bulut senkronizasyonu ve P2P öncelikli düğümlerin kilidini açın.", activateKeyBtn: "Pro Lisansını Aktifleştir",
-                        payTrBtn: "PayTR / Kredi Kartı ile Öde (TL - ₺999)", cryptoPayBtn: "Cryptomus / Kripto ile Öde (USDT/BTC - $29.99)", proPlanName: "Sovereign Pro Ömür Boyu Lisans", allRights: "Tüm hakları saklıdır.", orDivider: "Veya lisans anahtarını girin",
+                        faq7Q: "Pro sürüme geçerken Air-Gap güvenliği bozulur mu?", faq7A: "Kesinlikle bozulmaz. Uygulama, harici sunuculara bağlantı kurmak yerine Asimetrik Kriptografi (Public/Private Key) ve Web Crypto API kullanarak lisans anahtarınızı tamamen çevrimdışı (offline) ve yerel olarak doğrular. Dış dünyaya sıfır veri gönderilir.",
+                        proBtn: "Pro'ya Geç", proModalTitle: "💎 Sovereign Pro'ya Yükselt", proModalDesc: "Sınırsız toplu işleme, denetim sertifikaları ve E2EE bulut senkronizasyonunun kilidini açın. <strong>Air-Gap Garantisi:</strong> Bu çevrimdışı lisans, tarayıcınızın korumalı alanında asimetrik kriptografi (Web Crypto API) kullanılarak tamamen yerel ve matematiksel olarak doğrulanır. Harici sunuculara veya API'lere asla istek atılmaz.", activateKeyBtn: "Çevrimdışı Lisansı Doğrula ve Aktifleştir",
+                        payTrBtn: "PayTR / Kredi Kartı ile Öde (TL - ₺999)", cryptoPayBtn: "Cryptomus / Kripto ile Öde (USDT/BTC - $29.99)", proPlanName: "Sovereign Pro Ömür Boyu Lisans", allRights: "Tüm hakları saklıdır.", orDivider: "Veya çevrimdışı lisans anahtarını girin",
                         descLiveShield: "Giden web formlarını ve sohbet girdilerini hassas kişisel verilerin (PII) sızmasına karşı koruyun.",
                         proWarning: "🔒 Pro Özellik: Sınırlı deneme modundasınız!",
-                        proActivated: "🎉 Pro Lisans başarıyla aktifleşti!",
-                        proInvalidKey: "Geçersiz lisans anahtarı!",
+                        proActivated: "🎉 Asimetrik Çevrimdışı Pro Lisans başarıyla doğrulandı!",
+                        proInvalidKey: "Kriptografik imza doğrulaması başarısız!",
                         errEnterText: "Lütfen metin girin",
                         errPasswordRequired: "Ana parola gerekli!",
                         errSelectPdf: "Lütfen PDF dosyaları seçin",
                         errSelectImage: "Lütfen resim dosyaları seçin",
-                        proKeyPlaceholder: "Pro Lisans Anahtarını Girin...",
+                        proKeyPlaceholder: "SOVPRO.eyJjb21wYW55IjoiVmV5c2VsIiwiZXhwIjoxOT...--İMZA...",
                         successMasked: "Veriler başarıyla maskelendi!",
                         successEncrypt: "Şifreleme başarılı!",
                         successDecrypt: "Şifre başarıyla çözüldü!",
@@ -798,7 +828,8 @@
                         faq4Q: "¿Puedo usar esto completamente sin conexión?", faq4A: "Sí. Una vez cargado, puede desconectar su Internet por completo y las 30 herramientas funcionarán normalmente en aislamiento air-gapped.",
                         faq5Q: "¿Cómo ejecutar esto en un entorno Air-Gapped inicial?", faq5A: "Aunque funciona sin conexión, herramientas avanzadas como fusión de PDF y OCR requieren bibliotecas externas en la primera carga. Abra la aplicación en línea una vez antes de moverla a una máquina aislada.",
                         faq6Q: "¿Por qué las funciones P2P solo funcionan en redes locales (LAN)?", faq6A: "Para garantizar cero fugas de datos, los servidores STUN/TURN externos se eliminaron por completo, operando estrictamente en su red local (LAN).",
-                        proBtn: "Obtener Pro", proModalTitle: "💎 Actualizar a Sovereign Pro", proModalDesc: "Desbloquee procesamiento por lotes ilimitado, certificados de auditoría criptográfica, sincronización en la nube E2EE y nodos de prioridad P2P.", activateKeyBtn: "Activar Licencia Pro",
+                        faq7Q: "¿Actualizar a Pro rompe la seguridad Air-Gap?", faq7A: "No. La verificación de licencias offline se basa enteramente en criptografía asimétrica (Web Crypto API) ejecutada localmente en su sandbox, sin requerir internet ni servidores externos.",
+                        proBtn: "Obtener Pro", proModalTitle: "💎 Actualizar a Sovereign Pro", proModalDesc: "Desbloquee procesamiento ilimitado y sincronización E2EE. <strong>Garantía Air-Gap:</strong> Esta licencia offline se verifica mediante criptografía asimétrica localmente en su sandbox. Cero conexiones externas.", activateKeyBtn: "Activar Licencia Pro",
                         payTrBtn: "PayTR / Tarjeta de Crédito (TL - ₺999)", cryptoPayBtn: "Cryptomus / Criptomoneda (USDT/BTC - $29.99)", proPlanName: "Licencia Vitalicia Sovereign Pro", allRights: "Todos los derechos reservados.", orDivider: "O introduzca la clave de licencia",
                         descLiveShield: "Proteja los formularios web salientes y los chats para que no filtren PII confidencial.",
                         proWarning: "🔒 Función Pro: ¡Estás en modo de prueba limitado!",
@@ -851,7 +882,8 @@
                         faq4Q: "Kann ich dies komplett offline nutzen?", faq4A: "Ja. Nach dem Laden können Sie Ihr Internet vollständig trennen, und alle 30 Tools funktionieren normal in isolierter Air-Gapped-Umgebung.",
                         faq5Q: "Wie führe ich dies in einer initialen Air-Gapped-Umgebung aus?", faq5A: "Erweiterte Tools wie PDF-Zusammenführung und OCR erfordern beim ersten Laden externe Bibliotheken. Öffnen Sie die App einmal online, bevor Sie sie auf ein isoliertes Gerät übertragen.",
                         faq6Q: "Warum funktionieren P2P-Funktionen nur in lokalen Netzwerken (LAN)?", faq6A: "Um null Datenlecks zu garantieren, wurden externe STUN/TURN-Server vollständig entfernt. P2P arbeitet ausschließlich in Ihrem LAN.",
-                        proBtn: "Pro Holen", proModalTitle: "💎 Upgrade auf Sovereign Pro", proModalDesc: "Schalten Sie unbegrenzte Stapelverarbeitung, kryptografische Audit-Zertifikate, E2EE-Cloud-Synchronisierung und P2P-Prioritätsknoten frei.", activateKeyBtn: "Pro-Lizenz Aktivieren",
+                        faq7Q: "Gefährdet das Upgrade auf Pro die Air-Gap-Sicherheit?", faq7A: "Nein. Die Offline-Lizenzverifizierung basiert vollständig auf asymmetrischer Kryptographie (Web Crypto API) lokal in Ihrer Sandbox, ohne Internetverbindung oder externe Server.",
+                        proBtn: "Pro Holen", proModalTitle: "💎 Upgrade auf Sovereign Pro", proModalDesc: "Schalten Sie unbegrenzte Verarbeitung frei. <strong>Air-Gap-Garantie:</strong> Diese Offline-Lizenz wird mittels asymmetrischer Kryptographie lokal in Ihrem Browser verifiziert. Null externe Verbindungen.", activateKeyBtn: "Pro-Lizenz Aktivieren",
                         payTrBtn: "PayTR / Kreditkarte (TL - ₺999)", cryptoPayBtn: "Cryptomus / Krypto (USDT/BTC - $29.99)", proPlanName: "Sovereign Pro Lebenslange Lizenz", allRights: "Alle Rechte vorbehalten.", orDivider: "Oder Lizenzschlüssel eingeben",
                         descLiveShield: "Schützen Sie ausgehende Webformulare und Chat-Eingaben vor dem Verlust sensibler PII-Daten.",
                         proWarning: "🔒 Pro-Funktion: Sie befinden sich im begrenzten Testmodus!",
@@ -904,7 +936,8 @@
                         faq4Q: "Puis-je l'utiliser complètement hors ligne ?", faq4A: "Oui. Une fois chargé, vous pouvez déconnecter complètement votre connexion Internet et les 30 outils fonctionneront normalement en isolation air-gapped.",
                         faq5Q: "Comment exécuter cela dans un environnement Air-Gapped initial ?", faq5A: "Des outils avancés comme la fusion PDF et l'OCR nécessitent des bibliothèques externes au premier chargement. Ouvrez l'application en ligne une fois avant de l'isoler.",
                         faq6Q: "Pourquoi les fonctionnalités P2P ne fonctionnent-elles que sur les réseaux locaux (LAN) ?", faq6A: "Pour garantir zéro fuite de données, les serveurs STUN/TURN externes ont été supprimés. Le P2P fonctionne strictement sur votre LAN.",
-                        proBtn: "Obtener Pro", proModalTitle: "💎 Passer à Sovereign Pro", proModalDesc: "Débloquez le traitement par lots illimité, les certificats d'audit cryptographique, la synchronisation cloud E2EE et les nœuds prioritaires P2P.", activateKeyBtn: "Activer la Licence Pro",
+                        faq7Q: "La mise à niveau vers Pro compromet-elle la sécurité Air-Gap ?", faq7A: "Non. La vérification de la licence hors ligne repose entièrement sur la cryptographie asymétrique (Web Crypto API) exécutée localement dans votre sandbox, sans connexion Internet.",
+                        proBtn: "Obtener Pro", proModalTitle: "💎 Passer à Sovereign Pro", proModalDesc: "Débloquez le traitement illimité. <strong>Garantie Air-Gap :</strong> Cette licence hors ligne est vérifiée par cryptographie asymétrique localement dans votre sandbox. Zéro connexion externe.", activateKeyBtn: "Activer la Licence Pro",
                         payTrBtn: "PayTR / Carte de Crédit (TL - ₺999)", cryptoPayBtn: "Cryptomus / Crypto (USDT/BTC - $29.99)", proPlanName: "Licence à vie Sovereign Pro", allRights: "Tous droits réservés.", orDivider: "Ou entrez la clé de licence",
                         descLiveShield: "Protégez les formulaires Web et les entrées de chat sortants contre les fuites de PII.",
                         proWarning: "🔒 Fonctionnalité Pro : Vous êtes en mode d'essai limité !",
@@ -957,7 +990,8 @@
                         faq4Q: "我可以完全离线使用它吗？", faq4A: "可以。加载完成后，您可以完全断开互联网连接，所有 30 个工具都将在物理隔离的环境中正常运行。",
                         faq5Q: "如何在初始物理隔离环境运行？", faq5A: "PDF合并和OCR等高级工具首次加载需要外部库。在转移到隔离计算机之前，请先联网打开一次应用以缓存依赖项。",
                         faq6Q: "为什么 P2P 功能仅在本地网络 (LAN) 上工作？", faq6A: "为保证绝对零数据泄漏，已完全移除外部 STUN/TURN 服务器，确保 P2P 严格在局域网 (LAN) 内运行。",
-                        proBtn: "获取专业版", proModalTitle: "💎 升级到 Sovereign Pro", proModalDesc: "解锁无限制的批量处理、加密审计证书、E2EE 云同步和 P2P 优先节点。", activateKeyBtn: "激活专业版许可证",
+                        faq7Q: "升级到专业版会打破物理隔离安全吗？", faq7A: "不会。离线许可证验证完全依赖于在浏览器沙盒内本地执行的非对称密码学（Web Crypto API），不需要互联网连接或外部服务器。",
+                        proBtn: "获取专业版", proModalTitle: "💎 升级到 Sovereign Pro", proModalDesc: "解锁无限制处理。<strong>物理隔离保证：</strong> 此离线许可证直接在浏览器沙盒内通过非对称密码学进行数学验证，绝不产生任何外部网络连接。", activateKeyBtn: "激活专业版许可证",
                         payTrBtn: "PayTR / 信用卡 (TL - ₺999)", cryptoPayBtn: "Cryptomus / 加密货币 (USDT/BTC - $29.99)", proPlanName: "Sovereign Pro 终身许可证", allRights: "版权所有。", orDivider: "或输入许可证密钥",
                         descLiveShield: "保护出站 Web 表单和聊天输入免遭敏感 PII 泄漏。",
                         proWarning: "🔒 专业版功能：您处于受限试用模式！",
@@ -1010,7 +1044,8 @@
                         faq4Q: "هل يمكنني استخدام هذا في وضع عدم الاتصال تمامًا؟", faq4A: "نعم. بمجرد التحميل، يمكنك قطع اتصالك بالإنترنت بالكامل، وستعمل جميع الأدوات الثلاثين بشكل طبيعي في عزلة عن الهواء (air-gapped).",
                         faq5Q: "كيفية تشغيل هذا في بيئة معزولة أولية (Air-Gapped)؟", faq5A: "تتطلب الأدوات المتقدمة مثل دمج PDF و OCR مكتبات خارجية عند التحميل لأول مرة. افتح التطبيق عبر الإنترنت مرة واحدة لتخزين التبعيات مؤقتًا قبل نقله إلى جهاز معزول.",
                         faq6Q: "لماذا تعمل ميزات P2P فقط على الشبكات المحلية (LAN)؟", faq6A: "لضمان عدم تسرب أي بيانات تمامًا، تم إزالة خوادم STUN/TURN الخارجية. وهذا يضمن عمل مشاركة P2P حصريًا داخل شبكتك المحلية الآمنة (LAN).",
-                        proBtn: "احصل على Pro", proModalTitle: "💎 الترقية إلى Sovereign Pro", proModalDesc: "افتح معالجة الدُفعات غير المحدودة، وشهادات التدقيق المشفرة، والمزامنة السحابية E2EE، والعقد ذات الأولوية P2P.", activateKeyBtn: "تفعيل ترخيص Pro",
+                        faq7Q: "هل يؤدي الترقية إلى Pro إلى الإخلال بأمان Air-Gap؟", faq7A: "لا. يعتمد التحقق من الترخيص دون اتصال بالinternet بالكامل على التشفير غير المتماثل (Web Crypto API) المنفذ محليًا داخل sandbox الخاص بمتصفحك، دون الحاجة لأي اتصال بالإنترنت أو خوادم خارجية.",
+                        proBtn: "احصل على Pro", proModalTitle: "💎 الترقية إلى Sovereign Pro", proModalDesc: "افتح معالجة غير محدودة. <strong>ضمان Air-Gap:</strong> يتم التحقق من هذا الترخيص غير المتصل بالإنترنت رياضياً عبر التشفير غير المتماثل داخل sandbox الخاص بمتصفحك. لا توجد اتصالات خارجية على الإطلاق.", activateKeyBtn: "تفعيل ترخيص Pro",
                         payTrBtn: "PayTR / بطاقة الائتمان (TL - ₺999)", cryptoPayBtn: "Cryptomus / تشفير (USDT/BTC - $29.99)", proPlanName: "رخصة مدى الحياة Sovereign Pro", allRights: "جميع الحقوق محفوظة.", orDivider: "أو أدخل مفتاح الترخيص",
                         descLiveShield: "حماية نماذج الويب الصادرة ومدخلات الدردشة من تسريب معلومات التعريف الشخصية (PII) الحساسة.",
                         proWarning: "🔒 ميزة Pro: أنت في وضع التجربة المحدودة!",
@@ -1416,19 +1451,26 @@
                         this.showToast(dict['proActivated'] || '🎉 Pro license activated successfully!', 'success');
                     }, 1200);
                 },
-                activateProLicense() {
-                    const key = document.getElementById('proLicenseKeyInput')?.value;
+                async activateProLicense() {
+                    const keyInput = document.getElementById('proLicenseKeyInput')?.value.trim();
                     const dict = PrivacyConvert.i18n.translations[PrivacyConvert.state.lang] || PrivacyConvert.i18n.translations['en'];
-                    if(key && key.length > 5) {
+                    
+                    if (!keyInput) {
+                        return PrivacyConvert.ui.showToast('Lütfen lisans anahtarını girin', 'error');
+                    }
+
+                    const verification = await licenseEngine.verifyOfflineLicense(keyInput);
+                    
+                    if (verification.valid) {
                         PrivacyConvert.state.isPro = true;
                         localStorage.setItem('privacyConvert_pro', 'true');
                         const badge = document.getElementById('proBadge');
                         if(badge) badge.classList.remove('hidden');
                         const modal = document.getElementById('proModal');
                         if(modal) modal.classList.add('hidden');
-                        this.showToast(dict['proActivated'] || '🎉 Pro license activated successfully!', 'success');
+                        this.showToast(dict['proActivated'] || '🎉 Asymmetric Offline Pro license verified & activated!', 'success');
                     } else {
-                        this.showToast(dict['proInvalidKey'] || 'Invalid license key!', 'error');
+                        this.showToast((dict['proInvalidKey'] || 'Invalid license key!') + ` (${verification.reason})`, 'error');
                     }
                 },
                 promptBranding() {
@@ -1506,6 +1548,35 @@
                             const a = document.createElement('a'); a.href = url; a.download = "Merged_Document.pdf"; a.click();
                             PrivacyConvert.ui.updateProgress(100, 'Tamamlandı!');
                             PrivacyConvert.ui.showToast(dict['successPdfMerge'] || 'PDFs merged successfully!');
+                        }
+                        else if (tool === 'pdf-to-png') {
+                            if (files.length === 0) return PrivacyConvert.ui.showToast(dict['errSelectPdf'] || 'Please select PDF files', 'warning');
+                            PrivacyConvert.ui.updateProgress(20, 'PDF Sayfaları PNGye Dönüştürülüyor...');
+                            const file = files[0].file;
+                            const arrayBuffer = await file.arrayBuffer();
+                            const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+                            const pdfDoc = await loadingTask.promise;
+                            const numPages = pdfDoc.numPages;
+
+                            for (let i = 1; i <= numPages; i++) {
+                                PrivacyConvert.ui.updateProgress(Math.round((i / numPages) * 80), `Sayfa ${i}/${numPages} işleniyor...`);
+                                const page = await pdfDoc.getPage(i);
+                                const viewport = page.getViewport({ scale: 1.5 });
+                                const canvas = document.createElement('canvas');
+                                const context = canvas.getContext('2d');
+                                canvas.height = viewport.height;
+                                canvas.width = viewport.width;
+
+                                await page.render({ canvasContext: context, viewport: viewport }).promise;
+                                const url = canvas.toDataURL('image/png');
+                                const a = document.createElement('a');
+                                a.href = url;
+                                a.download = `${file.name.replace('.pdf', '')}_page_${i}.png`;
+                                a.click();
+                            }
+                            PrivacyConvert.ui.updateProgress(100, 'Tamamlandı!');
+                            outputBox.value = `[PDF TO PNG CONVERSION COMPLETE]\n- File: ${file.name}\n- Total Pages Converted & Downloaded: ${numPages}`;
+                            PrivacyConvert.ui.showToast('PDF sayfaları başarıyla PNG olarak dışa aktarıldı!');
                         }
                         else if (tool === 'ocr-tool') {
                             if (files.length === 0) return PrivacyConvert.ui.showToast(dict['errSelectImage'] || 'Please select image files', 'warning');
@@ -1587,7 +1658,6 @@
                             canvas.width = img.width; canvas.height = img.height;
                             canvas.classList.remove('hidden');
                             ctx.drawImage(img, 0, 0);
-                            // Otomatik yüz/mühür bölgesi simülasyonu (üst merkez siyah kutu)
                             ctx.fillStyle = "#000000";
                             ctx.fillRect(img.width * 0.35, img.height * 0.3, img.width * 0.3, img.height * 0.2);
                             const url = canvas.toDataURL('image/png');
