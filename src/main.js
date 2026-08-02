@@ -4,7 +4,7 @@ import { aiEngine } from './aiCore.js';
 import { streamCore } from './streamCore.js';
 import { mediaCore } from './mediaCore.js';
 
-const PrivacyConvert = {
+export const PrivacyConvert = {
     state: {
         lang: localStorage.getItem('privacyConvert_lang') || 'en',
         tool: 'live-pii-shield',
@@ -42,7 +42,6 @@ const PrivacyConvert = {
         });
     },
 
-    // KESİN ÇÖZÜMLÜ DİL ÇEVİRİ MOTORU
     i18n: {
         translations: {
             en: {
@@ -491,12 +490,13 @@ const PrivacyConvert = {
         const btn = document.getElementById('convertBtn');
         if(btn) btn.addEventListener('click', () => this.engine.executeTool());
 
-        // KESİN ÇÖZÜM: Global Event Delegation (Sayfanın herhangi bir yerindeki langSelect değişimini yakalar)
-        document.addEventListener('change', (e) => {
-            if (e.target && e.target.id === 'langSelect') {
-                PrivacyConvert.i18n.applyLanguage(e.target.value);
-            }
-        });
+        const langSelect = document.getElementById('langSelect');
+        if (langSelect) {
+            langSelect.value = this.state.lang;
+            langSelect.addEventListener('change', (e) => {
+                this.i18n.applyLanguage(e.target.value);
+            });
+        }
 
         const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('fileInput');
@@ -508,7 +508,6 @@ const PrivacyConvert = {
             fileInput.addEventListener('change', (e) => PrivacyConvert.ui.handleFiles(e.target.files));
         }
 
-        // Açılışta kayıtlı dili uygula
         this.i18n.applyLanguage(this.state.lang);
         this.routing.navigate(this.state.tool);
         window.addEventListener('beforeunload', () => this.cleanupObjectUrls());
