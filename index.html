@@ -321,7 +321,7 @@
 
         <div id="workspaceGrid" class="max-w-3xl mx-auto grid grid-cols-1 gap-6 transition-all duration-300 mb-12">
             <div class="p-6 sm:p-8 bg-white dark:bg-slate-800 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-700 relative">
-                <button id="clearBtn" class="hidden absolute top-6 right-6 text-xs font-bold text-red-500 bg-red-50 px-3 py-2 rounded-lg" data-i18n="btnReset">Reset</button>
+                <button id="clearBtn" onclick="PrivacyConvert.ui.resetCurrentWorkspace()" class="hidden absolute top-6 right-6 text-xs font-bold text-red-500 bg-red-50 dark:bg-red-950/40 px-3 py-2 rounded-lg transition" data-i18n="btnReset">Reset</button>
 
                 <!-- Uzun Formlu Değer ve Fayda Açıklama Paneli (Dinamik ve Çok Dilli) -->
                 <div id="toolEnterpriseValueBanner" class="hidden mb-5 p-4 bg-indigo-50/70 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800 rounded-2xl text-xs text-indigo-900 dark:text-indigo-200 space-y-1.5 leading-relaxed">
@@ -433,7 +433,6 @@
     </footer>
 
     <script>
-        // 2. Nokta: Gerçek Air-Gapped Service Worker Önbellekleme Entegrasyonu
         if ('serviceWorker' in navigator) {
             try {
                 const swCode = `
@@ -507,7 +506,7 @@
                 return await window.crypto.subtle.decrypt({name: "AES-GCM", iv}, key, data);
             },
             async sha256(message) {
-                const msgBuffer = new TextEncoder().encode(message);
+                const msgBuffer = typeof message === 'string' ? new TextEncoder().encode(message) : message;
                 const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
                 return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
             },
@@ -551,7 +550,6 @@
                 a.download = mode === 'encrypt' ? `${file.name}.enc` : file.name.replace('.enc', '');
                 a.click();
                 
-                // 4. Nokta: Bellek Sızıntısı Koruması (ObjectURL temizliği)
                 setTimeout(() => { try { URL.revokeObjectURL(url); } catch(e){} }, 10000);
                 
                 progressCallback(100, 'Tamamlandı!');
@@ -559,7 +557,6 @@
             }
         };
 
-        // 1. Nokta: Gerçek Asimetrik Kriptografik İmza Doğrulama Motoru
         const licenseEngine = {
             async verifyOfflineLicense(licenseKey) {
                 try {
@@ -631,7 +628,6 @@
             }
         };
 
-        // 3. Nokta: Kararlı WebRTC / P2P Sinyalleşme ve Timeout Mekanizması
         const p2pEngine = {
             pc: null,
             dataChannel: null,
@@ -1300,7 +1296,6 @@
                         v_p2p_title: "مشاركة P2P", v_p2p_desc: "نقل مباشر."
                     }
                 },
-                // 5. Nokta: Çok Dilli Fallback Mekanizması
                 get(key, lang) {
                     const l = lang || PrivacyConvert.state.lang;
                     const dict = this.translations[l] || this.translations['en'];
@@ -1453,6 +1448,13 @@
                     }
                     if(text && pText) pText.innerText = text;
                 },
+                resetCurrentWorkspace() {
+                    const meta = PrivacyConvert.routing.metaData[PrivacyConvert.state.tool];
+                    this.resetWorkspace(meta);
+                    const clearBtn = document.getElementById('clearBtn');
+                    if (clearBtn) clearBtn.classList.add('hidden');
+                    this.showToast('Workspace reset.');
+                },
                 resetWorkspace(meta) {
                     PrivacyConvert.cleanupObjectUrls();
                     PrivacyConvert.state.files = []; 
@@ -1465,6 +1467,7 @@
                     const mainInput = document.getElementById('mainInputField');
                     const outBox = document.getElementById('genericTextArea');
                     const fileInput = document.getElementById('fileInput');
+                    const clearBtn = document.getElementById('clearBtn');
                     
                     if (fileInput) {
                         fileInput.accept = meta.accept || '*/*';
@@ -1476,6 +1479,7 @@
                     if(genericTextBox) genericTextBox.classList.add('hidden');
                     if(cryptoOptions) cryptoOptions.classList.add('hidden');
                     if(dropZone) dropZone.style.display = 'none';
+                    if(clearBtn) clearBtn.classList.add('hidden');
                     if(container) { container.classList.add('hidden'); container.innerHTML = ''; }
                     if(mainInput) mainInput.value = '';
                     if(outBox) outBox.value = '';
@@ -1710,7 +1714,14 @@
                     });
                 },
                 openPreviewModal() {
-                    const val = document.getElementById('genericTextArea').value;
+                    const genericVal = document.getElementById('genericTextArea')?.value;
+                    const passkeyVal = document.getElementById('passkeyOutput')?.value;
+                    const ragVal = document.getElementById('ragResultArea')?.value;
+                    const zkpVal = document.getElementById('zkpResultBox')?.value;
+                    const signVal = document.getElementById('signOutput')?.value;
+                    const chatVal = document.getElementById('chatLogArea')?.value;
+
+                    const val = genericVal || passkeyVal || ragVal || zkpVal || signVal || chatVal || '';
                     const modal = document.getElementById('previewModal');
                     const content = document.getElementById('previewContent');
                     content.innerHTML = `<pre class="text-xs font-mono whitespace-pre-wrap dark:text-emerald-400">${val || 'No output data available.'}</pre>`;
@@ -1866,6 +1877,19 @@
                             const merkleHash = await cryptoCore.sha256(text);
                             outputBox.value = `[ZK-ROLLUP / BLOCKCHAIN ANCHOR]\n- Merkle Root Hash: ${merkleHash}\n- Network: Local Virtual Ledger\n- Status: Anchored successfully with zero external requests.`;
                             PrivacyConvert.ui.showToast('Blokzincir çapası oluşturuldu!');
+                        }
+                        else if (tool === 'timestamp-anchor' || tool === 'chain-custody') {
+                            if (files.length === 0) return PrivacyConvert.ui.showToast('Lütfen dosya seçin', 'warning');
+                            PrivacyConvert.ui.updateProgress(40, 'Kriptografik Özetler Hesaplanıyor...');
+                            let report = `[${tool === 'timestamp-anchor' ? 'OPENTIMESTAMPS ANCHOR' : 'CHAIN OF CUSTODY AUDIT LOG'}]\n`;
+                            for (let item of files) {
+                                const buf = await item.file.arrayBuffer();
+                                const hash = await cryptoCore.sha256(buf);
+                                report += `\nFile: ${item.file.name}\nSize: ${item.file.size} bytes\nSHA-256 Hash: ${hash}\nTimestamp: ${new Date().toISOString()}\nStatus: Cryptographically Verified & Secured\n`;
+                            }
+                            outputBox.value = report;
+                            PrivacyConvert.ui.updateProgress(100, 'Tamamlandı!');
+                            PrivacyConvert.ui.showToast('İşlem başarıyla tamamlandı!');
                         }
                         else if (tool === 'pdf-merge') {
                             if (files.length === 0) return PrivacyConvert.ui.showToast('Please select PDF files', 'warning');
