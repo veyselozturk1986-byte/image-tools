@@ -1330,8 +1330,39 @@ const PrivacyConvert = {
             PrivacyConvert.ui.showToast('Decryption successful!');
           }
         } else if (tool === 'cross-compliance') {
-          outputBox.value = `[CROSS-FRAMEWORK COMPLIANCE REPORT]\n- GDPR (EU): 100% Local Processing Compliant\n- KVKK (Turkey): Article 5/6 Data Residency Satisfied\n- HIPAA (US Healthcare): Zero Cloud Egress Verified\n- CCPA (California): Consumer Privacy Protected in Sandbox`;
-          PrivacyConvert.ui.showToast('Çapraz uyumluluk denetimi tamamlandı!');
+  const text = inputField ? inputField.value : '';
+  if (!text) return PrivacyConvert.ui.showToast('Lütfen uyumluluk analizi için bir metin girin', 'warning');
+  
+  // Metin içerisindeki hassas veri ve sektör kalıplarını akıllıca tara
+  const hasEmail = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/.test(text);
+  const hasPhone = /(?:\+90|0)?\s*\(?\d{3}\)?[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2}/.test(text);
+  const hasCard = /\b(?:\d{4}[ -]?){3}\d{4}\b/.test(text);
+  const hasHealth = /hastane|doktor|sağlık|tedavi|hasta|hospital|doctor|health|medical|patient/i.test(text);
+  const hasFinance = /bakiye|kredi|hesap|borç|balance|credit|account|debt|\$/i.test(text);
+
+  let riskScore = 0;
+  let findings = [];
+  if (hasEmail || hasPhone) { riskScore += 30; findings.push("Kişisel İletişim Verileri (E-posta/Telefon) tespit edildi."); }
+  if (hasCard || hasFinance) { riskScore += 40; findings.push("Finansal / Ödeme verileri tespit edildi."); }
+  if (hasHealth) { riskScore += 40; findings.push("Sağlık verileri (Özel Nitelikli Kişisel Veri) tespit edildi."); }
+
+  const gdprStatus = (hasEmail || hasPhone || hasHealth) ? "RİSKLİ (GDPR Madde 6/9 İhlal Riski)" : "UYUMLU (Kritik PII verisi yok)";
+  const kvkkStatus = (hasEmail || hasPhone || hasHealth) ? "RİSKLİ (KVKK Madde 5/6 Açık Rıza Gerektirir)" : "UYUMLU";
+  const hipaaStatus = hasHealth ? "UYARI (HIPAA Korumasına Tabi Sağlık Verisi İçerir)" : "ETKİLENMEZ";
+  const ccpaStatus = hasFinance ? "DİKKAT (Finansal Tüketici Verisi Mevcut)" : "KORUNAKLI";
+
+  outputBox.value = `[DİNAMİK ÇAPRAZ UYUMLULUK VE RİSK ANALİZİ]\n` +
+                    `- İncelenen Metin Uzunluğu: ${text.length} karakter\n` +
+                    `- Hesaplanan Tahmini Risk Skoru: ${Math.min(riskScore, 100)} / 100\n` +
+                    `- Tespit Edilen Risk Unsurları:\n  * ${findings.length > 0 ? findings.join('\n  * ') : 'Hiçbir kritik riskli veri unsuru saptanmadı.'}\n\n` +
+                    `--- DÜZENLEYİCİ ÇERÇEVE RAPORU ---\n` +
+                    `1. GDPR (Avrupa Birliği): ${gdprStatus}\n` +
+                    `2. KVKK (Türkiye): ${kvkkStatus}\n` +
+                    `3. HIPAA (ABD Sağlık Sektörü): ${hipaaStatus}\n` +
+                    `4. CCPA (Kaliforniya Tüketici Gizliliği): ${ccpaStatus}\n\n` +
+                    `[Air-Gapped Güvenlik Onayı]: Tüm bu analizler harici sunuculara hiç bağlanmadan, tarayıcınızın yalıtılmış korumalı alanında (sandbox) yerel olarak gerçekleştirilmiştir.`;
+  
+  PrivacyConvert.ui.showToast('Dinamik çapraz uyumluluk analizi başarıyla tamamlandı!');
         } else if (tool === 'template-market') {
           outputBox.value = `[LOCAL RULE MARKETPLACE]\n- Installed Templates:\n 1. TR-ID & Phone Masker (v1.2)\n 2. EU-IBAN & Credit Card Shield (v2.0)\n 3. Medical Record HIPAA Filter (v1.0)\nStatus: All rules active in local memory sandbox.`;
           PrivacyConvert.ui.showToast('Yerel kural pazarı yüklendi!');
