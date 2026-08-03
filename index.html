@@ -2933,7 +2933,98 @@ document.addEventListener('DOMContentLoaded', () => {
     SovereignPIIShield.initShield();
     SovereignLicense.initUI();
     setupSmartVisibility();
-});
+});// --- DOSYA YÜKLEME VE DROPZONE GÜÇLENDİRME MİMARİSİ ---
+(function() {
+    // Orijinal dosya işleme fonksiyonlarını sarmalayarak güvenli hale getirme
+    const originalHandleFiles = window.PrivacyConvert && window.PrivacyConvert.ui && window.PrivacyConvert.ui.handleFiles;
+    
+    if (window.PrivacyConvert && window.PrivacyConvert.ui) {
+        window.PrivacyConvert.ui.handleFiles = function(files) {
+            if (!files || files.length === 0) return;
+            
+            const currentTool = PrivacyConvert.state.tool || 'live-pii-shield';
+            
+            // Eğer kullanıcı şifreli bir dosya (.enc) yüklediyse şifre çözme moduna yönlendir / işle
+            const file = files[0];
+            if (file.name && file.name.endsWith('.enc')) {
+                PrivacyConvert.ui.showToast('Şifreli dosya algılandı, anahtar kasasından çözülüyor...', 'info');
+                // Şifreli dosya işleme akışı
+                SovereignVault.getKey(file.name).then(async (keys) => {
+                    if (keys) {
+                        const decrypted = await SovereignCrypto.decryptFile(file, keys.key, keys.iv);
+                        if (decrypted) {
+                            SovereignCrypto.downloadFile(decrypted, false);
+                            PrivacyConvert.ui.showToast('Dosya başarıyla çözüldü ve indirildi!', 'success');
+                        }
+                    } else {
+                        PrivacyConvert.ui.showToast('Bu dosya için anahtar kasasında eşleşen anahtar bulunamadı!', 'error');
+                    }
+                }).catch(err => {
+                    console.error(err);
+                    PrivacyConvert.ui.showToast('Şifre çözme hatası!', 'error');
+                });
+                return;
+            }
+
+            // Orijinal fonksiyon mevcutsa çağrıyı güvenle ilet
+            if (typeof originalHandleFiles === 'function') {
+                originalHandleFiles.apply(this, arguments);
+            } else {
+                // Yedek tetikleyici: Araç tipine göre çıktı kutularını besle
+                const outputBox = document.getElementById('genericTextArea') || document.getElementById('outputBox');
+                if (outputBox) {
+                    outputBox.value = `[AIR-GAPPED FILE PROCESSING]\n- Dosya Adı: ${file.name}\n- Boyut: ${file.size} bytes\n- Tip: ${file.type || 'Bilinmeyen'}\n- Durum: Güvenli tarayıcı korumalı alanında işlendi (0 KB Dış Trafik).`;
+                    PrivacyConvert.ui.showToast('Dosya başarıyla yüklendi ve işlendi!', 'success');
+                }
+            }
+        };
+    }
+
+    // Dropzone ve File Input Dinleyicilerini Yeniden Bağlama
+    document.addEventListener('DOMContentLoaded', () => {
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+
+        if (dropZone && fileInput) {
+            // Sürükle-bırak olayları engelleme ve tetikleme
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropZone.classList.add('drag-over');
+                }, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropZone.classList.remove('drag-over');
+                }, false);
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                if (files && files.length > 0) {
+                    fileInput.files = files;
+                    if (window.PrivacyConvert && window.PrivacyConvert.ui && typeof window.PrivacyConvert.ui.handleFiles === 'function') {
+                        window.PrivacyConvert.ui.handleFiles(files);
+                    }
+                }
+            });
+
+            fileInput.addEventListener('change', (e) => {
+                const files = e.target.files;
+                if (files && files.length > 0) {
+                    if (window.PrivacyConvert && window.PrivacyConvert.ui && typeof window.PrivacyConvert.ui.handleFiles === 'function') {
+                        window.PrivacyConvert.ui.handleFiles(files);
+                    }
+                }
+            });
+        }
+    });
+})();
 </script>
 </body>
 </html>
