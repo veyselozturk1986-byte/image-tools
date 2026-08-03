@@ -2505,23 +2505,25 @@ const SovereignVault = {
     }
 };
 
-// --- 2. GÜVENLİ UI KANCASI (Orijinal Araçları ve Yüklemeyi Kesinlikle Bozmaz) ---
+// --- 2. SIFIR ÇAKIŞMA: ORİJİNAL DOSYA YÜKLEME SİSTEMİNE DOKUNMADAN BAĞLANTI ---
 document.addEventListener('DOMContentLoaded', () => {
-    const checkInterval = setInterval(() => {
-        if (window.PrivacyConvert && window.PrivacyConvert.ui) {
-            clearInterval(checkInterval);
+    // Sitenin orijinal fonksiyonları yüklendikten sonra güvenli dinleyici ekliyoruz
+    const initTimer = setInterval(() => {
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+
+        if (dropZone && fileInput) {
+            clearInterval(initTimer);
             
-            const originalHandleFiles = window.PrivacyConvert.ui.handleFiles;
-            
-            window.PrivacyConvert.ui.handleFiles = async function(files) {
+            // Kullanıcı dosya bıraktığında veya seçtiğinde çalışan güvenli aracı dinleyici
+            const handleSovereignFiles = async (files) => {
                 if (!files || files.length === 0) return;
                 const file = files[0];
                 
-                // Sitenin hangi araçta olduğunu kontrol et
-                const activeTool = window.PrivacyConvert.state && window.PrivacyConvert.state.tool;
+                // Sadece ana şifreleme ekranındayken veya dosya .enc uzantılıysa şifreleme/çözme yap
+                const activeTool = window.PrivacyConvert && window.PrivacyConvert.state && window.PrivacyConvert.state.tool;
                 
-                // Eğer ana ekran / şifreleme sekmesindeyse bizim özel motoru çalıştır
-                if (!activeTool || activeTool === 'encrypt' || activeTool === 'decrypt' || activeTool === 'home') {
+                if (file.name.endsWith('.enc') || !activeTool || activeTool === 'encrypt' || activeTool === 'decrypt' || activeTool === 'home') {
                     try {
                         if (file.name.endsWith('.enc')) {
                             const decrypted = await SovereignCrypto.decryptFile(file);
@@ -2541,18 +2543,27 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                         }
                     } catch (e) {
-                        console.error("İşlem hatası:", e);
+                        console.error("Özel işlem hatası:", e);
                     }
                 }
-                
-                // Diğer tüm araçlar (PDF, OCR, vb.) için orijinal fonksiyonu kusursuz bir şekilde tetikle
-                if (typeof originalHandleFiles === 'function') {
-                    originalHandleFiles.apply(this, arguments);
-                }
             };
-            console.log("🛡️ Sovereign Kripto ve Güvenli Dosya Kancası Devrede.");
+
+            // Orijinal olayları ezmeden, ek bir yakalayıcı (interceptor) ekliyoruz
+            dropZone.addEventListener('drop', (e) => {
+                if (e.dataTransfer && e.dataTransfer.files.length > 0) {
+                    handleSovereignFiles(e.dataTransfer.files);
+                }
+            });
+
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files && e.target.files.length > 0) {
+                    handleSovereignFiles(e.target.files);
+                }
+            });
+
+            console.log("🛡️ Sovereign Güvenli Dinleyicileri Başarıyla Eklendi.");
         }
-    }, 100);
+    }, 200);
 });
 
 // --- 3. LIVE PII SHIELD VE LİSANS PANELLERİ ---
@@ -2593,7 +2604,7 @@ const SovereignPIIShield = {
                 } else {
                     document.body.appendChild(container);
                 }
-            }, 500);
+            }, 600);
         }
     }
 };
@@ -2630,12 +2641,12 @@ const SovereignLicense = {
                         }
                     });
                 }
-            }, 500);
+            }, 600);
         }
     }
 };
 
-// --- 4. GÖRÜNÜRLÜK GÖZLEMCİSİ (Diğer sekmelerde test panellerini otomatik gizler) ---
+// --- 4. GÖRÜNÜRLÜK GÖZLEMCİSİ (Diğer sekmelerde test panellerini gizler) ---
 setInterval(() => {
     const dropZone = document.getElementById('dropZone');
     const pii = document.getElementById('piiTestContainer');
