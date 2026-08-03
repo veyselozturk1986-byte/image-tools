@@ -2403,7 +2403,7 @@
                 window.addEventListener('beforeunload', () => this.cleanupObjectUrls());
             }
         };
-// --- 1. ÇEVRİMDIŞI KRİPTOGRAFİ VE KASA MOTORU ---
+// --- 1. ÇEVRİMDIŞI KRİPTOGRAFİ VE GÜVENLİ KASA (IndexedDB) ---
 const SovereignCrypto = {
     async generateKey() {
         return await window.crypto.subtle.generateKey(
@@ -2425,7 +2425,47 @@ const SovereignCrypto = {
             return { encryptedData, iv, key, originalName: file.name };
         } catch (error) {
             console.error("Şifreleme hatası:", error);
+            return null;
         }
+    },
+    async decryptFile(file) {
+        try {
+            let cleanFileName = file.name.replace(/\s\(\d+\)/g, '');
+            const vaultData = await SovereignVault.getKey(cleanFileName);
+            if (!vaultData) {
+                alert(`🚨 ANAHTAR BULUNAMADI: "${cleanFileName}" için bu cihazın yerel kasasında anahtar yok.`);
+                return null;
+            }
+            const arrayBuffer = await file.arrayBuffer();
+            const decryptedData = await window.crypto.subtle.decrypt(
+                { name: "AES-GCM", iv: vaultData.iv },
+                vaultData.key,
+                arrayBuffer
+            );
+            let originalName = cleanFileName.replace("Sifreli_", "").replace(".enc", "");
+            return { decryptedData, originalName };
+        } catch (error) {
+            console.error("Şifre çözme hatası:", error);
+            return null;
+        }
+    },
+    downloadFile(packageData, isEncrypted) {
+        const name = packageData.originalName || "dosya";
+        const extension = name.split('.').pop().toLowerCase();
+        const mimeTypes = {
+            'pdf': 'application/pdf', 'png': 'image/png', 'jpg': 'image/jpeg',
+            'jpeg': 'image/jpeg', 'txt': 'text/plain'
+        };
+        const fileFormat = mimeTypes[extension] || 'application/octet-stream';
+        const blob = new Blob([packageData.encryptedData || packageData.decryptedData], { type: isEncrypted ? 'application/octet-stream' : fileFormat });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = isEncrypted ? `Sifreli_${name}.enc` : `Cozulmus_${name}`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
     }
 };
 
@@ -2465,78 +2505,57 @@ const SovereignVault = {
     }
 };
 
-SovereignCrypto.decryptFile = async function(file) {
-    try {
-        let cleanFileName = file.name.replace(/\s\(\d+\)/g, '');
-        const vaultData = await SovereignVault.getKey(cleanFileName);
-        if (!vaultData) {
-            alert(`🚨 ANAHTAR BULUNAMADI: "${cleanFileName}" için bu cihazın kasasında anahtar yok.`);
-            return null;
+// --- 2. GÜVENLİ UI KANCASI (Orijinal Araçları ve Yüklemeyi Kesinlikle Bozmaz) ---
+document.addEventListener('DOMContentLoaded', () => {
+    const checkInterval = setInterval(() => {
+        if (window.PrivacyConvert && window.PrivacyConvert.ui) {
+            clearInterval(checkInterval);
+            
+            const originalHandleFiles = window.PrivacyConvert.ui.handleFiles;
+            
+            window.PrivacyConvert.ui.handleFiles = async function(files) {
+                if (!files || files.length === 0) return;
+                const file = files[0];
+                
+                // Sitenin hangi araçta olduğunu kontrol et
+                const activeTool = window.PrivacyConvert.state && window.PrivacyConvert.state.tool;
+                
+                // Eğer ana ekran / şifreleme sekmesindeyse bizim özel motoru çalıştır
+                if (!activeTool || activeTool === 'encrypt' || activeTool === 'decrypt' || activeTool === 'home') {
+                    try {
+                        if (file.name.endsWith('.enc')) {
+                            const decrypted = await SovereignCrypto.decryptFile(file);
+                            if (decrypted) {
+                                SovereignCrypto.downloadFile(decrypted, false);
+                                alert(`🔓 "${file.name}" şifresi başarıyla çözüldü!`);
+                                return;
+                            }
+                        } else {
+                            const encrypted = await SovereignCrypto.encryptFile(file);
+                            if (encrypted) {
+                                const safeName = `Sifreli_${encrypted.originalName}.enc`;
+                                await SovereignVault.saveKey(safeName, encrypted.key, encrypted.iv);
+                                SovereignCrypto.downloadFile(encrypted, true);
+                                alert(`🔒 "${file.name}" şifrelendi ve anahtar yerel kasaya kaydedildi.`);
+                                return;
+                            }
+                        }
+                    } catch (e) {
+                        console.error("İşlem hatası:", e);
+                    }
+                }
+                
+                // Diğer tüm araçlar (PDF, OCR, vb.) için orijinal fonksiyonu kusursuz bir şekilde tetikle
+                if (typeof originalHandleFiles === 'function') {
+                    originalHandleFiles.apply(this, arguments);
+                }
+            };
+            console.log("🛡️ Sovereign Kripto ve Güvenli Dosya Kancası Devrede.");
         }
-        const arrayBuffer = await file.arrayBuffer();
-        const decryptedData = await window.crypto.subtle.decrypt(
-            { name: "AES-GCM", iv: vaultData.iv },
-            vaultData.key,
-            arrayBuffer
-        );
-        let originalName = cleanFileName.replace("Sifreli_", "").replace(".enc", "");
-        return { decryptedData, originalName };
-    } catch (error) {
-        console.error("Şifre çözme hatası:", error);
-    }
-};
+    }, 100);
+});
 
-SovereignCrypto.downloadFile = function(packageData, isEncrypted) {
-    const extension = packageData.originalName.split('.').pop().toLowerCase();
-    const mimeTypes = {
-        'pdf': 'application/pdf', 'png': 'image/png', 'jpg': 'image/jpeg',
-        'jpeg': 'image/jpeg', 'txt': 'text/plain'
-    };
-    const fileFormat = mimeTypes[extension] || 'application/octet-stream';
-    const blob = new Blob([packageData.encryptedData || packageData.decryptedData], { type: isEncrypted ? 'application/octet-stream' : fileFormat });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = isEncrypted ? `Sifreli_${packageData.originalName}.enc` : `Cozulmus_${packageData.originalName}`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-};
-
-// --- 2. ORİJİNAL ARAYÜZ (UI) FONKSİYONUNU GÜVENLİ GENİŞLETME ---
-if (typeof PrivacyConvert !== 'undefined' && PrivacyConvert.ui) {
-    const originalHandleFiles = PrivacyConvert.ui.handleFiles;
-    
-    PrivacyConvert.ui.handleFiles = async function(files) {
-        if (!files || files.length === 0) return;
-        const file = files[0];
-        
-        // Eğer dosya .enc uzantılı ise şifre çöz, değilse şifrele
-        if (file.name.endsWith('.enc')) {
-            const decrypted = await SovereignCrypto.decryptFile(file);
-            if (decrypted) {
-                SovereignCrypto.downloadFile(decrypted, false);
-                alert(`🔓 "${file.name}" şifresi başarıyla çözüldü!`);
-            }
-        } else {
-            const encrypted = await SovereignCrypto.encryptFile(file);
-            if (encrypted) {
-                const safeName = `Sifreli_${encrypted.originalName}.enc`;
-                await SovereignVault.saveKey(safeName, encrypted.key, encrypted.iv);
-                SovereignCrypto.downloadFile(encrypted, true);
-                alert(`🔒 "${file.name}" şifrelendi ve anahtar yerel kasaya kaydedildi.`);
-            }
-        }
-        
-        // Varsa orijinal UI fonksiyonunu da tetikle
-        if (typeof originalHandleFiles === 'function') {
-            try { originalHandleFiles.apply(this, arguments); } catch(e){}
-        }
-    };
-}
-
-// --- 3. LIVE PII SHIELD VE LİSANS PANELLERİ (Akıllı Gizleme) ---
+// --- 3. LIVE PII SHIELD VE LİSANS PANELLERİ ---
 const SovereignPIIShield = {
     patterns: {
         email: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g,
@@ -2565,14 +2584,16 @@ const SovereignPIIShield = {
             container.style.cssText = "margin: 20px auto; max-width: 600px; padding: 15px; background: rgba(79, 70, 229, 0.05); border: 2px dashed #4f46e5; border-radius: 12px; font-family: sans-serif;";
             container.innerHTML = `
                 <h4 style="margin: 0 0 8px 0; color: #4f46e5; font-weight: bold; font-size: 14px;">🛡️ Live PII Shield Canlı Test Alanı</h4>
-                <textarea placeholder="Buraya test metni (E-posta, TC vb.) yazın..." style="width: 100%; height: 60px; padding: 8px; border: 1px solid #ccc; border-radius: 6px;"></textarea>
+                <textarea placeholder="Buraya test metni (E-posta, TC vb.) yazın..." style="width: 100%; height: 60px; padding: 8px; border: 1px solid #ccc; border-radius: 6px; resize: none;"></textarea>
             `;
-            const dropZone = document.getElementById('dropZone');
-            if (dropZone && dropZone.parentNode) {
-                dropZone.parentNode.insertBefore(container, dropZone.nextSibling);
-            } else {
-                document.body.appendChild(container);
-            }
+            setTimeout(() => {
+                const dropZone = document.getElementById('dropZone');
+                if (dropZone && dropZone.parentNode) {
+                    dropZone.parentNode.insertBefore(container, dropZone.nextSibling);
+                } else {
+                    document.body.appendChild(container);
+                }
+            }, 500);
         }
     }
 };
@@ -2590,26 +2611,31 @@ const SovereignLicense = {
                     <button id="activateBtn" style="padding: 8px 16px; background: #10b981; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">Doğrula</button>
                 </div>
             `;
-            const piiContainer = document.getElementById('piiTestContainer');
-            if (piiContainer && piiContainer.parentNode) {
-                piiContainer.parentNode.insertBefore(panel, piiContainer.nextSibling);
-            } else {
-                document.body.appendChild(panel);
-            }
-            document.getElementById('activateBtn').addEventListener('click', () => {
-                const val = document.getElementById('licenseInput').value;
-                if(val.startsWith('SOV-')) {
-                    localStorage.setItem("sovereign_pro_active", "true");
-                    alert("⭐ Pro Lisans Çevrimdışı Doğrulandı!");
+            setTimeout(() => {
+                const piiContainer = document.getElementById('piiTestContainer');
+                if (piiContainer && piiContainer.parentNode) {
+                    piiContainer.parentNode.insertBefore(panel, piiContainer.nextSibling);
                 } else {
-                    alert("Geçersiz anahtar.");
+                    document.body.appendChild(panel);
                 }
-            });
+                const btn = document.getElementById('activateBtn');
+                if(btn) {
+                    btn.addEventListener('click', () => {
+                        const val = document.getElementById('licenseInput').value;
+                        if(val.startsWith('SOV-')) {
+                            localStorage.setItem("sovereign_pro_active", "true");
+                            alert("⭐ Pro Lisans Çevrimdışı Doğrulandı!");
+                        } else {
+                            alert("Geçersiz anahtar.");
+                        }
+                    });
+                }
+            }, 500);
         }
     }
 };
 
-// --- 4. GÖRÜNÜRLÜK GÖZLEMCİSİ (Diğer sekmelerde panelleri gizler) ---
+// --- 4. GÖRÜNÜRLÜK GÖZLEMCİSİ (Diğer sekmelerde test panellerini otomatik gizler) ---
 setInterval(() => {
     const dropZone = document.getElementById('dropZone');
     const pii = document.getElementById('piiTestContainer');
@@ -2622,7 +2648,7 @@ setInterval(() => {
     }
 }, 250);
 
-// Başlatıcı
+// Başlatıcılar
 document.addEventListener('DOMContentLoaded', () => {
     SovereignPIIShield.initShield();
     SovereignLicense.initUI();
