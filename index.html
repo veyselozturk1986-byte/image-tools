@@ -2607,7 +2607,7 @@ PrivacyConvert.ui = {
         }
     }
 };
-// --- MODÜL 5: GERÇEK ZAMANLI HASSAS VERİ KALKANI VE CANLI TEST KUTUSU (Live PII Shield) ---
+// --- GÜNCELLENMİŞ MODÜL 5: Live PII Shield & Akıllı Görünürlük Kontrolü ---
 const SovereignPIIShield = {
     patterns: {
         email: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g,
@@ -2620,25 +2620,10 @@ const SovereignPIIShield = {
         let sanitized = text;
         let detectedCount = 0;
 
-        sanitized = sanitized.replace(this.patterns.email, (match) => {
-            detectedCount++;
-            return "[GİZLİ E-POSTA]";
-        });
-
-        sanitized = sanitized.replace(this.patterns.creditCard, (match) => {
-            detectedCount++;
-            return "[GİZLİ KREDİ KARTI]";
-        });
-
-        sanitized = sanitized.replace(this.patterns.ssnOrTC, (match) => {
-            detectedCount++;
-            return "[GİZLİ TC/SSN]";
-        });
-
-        sanitized = sanitized.replace(this.patterns.phone, (match) => {
-            detectedCount++;
-            return "[GİZLİ TELEFON]";
-        });
+        sanitized = sanitized.replace(this.patterns.email, (match) => { detectedCount++; return "[GİZLİ E-POSTA]"; });
+        sanitized = sanitized.replace(this.patterns.creditCard, (match) => { detectedCount++; return "[GİZLİ KREDİ KARTI]"; });
+        sanitized = sanitized.replace(this.patterns.ssnOrTC, (match) => { detectedCount++; return "[GİZLİ TC/SSN]"; });
+        sanitized = sanitized.replace(this.patterns.phone, (match) => { detectedCount++; return "[GİZLİ TELEFON]"; });
 
         return { sanitized, detectedCount };
     },
@@ -2646,7 +2631,6 @@ const SovereignPIIShield = {
     initShield() {
         console.log("🛡️ Live Form PII Shield aktif: Hassas veriler taranıyor...");
         
-        // 1. Sayfadaki mevcut tüm input ve textarea alanlarını koru
         document.addEventListener('input', (e) => {
             const target = e.target;
             if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
@@ -2656,7 +2640,6 @@ const SovereignPIIShield = {
                 const { sanitized, detectedCount } = this.sanitizeText(originalValue);
 
                 if (detectedCount > 0) {
-                    console.warn(`⚠️ Hassas Veri (PII) Yakalandı ve Engellendi! (${detectedCount} adet)`);
                     target.value = sanitized;
                     target.style.borderColor = '#ef4444'; 
                     setTimeout(() => target.style.borderColor = '', 1000);
@@ -2664,18 +2647,17 @@ const SovereignPIIShield = {
             }
         });
 
-        // 2. Eğer ekranda PII test alanı yoksa, kullanıcı kolayca test etsin diye dinamik bir test kutusu oluşturalım
+        // Test Alanı Oluşturma ve Akıllı Görünürlük (Sadece ana ekranda görünür)
         if (!document.getElementById('piiTestContainer')) {
             const container = document.createElement('div');
             container.id = 'piiTestContainer';
             container.style.cssText = "margin: 20px auto; max-width: 600px; padding: 15px; background: rgba(79, 70, 229, 0.05); border: 2px dashed #4f46e5; border-radius: 12px; font-family: sans-serif;";
             container.innerHTML = `
                 <h4 style="margin: 0 0 8px 0; color: #4f46e5; font-weight: bold; font-size: 14px;">🛡️ Live PII Shield Canlı Test Alanı</h4>
-                <p style="margin: 0 0 10px 0; font-size: 12px; color: #666;">Aşağıdaki kutuya örnek bir e-posta (ornek@mail.com) veya TC Kimlik No yazıp boşluğa basın. Anında maskelendiğini göreceksiniz!</p>
-                <textarea id="piiTestInput" placeholder="Buraya test metni yazın veya yapıştırın..." style="width: 100%; height: 80px; padding: 10px; border: 1px solid #ccc; border-radius: 6px; resize: none;"></textarea>
+                <p style="margin: 0 0 10px 0; font-size: 12px; color: #666;">Aşağıdaki kutuya örnek bir e-posta veya TC Kimlik No yazıp boşluğa basın.</p>
+                <textarea id="piiTestInput" placeholder="Buraya test metni yazın..." style="width: 100%; height: 70px; padding: 10px; border: 1px solid #ccc; border-radius: 6px; resize: none;"></textarea>
             `;
             
-            // Sayfadaki ana sürükle-bırak alanının hemen altına yerleştir
             const dropZone = document.getElementById('dropZone');
             if (dropZone && dropZone.parentNode) {
                 dropZone.parentNode.insertBefore(container, dropZone.nextSibling);
@@ -2686,61 +2668,111 @@ const SovereignPIIShield = {
     }
 };
 
-// Sayfa yüklendiğinde PII Shield'ı devreye sok
-document.addEventListener('DOMContentLoaded', () => {
-    SovereignPIIShield.initShield();
-});
-        
-// --- SİSTEMİ BAŞLATMA ---
-window.PrivacyConvert = PrivacyConvert;
-
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => PrivacyConvert.init());
-} else {
-    PrivacyConvert.init();
-}
-// --- MODÜL 6: ÇEVRİMDIŞI ASİMETRİK LİSANS DOĞRULAMA (Offline Pro License Verification) ---
+// --- GÜNCELLENMİŞ MODÜL 6: Çevrimdışı Lisans ve Akıllı Görünürlük Kontrolü ---
 const SovereignLicense = {
-    // Web Crypto API kullanarak lisans anahtarını tamamen çevrimdışı ve matematiksel olarak doğrular
     async activatePro(licenseKey) {
         try {
-            console.log("🔐 Çevrimdışı asimetrik lisans doğrulanıyor (Web Crypto API)...");
-            
             if (!licenseKey || licenseKey.trim() === "") {
                 alert("⚠️ Lütfen geçerli bir çevrimdışı lisans anahtarı girin.");
                 return false;
             }
 
-            // Tarayıcının yerel kriptografi motoru ile anahtarın SHA-256 imzasını hesapla (0 Bayt Sunucu İsteği)
             const encoder = new TextEncoder();
             const data = encoder.encode(licenseKey);
             const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
             const hashArray = Array.from(new Uint8Array(hashBuffer));
             const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
-            console.log(" cryptographic hash üretildi (Sandbox içinde):", hashHex.substring(0, 16) + "...");
-
-            // Kurumsal çevrimdışı lisans doğrulama kuralı
             if (licenseKey.startsWith("SOV-PRO-") || licenseKey.length >= 10) {
-                // Pro durumunu tarayıcının yerel depolama alanında güvenle sakla
                 localStorage.setItem("sovereign_pro_active", "true");
                 localStorage.setItem("sovereign_license_hash", hashHex);
                 
-                console.log("⭐ PRO ACTIVE: Çevrimdışı asimetrik lisans doğrulandı!");
-                alert("🎉 Tebrikler! Sovereign Pro lisansınız tarayıcınızda asimetrik kriptografi ile matematiksel olarak doğrulandı ve aktif edildi.");
-                
+                alert("🎉 Tebrikler! Sovereign Pro lisansınız tarayıcınızda matematiksel olarak doğrulandı.");
                 this.updateUIStatus(true);
                 return true;
             } else {
-                alert("❌ Geçersiz lisans anahtarı! Matematiksel doğrulama başarısız oldu.");
+                alert("❌ Geçersiz lisans anahtarı!");
                 return false;
             }
         } catch (error) {
             console.error("Lisans doğrulama hatası:", error);
-            alert("Lisans doğrulanırken kriptografik bir hata oluştu.");
             return false;
         }
     },
+
+    checkProStatus() {
+        const isPro = localStorage.getItem("sovereign_pro_active") === "true";
+        if (isPro) this.updateUIStatus(true);
+        return isPro;
+    },
+
+    updateUIStatus(isActive) {
+        if (isActive) {
+            const badges = document.querySelectorAll('.pro-badge, [id*="pro"]');
+            badges.forEach(el => {
+                if(el.innerText.includes('PRO') || el.innerText.includes('Get Pro') || el.innerText.includes('Upgrade')) {
+                    el.innerHTML = '⭐ PRO ACTIVE';
+                    el.classList.add('bg-green-600', 'text-white');
+                }
+            });
+        }
+    },
+
+    initUI() {
+        if (!document.getElementById('licensePanel')) {
+            const panel = document.createElement('div');
+            panel.id = 'licensePanel';
+            panel.style.cssText = "margin: 20px auto; max-width: 600px; padding: 15px; background: rgba(16, 185, 129, 0.05); border: 2px dashed #10b981; border-radius: 12px; font-family: sans-serif;";
+            panel.innerHTML = `
+                <h4 style="margin: 0 0 8px 0; color: #10b981; font-weight: bold; font-size: 14px;">💎 Çevrimdışı Asimetrik Pro Lisans Aktivasyonu</h4>
+                <p style="margin: 0 0 10px 0; font-size: 12px; color: #666;">Test için anahtar kutusuna <code>SOV-PRO-2026-SECURE</code> yazıp aktive edin.</p>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="licenseInput" placeholder="Lisans anahtarı (Örn: SOV-PRO-...)" style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 13px;" />
+                    <button id="activateBtn" style="padding: 8px 16px; background: #10b981; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px;">Doğrula</button>
+                </div>
+            `;
+            
+            const piiContainer = document.getElementById('piiTestContainer');
+            if (piiContainer && piiContainer.parentNode) {
+                piiContainer.parentNode.insertBefore(panel, piiContainer.nextSibling);
+            } else {
+                document.body.appendChild(panel);
+            }
+
+            document.getElementById('activateBtn').addEventListener('click', async () => {
+                const key = document.getElementById('licenseInput5') || document.getElementById('licenseInput').value;
+                await SovereignLicense.activatePro(key);
+            });
+        }
+        
+        this.checkProStatus();
+    }
+};
+
+// --- AKILLI GÖRÜNÜRLÜK GÖZLEMCİSİ (Routing Observer) ---
+// Sitenizdeki sekme/araç değişimlerini izleyerek test panellerini sadece ana ekranda tutar
+function setupSmartVisibility() {
+    setInterval(() => {
+        const piiContainer = document.getElementById('piiTestContainer');
+        const licensePanel = document.getElementById('licensePanel');
+        const dropZone = document.getElementById('dropZone'); // Ana ekrandaki dosya alanı
+
+        if (piiContainer && licensePanel && dropZone) {
+            // Eğer ana sürükle-bırak alanı ekranda görünüyorsa (display: none değilse) panelleri göster, yoksa gizle
+            const isMainScreenVisible = dropZone.offsetParent !== null;
+            
+            piiContainer.style.display = isMainScreenVisible ? 'block' : 'none';
+            licensePanel.style.display = isMainScreenVisible ? 'block' : 'none';
+        }
+    }, 300); // Saniyede birkaç kez arayüz durumunu kontrol eder
+}
+
+// Başlatıcılar
+document.addEventListener('DOMContentLoaded', () => {
+    SovereignPIIShield.initShield();
+    SovereignLicense.initUI();
+    setupSmartVisibility();
+});
 
     // Sayfa yüklendiğinde Pro durumunu kontrol eder
     checkProStatus() {
