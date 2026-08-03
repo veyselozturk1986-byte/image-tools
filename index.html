@@ -2607,7 +2607,78 @@ PrivacyConvert.ui = {
         }
     }
 };
+// --- MODÜL 5: GERÇEK ZAMANLI HASSAS VERİ KALKANI (Live PII Shield) ---
+const SovereignPIIShield = {
+    // Hassas verileri yakalayan Regex kalıpları
+    patterns: {
+        email: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g,
+        creditCard: /\b(?:\d{4}[ -]?){3}\d{4}\b/g,
+        ssnOrTC: /\b[1-9][0-9]{10}\b/g, // Türkiye Cumhuriyeti Kimlik Numarası formatı
+        phone: /(?:\+90|0)?\s*\(?\d{3}\)?[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2}/g
+    },
 
+    // Metin içindeki PII verilerini maskeler
+    sanitizeText(text) {
+        let sanitized = text;
+        let detectedCount = 0;
+
+        // E-postaları maskele
+        sanitized = sanitized.replace(this.patterns.email, (match) => {
+            detectedCount++;
+            return "[GİZLİ E-POSTA]";
+        });
+
+        // Kredi kartlarını maskele
+        sanitized = sanitized.replace(this.patterns.creditCard, (match) => {
+            detectedCount++;
+            return "[GİZLİ KREDİ KARTI]";
+        });
+
+        // TC Kimlik / SSN maskele
+        sanitized = sanitized.replace(this.patterns.ssnOrTC, (match) => {
+            detectedCount++;
+            return "[GİZLİ TC/SSN]";
+        });
+
+        // Telefon numaralarını maskele
+        sanitized = sanitized.replace(this.patterns.phone, (match) => {
+            detectedCount++;
+            return "[GİZLİ TELEFON]";
+        });
+
+        return { sanitized, detectedCount };
+    },
+
+    // Sayfadaki tüm metin kutularını (input/textarea) koruma altına alır
+    initShield() {
+        console.log("🛡️ Live Form PII Shield aktif: Hassas veriler taranıyor...");
+        
+        document.addEventListener('input', (e) => {
+            const target = e.target;
+            if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+                // Şifre veya arama inputlarını hariç tutabiliriz
+                if (target.type === 'password' || target.type === 'hidden') return;
+
+                const originalValue = target.value;
+                const { sanitized, detectedCount } = this.sanitizeText(originalValue);
+
+                if (detectedCount > 0) {
+                    console.warn(`⚠️ Hassas Veri (PII) Yakalandı ve Engellendi! (${detectedCount} adet)`);
+                    target.value = sanitized;
+                    
+                    // Görsel bir uyarı efekti verebiliriz
+                    target.style.borderColor = '#ef4444'; // Kırmızı çerçeve
+                    setTimeout(() => target.style.borderColor = '', 1000);
+                }
+            }
+        });
+    }
+};
+
+// Sayfa yüklendiğinde PII Shield'ı devreye sok
+document.addEventListener('DOMContentLoaded', () => {
+    SovereignPIIShield.initShield();
+});
 // --- SİSTEMİ BAŞLATMA ---
 window.PrivacyConvert = PrivacyConvert;
 
