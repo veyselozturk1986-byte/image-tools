@@ -576,6 +576,17 @@
                     if(log) log.value += `\n[Peer]: ${e.data}`;
                 };
             },
+            send(msg) {
+                if (this.dataChannel && this.dataChannel.readyState === 'open' && msg) {
+                    this.dataChannel.send(msg);
+                    const log = document.getElementById('chatLogArea');
+                    if(log) log.value += `\n[Me]: ${msg}`;
+                    const input = document.getElementById('chatMsgInput');
+                    if(input) input.value = '';
+                } else {
+                    PrivacyConvert.ui.showToast('P2P bağlantısı açık değil!', 'error');
+                }
+            },
             async createOffer() {
                 const sdp = await this.init(true);
                 const box = document.getElementById('p2pSignalBox');
@@ -899,7 +910,7 @@
                     'pdf-to-png': { type: 'file', accept: 'application/pdf', titleKey: 'toolPdfPng', valueTitleKey: 'v_pdfpng_title', valueDescKey: 'v_pdfpng_desc' },
                     'pdf-merge': { type: 'file', accept: 'application/pdf', multiple: true, titleKey: 'toolPdfMerge', valueTitleKey: 'v_pdfmerge_title', valueDescKey: 'v_pdfmerge_desc' },
                     'visual-redact': { type: 'interactive-redact', accept: 'image/*', titleKey: 'toolVisual', valueTitleKey: 'v_visual_title', valueDescKey: 'v_visual_desc' },
-                    'meta-scrubber': { type: 'file', multiple: true, accept: 'image/*', titleKey: 'toolMetaScrubber', valueTitleKey: 'v_meta_title', valueDescKey: 'v_meta_title' },
+                    'meta-scrubber': { type: 'file', multiple: true, accept: 'image/*', titleKey: 'toolMetaScrubber', valueTitleKey: 'v_meta_title', valueDescKey: 'v_meta_desc' },
                     'ocr-tool': { type: 'ocr', accept: 'image/*', titleKey: 'toolOcr', valueTitleKey: 'v_ocr_title', valueDescKey: 'v_ocr_desc' },
                     'p2p-share': { type: 'interactive-p2p', titleKey: 'toolP2p', valueTitleKey: 'v_p2p_title', valueDescKey: 'v_p2p_desc' }
                 },
@@ -1017,6 +1028,13 @@
                         PrivacyConvert.ui.renderSignUI();
                     }
                 },
+                renderWebAuthnUI() {
+                    const lang = PrivacyConvert.state.lang;
+                    const container = document.getElementById('interactiveWorkspaceContainer');
+                    if(!container) return;
+                    container.classList.remove('hidden');
+                    container.innerHTML = `<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3"><h4 class="font-bold text-xs uppercase text-slate-500">${PrivacyConvert.i18n.get('webAuthnTitle', lang)}</h4><input type="text" id="passkeyUser" placeholder="${PrivacyConvert.i18n.get('passkeyUserPlaceholder', lang)}" class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"><div class="flex gap-2"><button onclick="PrivacyConvert.ui.registerPasskey()" class="flex-1 py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">${PrivacyConvert.i18n.get('btnSavePasskey', lang)}</button><button onclick="PrivacyConvert.ui.authPasskey()" class="flex-1 py-2.5 bg-emerald-600 text-white font-bold text-xs rounded-xl">${PrivacyConvert.i18n.get('btnAuthPasskey', lang)}</button></div><textarea id="passkeyOutput" class="w-full h-24 bg-slate-900 text-emerald-400 text-xs p-3 rounded-xl font-mono" readonly placeholder="${PrivacyConvert.i18n.get('passkeyLogPlaceholder', lang)}"></textarea></div>`;
+                },
                 renderStegaUI() {
                     const lang = PrivacyConvert.state.lang;
                     const container = document.getElementById('interactiveWorkspaceContainer');
@@ -1073,7 +1091,7 @@
                     const container = document.getElementById('interactiveWorkspaceContainer'); 
                     if(!container) return; 
                     container.classList.remove('hidden');
-                    container.innerHTML = `<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-4"><h4 class="font-bold text-xs uppercase text-slate-500">${PrivacyConvert.i18n.get('p2pTitle', lang)}</h4><div class="flex gap-2"><button onclick="PrivacyConvert.engine.startP2POffer()" class="flex-1 py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">${PrivacyConvert.i18n.get('btnP2POffer', lang)}</button><button onclick="PrivacyConvert.engine.startP2PAnswer()" class="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl">${PrivacyConvert.i18n.get('btnP2PAnswer', lang)}</button></div><textarea id="p2pSignalBox" placeholder="${PrivacyConvert.i18n.get('p2pSignalBoxPlaceholder', lang)}" class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs font-mono dark:text-white"></textarea><div id="chatSection" class="hidden space-y-2"><textarea id="chatLogArea" class="w-full h-32 bg-slate-900 text-emerald-400 text-xs p-3 rounded-xl border-none focus:outline-none resize-none font-mono" readonly placeholder="..."></textarea><div class="flex gap-2"><input type="text" id="chatMsgInput" placeholder="${PrivacyConvert.i18n.get('chatMsgPlaceholder', lang)}" class="flex-1 p-2 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"><button onclick="p2pEngine.send(document.getElementById('chatMsgInput').value)" class="py-2 px-4 dynamic-bg text-white font-bold text-xs rounded-xl">${PrivacyConvert.i18n.get('btnChatSend', lang)}</button></div></div></div>`;
+                    container.innerHTML = `<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-4"><h4 class="font-bold text-xs uppercase text-slate-500">${PrivacyConvert.i18n.get('p2pTitle', lang)}</h4><div class="flex gap-2"><button onclick="p2pEngine.createOffer()" class="flex-1 py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">${PrivacyConvert.i18n.get('btnP2POffer', lang)}</button><button onclick="p2pEngine.createAnswer()" class="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl">${PrivacyConvert.i18n.get('btnP2PAnswer', lang)}</button></div><textarea id="p2pSignalBox" placeholder="${PrivacyConvert.i18n.get('p2pSignalBoxPlaceholder', lang)}" class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs font-mono dark:text-white"></textarea><div id="chatSection" class="hidden space-y-2"><textarea id="chatLogArea" class="w-full h-32 bg-slate-900 text-emerald-400 text-xs p-3 rounded-xl border-none focus:outline-none resize-none font-mono" readonly placeholder="..."></textarea><div class="flex gap-2"><input type="text" id="chatMsgInput" placeholder="${PrivacyConvert.i18n.get('chatMsgPlaceholder', lang)}" class="flex-1 p-2 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"><button onclick="p2pEngine.send(document.getElementById('chatMsgInput').value)" class="py-2 px-4 dynamic-bg text-white font-bold text-xs rounded-xl">${PrivacyConvert.i18n.get('btnChatSend', lang)}</button></div></div></div>`;
                 },
                 handleFiles(files) {
                     let validFiles = Array.from(files).map(f => ({ file: f, status: 'Ready' }));
@@ -1323,7 +1341,7 @@
                 },
                 async registerPasskey() {
                     const out = document.getElementById('passkeyOutput');
-                    out.value = `[WEBAUTHN REGISTRATION SUCCESS]`;
+                    if(out) out.value = `[WEBAUTHN REGISTRATION SUCCESS]`;
                     PrivacyConvert.ui.showToast('Passkey registered!');
                 },
                 async authPasskey() {
