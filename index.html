@@ -2463,38 +2463,123 @@ const SovereignCrypto = {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
     }
+};// --- MODÜL 3: GÜVENLİ ANAHTAR KASASI (IndexedDB Sandbox) ---
+const SovereignVault = {
+    async initDB() {
+        return new Promise((resolve, reject) => {
+            const request = indexedDB.open("SovereignKeyVault", 1);
+            request.onupgradeneeded = (e) => {
+                const db = e.target.result;
+                if (!db.objectStoreNames.contains("keys")) {
+                    db.createObjectStore("keys", { keyPath: "fileName" });
+                }
+            };
+            request.onsuccess = (e) => resolve(e.target.result);
+            request.onerror = (e) => reject(e.target.error);
+        });
+    },
+    async saveKey(fileName, key, iv) {
+        const db = await this.initDB();
+        return new Promise((resolve, reject) => {
+            const tx = db.transaction("keys", "readwrite");
+            const store = tx.objectStore("keys");
+            const request = store.put({ fileName, key, iv });
+            request.onsuccess = () => resolve();
+            request.onerror = () => reject();
+        });
+    },
+    async getKey(fileName) {
+        const db = await this.initDB();
+        return new Promise((resolve, reject) => {
+            const tx = db.transaction("keys", "readonly");
+            const store = tx.objectStore("keys");
+            const request = store.get(fileName);
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject();
+        });
+    }
 };
 
-// --- MODÜL 2: MEVCUT UI (ARAYÜZ) İLE BAĞLANTI ---
-// Sizin yazdığınız PrivacyConvert.ui.handleFiles fonksiyonunu bu motora bağlıyoruz:
+// --- MODÜL 3.1: ŞİFRE ÇÖZME (DECRYPT) FONKSİYONLARI ---
+SovereignCrypto.decryptFile = async function(file) {
+    try {
+        console.log(`🔓 Şifre çözme aranıyor: ${file.name}`);
+        const vaultData = await SovereignVault.getKey(file.name);
+        
+        if (!vaultData) {
+            alert("HATA: Bu dosyanın şifre çözme anahtarı bu cihazın kasasında bulunamadı! (Güvenlik İhlali Engellendi)");
+            return null;
+        }
+
+        const arrayBuffer = await file.arrayBuffer();
+        const decryptedData = await window.crypto.subtle.decrypt(
+            { name: "AES-GCM", iv: vaultData.iv },
+            vaultData.key,
+            arrayBuffer
+        );
+
+        console.log("✅ Dosya başarıyla çözüldü!");
+        let originalName = file.name.replace("Sifreli_", "").replace(".enc", "");
+        return { decryptedData, originalName };
+        
+    } catch (error) {
+        console.error("Şifre çözme başarısız:", error);
+        alert("Şifre çözme başarısız! Dosya bozuk veya oynanmış olabilir.");
+    }
+};
+
+SovereignCrypto.downloadDecryptedFile = function(decryptedPackage) {
+    const blob = new Blob([decryptedPackage.decryptedData]);
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `Cozulmus_${decryptedPackage.originalName}`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+};
+
+
+// --- MODÜL 4: AKILLI UI ENTEGRASYONU (Hem Şifreler Hem Çözer) ---
 PrivacyConvert.ui = {
-    ...PrivacyConvert.ui, // Mevcut diğer UI fonksiyonlarınızı korur
+    ...PrivacyConvert.ui, 
     
     async handleFiles(files) {
         if (!files || files.length === 0) return;
         
-        const file = files[0]; // Şimdilik ilk dosyayı alalım
+        const file = files[0]; 
         
-        // Arayüzde kullanıcıya bilgi verilebilir (Toast veya Modal eklenebilir)
-        console.log("Dosya yakalandı: ", file.name);
-        
-        // Şifreleme motorunu çalıştır
-        const encryptedPackage = await SovereignCrypto.encryptFile(file);
-        
-        if (encryptedPackage) {
-            // Şifrelenmiş dosyayı indir
-            SovereignCrypto.downloadEncryptedFile(encryptedPackage);
-            alert(`${file.name} başarıyla şifrelendi ve cihazınıza kaydedildi! \n(Ağ sekmesini kontrol edin: 0 Bayt aktarım)`);
+        // AKILLI MOTOR: Dosya .enc uzantılı mı?
+        if (file.name.endsWith('.enc')) {
+            // ŞİFRE ÇÖZME İŞLEMİ
+            const decryptedPackage = await SovereignCrypto.decryptFile(file);
+            if (decryptedPackage) {
+                SovereignCrypto.downloadDecryptedFile(decryptedPackage);
+                alert(`🔓 "${file.name}" dosyasının şifresi bu cihazın yerel kasası kullanılarak çözüldü! (0 Bayt Aktarım)`);
+            }
+        } else {
+            // ŞİFRELEME İŞLEMİ
+            const encryptedPackage = await SovereignCrypto.encryptFile(file);
+            if (encryptedPackage) {
+                const safeName = `Sifreli_${encryptedPackage.originalName}.enc`;
+                await SovereignVault.saveKey(safeName, encryptedPackage.key, encryptedPackage.iv);
+                
+                SovereignCrypto.downloadEncryptedFile(encryptedPackage);
+                alert(`🔒 "${file.name}" şifrelendi. \n🔑 Şifre çözme anahtarı güvenli tarayıcı kasanıza kaydedildi!`);
+            }
         }
     }
 };
-        window.PrivacyConvert = PrivacyConvert;
 
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => PrivacyConvert.init());
-        } else {
-            PrivacyConvert.init();
-        }
-    </script>
+// --- SİSTEMİ BAŞLATMA ---
+window.PrivacyConvert = PrivacyConvert;
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => PrivacyConvert.init());
+} else {
+    PrivacyConvert.init();
+}
+</script>
 </body>
 </html>
