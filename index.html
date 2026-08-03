@@ -2403,67 +2403,32 @@
                 window.addEventListener('beforeunload', () => this.cleanupObjectUrls());
             }
         };
-// --- MODÜL 1: ÇEVRİMDIŞI KRİPTOGRAFİ MOTORU (Web Crypto API) ---
+// --- 1. ÇEVRİMDIŞI KRİPTOGRAFİ VE KASA MOTORU ---
 const SovereignCrypto = {
-    // İnternetsiz AES-256-GCM Anahtarı Üretir
     async generateKey() {
         return await window.crypto.subtle.generateKey(
             { name: "AES-GCM", length: 256 },
-            true, // Anahtar dışarı aktarılabilir (ileride şifre çözmek için gerekecek)
+            true,
             ["encrypt", "decrypt"]
         );
     },
-
-    // Dosyayı Tarayıcı Belleğinde (0 Bayt Aktarım ile) Şifreler
     async encryptFile(file) {
         try {
-            console.log(`🔒 Şifreleme başlıyor: ${file.name} (Veri dışarı çıkmıyor...)`);
-            
-            // 1. Dosyayı güvenli belleğe (ArrayBuffer) al
             const arrayBuffer = await file.arrayBuffer();
-            
-            // 2. Rastgele bir Initialization Vector (IV) oluştur (Güvenlik için şart)
             const iv = window.crypto.getRandomValues(new Uint8Array(12));
-            
-            // 3. Şifreleme anahtarını üret
             const key = await this.generateKey();
-            
-            // 4. Dosyayı Donanımsal AES-256 ile şifrele
             const encryptedData = await window.crypto.subtle.encrypt(
                 { name: "AES-GCM", iv: iv },
                 key,
                 arrayBuffer
             );
-
-            console.log("✅ Dosya başarıyla şifrelendi!");
             return { encryptedData, iv, key, originalName: file.name };
-            
         } catch (error) {
             console.error("Şifreleme hatası:", error);
-            alert("Şifreleme sırasında bir hata oluştu.");
         }
-    },
-
-    // Şifrelenen dosyayı güvenli bir şekilde cihaza indirir (Blob URL)
-    downloadEncryptedFile(encryptedPackage) {
-        // Şifrelenmiş veriyi bir Blob nesnesine dönüştür
-        const blob = new Blob([encryptedPackage.encryptedData], { type: "application/octet-stream" });
-        
-        // Tarayıcı içinde sanal bir URL oluştur (İnternet kullanmaz)
-        const url = URL.createObjectURL(blob);
-        
-        // Gizli bir indirme butonu oluştur ve tıkla
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `Sifreli_${encryptedPackage.originalName}.enc`;
-        document.body.appendChild(a);
-        a.click();
-        
-        // Temizlik işlemleri (RAM'i rahatlatmak için)
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
     }
-};// --- MODÜL 3: GÜVENLİ ANAHTAR KASASI (IndexedDB Sandbox) ---
+};
+
 const SovereignVault = {
     async initDB() {
         return new Promise((resolve, reject) => {
@@ -2499,114 +2464,172 @@ const SovereignVault = {
         });
     }
 };
-// --- MODÜL 3.1: ŞİFRE ÇÖZME VE DOĞRU FORMATTA İNDİRME ---
+
 SovereignCrypto.decryptFile = async function(file) {
     try {
-        console.log(`🔓 Sisteme giren dosya: ${file.name}`);
-        
-        // AKILLI MOTOR: Dosya adındaki " (1)", " (2)" gibi tarayıcı eklerini (Regex ile) otomatik temizle
         let cleanFileName = file.name.replace(/\s\(\d+\)/g, '');
-        
-        console.log(`🔍 Kasada aranan temizlenmiş isim: ${cleanFileName}`);
-        
-        // Temizlenmiş isimle kasayı açmayı dene
         const vaultData = await SovereignVault.getKey(cleanFileName);
-        
         if (!vaultData) {
-            alert(`🚨 ANAHTAR BULUNAMADI!\n\nKasada aradığımız isim: "${cleanFileName}"\nSizin yüklediğiniz dosya: "${file.name}"\n\nLütfen F12 (Application -> IndexedDB) menüsündeki kayıtlı dosya adıyla yüklediğiniz dosyanın adının aynı olduğundan emin olun.`);
+            alert(`🚨 ANAHTAR BULUNAMADI: "${cleanFileName}" için bu cihazın kasasında anahtar yok.`);
             return null;
         }
-
-        console.log("🔑 Anahtar kasada bulundu! Donanımsal çözücü başlatılıyor...");
         const arrayBuffer = await file.arrayBuffer();
-        
-        // Kendi cihazındaki anahtarı kullanarak şifreyi çöz
         const decryptedData = await window.crypto.subtle.decrypt(
             { name: "AES-GCM", iv: vaultData.iv },
             vaultData.key,
             arrayBuffer
         );
-
-        console.log("✅ Dosya donanımsal olarak başarıyla çözüldü!");
-        
-        // İsmi orijinal haline geri döndür (Sifreli_ ve .enc kısımlarını at)
         let originalName = cleanFileName.replace("Sifreli_", "").replace(".enc", "");
         return { decryptedData, originalName };
-        
     } catch (error) {
-        console.error("Şifre çözme motoru çöktü:", error);
-        alert(`🚨 ŞİFRE ÇÖZME İŞLEMİ ÇÖKTÜ!\n\nDosya içeriği bozulmuş olabilir.\nHata Detayı: ${error.message}`);
+        console.error("Şifre çözme hatası:", error);
     }
 };
 
-SovereignCrypto.downloadDecryptedFile = function(decryptedPackage) {
-    // 1. Dosya uzantısını bul ve MIME Type belirle (Formatın bozulmasını önler)
-    const extension = decryptedPackage.originalName.split('.').pop().toLowerCase();
-    
+SovereignCrypto.downloadFile = function(packageData, isEncrypted) {
+    const extension = packageData.originalName.split('.').pop().toLowerCase();
     const mimeTypes = {
-        'pdf': 'application/pdf',
-        'png': 'image/png',
-        'jpg': 'image/jpeg',
-        'jpeg': 'image/jpeg',
-        'txt': 'text/plain',
-        'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'csv': 'text/csv'
+        'pdf': 'application/pdf', 'png': 'image/png', 'jpg': 'image/jpeg',
+        'jpeg': 'image/jpeg', 'txt': 'text/plain'
     };
-    
     const fileFormat = mimeTypes[extension] || 'application/octet-stream';
-
-    // 2. Blob nesnesine doğru kimlik kartını (MIME Type) işleyerek veriyi yükle
-    const blob = new Blob([decryptedPackage.decryptedData], { type: fileFormat });
+    const blob = new Blob([packageData.encryptedData || packageData.decryptedData], { type: isEncrypted ? 'application/octet-stream' : fileFormat });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `Cozulmus_${decryptedPackage.originalName}`;
-    
+    a.download = isEncrypted ? `Sifreli_${packageData.originalName}.enc` : `Cozulmus_${packageData.originalName}`;
     document.body.appendChild(a);
     a.click();
-    
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 };
 
-// --- MODÜL 4: AKILLI UI ENTEGRASYONU (Teşhis Modu) ---
-PrivacyConvert.ui = {
-    ...PrivacyConvert.ui, 
+// --- 2. ORİJİNAL ARAYÜZ (UI) FONKSİYONUNU GÜVENLİ GENİŞLETME ---
+if (typeof PrivacyConvert !== 'undefined' && PrivacyConvert.ui) {
+    const originalHandleFiles = PrivacyConvert.ui.handleFiles;
     
-    async handleFiles(files) {
+    PrivacyConvert.ui.handleFiles = async function(files) {
         if (!files || files.length === 0) return;
+        const file = files[0];
         
-        const file = files[0]; 
-        console.log("Sisteme giren dosya tam adı:", file.name);
-        
-        // AKILLI MOTOR: Dosya .enc uzantılı mı?
+        // Eğer dosya .enc uzantılı ise şifre çöz, değilse şifrele
         if (file.name.endsWith('.enc')) {
-            alert(`🕵️ Sistem "${file.name}" dosyasını ŞİFRELİ (enc) olarak algıladı. Çözme işlemi başlıyor...`);
-            const decryptedPackage = await SovereignCrypto.decryptFile(file);
-            
-            if (decryptedPackage) {
-                SovereignCrypto.downloadDecryptedFile(decryptedPackage);
-                alert(`🔓 "${file.name}" dosyasının şifresi bu cihazın yerel kasası kullanılarak çözüldü!`);
+            const decrypted = await SovereignCrypto.decryptFile(file);
+            if (decrypted) {
+                SovereignCrypto.downloadFile(decrypted, false);
+                alert(`🔓 "${file.name}" şifresi başarıyla çözüldü!`);
             }
         } else {
-            // ŞİFRELEME İŞLEMİ
-            const encryptedPackage = await SovereignCrypto.encryptFile(file);
-            if (encryptedPackage) {
-                const safeName = `Sifreli_${encryptedPackage.originalName}.enc`;
-                
-                try {
-                    await SovereignVault.saveKey(safeName, encryptedPackage.key, encryptedPackage.iv);
-                    SovereignCrypto.downloadEncryptedFile(encryptedPackage);
-                    alert(`🔒 "${file.name}" şifrelendi. \n🔑 Şifre çözme anahtarı "${safeName}" adıyla güvenli kasanıza kaydedildi!`);
-                } catch (dbError) {
-                    console.error("Veritabanı kayıt hatası:", dbError);
-                    alert("⚠️ Şifreleme yapıldı ancak anahtar veritabanına KAYDEDİLEMEDİ! Tarayıcınız yerel depolamaya izin vermiyor olabilir.");
+            const encrypted = await SovereignCrypto.encryptFile(file);
+            if (encrypted) {
+                const safeName = `Sifreli_${encrypted.originalName}.enc`;
+                await SovereignVault.saveKey(safeName, encrypted.key, encrypted.iv);
+                SovereignCrypto.downloadFile(encrypted, true);
+                alert(`🔒 "${file.name}" şifrelendi ve anahtar yerel kasaya kaydedildi.`);
+            }
+        }
+        
+        // Varsa orijinal UI fonksiyonunu da tetikle
+        if (typeof originalHandleFiles === 'function') {
+            try { originalHandleFiles.apply(this, arguments); } catch(e){}
+        }
+    };
+}
+
+// --- 3. LIVE PII SHIELD VE LİSANS PANELLERİ (Akıllı Gizleme) ---
+const SovereignPIIShield = {
+    patterns: {
+        email: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g,
+        creditCard: /\b(?:\d{4}[ -]?){3}\d{4}\b/g,
+        ssnOrTC: /\b[1-9][0-9]{10}\b/g
+    },
+    initShield() {
+        document.addEventListener('input', (e) => {
+            const target = e.target;
+            if ((target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') && target.type !== 'password') {
+                let val = target.value;
+                let changed = false;
+                for (let key in this.patterns) {
+                    if (val.match(this.patterns[key])) {
+                        val = val.replace(this.patterns[key], `[GİZLİ ${key.toUpperCase()}]`);
+                        changed = true;
+                    }
                 }
+                if (changed) target.value = val;
+            }
+        });
+
+        if (!document.getElementById('piiTestContainer')) {
+            const container = document.createElement('div');
+            container.id = 'piiTestContainer';
+            container.style.cssText = "margin: 20px auto; max-width: 600px; padding: 15px; background: rgba(79, 70, 229, 0.05); border: 2px dashed #4f46e5; border-radius: 12px; font-family: sans-serif;";
+            container.innerHTML = `
+                <h4 style="margin: 0 0 8px 0; color: #4f46e5; font-weight: bold; font-size: 14px;">🛡️ Live PII Shield Canlı Test Alanı</h4>
+                <textarea placeholder="Buraya test metni (E-posta, TC vb.) yazın..." style="width: 100%; height: 60px; padding: 8px; border: 1px solid #ccc; border-radius: 6px;"></textarea>
+            `;
+            const dropZone = document.getElementById('dropZone');
+            if (dropZone && dropZone.parentNode) {
+                dropZone.parentNode.insertBefore(container, dropZone.nextSibling);
+            } else {
+                document.body.appendChild(container);
             }
         }
     }
 };
+
+const SovereignLicense = {
+    initUI() {
+        if (!document.getElementById('licensePanel')) {
+            const panel = document.createElement('div');
+            panel.id = 'licensePanel';
+            panel.style.cssText = "margin: 15px auto; max-width: 600px; padding: 15px; background: rgba(16, 185, 129, 0.05); border: 2px dashed #10b981; border-radius: 12px; font-family: sans-serif;";
+            panel.innerHTML = `
+                <h4 style="margin: 0 0 8px 0; color: #10b981; font-weight: bold; font-size: 14px;">💎 Çevrimdışı Pro Lisans Aktivasyonu</h4>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="licenseInput" placeholder="Anahtar: SOV-PRO-2026" style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 6px;" />
+                    <button id="activateBtn" style="padding: 8px 16px; background: #10b981; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">Doğrula</button>
+                </div>
+            `;
+            const piiContainer = document.getElementById('piiTestContainer');
+            if (piiContainer && piiContainer.parentNode) {
+                piiContainer.parentNode.insertBefore(panel, piiContainer.nextSibling);
+            } else {
+                document.body.appendChild(panel);
+            }
+            document.getElementById('activateBtn').addEventListener('click', () => {
+                const val = document.getElementById('licenseInput').value;
+                if(val.startsWith('SOV-')) {
+                    localStorage.setItem("sovereign_pro_active", "true");
+                    alert("⭐ Pro Lisans Çevrimdışı Doğrulandı!");
+                } else {
+                    alert("Geçersiz anahtar.");
+                }
+            });
+        }
+    }
+};
+
+// --- 4. GÖRÜNÜRLÜK GÖZLEMCİSİ (Diğer sekmelerde panelleri gizler) ---
+setInterval(() => {
+    const dropZone = document.getElementById('dropZone');
+    const pii = document.getElementById('piiTestContainer');
+    const lic = document.getElementById('licensePanel');
+    if (dropZone && pii && lic) {
+        const isVisible = dropZone.offsetParent !== null && window.getComputedStyle(dropZone).display !== 'none';
+        const displayVal = isVisible ? 'block' : 'none';
+        pii.style.display = displayVal;
+        lic.style.display = displayVal;
+    }
+}, 250);
+
+// Başlatıcı
+document.addEventListener('DOMContentLoaded', () => {
+    SovereignPIIShield.initShield();
+    SovereignLicense.initUI();
+});
+</script>
+</body>
+</html>
 // --- GÜNCELLENMİŞ MODÜL 5: Live PII Shield & Akıllı Görünürlük Kontrolü ---
 const SovereignPIIShield = {
     patterns: {
