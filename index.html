@@ -1525,20 +1525,38 @@ const PrivacyConvert = {
       }
     },
     executePane2() {
-      const p1 = document.getElementById('mainInputField')?.value || '';
-      const p2 = document.getElementById('pane2Input')?.value || '';
-      const out = document.getElementById('genericTextArea');
-      const box = document.getElementById('genericTextBox');
-      if(box) box.classList.remove('hidden');
-      out.value = `[DIFF ENGINE COMPARISON]\n-- Primary Length: ${p1.length} chars\n-- Secondary Length: ${p2.length} chars\n-- Similarity Status: ${p1 === p2 ? 'Identical Match' : 'Divergent Content Detected'}`;
-      PrivacyConvert.ui.showToast('Comparison complete!');
-    },
-    runSampleTrial() {
-      const inputField = document.getElementById('mainInputField');
-      if(inputField) {
-        inputField.value = "Confidential Report: John Doe (john.doe@enterprise.com) phone +905551234567, IP 192.168.1.55 balance $45,000.";
-        PrivacyConvert.ui.showToast('Sample data loaded!');
-      }
+  const p1 = document.getElementById('mainInputField')?.value || '';
+  const p2 = document.getElementById('pane2Input')?.value || '';
+  const out = document.getElementById('genericTextArea');
+  const box = document.getElementById('genericTextBox');
+  if(box) box.classList.remove('hidden');
+
+  const lines1 = p1.split('\n');
+  const lines2 = p2.split('\n');
+  
+  let report = `[GERÇEK SÖZLEŞME KARŞILAŞTIRMA (DIFF) RAPORU]\n`;
+  report += `- Birinci Metin Satır Sayısı: ${lines1.length}\n`;
+  report += `- İkinci Metin Satır Sayısı: ${lines2.length}\n\n`;
+  report += `--- SATIR BAZLI ANALİZ ---\n`;
+
+  const maxLines = Math.max(lines1.length, lines2.length);
+  let diffCount = 0;
+
+  for (let i = 0; i < maxLines; i++) {
+    const l1 = lines1[i] !== undefined ? lines1[i] : '(Satır yok)';
+    const l2 = lines2[i] !== undefined ? lines2[i] : '(Satır yok)';
+    if (l1 === l2) {
+      report += `[AYNI] Satır ${i+1}: ${l1}\n`;
+    } else {
+      diffCount++;
+      report += `[FARK/DEĞİŞİKLİK] Satır ${i+1}:\n  (-) Eski: ${l1}\n  (+) Yeni: ${l2}\n`;
+    }
+  }
+
+  report += `\nToplam Değişen/Uyumsuz Satır Sayısı: ${diffCount}`;
+  out.value = report;
+  PrivacyConvert.ui.showToast('Gelişmiş sözleşme fark analizi tamamlandı!');
+}
     },
     async opfsSave() {
       const name = document.getElementById('opfsFileName')?.value;
