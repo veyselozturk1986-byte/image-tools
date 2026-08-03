@@ -672,7 +672,7 @@
                 db: null,
                 splitScreenActive: false,
                 objectUrls: new Set(),
-                isPro: localStorage.getItem('privacyConvert_pro'] === 'true',
+                isPro: localStorage.getItem('privacyConvert_pro') === 'true',
                 ragDocs: []
             },
             registerObjectUrl(url) { this.state.objectUrls.add(url); return url; },
@@ -899,7 +899,7 @@
                     'pdf-to-png': { type: 'file', accept: 'application/pdf', titleKey: 'toolPdfPng', valueTitleKey: 'v_pdfpng_title', valueDescKey: 'v_pdfpng_desc' },
                     'pdf-merge': { type: 'file', accept: 'application/pdf', multiple: true, titleKey: 'toolPdfMerge', valueTitleKey: 'v_pdfmerge_title', valueDescKey: 'v_pdfmerge_desc' },
                     'visual-redact': { type: 'interactive-redact', accept: 'image/*', titleKey: 'toolVisual', valueTitleKey: 'v_visual_title', valueDescKey: 'v_visual_desc' },
-                    'meta-scrubber': { type: 'file', multiple: true, accept: 'image/*', titleKey: 'toolMetaScrubber', valueTitleKey: 'v_meta_title', valueDescKey: 'v_meta_desc' },
+                    'meta-scrubber': { type: 'file', multiple: true, accept: 'image/*', titleKey: 'toolMetaScrubber', valueTitleKey: 'v_meta_title', valueDescKey: 'v_meta_title' },
                     'ocr-tool': { type: 'ocr', accept: 'image/*', titleKey: 'toolOcr', valueTitleKey: 'v_ocr_title', valueDescKey: 'v_ocr_desc' },
                     'p2p-share': { type: 'interactive-p2p', titleKey: 'toolP2p', valueTitleKey: 'v_p2p_title', valueDescKey: 'v_p2p_desc' }
                 },
