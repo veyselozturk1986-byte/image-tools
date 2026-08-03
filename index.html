@@ -2403,7 +2403,91 @@
                 window.addEventListener('beforeunload', () => this.cleanupObjectUrls());
             }
         };
+// --- MODÜL 1: ÇEVRİMDIŞI KRİPTOGRAFİ MOTORU (Web Crypto API) ---
+const SovereignCrypto = {
+    // İnternetsiz AES-256-GCM Anahtarı Üretir
+    async generateKey() {
+        return await window.crypto.subtle.generateKey(
+            { name: "AES-GCM", length: 256 },
+            true, // Anahtar dışarı aktarılabilir (ileride şifre çözmek için gerekecek)
+            ["encrypt", "decrypt"]
+        );
+    },
 
+    // Dosyayı Tarayıcı Belleğinde (0 Bayt Aktarım ile) Şifreler
+    async encryptFile(file) {
+        try {
+            console.log(`🔒 Şifreleme başlıyor: ${file.name} (Veri dışarı çıkmıyor...)`);
+            
+            // 1. Dosyayı güvenli belleğe (ArrayBuffer) al
+            const arrayBuffer = await file.arrayBuffer();
+            
+            // 2. Rastgele bir Initialization Vector (IV) oluştur (Güvenlik için şart)
+            const iv = window.crypto.getRandomValues(new Uint8Array(12));
+            
+            // 3. Şifreleme anahtarını üret
+            const key = await this.generateKey();
+            
+            // 4. Dosyayı Donanımsal AES-256 ile şifrele
+            const encryptedData = await window.crypto.subtle.encrypt(
+                { name: "AES-GCM", iv: iv },
+                key,
+                arrayBuffer
+            );
+
+            console.log("✅ Dosya başarıyla şifrelendi!");
+            return { encryptedData, iv, key, originalName: file.name };
+            
+        } catch (error) {
+            console.error("Şifreleme hatası:", error);
+            alert("Şifreleme sırasında bir hata oluştu.");
+        }
+    },
+
+    // Şifrelenen dosyayı güvenli bir şekilde cihaza indirir (Blob URL)
+    downloadEncryptedFile(encryptedPackage) {
+        // Şifrelenmiş veriyi bir Blob nesnesine dönüştür
+        const blob = new Blob([encryptedPackage.encryptedData], { type: "application/octet-stream" });
+        
+        // Tarayıcı içinde sanal bir URL oluştur (İnternet kullanmaz)
+        const url = URL.createObjectURL(blob);
+        
+        // Gizli bir indirme butonu oluştur ve tıkla
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `Sifreli_${encryptedPackage.originalName}.enc`;
+        document.body.appendChild(a);
+        a.click();
+        
+        // Temizlik işlemleri (RAM'i rahatlatmak için)
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+};
+
+// --- MODÜL 2: MEVCUT UI (ARAYÜZ) İLE BAĞLANTI ---
+// Sizin yazdığınız PrivacyConvert.ui.handleFiles fonksiyonunu bu motora bağlıyoruz:
+PrivacyConvert.ui = {
+    ...PrivacyConvert.ui, // Mevcut diğer UI fonksiyonlarınızı korur
+    
+    async handleFiles(files) {
+        if (!files || files.length === 0) return;
+        
+        const file = files[0]; // Şimdilik ilk dosyayı alalım
+        
+        // Arayüzde kullanıcıya bilgi verilebilir (Toast veya Modal eklenebilir)
+        console.log("Dosya yakalandı: ", file.name);
+        
+        // Şifreleme motorunu çalıştır
+        const encryptedPackage = await SovereignCrypto.encryptFile(file);
+        
+        if (encryptedPackage) {
+            // Şifrelenmiş dosyayı indir
+            SovereignCrypto.downloadEncryptedFile(encryptedPackage);
+            alert(`${file.name} başarıyla şifrelendi ve cihazınıza kaydedildi! \n(Ağ sekmesini kontrol edin: 0 Bayt aktarım)`);
+        }
+    }
+};
         window.PrivacyConvert = PrivacyConvert;
 
         if (document.readyState === 'loading') {
