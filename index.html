@@ -2505,65 +2505,59 @@ const SovereignVault = {
     }
 };
 
-// --- 2. SIFIR ÇAKIŞMA: ORİJİNAL DOSYA YÜKLEME SİSTEMİNE DOKUNMADAN BAĞLANTI ---
+// --- 2. KUSURSUZ GÜVENLİ KANCA (Orijinal site akışını ve butonları tamamen korur) ---
 document.addEventListener('DOMContentLoaded', () => {
-    // Sitenin orijinal fonksiyonları yüklendikten sonra güvenli dinleyici ekliyoruz
-    const initTimer = setInterval(() => {
-        const dropZone = document.getElementById('dropZone');
-        const fileInput = document.getElementById('fileInput');
-
-        if (dropZone && fileInput) {
-            clearInterval(initTimer);
+    const checkReady = setInterval(() => {
+        if (window.PrivacyConvert && window.PrivacyConvert.ui && typeof window.PrivacyConvert.ui.handleFiles === 'function') {
+            clearInterval(checkReady);
             
-            // Kullanıcı dosya bıraktığında veya seçtiğinde çalışan güvenli aracı dinleyici
-            const handleSovereignFiles = async (files) => {
+            const originalHandleFiles = window.PrivacyConvert.ui.handleFiles;
+            
+            // Sitenin orijinal handleFiles metodunu sarmalıyoruz (wrapper)
+            window.PrivacyConvert.ui.handleFiles = async function(files) {
                 if (!files || files.length === 0) return;
                 const file = files[0];
                 
-                // Sadece ana şifreleme ekranındayken veya dosya .enc uzantılıysa şifreleme/çözme yap
-                const activeTool = window.PrivacyConvert && window.PrivacyConvert.state && window.PrivacyConvert.state.tool;
-                
-                if (file.name.endsWith('.enc') || !activeTool || activeTool === 'encrypt' || activeTool === 'decrypt' || activeTool === 'home') {
+                // Eğer yüklenen dosya .enc uzantılıysa yerel kasadan şifresini çöz
+                if (file.name.endsWith('.enc')) {
                     try {
-                        if (file.name.endsWith('.enc')) {
-                            const decrypted = await SovereignCrypto.decryptFile(file);
-                            if (decrypted) {
-                                SovereignCrypto.downloadFile(decrypted, false);
-                                alert(`🔓 "${file.name}" şifresi başarıyla çözüldü!`);
-                                return;
-                            }
-                        } else {
-                            const encrypted = await SovereignCrypto.encryptFile(file);
-                            if (encrypted) {
-                                const safeName = `Sifreli_${encrypted.originalName}.enc`;
-                                await SovereignVault.saveKey(safeName, encrypted.key, encrypted.iv);
-                                SovereignCrypto.downloadFile(encrypted, true);
-                                alert(`🔒 "${file.name}" şifrelendi ve anahtar yerel kasaya kaydedildi.`);
-                                return;
-                            }
+                        const decrypted = await SovereignCrypto.decryptFile(file);
+                        if (decrypted) {
+                            SovereignCrypto.downloadFile(decrypted, false);
+                            alert(`🔓 "${file.name}" şifresi başarıyla çözüldü!`);
+                            return;
                         }
                     } catch (e) {
-                        console.error("Özel işlem hatası:", e);
+                        console.error("Şifre çözme hatası:", e);
+                    }
+                } 
+                
+                // Eğer ana şifreleme ekranındaysa ve normal dosyaysa şifreleme yap
+                const activeTool = window.PrivacyConvert.state && window.PrivacyConvert.state.tool;
+                if (!activeTool || activeTool === 'encrypt' || activeTool === 'home') {
+                    // İsteğe bağlı: Normal dosyaları şifrelemek yerine orijinal araca da bırakabilirsiniz. 
+                    // Burada güvenli şifreleme motorumuzu çalıştırıyoruz:
+                    try {
+                        const encrypted = await SovereignCrypto.encryptFile(file);
+                        if (encrypted) {
+                            const safeName = `Sifreli_${encrypted.originalName}.enc`;
+                            await SovereignVault.saveKey(safeName, encrypted.key, encrypted.iv);
+                            SovereignCrypto.downloadFile(encrypted, true);
+                            alert(`🔒 "${file.name}" şifrelendi ve anahtar yerel kasaya kaydedildi.`);
+                            return;
+                        }
+                    } catch (e) {
+                        console.error("Şifreleme hatası:", e);
                     }
                 }
+                
+                // Diğer tüm araçlar (PDF, OCR vb.) için orijinal site fonksiyonunu eksiksiz çalıştır
+                return originalHandleFiles.apply(this, arguments);
             };
-
-            // Orijinal olayları ezmeden, ek bir yakalayıcı (interceptor) ekliyoruz
-            dropZone.addEventListener('drop', (e) => {
-                if (e.dataTransfer && e.dataTransfer.files.length > 0) {
-                    handleSovereignFiles(e.dataTransfer.files);
-                }
-            });
-
-            fileInput.addEventListener('change', (e) => {
-                if (e.target.files && e.target.files.length > 0) {
-                    handleSovereignFiles(e.target.files);
-                }
-            });
-
-            console.log("🛡️ Sovereign Güvenli Dinleyicileri Başarıyla Eklendi.");
+            
+            console.log("🛡️ PrivacyConvert Orijinal Altyapısı Güvenle Genişletildi.");
         }
-    }, 200);
+    }, 50);
 });
 
 // --- 3. LIVE PII SHIELD VE LİSANS PANELLERİ ---
@@ -2646,7 +2640,7 @@ const SovereignLicense = {
     }
 };
 
-// --- 4. GÖRÜNÜRLÜK GÖZLEMCİSİ (Diğer sekmelerde test panellerini gizler) ---
+// --- 4. GÖRÜNÜRLÜK GÖZLEMCİSİ (Diğer sekmelerde test panellerini otomatik gizler) ---
 setInterval(() => {
     const dropZone = document.getElementById('dropZone');
     const pii = document.getElementById('piiTestContainer');
