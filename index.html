@@ -2980,18 +2980,25 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    // Dropzone ve File Input Dinleyicilerini Yeniden Bağlama
-    document.addEventListener('DOMContentLoaded', () => {
+    // --- PrivacyConvert Dinamik Dosya Yükleme Yöneticisi (Air-Gapped & SPA Uyumlu) ---
+(function initDynamicFileUploader() {
+    // Aynı elementlere birden fazla listener eklenmesini önlemek için bellek dostu WeakSet kullanıyoruz
+    const initializedElements = new WeakSet();
+
+    function attachEventListeners() {
         const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('fileInput');
 
-        if (dropZone && fileInput) {
-            // Sürükle-bırak olayları engelleme ve tetikleme
+        // DropZone varsa ve daha önce listener eklenmediyse
+        if (dropZone && !initializedElements.has(dropZone)) {
+            
+            // Sürükleme (Drag) görsel efektleri
             ['dragenter', 'dragover'].forEach(eventName => {
                 dropZone.addEventListener(eventName, (e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    dropZone.classList.add('drag-over');
+                    dropZone.classList.add('drag-over'); 
+                    // Tailwind kullanıyorsanız alternatif olarak: dropZone.classList.add('bg-gray-100', 'border-blue-500');
                 }, false);
             });
 
@@ -3003,27 +3010,77 @@ document.addEventListener('DOMContentLoaded', () => {
                 }, false);
             });
 
+            // Dosya Bırakma (Drop) İşlemi
             dropZone.addEventListener('drop', (e) => {
                 const dt = e.dataTransfer;
                 const files = dt.files;
                 if (files && files.length > 0) {
-                    fileInput.files = files;
-                    if (window.PrivacyConvert && window.PrivacyConvert.ui && typeof window.PrivacyConvert.ui.handleFiles === 'function') {
-                        window.PrivacyConvert.ui.handleFiles(files);
-                    }
+                    if (fileInput) fileInput.files = files; // Geriye dönük senkronizasyon
+                    triggerFileHandling(files);
+                }
+            });
+            
+            // Tıklama ile dosya seçiciyi açma (Eğer doğrudan dropzone'a tıklanabiliyorsa)
+            dropZone.addEventListener('click', (e) => {
+                // Tıklanan yer zaten fileInput değilse tetikle
+                if (fileInput && e.target !== fileInput) {
+                    fileInput.click();
                 }
             });
 
+            initializedElements.add(dropZone);
+        }
+
+        // FileInput varsa ve daha önce listener eklenmediyse
+        if (fileInput && !initializedElements.has(fileInput)) {
             fileInput.addEventListener('change', (e) => {
                 const files = e.target.files;
                 if (files && files.length > 0) {
-                    if (window.PrivacyConvert && window.PrivacyConvert.ui && typeof window.PrivacyConvert.ui.handleFiles === 'function') {
-                        window.PrivacyConvert.ui.handleFiles(files);
-                    }
+                    triggerFileHandling(files);
                 }
             });
+
+            initializedElements.add(fileInput);
+        }
+    }
+
+    // Sistemin ana motoruna dosyaları güvenle ileten köprü fonksiyon
+    function triggerFileHandling(files) {
+        if (window.PrivacyConvert && window.PrivacyConvert.ui && typeof window.PrivacyConvert.ui.handleFiles === 'function') {
+            window.PrivacyConvert.ui.handleFiles(files);
+        } else {
+            console.error("[PrivacyConvert] Kritik Hata: window.PrivacyConvert.ui.handleFiles fonksiyonu bulunamadı.");
+        }
+    }
+
+    // 1. Sayfa ilk yüklendiğinde tetikle
+    document.addEventListener('DOMContentLoaded', attachEventListeners);
+    // 2. Eğer DOMContentLoaded çoktan geçtiyse hemen tetikle
+    attachEventListeners();
+
+    // 3. MutationObserver ile sayfa içi (Routing/Sekme) geçişlerini takip et
+    const observer = new MutationObserver((mutations) => {
+        let shouldReattach = false;
+        // Eğer DOM'a yeni bir element eklendiyse (yani sekme değiştiyse)
+        for (const mutation of mutations) {
+            if (mutation.addedNodes.length > 0) {
+                shouldReattach = true;
+                break;
+            }
+        }
+        // Dinleyicileri yeni gelen arayüze tekrar bağla
+        if (shouldReattach) {
+            attachEventListeners();
         }
     });
+
+    // Sayfanın body kısmındaki tüm değişiklikleri (DOM güncellemelerini) izle
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+    
+    console.log("[PrivacyConvert] Dinamik Dosya Yükleme Yöneticisi (Observer) aktif edildi.");
 })();
 </script>
 </body>
