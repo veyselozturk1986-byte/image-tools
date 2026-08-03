@@ -2499,49 +2499,78 @@ const SovereignVault = {
         });
     }
 };
-
-// --- MODÜL 3.1: ŞİFRE ÇÖZME (DECRYPT) FONKSİYONLARI ---
+// --- MODÜL 3.1: ŞİFRE ÇÖZME VE DOĞRU FORMATTA İNDİRME ---
 SovereignCrypto.decryptFile = async function(file) {
     try {
-        console.log(`🔓 Şifre çözme aranıyor: ${file.name}`);
-        const vaultData = await SovereignVault.getKey(file.name);
+        console.log(`🔓 Sisteme giren dosya: ${file.name}`);
+        
+        // AKILLI MOTOR: Dosya adındaki " (1)", " (2)" gibi tarayıcı eklerini (Regex ile) otomatik temizle
+        let cleanFileName = file.name.replace(/\s\(\d+\)/g, '');
+        
+        console.log(`🔍 Kasada aranan temizlenmiş isim: ${cleanFileName}`);
+        
+        // Temizlenmiş isimle kasayı açmayı dene
+        const vaultData = await SovereignVault.getKey(cleanFileName);
         
         if (!vaultData) {
-            alert("HATA: Bu dosyanın şifre çözme anahtarı bu cihazın kasasında bulunamadı! (Güvenlik İhlali Engellendi)");
+            alert(`🚨 ANAHTAR BULUNAMADI!\n\nKasada aradığımız isim: "${cleanFileName}"\nSizin yüklediğiniz dosya: "${file.name}"\n\nLütfen F12 (Application -> IndexedDB) menüsündeki kayıtlı dosya adıyla yüklediğiniz dosyanın adının aynı olduğundan emin olun.`);
             return null;
         }
 
+        console.log("🔑 Anahtar kasada bulundu! Donanımsal çözücü başlatılıyor...");
         const arrayBuffer = await file.arrayBuffer();
+        
+        // Kendi cihazındaki anahtarı kullanarak şifreyi çöz
         const decryptedData = await window.crypto.subtle.decrypt(
             { name: "AES-GCM", iv: vaultData.iv },
             vaultData.key,
             arrayBuffer
         );
 
-        console.log("✅ Dosya başarıyla çözüldü!");
-        let originalName = file.name.replace("Sifreli_", "").replace(".enc", "");
+        console.log("✅ Dosya donanımsal olarak başarıyla çözüldü!");
+        
+        // İsmi orijinal haline geri döndür (Sifreli_ ve .enc kısımlarını at)
+        let originalName = cleanFileName.replace("Sifreli_", "").replace(".enc", "");
         return { decryptedData, originalName };
         
     } catch (error) {
-        console.error("Şifre çözme başarısız:", error);
-        alert("Şifre çözme başarısız! Dosya bozuk veya oynanmış olabilir.");
+        console.error("Şifre çözme motoru çöktü:", error);
+        alert(`🚨 ŞİFRE ÇÖZME İŞLEMİ ÇÖKTÜ!\n\nDosya içeriği bozulmuş olabilir.\nHata Detayı: ${error.message}`);
     }
 };
 
 SovereignCrypto.downloadDecryptedFile = function(decryptedPackage) {
-    const blob = new Blob([decryptedPackage.decryptedData]);
+    // 1. Dosya uzantısını bul ve MIME Type belirle (Formatın bozulmasını önler)
+    const extension = decryptedPackage.originalName.split('.').pop().toLowerCase();
+    
+    const mimeTypes = {
+        'pdf': 'application/pdf',
+        'png': 'image/png',
+        'jpg': 'image/jpeg',
+        'jpeg': 'image/jpeg',
+        'txt': 'text/plain',
+        'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'csv': 'text/csv'
+    };
+    
+    const fileFormat = mimeTypes[extension] || 'application/octet-stream';
+
+    // 2. Blob nesnesine doğru kimlik kartını (MIME Type) işleyerek veriyi yükle
+    const blob = new Blob([decryptedPackage.decryptedData], { type: fileFormat });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
     a.download = `Cozulmus_${decryptedPackage.originalName}`;
+    
     document.body.appendChild(a);
     a.click();
+    
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 };
 
-
-// --- MODÜL 4: AKILLI UI ENTEGRASYONU (Hem Şifreler Hem Çözer) ---
+// --- MODÜL 4: AKILLI UI ENTEGRASYONU (Teşhis Modu) ---
 PrivacyConvert.ui = {
     ...PrivacyConvert.ui, 
     
@@ -2549,29 +2578,107 @@ PrivacyConvert.ui = {
         if (!files || files.length === 0) return;
         
         const file = files[0]; 
+        console.log("Sisteme giren dosya tam adı:", file.name);
         
         // AKILLI MOTOR: Dosya .enc uzantılı mı?
         if (file.name.endsWith('.enc')) {
-            // ŞİFRE ÇÖZME İŞLEMİ
+            alert(`🕵️ Sistem "${file.name}" dosyasını ŞİFRELİ (enc) olarak algıladı. Çözme işlemi başlıyor...`);
             const decryptedPackage = await SovereignCrypto.decryptFile(file);
+            
             if (decryptedPackage) {
                 SovereignCrypto.downloadDecryptedFile(decryptedPackage);
-                alert(`🔓 "${file.name}" dosyasının şifresi bu cihazın yerel kasası kullanılarak çözüldü! (0 Bayt Aktarım)`);
+                alert(`🔓 "${file.name}" dosyasının şifresi bu cihazın yerel kasası kullanılarak çözüldü!`);
             }
         } else {
             // ŞİFRELEME İŞLEMİ
             const encryptedPackage = await SovereignCrypto.encryptFile(file);
             if (encryptedPackage) {
                 const safeName = `Sifreli_${encryptedPackage.originalName}.enc`;
-                await SovereignVault.saveKey(safeName, encryptedPackage.key, encryptedPackage.iv);
                 
-                SovereignCrypto.downloadEncryptedFile(encryptedPackage);
-                alert(`🔒 "${file.name}" şifrelendi. \n🔑 Şifre çözme anahtarı güvenli tarayıcı kasanıza kaydedildi!`);
+                try {
+                    await SovereignVault.saveKey(safeName, encryptedPackage.key, encryptedPackage.iv);
+                    SovereignCrypto.downloadEncryptedFile(encryptedPackage);
+                    alert(`🔒 "${file.name}" şifrelendi. \n🔑 Şifre çözme anahtarı "${safeName}" adıyla güvenli kasanıza kaydedildi!`);
+                } catch (dbError) {
+                    console.error("Veritabanı kayıt hatası:", dbError);
+                    alert("⚠️ Şifreleme yapıldı ancak anahtar veritabanına KAYDEDİLEMEDİ! Tarayıcınız yerel depolamaya izin vermiyor olabilir.");
+                }
             }
         }
     }
 };
+// --- MODÜL 5: GERÇEK ZAMANLI HASSAS VERİ KALKANI (Live PII Shield) ---
+const SovereignPIIShield = {
+    // Hassas verileri yakalayan Regex kalıpları
+    patterns: {
+        email: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g,
+        creditCard: /\b(?:\d{4}[ -]?){3}\d{4}\b/g,
+        ssnOrTC: /\b[1-9][0-9]{10}\b/g, // Türkiye Cumhuriyeti Kimlik Numarası formatı
+        phone: /(?:\+90|0)?\s*\(?\d{3}\)?[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2}/g
+    },
 
+    // Metin içindeki PII verilerini maskeler
+    sanitizeText(text) {
+        let sanitized = text;
+        let detectedCount = 0;
+
+        // E-postaları maskele
+        sanitized = sanitized.replace(this.patterns.email, (match) => {
+            detectedCount++;
+            return "[GİZLİ E-POSTA]";
+        });
+
+        // Kredi kartlarını maskele
+        sanitized = sanitized.replace(this.patterns.creditCard, (match) => {
+            detectedCount++;
+            return "[GİZLİ KREDİ KARTI]";
+        });
+
+        // TC Kimlik / SSN maskele
+        sanitized = sanitized.replace(this.patterns.ssnOrTC, (match) => {
+            detectedCount++;
+            return "[GİZLİ TC/SSN]";
+        });
+
+        // Telefon numaralarını maskele
+        sanitized = sanitized.replace(this.patterns.phone, (match) => {
+            detectedCount++;
+            return "[GİZLİ TELEFON]";
+        });
+
+        return { sanitized, detectedCount };
+    },
+
+    // Sayfadaki tüm metin kutularını (input/textarea) koruma altına alır
+    initShield() {
+        console.log("🛡️ Live Form PII Shield aktif: Hassas veriler taranıyor...");
+        
+        document.addEventListener('input', (e) => {
+            const target = e.target;
+            if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+                // Şifre veya arama inputlarını hariç tutabiliriz
+                if (target.type === 'password' || target.type === 'hidden') return;
+
+                const originalValue = target.value;
+                const { sanitized, detectedCount } = this.sanitizeText(originalValue);
+
+                if (detectedCount > 0) {
+                    console.warn(`⚠️ Hassas Veri (PII) Yakalandı ve Engellendi! (${detectedCount} adet)`);
+                    target.value = sanitized;
+                    
+                    // Görsel bir uyarı efekti verebiliriz
+                    target.style.borderColor = '#ef4444'; // Kırmızı çerçeve
+                    setTimeout(() => target.style.borderColor = '', 1000);
+                }
+            }
+        });
+    }
+};
+
+// Sayfa yüklendiğinde PII Shield'ı devreye sok
+document.addEventListener('DOMContentLoaded', () => {
+    SovereignPIIShield.initShield();
+});
 // --- SİSTEMİ BAŞLATMA ---
 window.PrivacyConvert = PrivacyConvert;
 
@@ -2580,6 +2687,7 @@ if (document.readyState === 'loading') {
 } else {
     PrivacyConvert.init();
 }
+
 </script>
 </body>
 </html>
