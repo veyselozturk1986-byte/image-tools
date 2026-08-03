@@ -2500,34 +2500,31 @@ const SovereignVault = {
     }
 };
 
-// --- MODÜL 3.1: ŞİFRE ÇÖZME (Gelişmiş Analiz Versiyonu) ---
+// --- MODÜL 3.1: ŞİFRE ÇÖZME (DECRYPT) FONKSİYONLARI ---
 SovereignCrypto.decryptFile = async function(file) {
     try {
         console.log(`🔓 Şifre çözme aranıyor: ${file.name}`);
         const vaultData = await SovereignVault.getKey(file.name);
         
         if (!vaultData) {
-            // Anahtar bulunamazsa kullanıcıya tam olarak nedenini söyle
-            alert(`🚨 ANAHTAR BULUNAMADI!\n\nKasada aranan dosya adı: "${file.name}"\n\nİpucu: İndirdiğiniz dosyanın adında (1) gibi bir ek var mı kontrol edin. Anahtarın bulunabilmesi için dosya adı şifrelendiği anki adıyla birebir aynı olmalıdır.`);
+            alert("HATA: Bu dosyanın şifre çözme anahtarı bu cihazın kasasında bulunamadı! (Güvenlik İhlali Engellendi)");
             return null;
         }
 
-        console.log("🔑 Anahtar kasada bulundu! Donanımsal çözücü başlatılıyor...");
         const arrayBuffer = await file.arrayBuffer();
-        
         const decryptedData = await window.crypto.subtle.decrypt(
             { name: "AES-GCM", iv: vaultData.iv },
             vaultData.key,
             arrayBuffer
         );
 
-        console.log("✅ Dosya donanımsal olarak başarıyla çözüldü!");
+        console.log("✅ Dosya başarıyla çözüldü!");
         let originalName = file.name.replace("Sifreli_", "").replace(".enc", "");
         return { decryptedData, originalName };
         
     } catch (error) {
-        console.error("Şifre çözme motoru çöktü:", error);
-        alert(`🚨 ŞİFRE ÇÖZME İŞLEMİ ÇÖKTÜ!\n\nDosya içeriği bozulmuş olabilir veya tarayıcı anahtarı okuyamıyor.\nHata Detayı: ${error.message}`);
+        console.error("Şifre çözme başarısız:", error);
+        alert("Şifre çözme başarısız! Dosya bozuk veya oynanmış olabilir.");
     }
 };
 
@@ -2544,7 +2541,7 @@ SovereignCrypto.downloadDecryptedFile = function(decryptedPackage) {
 };
 
 
-// --- MODÜL 4: AKILLI UI ENTEGRASYONU (Teşhis Modu) ---
+// --- MODÜL 4: AKILLI UI ENTEGRASYONU (Hem Şifreler Hem Çözer) ---
 PrivacyConvert.ui = {
     ...PrivacyConvert.ui, 
     
@@ -2552,31 +2549,24 @@ PrivacyConvert.ui = {
         if (!files || files.length === 0) return;
         
         const file = files[0]; 
-        console.log("Sisteme giren dosya tam adı:", file.name);
         
         // AKILLI MOTOR: Dosya .enc uzantılı mı?
         if (file.name.endsWith('.enc')) {
-            alert(`🕵️ Sistem "${file.name}" dosyasını ŞİFRELİ (enc) olarak algıladı. Çözme işlemi başlıyor...`);
+            // ŞİFRE ÇÖZME İŞLEMİ
             const decryptedPackage = await SovereignCrypto.decryptFile(file);
-            
             if (decryptedPackage) {
                 SovereignCrypto.downloadDecryptedFile(decryptedPackage);
-                alert(`🔓 "${file.name}" dosyasının şifresi bu cihazın yerel kasası kullanılarak çözüldü!`);
+                alert(`🔓 "${file.name}" dosyasının şifresi bu cihazın yerel kasası kullanılarak çözüldü! (0 Bayt Aktarım)`);
             }
         } else {
             // ŞİFRELEME İŞLEMİ
             const encryptedPackage = await SovereignCrypto.encryptFile(file);
             if (encryptedPackage) {
                 const safeName = `Sifreli_${encryptedPackage.originalName}.enc`;
+                await SovereignVault.saveKey(safeName, encryptedPackage.key, encryptedPackage.iv);
                 
-                try {
-                    await SovereignVault.saveKey(safeName, encryptedPackage.key, encryptedPackage.iv);
-                    SovereignCrypto.downloadEncryptedFile(encryptedPackage);
-                    alert(`🔒 "${file.name}" şifrelendi. \n🔑 Şifre çözme anahtarı "${safeName}" adıyla güvenli kasanıza kaydedildi!`);
-                } catch (dbError) {
-                    console.error("Veritabanı kayıt hatası:", dbError);
-                    alert("⚠️ Şifreleme yapıldı ancak anahtar veritabanına KAYDEDİLEMEDİ! Tarayıcınız yerel depolamaya izin vermiyor olabilir.");
-                }
+                SovereignCrypto.downloadEncryptedFile(encryptedPackage);
+                alert(`🔒 "${file.name}" şifrelendi. \n🔑 Şifre çözme anahtarı güvenli tarayıcı kasanıza kaydedildi!`);
             }
         }
     }
@@ -2590,7 +2580,6 @@ if (document.readyState === 'loading') {
 } else {
     PrivacyConvert.init();
 }
-
 </script>
 </body>
 </html>
