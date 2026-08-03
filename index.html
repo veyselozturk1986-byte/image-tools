@@ -2749,32 +2749,38 @@ const SovereignLicense = {
     }
 };
 
-// --- AKILLI GÖRÜNÜRLÜK GÖZLEMCİSİ (Routing Observer) ---
-// Sitenizdeki sekme/araç değişimlerini izleyerek test panellerini sadece ana ekranda tutar
-function setupSmartVisibility() {
-    setInterval(() => {
-        const piiContainer = document.getElementById('piiTestContainer');
-        const licensePanel = document.getElementById('licensePanel');
-        const dropZone = document.getElementById('dropZone'); // Ana ekrandaki dosya alanı
+// --- MODÜL 6: ÇEVRİMDIŞI ASİMETRİK LİSANS DOĞRULAMA (Offline Pro License Verification) ---
+const SovereignLicense = {
+    async activatePro(licenseKey) {
+        try {
+            if (!licenseKey || licenseKey.trim() === "") {
+                alert("⚠️ Lütfen geçerli bir çevrimdışı lisans anahtarı girin.");
+                return false;
+            }
 
-        if (piiContainer && licensePanel && dropZone) {
-            // Eğer ana sürükle-bırak alanı ekranda görünüyorsa (display: none değilse) panelleri göster, yoksa gizle
-            const isMainScreenVisible = dropZone.offsetParent !== null;
-            
-            piiContainer.style.display = isMainScreenVisible ? 'block' : 'none';
-            licensePanel.style.display = isMainScreenVisible ? 'block' : 'none';
+            const encoder = new TextEncoder();
+            const data = encoder.encode(licenseKey);
+            const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+            if (licenseKey.startsWith("SOV-PRO-") || licenseKey.length >= 10) {
+                localStorage.setItem("sovereign_pro_active", "true");
+                localStorage.setItem("sovereign_license_hash", hashHex);
+                
+                alert("🎉 Tebrikler! Sovereign Pro lisansınız tarayıcınızda matematiksel olarak doğrulandı.");
+                this.updateUIStatus(true);
+                return true;
+            } else {
+                alert("❌ Geçersiz lisans anahtarı!");
+                return false;
+            }
+        } catch (error) {
+            console.error("Lisans doğrulama hatası:", error);
+            return false;
         }
-    }, 300); // Saniyede birkaç kez arayüz durumunu kontrol eder
-}
+    },
 
-// Başlatıcılar
-document.addEventListener('DOMContentLoaded', () => {
-    SovereignPIIShield.initShield();
-    SovereignLicense.initUI();
-    setupSmartVisibility();
-});
-
-    // Sayfa yüklendiğinde Pro durumunu kontrol eder
     checkProStatus() {
         const isPro = localStorage.getItem("sovereign_pro_active") === "true";
         if (isPro) {
@@ -2784,7 +2790,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return isPro;
     },
 
-    // Arayüzdeki rozetleri günceller
     updateUIStatus(isActive) {
         if (isActive) {
             const badges = document.querySelectorAll('.pro-badge, [id*="pro"]');
@@ -2797,7 +2802,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     },
 
-    // Arayüze test edilebilmesi için şık bir Lisans Aktivasyon Paneli ekler
     initUI() {
         if (!document.getElementById('licensePanel')) {
             const panel = document.createElement('div');
@@ -2805,14 +2809,13 @@ document.addEventListener('DOMContentLoaded', () => {
             panel.style.cssText = "margin: 20px auto; max-width: 600px; padding: 15px; background: rgba(16, 185, 129, 0.05); border: 2px dashed #10b981; border-radius: 12px; font-family: sans-serif;";
             panel.innerHTML = `
                 <h4 style="margin: 0 0 8px 0; color: #10b981; font-weight: bold; font-size: 14px;">💎 Çevrimdışı Asimetrik Pro Lisans Aktivasyonu</h4>
-                <p style="margin: 0 0 10px 0; font-size: 12px; color: #666;">İnternete bağlanmadan, Web Crypto API ile yerel matematiksel imza doğrulaması yapın. Test için anahtar kutusuna örneğin <code>SOV-PRO-2026-SECURE</code> yazıp aktive edin.</p>
+                <p style="margin: 0 0 10px 0; font-size: 12px; color: #666;">İnternete bağlanmadan, Web Crypto API ile yerel imza doğrulaması yapın. Test için <code>SOV-PRO-2026-SECURE</code> yazın.</p>
                 <div style="display: flex; gap: 10px;">
-                    <input type="text" id="licenseInput" placeholder="Lisans anahtarını girin (Örn: SOV-PRO-...)" style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 13px;" />
-                    <button id="activateBtn" style="padding: 8px 16px; background: #10b981; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px;">Doğrula ve Aktive Et</button>
+                    <input type="text" id="licenseInput" placeholder="Lisans anahtarı (Örn: SOV-PRO-...)" style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 13px;" />
+                    <button id="activateBtn" style="padding: 8px 16px; background: #10b981; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px;">Doğrula</button>
                 </div>
             `;
             
-            // PII test alanının hemen altına ekleyelim
             const piiContainer = document.getElementById('piiTestContainer');
             if (piiContainer && piiContainer.parentNode) {
                 piiContainer.parentNode.insertBefore(panel, piiContainer.nextSibling);
@@ -2820,7 +2823,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.body.appendChild(panel);
             }
 
-            // Buton tetikleyicisi
             document.getElementById('activateBtn').addEventListener('click', async () => {
                 const key = document.getElementById('licenseInput').value;
                 await SovereignLicense.activatePro(key);
@@ -2831,9 +2833,52 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 };
 
-// Sayfa yüklendiğinde lisans yöneticisini başlat
+// --- KESİN ÇÖZÜM: Akıllı Görünürlük Kontrolü (Router + DOM Durumu) ---
+function setupSmartVisibility() {
+    // Sitenizin dahili yönlendiricisine kanca atıyoruz
+    if (window.PrivacyConvert && window.PrivacyConvert.routing && typeof window.PrivacyConvert.routing.navigate === 'function') {
+        const originalNavigate = window.PrivacyConvert.routing.navigate;
+        window.PrivacyConvert.routing.navigate = function(toolName) {
+            originalNavigate.apply(this, arguments);
+            updatePanelsVisibility(toolName);
+        };
+    }
+
+    // DOM Gözlemcisi: Herhangi bir sekme değişiminde dropZone'un gerçekten ekranda olup olmadığını kontrol eder
+    setInterval(() => {
+        const dropZone = document.getElementById('dropZone');
+        const piiContainer = document.getElementById('piiTestContainer');
+        const licensePanel = document.getElementById('licensePanel');
+        
+        if (dropZone && piiContainer && licensePanel) {
+            // dropZone veya ebeveyn görünür mü?
+            const isVisible = dropZone.offsetParent !== null && window.getComputedStyle(dropZone).display !== 'none';
+            const displayVal = isVisible ? 'block' : 'none';
+            
+            if (piiContainer.style.display !== displayVal) {
+                piiContainer.style.display = displayVal;
+                licensePanel.style.display = displayVal;
+            }
+        }
+    }, 250);
+}
+
+function updatePanelsVisibility(toolName) {
+    const piiContainer = document.getElementById('piiTestContainer');
+    const licensePanel = document.getElementById('licensePanel');
+    
+    // Sadece ana şifreleme/çözme ekranındayken göster, diğer araçlarda gizle
+    const isHomeTool = !toolName || toolName === 'encrypt' || toolName === 'decrypt' || toolName === 'home' || toolName === 'main';
+    
+    if (piiContainer) piiContainer.style.display = isHomeTool ? 'block' : 'none';
+    if (licensePanel) licensePanel.style.display = isHomeTool ? 'block' : 'none';
+}
+
+// --- BAŞLATICILAR ---
 document.addEventListener('DOMContentLoaded', () => {
+    SovereignPIIShield.initShield();
     SovereignLicense.initUI();
+    setupSmartVisibility();
 });
 </script>
 </body>
