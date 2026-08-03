@@ -2499,28 +2499,22 @@ const SovereignVault = {
         });
     }
 };
-// --- MODÜL 3.1: ŞİFRE ÇÖZME (Akıllı İsim Temizleme Versiyonu) ---
+
+// --- MODÜL 3.1: ŞİFRE ÇÖZME (Gelişmiş Analiz Versiyonu) ---
 SovereignCrypto.decryptFile = async function(file) {
     try {
-        console.log(`🔓 Sisteme giren dosya: ${file.name}`);
-        
-        // AKILLI MOTOR: Dosya adındaki " (1)", " (2)" gibi tarayıcı eklerini (Regex ile) otomatik temizle
-        let cleanFileName = file.name.replace(/\s\(\d+\)/g, '');
-        
-        console.log(`🔍 Kasada aranan temizlenmiş isim: ${cleanFileName}`);
-        
-        // Temizlenmiş isimle kasayı açmayı dene
-        const vaultData = await SovereignVault.getKey(cleanFileName);
+        console.log(`🔓 Şifre çözme aranıyor: ${file.name}`);
+        const vaultData = await SovereignVault.getKey(file.name);
         
         if (!vaultData) {
-            alert(`🚨 ANAHTAR BULUNAMADI!\n\nKasada aradığımız isim: "${cleanFileName}"\nSizin yüklediğiniz dosya: "${file.name}"\n\nLütfen F12 (Application -> IndexedDB) menüsündeki kayıtlı dosya adıyla yüklediğiniz dosyanın adının aynı olduğundan emin olun.`);
+            // Anahtar bulunamazsa kullanıcıya tam olarak nedenini söyle
+            alert(`🚨 ANAHTAR BULUNAMADI!\n\nKasada aranan dosya adı: "${file.name}"\n\nİpucu: İndirdiğiniz dosyanın adında (1) gibi bir ek var mı kontrol edin. Anahtarın bulunabilmesi için dosya adı şifrelendiği anki adıyla birebir aynı olmalıdır.`);
             return null;
         }
 
         console.log("🔑 Anahtar kasada bulundu! Donanımsal çözücü başlatılıyor...");
         const arrayBuffer = await file.arrayBuffer();
         
-        // Kendi cihazındaki anahtarı kullanarak şifreyi çöz
         const decryptedData = await window.crypto.subtle.decrypt(
             { name: "AES-GCM", iv: vaultData.iv },
             vaultData.key,
@@ -2528,14 +2522,12 @@ SovereignCrypto.decryptFile = async function(file) {
         );
 
         console.log("✅ Dosya donanımsal olarak başarıyla çözüldü!");
-        
-        // İsmi orijinal haline geri döndür (Sifreli_ ve .enc kısımlarını at)
-        let originalName = cleanFileName.replace("Sifreli_", "").replace(".enc", "");
+        let originalName = file.name.replace("Sifreli_", "").replace(".enc", "");
         return { decryptedData, originalName };
         
     } catch (error) {
         console.error("Şifre çözme motoru çöktü:", error);
-        alert(`🚨 ŞİFRE ÇÖZME İŞLEMİ ÇÖKTÜ!\n\nDosya içeriği bozulmuş olabilir.\nHata Detayı: ${error.message}`);
+        alert(`🚨 ŞİFRE ÇÖZME İŞLEMİ ÇÖKTÜ!\n\nDosya içeriği bozulmuş olabilir veya tarayıcı anahtarı okuyamıyor.\nHata Detayı: ${error.message}`);
     }
 };
 
@@ -2550,6 +2542,7 @@ SovereignCrypto.downloadDecryptedFile = function(decryptedPackage) {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 };
+
 
 // --- MODÜL 4: AKILLI UI ENTEGRASYONU (Teşhis Modu) ---
 PrivacyConvert.ui = {
