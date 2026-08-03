@@ -2607,34 +2607,40 @@ PrivacyConvert.ui = {
         }
     }
 };
-// --- MODÜL 5: GERÇEK ZAMANLI HASSAS VERİ KALKANI VE CANLI TEST KUTUSU (Live PII Shield) ---
+// --- MODÜL 5: GERÇEK ZAMANLI HASSAS VERİ KALKANI (Live PII Shield) ---
 const SovereignPIIShield = {
+    // Hassas verileri yakalayan Regex kalıpları
     patterns: {
         email: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g,
         creditCard: /\b(?:\d{4}[ -]?){3}\d{4}\b/g,
-        ssnOrTC: /\b[1-9][0-9]{10}\b/g, 
+        ssnOrTC: /\b[1-9][0-9]{10}\b/g, // Türkiye Cumhuriyeti Kimlik Numarası formatı
         phone: /(?:\+90|0)?\s*\(?\d{3}\)?[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2}/g
     },
 
+    // Metin içindeki PII verilerini maskeler
     sanitizeText(text) {
         let sanitized = text;
         let detectedCount = 0;
 
+        // E-postaları maskele
         sanitized = sanitized.replace(this.patterns.email, (match) => {
             detectedCount++;
             return "[GİZLİ E-POSTA]";
         });
 
+        // Kredi kartlarını maskele
         sanitized = sanitized.replace(this.patterns.creditCard, (match) => {
             detectedCount++;
             return "[GİZLİ KREDİ KARTI]";
         });
 
+        // TC Kimlik / SSN maskele
         sanitized = sanitized.replace(this.patterns.ssnOrTC, (match) => {
             detectedCount++;
             return "[GİZLİ TC/SSN]";
         });
 
+        // Telefon numaralarını maskele
         sanitized = sanitized.replace(this.patterns.phone, (match) => {
             detectedCount++;
             return "[GİZLİ TELEFON]";
@@ -2643,13 +2649,14 @@ const SovereignPIIShield = {
         return { sanitized, detectedCount };
     },
 
+    // Sayfadaki tüm metin kutularını (input/textarea) koruma altına alır
     initShield() {
         console.log("🛡️ Live Form PII Shield aktif: Hassas veriler taranıyor...");
         
-        // 1. Sayfadaki mevcut tüm input ve textarea alanlarını koru
         document.addEventListener('input', (e) => {
             const target = e.target;
             if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+                // Şifre veya arama inputlarını hariç tutabiliriz
                 if (target.type === 'password' || target.type === 'hidden') return;
 
                 const originalValue = target.value;
@@ -2658,31 +2665,13 @@ const SovereignPIIShield = {
                 if (detectedCount > 0) {
                     console.warn(`⚠️ Hassas Veri (PII) Yakalandı ve Engellendi! (${detectedCount} adet)`);
                     target.value = sanitized;
-                    target.style.borderColor = '#ef4444'; 
+                    
+                    // Görsel bir uyarı efekti verebiliriz
+                    target.style.borderColor = '#ef4444'; // Kırmızı çerçeve
                     setTimeout(() => target.style.borderColor = '', 1000);
                 }
             }
         });
-
-        // 2. Eğer ekranda PII test alanı yoksa, kullanıcı kolayca test etsin diye dinamik bir test kutusu oluşturalım
-        if (!document.getElementById('piiTestContainer')) {
-            const container = document.createElement('div');
-            container.id = 'piiTestContainer';
-            container.style.cssText = "margin: 20px auto; max-width: 600px; padding: 15px; background: rgba(79, 70, 229, 0.05); border: 2px dashed #4f46e5; border-radius: 12px; font-family: sans-serif;";
-            container.innerHTML = `
-                <h4 style="margin: 0 0 8px 0; color: #4f46e5; font-weight: bold; font-size: 14px;">🛡️ Live PII Shield Canlı Test Alanı</h4>
-                <p style="margin: 0 0 10px 0; font-size: 12px; color: #666;">Aşağıdaki kutuya örnek bir e-posta (ornek@mail.com) veya TC Kimlik No yazıp boşluğa basın. Anında maskelendiğini göreceksiniz!</p>
-                <textarea id="piiTestInput" placeholder="Buraya test metni yazın veya yapıştırın..." style="width: 100%; height: 80px; padding: 10px; border: 1px solid #ccc; border-radius: 6px; resize: none;"></textarea>
-            `;
-            
-            // Sayfadaki ana sürükle-bırak alanının hemen altına yerleştir
-            const dropZone = document.getElementById('dropZone');
-            if (dropZone && dropZone.parentNode) {
-                dropZone.parentNode.insertBefore(container, dropZone.nextSibling);
-            } else {
-                document.body.appendChild(container);
-            }
-        }
     }
 };
 
@@ -2690,7 +2679,6 @@ const SovereignPIIShield = {
 document.addEventListener('DOMContentLoaded', () => {
     SovereignPIIShield.initShield();
 });
-        
 // --- SİSTEMİ BAŞLATMA ---
 window.PrivacyConvert = PrivacyConvert;
 
@@ -2699,110 +2687,7 @@ if (document.readyState === 'loading') {
 } else {
     PrivacyConvert.init();
 }
-// --- MODÜL 6: ÇEVRİMDIŞI ASİMETRİK LİSANS DOĞRULAMA (Offline Pro License Verification) ---
-const SovereignLicense = {
-    // Web Crypto API kullanarak lisans anahtarını tamamen çevrimdışı ve matematiksel olarak doğrular
-    async activatePro(licenseKey) {
-        try {
-            console.log("🔐 Çevrimdışı asimetrik lisans doğrulanıyor (Web Crypto API)...");
-            
-            if (!licenseKey || licenseKey.trim() === "") {
-                alert("⚠️ Lütfen geçerli bir çevrimdışı lisans anahtarı girin.");
-                return false;
-            }
 
-            // Tarayıcının yerel kriptografi motoru ile anahtarın SHA-256 imzasını hesapla (0 Bayt Sunucu İsteği)
-            const encoder = new TextEncoder();
-            const data = encoder.encode(licenseKey);
-            const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-
-            console.log(" cryptographic hash üretildi (Sandbox içinde):", hashHex.substring(0, 16) + "...");
-
-            // Kurumsal çevrimdışı lisans doğrulama kuralı
-            if (licenseKey.startsWith("SOV-PRO-") || licenseKey.length >= 10) {
-                // Pro durumunu tarayıcının yerel depolama alanında güvenle sakla
-                localStorage.setItem("sovereign_pro_active", "true");
-                localStorage.setItem("sovereign_license_hash", hashHex);
-                
-                console.log("⭐ PRO ACTIVE: Çevrimdışı asimetrik lisans doğrulandı!");
-                alert("🎉 Tebrikler! Sovereign Pro lisansınız tarayıcınızda asimetrik kriptografi ile matematiksel olarak doğrulandı ve aktif edildi.");
-                
-                this.updateUIStatus(true);
-                return true;
-            } else {
-                alert("❌ Geçersiz lisans anahtarı! Matematiksel doğrulama başarısız oldu.");
-                return false;
-            }
-        } catch (error) {
-            console.error("Lisans doğrulama hatası:", error);
-            alert("Lisans doğrulanırken kriptografik bir hata oluştu.");
-            return false;
-        }
-    },
-
-    // Sayfa yüklendiğinde Pro durumunu kontrol eder
-    checkProStatus() {
-        const isPro = localStorage.getItem("sovereign_pro_active") === "true";
-        if (isPro) {
-            console.log("⭐ Sovereign Pro Aktif (Çevrimdışı Doğrulandı)");
-            this.updateUIStatus(true);
-        }
-        return isPro;
-    },
-
-    // Arayüzdeki rozetleri günceller
-    updateUIStatus(isActive) {
-        if (isActive) {
-            const badges = document.querySelectorAll('.pro-badge, [id*="pro"]');
-            badges.forEach(el => {
-                if(el.innerText.includes('PRO') || el.innerText.includes('Get Pro') || el.innerText.includes('Upgrade')) {
-                    el.innerHTML = '⭐ PRO ACTIVE';
-                    el.classList.add('bg-green-600', 'text-white');
-                }
-            });
-        }
-    },
-
-    // Arayüze test edilebilmesi için şık bir Lisans Aktivasyon Paneli ekler
-    initUI() {
-        if (!document.getElementById('licensePanel')) {
-            const panel = document.createElement('div');
-            panel.id = 'licensePanel';
-            panel.style.cssText = "margin: 20px auto; max-width: 600px; padding: 15px; background: rgba(16, 185, 129, 0.05); border: 2px dashed #10b981; border-radius: 12px; font-family: sans-serif;";
-            panel.innerHTML = `
-                <h4 style="margin: 0 0 8px 0; color: #10b981; font-weight: bold; font-size: 14px;">💎 Çevrimdışı Asimetrik Pro Lisans Aktivasyonu</h4>
-                <p style="margin: 0 0 10px 0; font-size: 12px; color: #666;">İnternete bağlanmadan, Web Crypto API ile yerel matematiksel imza doğrulaması yapın. Test için anahtar kutusuna örneğin <code>SOV-PRO-2026-SECURE</code> yazıp aktive edin.</p>
-                <div style="display: flex; gap: 10px;">
-                    <input type="text" id="licenseInput" placeholder="Lisans anahtarını girin (Örn: SOV-PRO-...)" style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 13px;" />
-                    <button id="activateBtn" style="padding: 8px 16px; background: #10b981; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px;">Doğrula ve Aktive Et</button>
-                </div>
-            `;
-            
-            // PII test alanının hemen altına ekleyelim
-            const piiContainer = document.getElementById('piiTestContainer');
-            if (piiContainer && piiContainer.parentNode) {
-                piiContainer.parentNode.insertBefore(panel, piiContainer.nextSibling);
-            } else {
-                document.body.appendChild(panel);
-            }
-
-            // Buton tetikleyicisi
-            document.getElementById('activateBtn').addEventListener('click', async () => {
-                const key = document.getElementById('licenseInput').value;
-                await SovereignLicense.activatePro(key);
-            });
-        }
-        
-        this.checkProStatus();
-    }
-};
-
-// Sayfa yüklendiğinde lisans yöneticisini başlat
-document.addEventListener('DOMContentLoaded', () => {
-    SovereignLicense.initUI();
-});
 </script>
 </body>
 </html>
