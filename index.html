@@ -2499,7 +2499,7 @@ const SovereignVault = {
         });
     }
 };
-// --- MODÜL 3.1: ŞİFRE ÇÖZME (Akıllı İsim Temizleme Versiyonu) ---
+// --- MODÜL 3.1: ŞİFRE ÇÖZME VE DOĞRU FORMATTA İNDİRME ---
 SovereignCrypto.decryptFile = async function(file) {
     try {
         console.log(`🔓 Sisteme giren dosya: ${file.name}`);
@@ -2540,13 +2540,32 @@ SovereignCrypto.decryptFile = async function(file) {
 };
 
 SovereignCrypto.downloadDecryptedFile = function(decryptedPackage) {
-    const blob = new Blob([decryptedPackage.decryptedData]);
+    // 1. Dosya uzantısını bul ve MIME Type belirle (Formatın bozulmasını önler)
+    const extension = decryptedPackage.originalName.split('.').pop().toLowerCase();
+    
+    const mimeTypes = {
+        'pdf': 'application/pdf',
+        'png': 'image/png',
+        'jpg': 'image/jpeg',
+        'jpeg': 'image/jpeg',
+        'txt': 'text/plain',
+        'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'csv': 'text/csv'
+    };
+    
+    const fileFormat = mimeTypes[extension] || 'application/octet-stream';
+
+    // 2. Blob nesnesine doğru kimlik kartını (MIME Type) işleyerek veriyi yükle
+    const blob = new Blob([decryptedPackage.decryptedData], { type: fileFormat });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
     a.download = `Cozulmus_${decryptedPackage.originalName}`;
+    
     document.body.appendChild(a);
     a.click();
+    
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 };
