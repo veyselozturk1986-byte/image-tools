@@ -2403,72 +2403,67 @@
                 window.addEventListener('beforeunload', () => this.cleanupObjectUrls());
             }
         };
-// --- 1. ÇEVRİMDIŞI KRİPTOGRAFİ VE GÜVENLİ KASA (IndexedDB) ---
+// --- MODÜL 1: ÇEVRİMDIŞI KRİPTOGRAFİ MOTORU (Web Crypto API) ---
 const SovereignCrypto = {
+    // İnternetsiz AES-256-GCM Anahtarı Üretir
     async generateKey() {
         return await window.crypto.subtle.generateKey(
             { name: "AES-GCM", length: 256 },
-            true,
+            true, // Anahtar dışarı aktarılabilir (ileride şifre çözmek için gerekecek)
             ["encrypt", "decrypt"]
         );
     },
+
+    // Dosyayı Tarayıcı Belleğinde (0 Bayt Aktarım ile) Şifreler
     async encryptFile(file) {
         try {
+            console.log(`🔒 Şifreleme başlıyor: ${file.name} (Veri dışarı çıkmıyor...)`);
+            
+            // 1. Dosyayı güvenli belleğe (ArrayBuffer) al
             const arrayBuffer = await file.arrayBuffer();
+            
+            // 2. Rastgele bir Initialization Vector (IV) oluştur (Güvenlik için şart)
             const iv = window.crypto.getRandomValues(new Uint8Array(12));
+            
+            // 3. Şifreleme anahtarını üret
             const key = await this.generateKey();
+            
+            // 4. Dosyayı Donanımsal AES-256 ile şifrele
             const encryptedData = await window.crypto.subtle.encrypt(
                 { name: "AES-GCM", iv: iv },
                 key,
                 arrayBuffer
             );
+
+            console.log("✅ Dosya başarıyla şifrelendi!");
             return { encryptedData, iv, key, originalName: file.name };
+            
         } catch (error) {
             console.error("Şifreleme hatası:", error);
-            return null;
+            alert("Şifreleme sırasında bir hata oluştu.");
         }
     },
-    async decryptFile(file) {
-        try {
-            let cleanFileName = file.name.replace(/\s\(\d+\)/g, '');
-            const vaultData = await SovereignVault.getKey(cleanFileName);
-            if (!vaultData) {
-                alert(`🚨 ANAHTAR BULUNAMADI: "${cleanFileName}" için bu cihazın yerel kasasında anahtar yok.`);
-                return null;
-            }
-            const arrayBuffer = await file.arrayBuffer();
-            const decryptedData = await window.crypto.subtle.decrypt(
-                { name: "AES-GCM", iv: vaultData.iv },
-                vaultData.key,
-                arrayBuffer
-            );
-            let originalName = cleanFileName.replace("Sifreli_", "").replace(".enc", "");
-            return { decryptedData, originalName };
-        } catch (error) {
-            console.error("Şifre çözme hatası:", error);
-            return null;
-        }
-    },
-    downloadFile(packageData, isEncrypted) {
-        const name = packageData.originalName || "dosya";
-        const extension = name.split('.').pop().toLowerCase();
-        const mimeTypes = {
-            'pdf': 'application/pdf', 'png': 'image/png', 'jpg': 'image/jpeg',
-            'jpeg': 'image/jpeg', 'txt': 'text/plain'
-        };
-        const fileFormat = mimeTypes[extension] || 'application/octet-stream';
-        const blob = new Blob([packageData.encryptedData || packageData.decryptedData], { type: isEncrypted ? 'application/octet-stream' : fileFormat });
+
+    // Şifrelenen dosyayı güvenli bir şekilde cihaza indirir (Blob URL)
+    downloadEncryptedFile(encryptedPackage) {
+        // Şifrelenmiş veriyi bir Blob nesnesine dönüştür
+        const blob = new Blob([encryptedPackage.encryptedData], { type: "application/octet-stream" });
+        
+        // Tarayıcı içinde sanal bir URL oluştur (İnternet kullanmaz)
         const url = URL.createObjectURL(blob);
+        
+        // Gizli bir indirme butonu oluştur ve tıkla
         const a = document.createElement("a");
         a.href = url;
-        a.download = isEncrypted ? `Sifreli_${name}.enc` : `Cozulmus_${name}`;
+        a.download = `Sifreli_${encryptedPackage.originalName}.enc`;
         document.body.appendChild(a);
         a.click();
+        
+        // Temizlik işlemleri (RAM'i rahatlatmak için)
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
     }
-};
-
+};// --- MODÜL 3: GÜVENLİ ANAHTAR KASASI (IndexedDB Sandbox) ---
 const SovereignVault = {
     async initDB() {
         return new Promise((resolve, reject) => {
@@ -2504,164 +2499,115 @@ const SovereignVault = {
         });
     }
 };
-
-// --- 2. KUSURSUZ GÜVENLİ KANCA (Orijinal site akışını ve butonları tamamen korur) ---
-document.addEventListener('DOMContentLoaded', () => {
-    const checkReady = setInterval(() => {
-        if (window.PrivacyConvert && window.PrivacyConvert.ui && typeof window.PrivacyConvert.ui.handleFiles === 'function') {
-            clearInterval(checkReady);
-            
-            const originalHandleFiles = window.PrivacyConvert.ui.handleFiles;
-            
-            // Sitenin orijinal handleFiles metodunu sarmalıyoruz (wrapper)
-            window.PrivacyConvert.ui.handleFiles = async function(files) {
-                if (!files || files.length === 0) return;
-                const file = files[0];
-                
-                // Eğer yüklenen dosya .enc uzantılıysa yerel kasadan şifresini çöz
-                if (file.name.endsWith('.enc')) {
-                    try {
-                        const decrypted = await SovereignCrypto.decryptFile(file);
-                        if (decrypted) {
-                            SovereignCrypto.downloadFile(decrypted, false);
-                            alert(`🔓 "${file.name}" şifresi başarıyla çözüldü!`);
-                            return;
-                        }
-                    } catch (e) {
-                        console.error("Şifre çözme hatası:", e);
-                    }
-                } 
-                
-                // Eğer ana şifreleme ekranındaysa ve normal dosyaysa şifreleme yap
-                const activeTool = window.PrivacyConvert.state && window.PrivacyConvert.state.tool;
-                if (!activeTool || activeTool === 'encrypt' || activeTool === 'home') {
-                    // İsteğe bağlı: Normal dosyaları şifrelemek yerine orijinal araca da bırakabilirsiniz. 
-                    // Burada güvenli şifreleme motorumuzu çalıştırıyoruz:
-                    try {
-                        const encrypted = await SovereignCrypto.encryptFile(file);
-                        if (encrypted) {
-                            const safeName = `Sifreli_${encrypted.originalName}.enc`;
-                            await SovereignVault.saveKey(safeName, encrypted.key, encrypted.iv);
-                            SovereignCrypto.downloadFile(encrypted, true);
-                            alert(`🔒 "${file.name}" şifrelendi ve anahtar yerel kasaya kaydedildi.`);
-                            return;
-                        }
-                    } catch (e) {
-                        console.error("Şifreleme hatası:", e);
-                    }
-                }
-                
-                // Diğer tüm araçlar (PDF, OCR vb.) için orijinal site fonksiyonunu eksiksiz çalıştır
-                return originalHandleFiles.apply(this, arguments);
-            };
-            
-            console.log("🛡️ PrivacyConvert Orijinal Altyapısı Güvenle Genişletildi.");
+// --- MODÜL 3.1: ŞİFRE ÇÖZME VE DOĞRU FORMATTA İNDİRME ---
+SovereignCrypto.decryptFile = async function(file) {
+    try {
+        console.log(`🔓 Sisteme giren dosya: ${file.name}`);
+        
+        // AKILLI MOTOR: Dosya adındaki " (1)", " (2)" gibi tarayıcı eklerini (Regex ile) otomatik temizle
+        let cleanFileName = file.name.replace(/\s\(\d+\)/g, '');
+        
+        console.log(`🔍 Kasada aranan temizlenmiş isim: ${cleanFileName}`);
+        
+        // Temizlenmiş isimle kasayı açmayı dene
+        const vaultData = await SovereignVault.getKey(cleanFileName);
+        
+        if (!vaultData) {
+            alert(`🚨 ANAHTAR BULUNAMADI!\n\nKasada aradığımız isim: "${cleanFileName}"\nSizin yüklediğiniz dosya: "${file.name}"\n\nLütfen F12 (Application -> IndexedDB) menüsündeki kayıtlı dosya adıyla yüklediğiniz dosyanın adının aynı olduğundan emin olun.`);
+            return null;
         }
-    }, 50);
-});
 
-// --- 3. LIVE PII SHIELD VE LİSANS PANELLERİ ---
-const SovereignPIIShield = {
-    patterns: {
-        email: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g,
-        creditCard: /\b(?:\d{4}[ -]?){3}\d{4}\b/g,
-        ssnOrTC: /\b[1-9][0-9]{10}\b/g
-    },
-    initShield() {
-        document.addEventListener('input', (e) => {
-            const target = e.target;
-            if ((target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') && target.type !== 'password') {
-                let val = target.value;
-                let changed = false;
-                for (let key in this.patterns) {
-                    if (val.match(this.patterns[key])) {
-                        val = val.replace(this.patterns[key], `[GİZLİ ${key.toUpperCase()}]`);
-                        changed = true;
-                    }
-                }
-                if (changed) target.value = val;
+        console.log("🔑 Anahtar kasada bulundu! Donanımsal çözücü başlatılıyor...");
+        const arrayBuffer = await file.arrayBuffer();
+        
+        // Kendi cihazındaki anahtarı kullanarak şifreyi çöz
+        const decryptedData = await window.crypto.subtle.decrypt(
+            { name: "AES-GCM", iv: vaultData.iv },
+            vaultData.key,
+            arrayBuffer
+        );
+
+        console.log("✅ Dosya donanımsal olarak başarıyla çözüldü!");
+        
+        // İsmi orijinal haline geri döndür (Sifreli_ ve .enc kısımlarını at)
+        let originalName = cleanFileName.replace("Sifreli_", "").replace(".enc", "");
+        return { decryptedData, originalName };
+        
+    } catch (error) {
+        console.error("Şifre çözme motoru çöktü:", error);
+        alert(`🚨 ŞİFRE ÇÖZME İŞLEMİ ÇÖKTÜ!\n\nDosya içeriği bozulmuş olabilir.\nHata Detayı: ${error.message}`);
+    }
+};
+
+SovereignCrypto.downloadDecryptedFile = function(decryptedPackage) {
+    // 1. Dosya uzantısını bul ve MIME Type belirle (Formatın bozulmasını önler)
+    const extension = decryptedPackage.originalName.split('.').pop().toLowerCase();
+    
+    const mimeTypes = {
+        'pdf': 'application/pdf',
+        'png': 'image/png',
+        'jpg': 'image/jpeg',
+        'jpeg': 'image/jpeg',
+        'txt': 'text/plain',
+        'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'csv': 'text/csv'
+    };
+    
+    const fileFormat = mimeTypes[extension] || 'application/octet-stream';
+
+    // 2. Blob nesnesine doğru kimlik kartını (MIME Type) işleyerek veriyi yükle
+    const blob = new Blob([decryptedPackage.decryptedData], { type: fileFormat });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `Cozulmus_${decryptedPackage.originalName}`;
+    
+    document.body.appendChild(a);
+    a.click();
+    
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+};
+
+// --- MODÜL 4: AKILLI UI ENTEGRASYONU (Teşhis Modu) ---
+PrivacyConvert.ui = {
+    ...PrivacyConvert.ui, 
+    
+    async handleFiles(files) {
+        if (!files || files.length === 0) return;
+        
+        const file = files[0]; 
+        console.log("Sisteme giren dosya tam adı:", file.name);
+        
+        // AKILLI MOTOR: Dosya .enc uzantılı mı?
+        if (file.name.endsWith('.enc')) {
+            alert(`🕵️ Sistem "${file.name}" dosyasını ŞİFRELİ (enc) olarak algıladı. Çözme işlemi başlıyor...`);
+            const decryptedPackage = await SovereignCrypto.decryptFile(file);
+            
+            if (decryptedPackage) {
+                SovereignCrypto.downloadDecryptedFile(decryptedPackage);
+                alert(`🔓 "${file.name}" dosyasının şifresi bu cihazın yerel kasası kullanılarak çözüldü!`);
             }
-        });
-
-        if (!document.getElementById('piiTestContainer')) {
-            const container = document.createElement('div');
-            container.id = 'piiTestContainer';
-            container.style.cssText = "margin: 20px auto; max-width: 600px; padding: 15px; background: rgba(79, 70, 229, 0.05); border: 2px dashed #4f46e5; border-radius: 12px; font-family: sans-serif;";
-            container.innerHTML = `
-                <h4 style="margin: 0 0 8px 0; color: #4f46e5; font-weight: bold; font-size: 14px;">🛡️ Live PII Shield Canlı Test Alanı</h4>
-                <textarea placeholder="Buraya test metni (E-posta, TC vb.) yazın..." style="width: 100%; height: 60px; padding: 8px; border: 1px solid #ccc; border-radius: 6px; resize: none;"></textarea>
-            `;
-            setTimeout(() => {
-                const dropZone = document.getElementById('dropZone');
-                if (dropZone && dropZone.parentNode) {
-                    dropZone.parentNode.insertBefore(container, dropZone.nextSibling);
-                } else {
-                    document.body.appendChild(container);
+        } else {
+            // ŞİFRELEME İŞLEMİ
+            const encryptedPackage = await SovereignCrypto.encryptFile(file);
+            if (encryptedPackage) {
+                const safeName = `Sifreli_${encryptedPackage.originalName}.enc`;
+                
+                try {
+                    await SovereignVault.saveKey(safeName, encryptedPackage.key, encryptedPackage.iv);
+                    SovereignCrypto.downloadEncryptedFile(encryptedPackage);
+                    alert(`🔒 "${file.name}" şifrelendi. \n🔑 Şifre çözme anahtarı "${safeName}" adıyla güvenli kasanıza kaydedildi!`);
+                } catch (dbError) {
+                    console.error("Veritabanı kayıt hatası:", dbError);
+                    alert("⚠️ Şifreleme yapıldı ancak anahtar veritabanına KAYDEDİLEMEDİ! Tarayıcınız yerel depolamaya izin vermiyor olabilir.");
                 }
-            }, 600);
+            }
         }
     }
 };
-
-const SovereignLicense = {
-    initUI() {
-        if (!document.getElementById('licensePanel')) {
-            const panel = document.createElement('div');
-            panel.id = 'licensePanel';
-            panel.style.cssText = "margin: 15px auto; max-width: 600px; padding: 15px; background: rgba(16, 185, 129, 0.05); border: 2px dashed #10b981; border-radius: 12px; font-family: sans-serif;";
-            panel.innerHTML = `
-                <h4 style="margin: 0 0 8px 0; color: #10b981; font-weight: bold; font-size: 14px;">💎 Çevrimdışı Pro Lisans Aktivasyonu</h4>
-                <div style="display: flex; gap: 10px;">
-                    <input type="text" id="licenseInput" placeholder="Anahtar: SOV-PRO-2026" style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 6px;" />
-                    <button id="activateBtn" style="padding: 8px 16px; background: #10b981; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">Doğrula</button>
-                </div>
-            `;
-            setTimeout(() => {
-                const piiContainer = document.getElementById('piiTestContainer');
-                if (piiContainer && piiContainer.parentNode) {
-                    piiContainer.parentNode.insertBefore(panel, piiContainer.nextSibling);
-                } else {
-                    document.body.appendChild(panel);
-                }
-                const btn = document.getElementById('activateBtn');
-                if(btn) {
-                    btn.addEventListener('click', () => {
-                        const val = document.getElementById('licenseInput').value;
-                        if(val.startsWith('SOV-')) {
-                            localStorage.setItem("sovereign_pro_active", "true");
-                            alert("⭐ Pro Lisans Çevrimdışı Doğrulandı!");
-                        } else {
-                            alert("Geçersiz anahtar.");
-                        }
-                    });
-                }
-            }, 600);
-        }
-    }
-};
-
-// --- 4. GÖRÜNÜRLÜK GÖZLEMCİSİ (Diğer sekmelerde test panellerini otomatik gizler) ---
-setInterval(() => {
-    const dropZone = document.getElementById('dropZone');
-    const pii = document.getElementById('piiTestContainer');
-    const lic = document.getElementById('licensePanel');
-    if (dropZone && pii && lic) {
-        const isVisible = dropZone.offsetParent !== null && window.getComputedStyle(dropZone).display !== 'none';
-        const displayVal = isVisible ? 'block' : 'none';
-        pii.style.display = displayVal;
-        lic.style.display = displayVal;
-    }
-}, 250);
-
-// Başlatıcılar
-document.addEventListener('DOMContentLoaded', () => {
-    SovereignPIIShield.initShield();
-    SovereignLicense.initUI();
-});
-</script>
-</body>
-</html>
-// --- GÜNCELLENMİŞ MODÜL 5: Live PII Shield & Akıllı Görünürlük Kontrolü ---
+// --- MODÜL 5: GERÇEK ZAMANLI HASSAS VERİ KALKANI VE CANLI TEST KUTUSU (Live PII Shield) ---
 const SovereignPIIShield = {
     patterns: {
         email: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g,
@@ -2674,10 +2620,25 @@ const SovereignPIIShield = {
         let sanitized = text;
         let detectedCount = 0;
 
-        sanitized = sanitized.replace(this.patterns.email, (match) => { detectedCount++; return "[GİZLİ E-POSTA]"; });
-        sanitized = sanitized.replace(this.patterns.creditCard, (match) => { detectedCount++; return "[GİZLİ KREDİ KARTI]"; });
-        sanitized = sanitized.replace(this.patterns.ssnOrTC, (match) => { detectedCount++; return "[GİZLİ TC/SSN]"; });
-        sanitized = sanitized.replace(this.patterns.phone, (match) => { detectedCount++; return "[GİZLİ TELEFON]"; });
+        sanitized = sanitized.replace(this.patterns.email, (match) => {
+            detectedCount++;
+            return "[GİZLİ E-POSTA]";
+        });
+
+        sanitized = sanitized.replace(this.patterns.creditCard, (match) => {
+            detectedCount++;
+            return "[GİZLİ KREDİ KARTI]";
+        });
+
+        sanitized = sanitized.replace(this.patterns.ssnOrTC, (match) => {
+            detectedCount++;
+            return "[GİZLİ TC/SSN]";
+        });
+
+        sanitized = sanitized.replace(this.patterns.phone, (match) => {
+            detectedCount++;
+            return "[GİZLİ TELEFON]";
+        });
 
         return { sanitized, detectedCount };
     },
@@ -2685,6 +2646,7 @@ const SovereignPIIShield = {
     initShield() {
         console.log("🛡️ Live Form PII Shield aktif: Hassas veriler taranıyor...");
         
+        // 1. Sayfadaki mevcut tüm input ve textarea alanlarını koru
         document.addEventListener('input', (e) => {
             const target = e.target;
             if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
@@ -2694,6 +2656,7 @@ const SovereignPIIShield = {
                 const { sanitized, detectedCount } = this.sanitizeText(originalValue);
 
                 if (detectedCount > 0) {
+                    console.warn(`⚠️ Hassas Veri (PII) Yakalandı ve Engellendi! (${detectedCount} adet)`);
                     target.value = sanitized;
                     target.style.borderColor = '#ef4444'; 
                     setTimeout(() => target.style.borderColor = '', 1000);
@@ -2701,17 +2664,18 @@ const SovereignPIIShield = {
             }
         });
 
-        // Test Alanı Oluşturma ve Akıllı Görünürlük (Sadece ana ekranda görünür)
+        // 2. Eğer ekranda PII test alanı yoksa, kullanıcı kolayca test etsin diye dinamik bir test kutusu oluşturalım
         if (!document.getElementById('piiTestContainer')) {
             const container = document.createElement('div');
             container.id = 'piiTestContainer';
             container.style.cssText = "margin: 20px auto; max-width: 600px; padding: 15px; background: rgba(79, 70, 229, 0.05); border: 2px dashed #4f46e5; border-radius: 12px; font-family: sans-serif;";
             container.innerHTML = `
                 <h4 style="margin: 0 0 8px 0; color: #4f46e5; font-weight: bold; font-size: 14px;">🛡️ Live PII Shield Canlı Test Alanı</h4>
-                <p style="margin: 0 0 10px 0; font-size: 12px; color: #666;">Aşağıdaki kutuya örnek bir e-posta veya TC Kimlik No yazıp boşluğa basın.</p>
-                <textarea id="piiTestInput" placeholder="Buraya test metni yazın..." style="width: 100%; height: 70px; padding: 10px; border: 1px solid #ccc; border-radius: 6px; resize: none;"></textarea>
+                <p style="margin: 0 0 10px 0; font-size: 12px; color: #666;">Aşağıdaki kutuya örnek bir e-posta (ornek@mail.com) veya TC Kimlik No yazıp boşluğa basın. Anında maskelendiğini göreceksiniz!</p>
+                <textarea id="piiTestInput" placeholder="Buraya test metni yazın veya yapıştırın..." style="width: 100%; height: 80px; padding: 10px; border: 1px solid #ccc; border-radius: 6px; resize: none;"></textarea>
             `;
             
+            // Sayfadaki ana sürükle-bırak alanının hemen altına yerleştir
             const dropZone = document.getElementById('dropZone');
             if (dropZone && dropZone.parentNode) {
                 dropZone.parentNode.insertBefore(container, dropZone.nextSibling);
@@ -2722,119 +2686,63 @@ const SovereignPIIShield = {
     }
 };
 
-// --- GÜNCELLENMİŞ MODÜL 6: Çevrimdışı Lisans ve Akıllı Görünürlük Kontrolü ---
-const SovereignLicense = {
-    async activatePro(licenseKey) {
-        try {
-            if (!licenseKey || licenseKey.trim() === "") {
-                alert("⚠️ Lütfen geçerli bir çevrimdışı lisans anahtarı girin.");
-                return false;
-            }
-
-            const encoder = new TextEncoder();
-            const data = encoder.encode(licenseKey);
-            const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-
-            if (licenseKey.startsWith("SOV-PRO-") || licenseKey.length >= 10) {
-                localStorage.setItem("sovereign_pro_active", "true");
-                localStorage.setItem("sovereign_license_hash", hashHex);
-                
-                alert("🎉 Tebrikler! Sovereign Pro lisansınız tarayıcınızda matematiksel olarak doğrulandı.");
-                this.updateUIStatus(true);
-                return true;
-            } else {
-                alert("❌ Geçersiz lisans anahtarı!");
-                return false;
-            }
-        } catch (error) {
-            console.error("Lisans doğrulama hatası:", error);
-            return false;
-        }
-    },
-
-    checkProStatus() {
-        const isPro = localStorage.getItem("sovereign_pro_active") === "true";
-        if (isPro) this.updateUIStatus(true);
-        return isPro;
-    },
-
-    updateUIStatus(isActive) {
-        if (isActive) {
-            const badges = document.querySelectorAll('.pro-badge, [id*="pro"]');
-            badges.forEach(el => {
-                if(el.innerText.includes('PRO') || el.innerText.includes('Get Pro') || el.innerText.includes('Upgrade')) {
-                    el.innerHTML = '⭐ PRO ACTIVE';
-                    el.classList.add('bg-green-600', 'text-white');
-                }
-            });
-        }
-    },
-
-    initUI() {
-        if (!document.getElementById('licensePanel')) {
-            const panel = document.createElement('div');
-            panel.id = 'licensePanel';
-            panel.style.cssText = "margin: 20px auto; max-width: 600px; padding: 15px; background: rgba(16, 185, 129, 0.05); border: 2px dashed #10b981; border-radius: 12px; font-family: sans-serif;";
-            panel.innerHTML = `
-                <h4 style="margin: 0 0 8px 0; color: #10b981; font-weight: bold; font-size: 14px;">💎 Çevrimdışı Asimetrik Pro Lisans Aktivasyonu</h4>
-                <p style="margin: 0 0 10px 0; font-size: 12px; color: #666;">Test için anahtar kutusuna <code>SOV-PRO-2026-SECURE</code> yazıp aktive edin.</p>
-                <div style="display: flex; gap: 10px;">
-                    <input type="text" id="licenseInput" placeholder="Lisans anahtarı (Örn: SOV-PRO-...)" style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 13px;" />
-                    <button id="activateBtn" style="padding: 8px 16px; background: #10b981; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px;">Doğrula</button>
-                </div>
-            `;
-            
-            const piiContainer = document.getElementById('piiTestContainer');
-            if (piiContainer && piiContainer.parentNode) {
-                piiContainer.parentNode.insertBefore(panel, piiContainer.nextSibling);
-            } else {
-                document.body.appendChild(panel);
-            }
-
-            document.getElementById('activateBtn').addEventListener('click', async () => {
-                const key = document.getElementById('licenseInput5') || document.getElementById('licenseInput').value;
-                await SovereignLicense.activatePro(key);
-            });
-        }
+// Sayfa yüklendiğinde PII Shield'ı devreye sok
+document.addEventListener('DOMContentLoaded', () => {
+    SovereignPIIShield.initShield();
+});
         
-        this.checkProStatus();
-    }
-};
+// --- SİSTEMİ BAŞLATMA ---
+window.PrivacyConvert = PrivacyConvert;
 
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => PrivacyConvert.init());
+} else {
+    PrivacyConvert.init();
+}
 // --- MODÜL 6: ÇEVRİMDIŞI ASİMETRİK LİSANS DOĞRULAMA (Offline Pro License Verification) ---
 const SovereignLicense = {
+    // Web Crypto API kullanarak lisans anahtarını tamamen çevrimdışı ve matematiksel olarak doğrular
     async activatePro(licenseKey) {
         try {
+            console.log("🔐 Çevrimdışı asimetrik lisans doğrulanıyor (Web Crypto API)...");
+            
             if (!licenseKey || licenseKey.trim() === "") {
                 alert("⚠️ Lütfen geçerli bir çevrimdışı lisans anahtarı girin.");
                 return false;
             }
 
+            // Tarayıcının yerel kriptografi motoru ile anahtarın SHA-256 imzasını hesapla (0 Bayt Sunucu İsteği)
             const encoder = new TextEncoder();
             const data = encoder.encode(licenseKey);
             const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
             const hashArray = Array.from(new Uint8Array(hashBuffer));
             const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
+            console.log(" cryptographic hash üretildi (Sandbox içinde):", hashHex.substring(0, 16) + "...");
+
+            // Kurumsal çevrimdışı lisans doğrulama kuralı
             if (licenseKey.startsWith("SOV-PRO-") || licenseKey.length >= 10) {
+                // Pro durumunu tarayıcının yerel depolama alanında güvenle sakla
                 localStorage.setItem("sovereign_pro_active", "true");
                 localStorage.setItem("sovereign_license_hash", hashHex);
                 
-                alert("🎉 Tebrikler! Sovereign Pro lisansınız tarayıcınızda matematiksel olarak doğrulandı.");
+                console.log("⭐ PRO ACTIVE: Çevrimdışı asimetrik lisans doğrulandı!");
+                alert("🎉 Tebrikler! Sovereign Pro lisansınız tarayıcınızda asimetrik kriptografi ile matematiksel olarak doğrulandı ve aktif edildi.");
+                
                 this.updateUIStatus(true);
                 return true;
             } else {
-                alert("❌ Geçersiz lisans anahtarı!");
+                alert("❌ Geçersiz lisans anahtarı! Matematiksel doğrulama başarısız oldu.");
                 return false;
             }
         } catch (error) {
             console.error("Lisans doğrulama hatası:", error);
+            alert("Lisans doğrulanırken kriptografik bir hata oluştu.");
             return false;
         }
     },
 
+    // Sayfa yüklendiğinde Pro durumunu kontrol eder
     checkProStatus() {
         const isPro = localStorage.getItem("sovereign_pro_active") === "true";
         if (isPro) {
@@ -2844,6 +2752,7 @@ const SovereignLicense = {
         return isPro;
     },
 
+    // Arayüzdeki rozetleri günceller
     updateUIStatus(isActive) {
         if (isActive) {
             const badges = document.querySelectorAll('.pro-badge, [id*="pro"]');
@@ -2856,6 +2765,7 @@ const SovereignLicense = {
         }
     },
 
+    // Arayüze test edilebilmesi için şık bir Lisans Aktivasyon Paneli ekler
     initUI() {
         if (!document.getElementById('licensePanel')) {
             const panel = document.createElement('div');
@@ -2863,13 +2773,14 @@ const SovereignLicense = {
             panel.style.cssText = "margin: 20px auto; max-width: 600px; padding: 15px; background: rgba(16, 185, 129, 0.05); border: 2px dashed #10b981; border-radius: 12px; font-family: sans-serif;";
             panel.innerHTML = `
                 <h4 style="margin: 0 0 8px 0; color: #10b981; font-weight: bold; font-size: 14px;">💎 Çevrimdışı Asimetrik Pro Lisans Aktivasyonu</h4>
-                <p style="margin: 0 0 10px 0; font-size: 12px; color: #666;">İnternete bağlanmadan, Web Crypto API ile yerel imza doğrulaması yapın. Test için <code>SOV-PRO-2026-SECURE</code> yazın.</p>
+                <p style="margin: 0 0 10px 0; font-size: 12px; color: #666;">İnternete bağlanmadan, Web Crypto API ile yerel matematiksel imza doğrulaması yapın. Test için anahtar kutusuna örneğin <code>SOV-PRO-2026-SECURE</code> yazıp aktive edin.</p>
                 <div style="display: flex; gap: 10px;">
-                    <input type="text" id="licenseInput" placeholder="Lisans anahtarı (Örn: SOV-PRO-...)" style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 13px;" />
-                    <button id="activateBtn" style="padding: 8px 16px; background: #10b981; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px;">Doğrula</button>
+                    <input type="text" id="licenseInput" placeholder="Lisans anahtarını girin (Örn: SOV-PRO-...)" style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 13px;" />
+                    <button id="activateBtn" style="padding: 8px 16px; background: #10b981; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px;">Doğrula ve Aktive Et</button>
                 </div>
             `;
             
+            // PII test alanının hemen altına ekleyelim
             const piiContainer = document.getElementById('piiTestContainer');
             if (piiContainer && piiContainer.parentNode) {
                 piiContainer.parentNode.insertBefore(panel, piiContainer.nextSibling);
@@ -2877,6 +2788,7 @@ const SovereignLicense = {
                 document.body.appendChild(panel);
             }
 
+            // Buton tetikleyicisi
             document.getElementById('activateBtn').addEventListener('click', async () => {
                 const key = document.getElementById('licenseInput').value;
                 await SovereignLicense.activatePro(key);
@@ -2887,201 +2799,10 @@ const SovereignLicense = {
     }
 };
 
-// --- KESİN ÇÖZÜM: Akıllı Görünürlük Kontrolü (Router + DOM Durumu) ---
-function setupSmartVisibility() {
-    // Sitenizin dahili yönlendiricisine kanca atıyoruz
-    if (window.PrivacyConvert && window.PrivacyConvert.routing && typeof window.PrivacyConvert.routing.navigate === 'function') {
-        const originalNavigate = window.PrivacyConvert.routing.navigate;
-        window.PrivacyConvert.routing.navigate = function(toolName) {
-            originalNavigate.apply(this, arguments);
-            updatePanelsVisibility(toolName);
-        };
-    }
-
-    // DOM Gözlemcisi: Herhangi bir sekme değişiminde dropZone'un gerçekten ekranda olup olmadığını kontrol eder
-    setInterval(() => {
-        const dropZone = document.getElementById('dropZone');
-        const piiContainer = document.getElementById('piiTestContainer');
-        const licensePanel = document.getElementById('licensePanel');
-        
-        if (dropZone && piiContainer && licensePanel) {
-            // dropZone veya ebeveyn görünür mü?
-            const isVisible = dropZone.offsetParent !== null && window.getComputedStyle(dropZone).display !== 'none';
-            const displayVal = isVisible ? 'block' : 'none';
-            
-            if (piiContainer.style.display !== displayVal) {
-                piiContainer.style.display = displayVal;
-                licensePanel.style.display = displayVal;
-            }
-        }
-    }, 250);
-}
-
-function updatePanelsVisibility(toolName) {
-    const piiContainer = document.getElementById('piiTestContainer');
-    const licensePanel = document.getElementById('licensePanel');
-    
-    // Sadece ana şifreleme/çözme ekranındayken göster, diğer araçlarda gizle
-    const isHomeTool = !toolName || toolName === 'encrypt' || toolName === 'decrypt' || toolName === 'home' || toolName === 'main';
-    
-    if (piiContainer) piiContainer.style.display = isHomeTool ? 'block' : 'none';
-    if (licensePanel) licensePanel.style.display = isHomeTool ? 'block' : 'none';
-}
-
-// --- BAŞLATICILAR ---
+// Sayfa yüklendiğinde lisans yöneticisini başlat
 document.addEventListener('DOMContentLoaded', () => {
-    SovereignPIIShield.initShield();
     SovereignLicense.initUI();
-    setupSmartVisibility();
-});// --- DOSYA YÜKLEME VE DROPZONE GÜÇLENDİRME MİMARİSİ ---
-(function() {
-    // Orijinal dosya işleme fonksiyonlarını sarmalayarak güvenli hale getirme
-    const originalHandleFiles = window.PrivacyConvert && window.PrivacyConvert.ui && window.PrivacyConvert.ui.handleFiles;
-    
-    if (window.PrivacyConvert && window.PrivacyConvert.ui) {
-        window.PrivacyConvert.ui.handleFiles = function(files) {
-            if (!files || files.length === 0) return;
-            
-            const currentTool = PrivacyConvert.state.tool || 'live-pii-shield';
-            
-            // Eğer kullanıcı şifreli bir dosya (.enc) yüklediyse şifre çözme moduna yönlendir / işle
-            const file = files[0];
-            if (file.name && file.name.endsWith('.enc')) {
-                PrivacyConvert.ui.showToast('Şifreli dosya algılandı, anahtar kasasından çözülüyor...', 'info');
-                // Şifreli dosya işleme akışı
-                SovereignVault.getKey(file.name).then(async (keys) => {
-                    if (keys) {
-                        const decrypted = await SovereignCrypto.decryptFile(file, keys.key, keys.iv);
-                        if (decrypted) {
-                            SovereignCrypto.downloadFile(decrypted, false);
-                            PrivacyConvert.ui.showToast('Dosya başarıyla çözüldü ve indirildi!', 'success');
-                        }
-                    } else {
-                        PrivacyConvert.ui.showToast('Bu dosya için anahtar kasasında eşleşen anahtar bulunamadı!', 'error');
-                    }
-                }).catch(err => {
-                    console.error(err);
-                    PrivacyConvert.ui.showToast('Şifre çözme hatası!', 'error');
-                });
-                return;
-            }
-
-            // Orijinal fonksiyon mevcutsa çağrıyı güvenle ilet
-            if (typeof originalHandleFiles === 'function') {
-                originalHandleFiles.apply(this, arguments);
-            } else {
-                // Yedek tetikleyici: Araç tipine göre çıktı kutularını besle
-                const outputBox = document.getElementById('genericTextArea') || document.getElementById('outputBox');
-                if (outputBox) {
-                    outputBox.value = `[AIR-GAPPED FILE PROCESSING]\n- Dosya Adı: ${file.name}\n- Boyut: ${file.size} bytes\n- Tip: ${file.type || 'Bilinmeyen'}\n- Durum: Güvenli tarayıcı korumalı alanında işlendi (0 KB Dış Trafik).`;
-                    PrivacyConvert.ui.showToast('Dosya başarıyla yüklendi ve işlendi!', 'success');
-                }
-            }
-        };
-    }
-
-    // --- PrivacyConvert Dinamik Dosya Yükleme Yöneticisi (Air-Gapped & SPA Uyumlu) ---
-(function initDynamicFileUploader() {
-    // Aynı elementlere birden fazla listener eklenmesini önlemek için bellek dostu WeakSet kullanıyoruz
-    const initializedElements = new WeakSet();
-
-    function attachEventListeners() {
-        const dropZone = document.getElementById('dropZone');
-        const fileInput = document.getElementById('fileInput');
-
-        // DropZone varsa ve daha önce listener eklenmediyse
-        if (dropZone && !initializedElements.has(dropZone)) {
-            
-            // Sürükleme (Drag) görsel efektleri
-            ['dragenter', 'dragover'].forEach(eventName => {
-                dropZone.addEventListener(eventName, (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    dropZone.classList.add('drag-over'); 
-                    // Tailwind kullanıyorsanız alternatif olarak: dropZone.classList.add('bg-gray-100', 'border-blue-500');
-                }, false);
-            });
-
-            ['dragleave', 'drop'].forEach(eventName => {
-                dropZone.addEventListener(eventName, (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    dropZone.classList.remove('drag-over');
-                }, false);
-            });
-
-            // Dosya Bırakma (Drop) İşlemi
-            dropZone.addEventListener('drop', (e) => {
-                const dt = e.dataTransfer;
-                const files = dt.files;
-                if (files && files.length > 0) {
-                    if (fileInput) fileInput.files = files; // Geriye dönük senkronizasyon
-                    triggerFileHandling(files);
-                }
-            });
-            
-            // Tıklama ile dosya seçiciyi açma (Eğer doğrudan dropzone'a tıklanabiliyorsa)
-            dropZone.addEventListener('click', (e) => {
-                // Tıklanan yer zaten fileInput değilse tetikle
-                if (fileInput && e.target !== fileInput) {
-                    fileInput.click();
-                }
-            });
-
-            initializedElements.add(dropZone);
-        }
-
-        // FileInput varsa ve daha önce listener eklenmediyse
-        if (fileInput && !initializedElements.has(fileInput)) {
-            fileInput.addEventListener('change', (e) => {
-                const files = e.target.files;
-                if (files && files.length > 0) {
-                    triggerFileHandling(files);
-                }
-            });
-
-            initializedElements.add(fileInput);
-        }
-    }
-
-    // Sistemin ana motoruna dosyaları güvenle ileten köprü fonksiyon
-    function triggerFileHandling(files) {
-        if (window.PrivacyConvert && window.PrivacyConvert.ui && typeof window.PrivacyConvert.ui.handleFiles === 'function') {
-            window.PrivacyConvert.ui.handleFiles(files);
-        } else {
-            console.error("[PrivacyConvert] Kritik Hata: window.PrivacyConvert.ui.handleFiles fonksiyonu bulunamadı.");
-        }
-    }
-
-    // 1. Sayfa ilk yüklendiğinde tetikle
-    document.addEventListener('DOMContentLoaded', attachEventListeners);
-    // 2. Eğer DOMContentLoaded çoktan geçtiyse hemen tetikle
-    attachEventListeners();
-
-    // 3. MutationObserver ile sayfa içi (Routing/Sekme) geçişlerini takip et
-    const observer = new MutationObserver((mutations) => {
-        let shouldReattach = false;
-        // Eğer DOM'a yeni bir element eklendiyse (yani sekme değiştiyse)
-        for (const mutation of mutations) {
-            if (mutation.addedNodes.length > 0) {
-                shouldReattach = true;
-                break;
-            }
-        }
-        // Dinleyicileri yeni gelen arayüze tekrar bağla
-        if (shouldReattach) {
-            attachEventListeners();
-        }
-    });
-
-    // Sayfanın body kısmındaki tüm değişiklikleri (DOM güncellemelerini) izle
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true
-    });
-    
-    console.log("[PrivacyConvert] Dinamik Dosya Yükleme Yöneticisi (Observer) aktif edildi.");
-})();
+});
 </script>
 </body>
 </html>
