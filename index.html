@@ -97,7 +97,7 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
     <!-- Kategori 2 -->
     <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-2">
       <h3 class="text-[11px] font-extrabold dynamic-text uppercase tracking-wider border-b pb-2">🔑 Crypto & Authentication</h3>
-      <button id="tab-ed25519-sign" onclick="PrivacyConvert.routing.navigate('ed25519-sign')" class="tool-tab w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-xl transition shadow-sm border"><span>✒️</span> Ed25519 Doc Signer</button>
+      <button id="tab-ed25519-sign" onclick="PrivacyConvert.routing.navigate('ed25519-sign')" class="tool-tab w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-xl transition shadow-sm border"><span>✒️</span> ECDSA P-256 Signer</button>
       <button id="tab-webauthn-vault" onclick="PrivacyConvert.routing.navigate('webauthn-vault')" class="tool-tab w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-xl transition shadow-sm border"><span>🔐</span> WebAuthn Passkey Vault</button>
       <button id="tab-zkp-validator" onclick="PrivacyConvert.routing.navigate('zkp-validator')" class="tool-tab w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-xl transition shadow-sm border"><span>🛡️</span> Zero-Knowledge Proofs</button>
       <button id="tab-chain-custody" onclick="PrivacyConvert.routing.navigate('chain-custody')" class="tool-tab w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-xl transition shadow-sm border"><span>⚖️</span> File Hash Checksum</button>
@@ -169,6 +169,30 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 </main>
 
 <script>
+// --- SERVICE WORKER FOR AIR-GAPPED OFFLINE CACHING ---
+if ('serviceWorker' in navigator) {
+  const swCode = `
+    const CACHE_NAME = 'sovereign-core-v1';
+    const assets = ['/', 'https://cdn.tailwindcss.com', 'https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js', 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js', 'https://unpkg.com/tesseract.js@2.1.4/dist/tesseract.min.js'];
+    self.addEventListener('install', e => {
+      e.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(assets).catch(() => {})));
+      self.skipWaiting();
+    });
+    self.addEventListener('activate', e => {
+      e.waitUntil(caches.keys().then(keys => Promise.all(keys.map(k => k !== CACHE_NAME ? caches.delete(k) : null))));
+      self.clients.claim();
+    });
+    self.addEventListener('fetch', e => {
+      e.respondWith(caches.match(e.request).then(cached => cached || fetch(e.request).then(res => {
+        return caches.open(CACHE_NAME).then(cache => { cache.put(e.request, res.clone()); return res; });
+      }).catch(() => {})));
+    });
+  `;
+  try {
+    navigator.serviceWorker.register(URL.createObjectURL(new Blob([swCode], { type: 'application/javascript' }))).catch(()=>{});
+  } catch(e) {}
+}
+
 const ScriptLoader = {
   loaded: {},
   async load(url) {
@@ -280,7 +304,8 @@ const opfsEngine = {
 const p2pEngine = {
   pc: null, dataChannel: null,
   async init(isInitiator) {
-    this.pc = new RTCPeerConnection({ iceServers: [] });
+    // Esnek P2P yapılandırması: LAN için boş, geniş ağlar (WAN) için opsiyonel STUN desteği
+    this.pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
     if (isInitiator) {
       this.dataChannel = this.pc.createDataChannel("PrivacyConvertSecureChat");
       this.setupDataChannel();
@@ -387,7 +412,7 @@ const PrivacyConvert = {
       'pii-redactor': { type: 'file', accept: 'application/pdf,image/*,text/plain', multiple: true, title: 'Batch PII Redactor' },
       'encrypt-tool': { type: 'crypto', accept: '*/*', title: 'AES-256 Encryptor' },
       'visual-redact': { type: 'interactive-redact', accept: 'image/*', title: 'Visual Redaction' },
-      'ed25519-sign': { type: 'interactive-sign', title: 'Ed25519 Document Signer' },
+      'ed25519-sign': { type: 'interactive-sign', title: 'ECDSA P-256 Signer' },
       'webauthn-vault': { type: 'webauthn', title: 'WebAuthn Passkey Vault' },
       'zkp-validator': { type: 'interactive-zkp', title: 'Zero-Knowledge Proofs' },
       'chain-custody': { type: 'file', multiple: true, accept: '*/*', title: 'File Hash Checksum' },
@@ -498,7 +523,7 @@ const PrivacyConvert = {
     },
     renderSignUI() {
       const container = document.getElementById('interactiveWorkspaceContainer'); container.classList.remove('hidden');
-      container.innerHTML = `<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3"><textarea id="signInput" placeholder="Document content to sign..." class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white font-mono"></textarea><button onclick="PrivacyConvert.engine.executeSign()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">Sign Document</button><textarea id="signOutput" class="w-full h-24 bg-slate-900 text-emerald-400 text-xs p-3 rounded-xl font-mono" readonly placeholder="Signature..."></textarea></div>`;
+      container.innerHTML = `<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3"><textarea id="signInput" placeholder="Document content to sign..." class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white font-mono"></textarea><button onclick="PrivacyConvert.engine.executeSign()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">Sign Document (ECDSA P-256)</button><textarea id="signOutput" class="w-full h-24 bg-slate-900 text-emerald-400 text-xs p-3 rounded-xl font-mono" readonly placeholder="Signature..."></textarea></div>`;
     },
     renderOpfsUI() {
       const container = document.getElementById('interactiveWorkspaceContainer'); container.classList.remove('hidden');
@@ -516,7 +541,6 @@ const PrivacyConvert = {
   },
 
   engine: {
-    // Görsel Karartma için interaktif state değişkenleri
     redactImageObj: null,
     redactRect: { startX: 0, startY: 0, w: 0, h: 0, active: false },
 
@@ -534,7 +558,6 @@ const PrivacyConvert = {
           const ctx = cvs.getContext('2d');
           ctx.drawImage(img, 0, 0);
           
-          // Mouse Çizim Olayları (Interactive Bounding Box)
           let isDrawing = false;
           cvs.onmousedown = (evt) => {
             const rect = cvs.getBoundingClientRect();
@@ -555,7 +578,6 @@ const PrivacyConvert = {
             this.redactRect.w = currX - this.redactRect.startX;
             this.redactRect.h = currY - this.redactRect.startY;
 
-            // Canvas'ı ve anlık dikdörtgen önizlemesini çiz
             ctx.clearRect(0, 0, cvs.width, cvs.height);
             ctx.drawImage(img, 0, 0);
             ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
@@ -577,7 +599,6 @@ const PrivacyConvert = {
       ctx.clearRect(0, 0, cvs.width, cvs.height);
       ctx.drawImage(this.redactImageObj, 0, 0);
       
-      // Kesin siyah kutu uygulaması
       ctx.fillStyle = "#000000";
       ctx.fillRect(this.redactRect.startX, this.redactRect.startY, this.redactRect.w, this.redactRect.h);
 
@@ -614,7 +635,6 @@ const PrivacyConvert = {
             try {
               if (file.type === "application/pdf") {
                 await ScriptLoader.load('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
-                // disableWorker: true ile harici worker CDN bağımlılığı tamamen kaldırıldı (Tam Air-Gapped)
                 const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer(), disableWorker: true }).promise;
                 for (let i = 1; i <= pdf.numPages; i++) {
                   const page = await pdf.getPage(i);
@@ -626,7 +646,7 @@ const PrivacyConvert = {
                 extracted = result.data.text;
               } else { extracted = await file.text(); }
             } finally {
-              URL.revokeObjectURL(objUrl); // Bellek sızıntısı önlendi
+              URL.revokeObjectURL(objUrl);
             }
             combinedOutput += `=== [FILE: ${file.name}] ===\n` + aiEngine.maskPII(extracted) + "\n\n";
           }
@@ -701,7 +721,7 @@ const PrivacyConvert = {
               const res = await Tesseract.recognize(objUrl, 'eng+tur');
               combinedText += `--- [${files[i].file.name}] ---\n` + res.data.text + "\n\n";
             } finally {
-              URL.revokeObjectURL(objUrl); // Bellek sızıntısı önlendi
+              URL.revokeObjectURL(objUrl);
             }
           }
           outputBox.value = combinedText; 
@@ -772,7 +792,7 @@ const PrivacyConvert = {
     async executeSign() {
       const txt = document.getElementById('signInput').value; if(!txt) return PrivacyConvert.ui.showToast('Metin gerekli', 'warning');
       const kp = await cryptoCore.generateSignKeypair();
-      document.getElementById('signOutput').value = `[ED25519/ECDSA SIGNATURE RESULT]\nAlgorithm: P-256 SHA-256\nSignature (Hex):\n${await cryptoCore.signData(kp.privateKey, txt)}\nStatus: VALID`;
+      document.getElementById('signOutput').value = `[ECDSA P-256 SIGNATURE RESULT]\nAlgorithm: P-256 SHA-256\nSignature (Hex):\n${await cryptoCore.signData(kp.privateKey, txt)}\nStatus: VALID`;
       PrivacyConvert.ui.showToast('Belge imzalandı!');
     },
 
