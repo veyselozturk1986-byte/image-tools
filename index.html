@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; worker-src 'self' blob: https://unpkg.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' wss: https: data: blob:;">
-<title>PrivacyConvert Sovereign OS - Pro Suite (Production Hardened v19)</title>
+<title>PrivacyConvert Sovereign OS - Pro Suite (Production Hardened v20)</title>
 <meta name="theme-color" content="#4f46e5">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
@@ -170,10 +170,10 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 </main>
 
 <script>
-// --- ROBUST AIR-GAPPED FIRST-RUN RESILIENT SERVICE WORKER (v19) ---
+// --- ROBUST AIR-GAPPED RESILIENT SERVICE WORKER (v20) ---
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE_NAME = 'sovereign-core-v19';
+    const CACHE_NAME = 'sovereign-core-v20';
     const assets = [
       './',
       location.pathname,
@@ -182,7 +182,9 @@ if ('serviceWorker' in navigator) {
       'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js',
       'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js',
       'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js',
-      'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'
+      'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js',
+      'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/worker.min.js',
+      'https://cdn.jsdelivr.net/npm/tesseract.js-core@v5/tesseract-core.wasm.js'
     ];
     self.addEventListener('install', e => {
       e.waitUntil(
@@ -193,9 +195,7 @@ if ('serviceWorker' in navigator) {
               if (res && res.ok) {
                 await cache.put(asset, res);
               }
-            } catch (err) {
-              // İlk açılışta tamamen çevrimdışı ve ağ erişimi yoksa kurulum patlamaz, sessizce yutulur.
-            }
+            } catch (err) {}
           }
         })
       );
@@ -222,7 +222,6 @@ if ('serviceWorker' in navigator) {
             });
             return res;
           }).catch(() => {
-            // Çevrimdışı durumda önbellekte olmayan assetler için güvenli düşüş (fallback)
             if (e.request.destination === 'document') {
               return caches.match('./');
             }
@@ -256,7 +255,7 @@ const ScriptLoader = {
       };
       script.onerror = () => {
         delete this.loadingPromises[url];
-        PrivacyConvert.ui.showToast(`${url} yüklenemedi. Tamamen çevrimdışı (Air-Gapped) ortamda önbellek eksik olabilir.`, 'error');
+        PrivacyConvert.ui.showToast(`${url} yüklenemedi. Air-Gapped önbellek eksik olabilir.`, 'error');
         reject(new Error(`${url} yüklenemedi.`));
       };
       document.head.appendChild(script);
@@ -353,7 +352,7 @@ const streamCore = {
     a.click();
     setTimeout(() => { try { URL.revokeObjectURL(url); } catch(e){} }, 10000);
     progressCallback(100, 'Tamamlandı!');
-    toastCallback(mode === 'encrypt' ? 'Şifrelendi ve indirildi!' : 'Şifresi çözüldó ve indirildi!');
+    toastCallback(mode === 'encrypt' ? 'Şifrelendi ve indirildi!' : 'Şifresi çözüldü ve indirildi!');
   }
 };
 
@@ -420,7 +419,15 @@ const p2pEngine = {
   pc: null,
   dataChannel: null,
   async init(isInitiator) {
-    this.pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:stun1.l.google.com:19302' }, { urls: 'stun:stun.stunprotocol.org:3478' }, { urls: 'stun:openrelay.metered.ca:80' }] });
+    this.pc = new RTCPeerConnection({ 
+      iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' }, 
+        { urls: 'stun:stun1.l.google.com:19302' }
+      ] 
+    });
+    // Lokal ağda (true air-gapped) STUN zaman aşımı durumunda host adaylarının anında toplanması
+    this.pc.onicecandidateerror = (e) => {};
+    
     if (isInitiator) {
       this.dataChannel = this.pc.createDataChannel("PrivacyConvertSecureChat");
       this.setupDataChannel();
@@ -436,7 +443,7 @@ const p2pEngine = {
         };
         this.pc.onicegatheringstatechange = () => checkState();
         this.pc.onicecandidate = e => { if (!e.candidate) checkState(); };
-        setTimeout(checkState, 4000);
+        setTimeout(checkState, 2500); // Air-gapped hızlandırma zamanlayıcısı
       });
     } else {
       this.pc.ondatachannel = e => { this.dataChannel = e.channel; this.setupDataChannel(); };
@@ -475,7 +482,7 @@ const p2pEngine = {
       };
       this.pc.onicegatheringstatechange = () => checkState();
       this.pc.onicecandidate = e => { if (!e.candidate) checkState(); };
-      setTimeout(checkState, 4000);
+      setTimeout(checkState, 2500);
     });
   },
   async acceptAnswer() {
@@ -848,7 +855,13 @@ const PrivacyConvert = {
                 }
               } else if (file.type.startsWith("image/")) {
                 await ScriptLoader.load('https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js');
-                const result = await Tesseract.recognize(objUrl, 'eng');
+                const worker = await Tesseract.createWorker('eng', 1, {
+                  workerPath: 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/worker.min.js',
+                  corePath: 'https://cdn.jsdelivr.net/npm/tesseract.js-core@v5/tesseract-core.wasm.js',
+                  logger: m => {}
+                });
+                const result = await worker.recognize(objUrl);
+                await worker.terminate();
                 extracted = result.data.text;
               } else { 
                 extracted = await file.text(); 
@@ -941,7 +954,13 @@ const PrivacyConvert = {
             let objUrl = URL.createObjectURL(files[i].file);
             PrivacyConvert.registerObjectUrl(objUrl);
             try {
-              const res = await Tesseract.recognize(objUrl, 'eng');
+              const worker = await Tesseract.createWorker('eng', 1, {
+                workerPath: 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/worker.min.js',
+                corePath: 'https://cdn.jsdelivr.net/npm/tesseract.js-core@v5/tesseract-core.wasm.js',
+                logger: m => {}
+              });
+              const res = await worker.recognize(objUrl);
+              await worker.terminate();
               combinedText += `--- [${files[i].file.name}] ---\n` + res.data.text + "\n\n";
             } finally { 
               URL.revokeObjectURL(objUrl); 
