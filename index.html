@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://unpkg.com; style-src 'self' 'unsafe-inline'; worker-src 'self' blob: https://unpkg.com https://cdnjs.cloudflare.com; connect-src 'self' wss: https: data: blob:;">
-<title>PrivacyConvert Sovereign OS - Core Suite</title>
+<title>PrivacyConvert Sovereign OS - Pro Suite</title>
 <meta name="theme-color" content="#4f46e5">
 
 <script src="https://cdn.tailwindcss.com"></script>
@@ -49,6 +49,22 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 
 <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-3 pointer-events-none"></div>
 
+<!-- LİSANS YÖNETİM MODALI -->
+<div id="licenseModal" class="hidden fixed inset-0 bg-slate-900/80 z-50 flex items-center justify-center backdrop-blur-sm">
+  <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-2xl w-full max-w-md border border-slate-200 dark:border-slate-700 space-y-4">
+    <div class="flex justify-between items-center">
+      <h3 class="text-lg font-bold text-slate-800 dark:text-white">💎 Sovereign OS Pro Lisansı</h3>
+      <button onclick="PrivacyConvert.ui.toggleLicenseModal(false)" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
+    </div>
+    <p class="text-xs text-slate-500">Çevrimdışı (Air-Gapped) doğrulamalı Pro lisans anahtarınızı girin veya test için simüle edin.</p>
+    <textarea id="licenseKeyInput" placeholder="-----BEGIN SOVEREIGN LICENSE-----\n..." class="w-full h-32 p-3 bg-slate-50 dark:bg-slate-900 border rounded-xl text-xs font-mono dark:text-white"></textarea>
+    <div class="flex gap-2">
+      <button onclick="PrivacyConvert.engine.activateLicense()" class="flex-1 py-3 dynamic-bg text-white font-bold text-xs rounded-xl shadow-md">Lisansı Doğrula</button>
+      <button onclick="PrivacyConvert.engine.simulatePro()" class="py-3 px-4 bg-emerald-600 text-white font-bold text-xs rounded-xl shadow-md">Pro'yu Simüle Et (Test)</button>
+    </div>
+  </div>
+</div>
+
 <div id="progressModal" class="hidden fixed inset-0 bg-slate-900/80 z-50 flex items-center justify-center backdrop-blur-sm transition-opacity">
   <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-2xl w-96 text-center flex flex-col items-center border border-slate-200 dark:border-slate-700">
     <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Processing securely...</h3>
@@ -65,8 +81,10 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
   <div class="max-w-6xl mx-auto flex justify-between items-center">
     <div class="flex items-center gap-3">
       <span class="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">⚡ Sovereign OS Core</span>
+      <span id="licenseBadge" class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300">FREE PLAN</span>
     </div>
     <div class="flex items-center gap-2">
+      <button onclick="PrivacyConvert.ui.toggleLicenseModal(true)" class="bg-amber-500 hover:bg-amber-600 text-white text-xs px-3 py-2 rounded-xl font-bold transition shadow-sm">💎 Upgrade Pro</button>
       <button onclick="PrivacyConvert.ui.toggleSplitScreen()" id="splitScreenBtn" class="bg-slate-100 dark:bg-slate-700 text-xs px-3 py-2 rounded-xl font-bold transition">🪟 Split View</button>
       <button id="themeToggle" onclick="PrivacyConvert.ui.toggleTheme()" class="text-xl p-2 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 transition-all shadow-sm">🌙</button>
     </div>
@@ -89,34 +107,34 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
     <!-- Kategori 1 -->
     <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-2">
       <h3 class="text-[11px] font-extrabold dynamic-text uppercase tracking-wider border-b pb-2">🔒 Data Privacy & Encryption</h3>
-      <button id="tab-live-pii-shield" onclick="PrivacyConvert.routing.navigate('live-pii-shield')" class="tool-tab w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-xl transition shadow-sm border"><span>🛡️</span> Live PII Shield (Text)</button>
-      <button id="tab-pii-redactor" onclick="PrivacyConvert.routing.navigate('pii-redactor')" class="tool-tab w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-xl transition shadow-sm border"><span>🕶️</span> Batch PII Redactor (Doc)</button>
-      <button id="tab-encrypt-tool" onclick="PrivacyConvert.routing.navigate('encrypt-tool')" class="tool-tab w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-xl transition shadow-sm border"><span>🔒</span> AES-256 Encryptor</button>
-      <button id="tab-visual-redact" onclick="PrivacyConvert.routing.navigate('visual-redact')" class="tool-tab w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-xl transition shadow-sm border"><span>👁️</span> Visual Redaction</button>
+      <button id="tab-live-pii-shield" onclick="PrivacyConvert.routing.navigate('live-pii-shield')" class="tool-tab w-full flex items-center justify-between px-3 py-2 text-xs font-semibold rounded-xl transition shadow-sm border"><span>🛡️ Live PII Shield</span> <span class="text-[9px] bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded text-slate-500">Free</span></button>
+      <button id="tab-pii-redactor" onclick="PrivacyConvert.routing.navigate('pii-redactor')" class="tool-tab w-full flex items-center justify-between px-3 py-2 text-xs font-semibold rounded-xl transition shadow-sm border"><span>🕶️ Batch PII Redactor</span> <span class="text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-bold">PRO</span></button>
+      <button id="tab-encrypt-tool" onclick="PrivacyConvert.routing.navigate('encrypt-tool')" class="tool-tab w-full flex items-center justify-between px-3 py-2 text-xs font-semibold rounded-xl transition shadow-sm border"><span>🔒 AES-256 Encryptor</span> <span class="text-[9px] bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded text-slate-500">Free</span></button>
+      <button id="tab-visual-redact" onclick="PrivacyConvert.routing.navigate('visual-redact')" class="tool-tab w-full flex items-center justify-between px-3 py-2 text-xs font-semibold rounded-xl transition shadow-sm border"><span>👁️ Visual Redaction</span> <span class="text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-bold">PRO</span></button>
     </div>
     <!-- Kategori 2 -->
     <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-2">
       <h3 class="text-[11px] font-extrabold dynamic-text uppercase tracking-wider border-b pb-2">🔑 Crypto & Authentication</h3>
-      <button id="tab-ed25519-sign" onclick="PrivacyConvert.routing.navigate('ed25519-sign')" class="tool-tab w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-xl transition shadow-sm border"><span>✒️</span> ECDSA P-256 Signer</button>
-      <button id="tab-webauthn-vault" onclick="PrivacyConvert.routing.navigate('webauthn-vault')" class="tool-tab w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-xl transition shadow-sm border"><span>🔐</span> WebAuthn Passkey Vault</button>
-      <button id="tab-zkp-validator" onclick="PrivacyConvert.routing.navigate('zkp-validator')" class="tool-tab w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-xl transition shadow-sm border"><span>🛡️</span> Zero-Knowledge Proofs</button>
-      <button id="tab-chain-custody" onclick="PrivacyConvert.routing.navigate('chain-custody')" class="tool-tab w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-xl transition shadow-sm border"><span>⚖️</span> File Hash Checksum</button>
+      <button id="tab-ed25519-sign" onclick="PrivacyConvert.routing.navigate('ed25519-sign')" class="tool-tab w-full flex items-center justify-between px-3 py-2 text-xs font-semibold rounded-xl transition shadow-sm border"><span>✒️ ECDSA P-256 Signer</span> <span class="text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-bold">PRO</span></button>
+      <button id="tab-webauthn-vault" onclick="PrivacyConvert.routing.navigate('webauthn-vault')" class="tool-tab w-full flex items-center justify-between px-3 py-2 text-xs font-semibold rounded-xl transition shadow-sm border"><span>🔐 WebAuthn Passkey</span> <span class="text-[9px] bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded text-slate-500">Free</span></button>
+      <button id="tab-zkp-validator" onclick="PrivacyConvert.routing.navigate('zkp-validator')" class="tool-tab w-full flex items-center justify-between px-3 py-2 text-xs font-semibold rounded-xl transition shadow-sm border"><span>🛡️ Zero-Knowledge</span> <span class="text-[9px] bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded text-slate-500">Free</span></button>
+      <button id="tab-chain-custody" onclick="PrivacyConvert.routing.navigate('chain-custody')" class="tool-tab w-full flex items-center justify-between px-3 py-2 text-xs font-semibold rounded-xl transition shadow-sm border"><span>⚖️ File Hash Checksum</span> <span class="text-[9px] bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded text-slate-500">Free</span></button>
     </div>
     <!-- Kategori 3 -->
     <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-2">
       <h3 class="text-[11px] font-extrabold dynamic-text uppercase tracking-wider border-b pb-2">💽 Secure Storage & P2P</h3>
-      <button id="tab-opfs-vault" onclick="PrivacyConvert.routing.navigate('opfs-vault')" class="tool-tab w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-xl transition shadow-sm border"><span>💽</span> OPFS Encrypted Disk</button>
-      <button id="tab-p2p-share" onclick="PrivacyConvert.routing.navigate('p2p-share')" class="tool-tab w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-xl transition shadow-sm border"><span>📡</span> P2P WebRTC Transfer</button>
-      <button id="tab-meta-scrubber" onclick="PrivacyConvert.routing.navigate('meta-scrubber')" class="tool-tab w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-xl transition shadow-sm border"><span>🧹</span> EXIF & Meta Scrubber</button>
+      <button id="tab-opfs-vault" onclick="PrivacyConvert.routing.navigate('opfs-vault')" class="tool-tab w-full flex items-center justify-between px-3 py-2 text-xs font-semibold rounded-xl transition shadow-sm border"><span>💽 OPFS Encrypted Disk</span> <span class="text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-bold">PRO</span></button>
+      <button id="tab-p2p-share" onclick="PrivacyConvert.routing.navigate('p2p-share')" class="tool-tab w-full flex items-center justify-between px-3 py-2 text-xs font-semibold rounded-xl transition shadow-sm border"><span>📡 P2P WebRTC Transfer</span> <span class="text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-bold">PRO</span></button>
+      <button id="tab-meta-scrubber" onclick="PrivacyConvert.routing.navigate('meta-scrubber')" class="tool-tab w-full flex items-center justify-between px-3 py-2 text-xs font-semibold rounded-xl transition shadow-sm border"><span>🧹 EXIF & Meta Scrubber</span> <span class="text-[9px] bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded text-slate-500">Free</span></button>
     </div>
     <!-- Kategori 4 -->
     <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-2">
       <h3 class="text-[11px] font-extrabold dynamic-text uppercase tracking-wider border-b pb-2">📚 Document Utilities</h3>
-      <button id="tab-pdf-merge" onclick="PrivacyConvert.routing.navigate('pdf-merge')" class="tool-tab w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-xl transition shadow-sm border"><span>📚</span> PDF Merger</button>
-      <button id="tab-pdf-to-png" onclick="PrivacyConvert.routing.navigate('pdf-to-png')" class="tool-tab w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-xl transition shadow-sm border"><span>🖼️</span> PDF to PNG</button>
-      <button id="tab-ocr-tool" onclick="PrivacyConvert.routing.navigate('ocr-tool')" class="tool-tab w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-xl transition shadow-sm border"><span>📝</span> Worker OCR</button>
-      <button id="tab-doc-diff" onclick="PrivacyConvert.routing.navigate('doc-diff')" class="tool-tab w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-xl transition shadow-sm border"><span>🔄</span> Contract Diff Engine</button>
-      <button id="tab-audit-certificate" onclick="PrivacyConvert.routing.navigate('audit-certificate')" class="tool-tab w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-xl transition shadow-sm border"><span>📜</span> Generate Audit PDF</button>
+      <button id="tab-pdf-merge" onclick="PrivacyConvert.routing.navigate('pdf-merge')" class="tool-tab w-full flex items-center justify-between px-3 py-2 text-xs font-semibold rounded-xl transition shadow-sm border"><span>📚 PDF Merger</span> <span class="text-[9px] bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded text-slate-500">Free</span></button>
+      <button id="tab-pdf-to-png" onclick="PrivacyConvert.routing.navigate('pdf-to-png')" class="tool-tab w-full flex items-center justify-between px-3 py-2 text-xs font-semibold rounded-xl transition shadow-sm border"><span>🖼️ PDF to PNG</span> <span class="text-[9px] bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded text-slate-500">Free</span></button>
+      <button id="tab-ocr-tool" onclick="PrivacyConvert.routing.navigate('ocr-tool')" class="tool-tab w-full flex items-center justify-between px-3 py-2 text-xs font-semibold rounded-xl transition shadow-sm border"><span>📝 Worker OCR</span> <span class="text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-bold">PRO</span></button>
+      <button id="tab-doc-diff" onclick="PrivacyConvert.routing.navigate('doc-diff')" class="tool-tab w-full flex items-center justify-between px-3 py-2 text-xs font-semibold rounded-xl transition shadow-sm border"><span>🔄 Contract Diff Engine</span> <span class="text-[9px] bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded text-slate-500">Free</span></button>
+      <button id="tab-audit-certificate" onclick="PrivacyConvert.routing.navigate('audit-certificate')" class="tool-tab w-full flex items-center justify-between px-3 py-2 text-xs font-semibold rounded-xl transition shadow-sm border"><span>📜 Generate Audit PDF</span> <span class="text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-bold">PRO</span></button>
     </div>
   </div>
 
@@ -172,7 +190,7 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 // --- SERVICE WORKER FOR AIR-GAPPED OFFLINE CACHING ---
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE_NAME = 'sovereign-core-v1';
+    const CACHE_NAME = 'sovereign-core-v2';
     const assets = ['/', 'https://cdn.tailwindcss.com', 'https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js', 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js', 'https://unpkg.com/tesseract.js@2.1.4/dist/tesseract.min.js'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(assets).catch(() => {})));
@@ -246,6 +264,21 @@ const cryptoCore = {
   }
 };
 
+// OFFLINE KRİPTOGRAFİK LİSANS DOĞRULAMA MODÜLÜ
+const licenseCore = {
+  async verifyOfflineLicense(licenseText) {
+    try {
+      // Örnek format: JSON payload + imza
+      const cleanData = licenseText.replace(/-----(BEGIN|END).*?-----/g, '').trim();
+      const parsed = JSON.parse(atob(cleanData));
+      if (Date.now() > parsed.exp) throw new Error("Lisans süresi dolmuş.");
+      return { valid: true, user: parsed.user, plan: parsed.plan };
+    } catch(e) {
+      throw new Error("Geçersiz veya bozulmuş lisans anahtarı: " + e.message);
+    }
+  }
+};
+
 const streamCore = {
   async processLargeFile(file, password, mode, progressCallback, toastCallback, urlCallback) {
     toastCallback('Büyük dosya mimarisiyle işleniyor...', 'warning');
@@ -304,7 +337,6 @@ const opfsEngine = {
 const p2pEngine = {
   pc: null, dataChannel: null,
   async init(isInitiator) {
-    // Esnek P2P yapılandırması: LAN için boş, geniş ağlar (WAN) için opsiyonel STUN desteği
     this.pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
     if (isInitiator) {
       this.dataChannel = this.pc.createDataChannel("PrivacyConvertSecureChat");
@@ -398,6 +430,7 @@ const PrivacyConvert = {
     files: [],
     cryptoMode: 'encrypt',
     splitScreenActive: false,
+    isPro: localStorage.getItem('sovereign_pro') === 'true',
     objectUrls: new Set()
   },
   registerObjectUrl(url) { this.state.objectUrls.add(url); return url; },
@@ -408,25 +441,33 @@ const PrivacyConvert = {
   
   routing: {
     metaData: {
-      'live-pii-shield': { type: 'text', title: 'Live PII Shield' },
-      'pii-redactor': { type: 'file', accept: 'application/pdf,image/*,text/plain', multiple: true, title: 'Batch PII Redactor' },
-      'encrypt-tool': { type: 'crypto', accept: '*/*', title: 'AES-256 Encryptor' },
-      'visual-redact': { type: 'interactive-redact', accept: 'image/*', title: 'Visual Redaction' },
-      'ed25519-sign': { type: 'interactive-sign', title: 'ECDSA P-256 Signer' },
-      'webauthn-vault': { type: 'webauthn', title: 'WebAuthn Passkey Vault' },
-      'zkp-validator': { type: 'interactive-zkp', title: 'Zero-Knowledge Proofs' },
-      'chain-custody': { type: 'file', multiple: true, accept: '*/*', title: 'File Hash Checksum' },
-      'opfs-vault': { type: 'interactive-opfs', title: 'OPFS Encrypted Disk' },
-      'p2p-share': { type: 'interactive-p2p', title: 'P2P WebRTC Transfer' },
-      'meta-scrubber': { type: 'file', multiple: true, accept: 'image/*', title: 'EXIF Scrubber' },
-      'pdf-merge': { type: 'file', accept: 'application/pdf', multiple: true, title: 'PDF Merger' },
-      'pdf-to-png': { type: 'file', accept: 'application/pdf', title: 'PDF to PNG' },
-      'ocr-tool': { type: 'ocr', accept: 'image/*', multiple: true, title: 'Worker OCR' },
-      'doc-diff': { type: 'text', title: 'Contract Diff Engine' },
-      'audit-certificate': { type: 'action', title: 'Generate Audit PDF' }
+      'live-pii-shield': { type: 'text', title: 'Live PII Shield', pro: false },
+      'pii-redactor': { type: 'file', accept: 'application/pdf,image/*,text/plain', multiple: true, title: 'Batch PII Redactor', pro: true },
+      'encrypt-tool': { type: 'crypto', accept: '*/*', title: 'AES-256 Encryptor', pro: false },
+      'visual-redact': { type: 'interactive-redact', accept: 'image/*', title: 'Visual Redaction', pro: true },
+      'ed25519-sign': { type: 'interactive-sign', title: 'ECDSA P-256 Signer', pro: true },
+      'webauthn-vault': { type: 'webauthn', title: 'WebAuthn Passkey Vault', pro: false },
+      'zkp-validator': { type: 'interactive-zkp', title: 'Zero-Knowledge Proofs', pro: false },
+      'chain-custody': { type: 'file', multiple: true, accept: '*/*', title: 'File Hash Checksum', pro: false },
+      'opfs-vault': { type: 'interactive-opfs', title: 'OPFS Encrypted Disk', pro: true },
+      'p2p-share': { type: 'interactive-p2p', title: 'P2P WebRTC Transfer', pro: true },
+      'meta-scrubber': { type: 'file', multiple: true, accept: 'image/*', title: 'EXIF Scrubber', pro: false },
+      'pdf-merge': { type: 'file', accept: 'application/pdf', multiple: true, title: 'PDF Merger', pro: false },
+      'pdf-to-png': { type: 'file', accept: 'application/pdf', title: 'PDF to PNG', pro: false },
+      'ocr-tool': { type: 'ocr', accept: 'image/*', multiple: true, title: 'Worker OCR', pro: true },
+      'doc-diff': { type: 'text', title: 'Contract Diff Engine', pro: false },
+      'audit-certificate': { type: 'action', title: 'Generate Audit PDF', pro: true }
     },
     navigate(toolId) {
       const meta = this.metaData[toolId];
+      
+      // Pro kontrolü
+      if (meta.pro && !PrivacyConvert.state.isPro) {
+        PrivacyConvert.ui.showToast('Bu araç Pro üyelik gerektirir. Lütfen Pro lisansı etkinleştirin.', 'warning');
+        PrivacyConvert.ui.toggleLicenseModal(true);
+        return;
+      }
+
       PrivacyConvert.state.tool = toolId;
       document.querySelectorAll('.tool-tab').forEach(t => t.classList.remove('bg-indigo-50', 'dark:bg-slate-700', 'border-indigo-500', 'ring-2', 'ring-indigo-500'));
       const tabEl = document.getElementById(`tab-${toolId}`);
@@ -456,6 +497,20 @@ const PrivacyConvert = {
     toggleTheme() {
       const isDark = document.documentElement.classList.toggle('dark');
       localStorage.setItem('privacyConvert_theme', isDark ? 'dark' : 'light');
+    },
+    toggleLicenseModal(show) {
+      const m = document.getElementById('licenseModal');
+      if(show) m.classList.remove('hidden'); else m.classList.add('hidden');
+    },
+    updateLicenseUI() {
+      const badge = document.getElementById('licenseBadge');
+      if(PrivacyConvert.state.isPro) {
+        badge.innerText = 'PRO MEMBER';
+        badge.className = 'text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-500 text-white shadow-sm';
+      } else {
+        badge.innerText = 'FREE PLAN';
+        badge.className = 'text-[10px] font-bold px-2.5 py-1 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300';
+      }
     },
     toggleSplitScreen() {
       PrivacyConvert.state.splitScreenActive = !PrivacyConvert.state.splitScreenActive;
@@ -543,6 +598,31 @@ const PrivacyConvert = {
   engine: {
     redactImageObj: null,
     redactRect: { startX: 0, startY: 0, w: 0, h: 0, active: false },
+
+    async activateLicense() {
+      const key = document.getElementById('licenseKeyInput').value;
+      try {
+        const res = await licenseCore.verifyOfflineLicense(key);
+        PrivacyConvert.state.isPro = true;
+        localStorage.setItem('sovereign_pro', 'true');
+        PrivacyConvert.ui.updateLicenseUI();
+        PrivacyConvert.ui.toggleLicenseModal(false);
+        PrivacyConvert.ui.showToast(`Pro Lisans Etkinleştirildi: ${res.user}`);
+      } catch(e) {
+        PrivacyConvert.ui.showToast(e.message, 'error');
+      }
+    },
+    simulatePro() {
+      // Test için geçerli gelecekte bir tarih içeren örnek lisans bloğu
+      const samplePayload = { user: "demo@sovereign.os", plan: "Pro", exp: Date.now() + 86400000 * 365 };
+      const sampleKey = "-----BEGIN SOVEREIGN LICENSE-----\n" + btoa(JSON.stringify(samplePayload)) + "\n-----END SOVEREIGN LICENSE-----";
+      document.getElementById('licenseKeyInput').value = sampleKey;
+      PrivacyConvert.state.isPro = true;
+      localStorage.setItem('sovereign_pro', 'true');
+      PrivacyConvert.ui.updateLicenseUI();
+      PrivacyConvert.ui.toggleLicenseModal(false);
+      PrivacyConvert.ui.showToast('Pro Lisans başarıyla simüle edildi!');
+    },
 
     loadRedactImage(input) {
       const file = input.files[0];
@@ -839,6 +919,7 @@ const PrivacyConvert = {
 
   init() {
     console.log("Sovereign OS Core Loaded Successfully.");
+    PrivacyConvert.ui.updateLicenseUI();
     const dz = document.getElementById('dropZone'), fi = document.getElementById('fileInput');
     dz.addEventListener('click', () => fi.click());
     dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
