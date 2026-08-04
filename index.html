@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; worker-src 'self' blob: https://unpkg.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' wss: https: data: blob:;">
-<title>PrivacyConvert Sovereign OS - Pro Suite (Production Hardened v17)</title>
+<title>PrivacyConvert Sovereign OS - Pro Suite (Production Hardened v19)</title>
 <meta name="theme-color" content="#4f46e5">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
@@ -170,10 +170,10 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 </main>
 
 <script>
-// --- ROBUST NON-ATOMIC AIR-GAPPED SERVICE WORKER ---
+// --- ROBUST AIR-GAPPED FIRST-RUN RESILIENT SERVICE WORKER (v19) ---
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE_NAME = 'sovereign-core-v17';
+    const CACHE_NAME = 'sovereign-core-v19';
     const assets = [
       './',
       location.pathname,
@@ -194,7 +194,7 @@ if ('serviceWorker' in navigator) {
                 await cache.put(asset, res);
               }
             } catch (err) {
-              // Bireysel asset hataları yutulur; böylece tek bir CDN hatası tüm kurulumu engellemez.
+              // İlk açılışta tamamen çevrimdışı ve ağ erişimi yoksa kurulum patlamaz, sessizce yutulur.
             }
           }
         })
@@ -221,7 +221,13 @@ if ('serviceWorker' in navigator) {
               cache.put(e.request, responseToCache).catch(() => {});
             });
             return res;
-          }).catch(() => caches.match(e.request));
+          }).catch(() => {
+            // Çevrimdışı durumda önbellekte olmayan assetler için güvenli düşüş (fallback)
+            if (e.request.destination === 'document') {
+              return caches.match('./');
+            }
+            return new Response('Network error / Air-gapped fallback', { status: 404, statusText: 'Not Found' });
+          });
         })
       );
     });
@@ -240,7 +246,7 @@ const ScriptLoader = {
     if (this.loaded[url]) return Promise.resolve();
     if (this.loadingPromises[url]) return this.loadingPromises[url];
     this.loadingPromises[url] = new Promise((resolve, reject) => {
-      PrivacyConvert.ui.updateProgress(10, 'Bağımlılıklar indiriliyor...');
+      PrivacyConvert.ui.updateProgress(10, 'Bağımlılıklar yükleniyor...');
       const script = document.createElement('script');
       script.src = url;
       script.onload = () => { 
@@ -250,7 +256,7 @@ const ScriptLoader = {
       };
       script.onerror = () => {
         delete this.loadingPromises[url];
-        PrivacyConvert.ui.showToast(`${url} yüklenemedi. Ağ veya Air-Gapped engeli olabilir.`, 'error');
+        PrivacyConvert.ui.showToast(`${url} yüklenemedi. Tamamen çevrimdışı (Air-Gapped) ortamda önbellek eksik olabilir.`, 'error');
         reject(new Error(`${url} yüklenemedi.`));
       };
       document.head.appendChild(script);
@@ -329,7 +335,7 @@ const streamCore = {
     if (file.size > 500 * 1024 * 1024) {
       toastCallback('Uyarı: 500MB üzeri dosyalarda tarayıcı belleği (RAM) sınırları zorlanabilir.', 'warning');
     }
-    toastCallback('Büyük dosya mimarisiyle işleniyor...', 'warning');
+    toastCallback('Güvenli akış mimarisiyle işleniyor...', 'warning');
     progressCallback(20, 'Dosya okunuyor...');
     const arrayBuffer = await file.arrayBuffer();
     progressCallback(60, mode === 'encrypt' ? 'Şifreleniyor...' : 'Şifre çözülüyor...');
@@ -347,7 +353,7 @@ const streamCore = {
     a.click();
     setTimeout(() => { try { URL.revokeObjectURL(url); } catch(e){} }, 10000);
     progressCallback(100, 'Tamamlandı!');
-    toastCallback(mode === 'encrypt' ? 'Şifrelendi ve indirildi!' : 'Şifresi çözüldü ve indirildi!');
+    toastCallback(mode === 'encrypt' ? 'Şifrelendi ve indirildi!' : 'Şifresi çözüldó ve indirildi!');
   }
 };
 
