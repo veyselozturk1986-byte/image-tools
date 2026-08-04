@@ -376,12 +376,15 @@ const PrivacyConvert = {
     objectUrls: new Set()
   },
   registerObjectUrl(url) { this.state.objectUrls.add(url); return url; },
-  cleanupObjectUrls() { this.state.objectUrls.forEach(url => { try { URL.revokeObjectURL(url); } catch(e){} }); this.state.objectUrls.clear(); },
+  cleanupObjectUrls() { 
+    this.state.objectUrls.forEach(url => { try { URL.revokeObjectURL(url); } catch(e){} }); 
+    this.state.objectUrls.clear(); 
+  },
   
   routing: {
     metaData: {
       'live-pii-shield': { type: 'text', title: 'Live PII Shield' },
-      'pii-redactor': { type: 'file', accept: 'application/pdf,image/*,text/plain', title: 'Batch PII Redactor' },
+      'pii-redactor': { type: 'file', accept: 'application/pdf,image/*,text/plain', multiple: true, title: 'Batch PII Redactor' },
       'encrypt-tool': { type: 'crypto', accept: '*/*', title: 'AES-256 Encryptor' },
       'visual-redact': { type: 'interactive-redact', accept: 'image/*', title: 'Visual Redaction' },
       'ed25519-sign': { type: 'interactive-sign', title: 'Ed25519 Document Signer' },
@@ -484,7 +487,14 @@ const PrivacyConvert = {
     },
     renderRedactUI() {
       const container = document.getElementById('interactiveWorkspaceContainer'); container.classList.remove('hidden');
-      container.innerHTML = `<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3 text-center"><input type="file" id="redactFile" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:bg-indigo-50"/><div class="text-[11px] text-slate-500">Mause ile sürükleyerek veya otomatik alan seçerek karartma uygulayın.</div><canvas id="redactCanvas" class="max-w-full mx-auto rounded-xl border hidden cursor-crosshair"></canvas><button onclick="PrivacyConvert.engine.executeVisualRedact()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">İşaretlenen Alanı Karart</button></div>`;
+      container.innerHTML = `<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3 text-center">
+        <input type="file" id="redactFile" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:bg-indigo-50" onchange="PrivacyConvert.engine.loadRedactImage(this)"/>
+        <div class="text-[11px] text-slate-500">Görsel üzerine tıklayıp sürükleyerek karartılacak alanı seçin:</div>
+        <div class="overflow-auto max-h-96 border rounded-xl inline-block bg-slate-900 relative">
+          <canvas id="redactCanvas" class="max-w-full cursor-crosshair hidden"></canvas>
+        </div>
+        <button onclick="PrivacyConvert.engine.executeVisualRedact()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">Seçilen Alanı Karart ve İndir</button>
+      </div>`;
     },
     renderSignUI() {
       const container = document.getElementById('interactiveWorkspaceContainer'); container.classList.remove('hidden');
@@ -506,6 +516,79 @@ const PrivacyConvert = {
   },
 
   engine: {
+    // Görsel Karartma için interaktif state değişkenleri
+    redactImageObj: null,
+    redactRect: { startX: 0, startY: 0, w: 0, h: 0, active: false },
+
+    loadRedactImage(input) {
+      const file = input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          this.redactImageObj = img;
+          const cvs = document.getElementById('redactCanvas');
+          cvs.width = img.width; cvs.height = img.height;
+          cvs.classList.remove('hidden');
+          const ctx = cvs.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          
+          // Mouse Çizim Olayları (Interactive Bounding Box)
+          let isDrawing = false;
+          cvs.onmousedown = (evt) => {
+            const rect = cvs.getBoundingClientRect();
+            const scaleX = cvs.width / rect.width;
+            const scaleY = cvs.height / rect.height;
+            this.redactRect.startX = (evt.clientX - rect.left) * scaleX;
+            this.redactRect.startY = (evt.clientY - rect.top) * scaleY;
+            isDrawing = true;
+          };
+          cvs.onmousemove = (evt) => {
+            if (!isDrawing) return;
+            const rect = cvs.getBoundingClientRect();
+            const scaleX = cvs.width / rect.width;
+            const scaleY = cvs.height / rect.height;
+            const currX = (evt.clientX - rect.left) * scaleX;
+            const currY = (evt.clientY - rect.top) * scaleY;
+            
+            this.redactRect.w = currX - this.redactRect.startX;
+            this.redactRect.h = currY - this.redactRect.startY;
+
+            // Canvas'ı ve anlık dikdörtgen önizlemesini çiz
+            ctx.clearRect(0, 0, cvs.width, cvs.height);
+            ctx.drawImage(img, 0, 0);
+            ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
+            ctx.fillRect(this.redactRect.startX, this.redactRect.startY, this.redactRect.w, this.redactRect.h);
+          };
+          cvs.onmouseup = () => { isDrawing = false; this.redactRect.active = true; };
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    },
+
+    async executeVisualRedact() {
+      const cvs = document.getElementById('redactCanvas');
+      if (!this.redactImageObj || !cvs || !this.redactRect.active) {
+        return PrivacyConvert.ui.showToast('Lütfen görsel üzerinde karartılacak alanı mause ile çizin!', 'warning');
+      }
+      const ctx = cvs.getContext('2d');
+      ctx.clearRect(0, 0, cvs.width, cvs.height);
+      ctx.drawImage(this.redactImageObj, 0, 0);
+      
+      // Kesin siyah kutu uygulaması
+      ctx.fillStyle = "#000000";
+      ctx.fillRect(this.redactRect.startX, this.redactRect.startY, this.redactRect.w, this.redactRect.h);
+
+      cvs.toBlob((blob) => {
+        const url = PrivacyConvert.registerObjectUrl(URL.createObjectURL(blob));
+        const a = document.createElement('a'); a.href = url; a.download = "redacted_image.png"; a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 5000);
+        PrivacyConvert.ui.showToast('Seçilen alan başarıyla karartıldı ve indirildi!');
+      }, 'image/png');
+    },
+
     async executeTool() {
       try {
         const tool = PrivacyConvert.state.tool;
@@ -526,19 +609,25 @@ const PrivacyConvert = {
             const file = files[idx].file;
             PrivacyConvert.ui.updateProgress(Math.round(((idx+1)/files.length)*40), `Reading ${file.name}...`);
             let extracted = "";
-            if (file.type === "application/pdf") {
-              await ScriptLoader.load('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
-              pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-              const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
-              for (let i = 1; i <= pdf.numPages; i++) {
-                const page = await pdf.getPage(i);
-                extracted += (await page.getTextContent()).items.map(s => s.str).join('') + "\n";
-              }
-            } else if (file.type.startsWith("image/")) {
-              await ScriptLoader.load('https://unpkg.com/tesseract.js@2.1.4/dist/tesseract.min.js');
-              const result = await Tesseract.recognize(URL.createObjectURL(file), 'eng');
-              extracted = result.data.text;
-            } else { extracted = await file.text(); }
+            let objUrl = URL.createObjectURL(file);
+            PrivacyConvert.registerObjectUrl(objUrl);
+            try {
+              if (file.type === "application/pdf") {
+                await ScriptLoader.load('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
+                // disableWorker: true ile harici worker CDN bağımlılığı tamamen kaldırıldı (Tam Air-Gapped)
+                const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer(), disableWorker: true }).promise;
+                for (let i = 1; i <= pdf.numPages; i++) {
+                  const page = await pdf.getPage(i);
+                  extracted += (await page.getTextContent()).items.map(s => s.str).join('') + "\n";
+                }
+              } else if (file.type.startsWith("image/")) {
+                await ScriptLoader.load('https://unpkg.com/tesseract.js@2.1.4/dist/tesseract.min.js');
+                const result = await Tesseract.recognize(objUrl, 'eng');
+                extracted = result.data.text;
+              } else { extracted = await file.text(); }
+            } finally {
+              URL.revokeObjectURL(objUrl); // Bellek sızıntısı önlendi
+            }
             combinedOutput += `=== [FILE: ${file.name}] ===\n` + aiEngine.maskPII(extracted) + "\n\n";
           }
           outputBox.value = `[BATCH PII REDACTION REPORT]\n\n` + combinedOutput;
@@ -579,21 +668,24 @@ const PrivacyConvert = {
             const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
             pages.forEach(p => mergedPdf.addPage(p));
           }
-          const url = PrivacyConvert.registerObjectUrl(URL.createObjectURL(new Blob([await mergedPdf.save()], { type: 'application/pdf' })));
+          const blobUrl = URL.createObjectURL(new Blob([await mergedPdf.save()], { type: 'application/pdf' }));
+          const url = PrivacyConvert.registerObjectUrl(blobUrl);
           const a = document.createElement('a'); a.href = url; a.download = "Merged.pdf"; a.click();
+          setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
           PrivacyConvert.ui.updateProgress(100, 'Done!'); PrivacyConvert.state.files = [];
         }
         else if (tool === 'pdf-to-png') {
           if (files.length === 0) return PrivacyConvert.ui.showToast('Select PDF', 'warning');
           await ScriptLoader.load('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
-          pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-          const pdfDoc = await pdfjsLib.getDocument({ data: await files[0].file.arrayBuffer() }).promise;
+          const pdfDoc = await pdfjsLib.getDocument({ data: await files[0].file.arrayBuffer(), disableWorker: true }).promise;
           for (let i = 1; i <= pdfDoc.numPages; i++) {
             PrivacyConvert.ui.updateProgress((i/pdfDoc.numPages)*90, `Page ${i}...`);
             const page = await pdfDoc.getPage(i); const vp = page.getViewport({ scale: 1.5 });
             const cvs = document.createElement('canvas'); cvs.width = vp.width; cvs.height = vp.height;
             await page.render({ canvasContext: cvs.getContext('2d'), viewport: vp }).promise;
-            const a = document.createElement('a'); a.href = cvs.toDataURL('image/png'); a.download = `page_${i}.png`; a.click();
+            
+            const pageBlobUrl = cvs.toDataURL('image/png');
+            const a = document.createElement('a'); a.href = pageBlobUrl; a.download = `page_${i}.png`; a.click();
           }
           PrivacyConvert.ui.updateProgress(100, 'Done!'); PrivacyConvert.state.files = [];
         }
@@ -603,8 +695,14 @@ const PrivacyConvert = {
           let combinedText = "";
           for (let i = 0; i < files.length; i++) {
             PrivacyConvert.ui.updateProgress(Math.round(((i+1)/files.length)*90), `Processing ${files[i].file.name}...`);
-            const res = await Tesseract.recognize(URL.createObjectURL(files[i].file), 'eng+tur');
-            combinedText += `--- [${files[i].file.name}] ---\n` + res.data.text + "\n\n";
+            let objUrl = URL.createObjectURL(files[i].file);
+            PrivacyConvert.registerObjectUrl(objUrl);
+            try {
+              const res = await Tesseract.recognize(objUrl, 'eng+tur');
+              combinedText += `--- [${files[i].file.name}] ---\n` + res.data.text + "\n\n";
+            } finally {
+              URL.revokeObjectURL(objUrl); // Bellek sızıntısı önlendi
+            }
           }
           outputBox.value = combinedText; 
           PrivacyConvert.ui.updateProgress(100, 'Done!'); 
@@ -624,8 +722,10 @@ const PrivacyConvert = {
           const doc = await PDFLib.PDFDocument.create(); const p = doc.addPage([600, 400]);
           p.drawText('PrivacyConvert Sovereign Compliance Certificate', { x: 50, y: 330, size: 14 });
           p.drawText('Status: 100% Air-Gapped Sandbox Verified\nTimestamp: ' + new Date().toISOString() + '\nIntegrity: SHA-256 Proof Valid', { x: 50, y: 270, size: 10 });
-          const url = PrivacyConvert.registerObjectUrl(URL.createObjectURL(new Blob([await doc.save()], { type: 'application/pdf' })));
+          const blobUrl = URL.createObjectURL(new Blob([await doc.save()], { type: 'application/pdf' }));
+          const url = PrivacyConvert.registerObjectUrl(blobUrl);
           const a = document.createElement('a'); a.href = url; a.download = "Audit_Certificate.pdf"; a.click();
+          setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
           PrivacyConvert.ui.updateProgress(100, 'Done!'); outputBox.value = "Auditor Certificate PDF Generated and Downloaded.";
         }
       } catch(e) { PrivacyConvert.ui.showToast(e.message, 'error'); }
@@ -636,7 +736,8 @@ const PrivacyConvert = {
       const l2 = (document.getElementById('pane2Input')?.value || '').split('\n');
       let report = "[CONTRACT DIFF COMPARISON REPORT]\n", diffs = 0;
       for (let i = 0; i < Math.max(l1.length, l2.length); i++) {
-        const a = l1[i] !== undefined ? l1[i] : '(boş satır)', b = l2[i] !== undefined ? l2[i] : '(boş satır)';
+        const a = l1[i] !== undefined ? l1[i] : '(boş satır)';
+        const b = l2[i] !== undefined ? l2[i] : '(boş satır)';
         if(a !== b) { diffs++; report += `Satır ${i+1}:\n (-) Eski: ${a}\n (+) Yeni: ${b}\n\n`; }
       }
       document.getElementById('genericTextBox').classList.remove('hidden');
@@ -666,26 +767,6 @@ const PrivacyConvert = {
         out.value = `[SIMULATED AUTH SUCCESS]\nFIDO2 Donanım Anahtarı başarıyla doğrulandı.\nZaman damgası: ${new Date().toISOString()}`;
         PrivacyConvert.ui.showToast('Kimlik doğrulama başarılı!', 'success');
       }
-    },
-
-    async executeVisualRedact() {
-      const fileInput = document.getElementById('redactFile');
-      if(!fileInput || !fileInput.files[0]) return PrivacyConvert.ui.showToast('Önce bir görsel seçin!', 'warning');
-      const cvs = document.getElementById('redactCanvas'); const ctx = cvs.getContext('2d');
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const img = new Image();
-        img.onload = () => {
-          cvs.width = img.width; cvs.height = img.height; cvs.classList.remove('hidden');
-          ctx.drawImage(img, 0, 0);
-          ctx.fillStyle = "#000000";
-          ctx.fillRect(img.width * 0.2, img.height * 0.2, img.width * 0.6, img.height * 0.15); // Dinamik karartma alanı
-          const a = document.createElement('a'); a.href = cvs.toDataURL('image/png'); a.download = "redacted_image.png"; a.click();
-          PrivacyConvert.ui.showToast('Görsel karartıldı ve indirildi!');
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(fileInput.files[0]);
     },
 
     async executeSign() {
