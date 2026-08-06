@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; worker-src 'self' blob: https://unpkg.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' wss: https: data: blob:;">
-<title>PrivacyConvert Sovereign OS - Pro Suite (Crypto-Only v34)</title>
+<title>PrivacyConvert Sovereign OS - Pro Suite (Crypto-Only v35)</title>
 <meta name="theme-color" content="#4f46e5">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
@@ -47,19 +47,28 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 <body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-300 relative">
 <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-3 pointer-events-none"></div>
 
-<!-- KRİPTO ÖDEME MODALI (YALNIZCA KRİPTO) -->
+<!-- KRİPTO ÖDEME MODALI (İNGİLİZCE & AKTİVASYON REHBERİ) -->
 <div id="licenseModal" class="hidden fixed inset-0 bg-slate-900/80 z-50 flex items-center justify-center backdrop-blur-sm p-4">
-<div class="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-3xl shadow-2xl w-full max-w-lg border border-slate-200 dark:border-slate-700 space-y-5">
+<div class="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-3xl shadow-2xl w-full max-w-lg border border-slate-200 dark:border-slate-700 space-y-4">
 <div class="flex justify-between items-center">
-<h3 class="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">💎 Sovereign OS Pro Suite - Kripto Ödeme</h3>
+<h3 class="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">💎 Pro Suite - Crypto Payment</h3>
 <button onclick="PrivacyConvert.ui.toggleLicenseModal(false)" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
 </div>
-<div class="space-y-4">
+
+<!-- ACTIVATION GUIDE -->
+<div class="bg-indigo-50 dark:bg-slate-900 p-3.5 rounded-2xl border border-indigo-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-300 space-y-1.5 shadow-inner">
+<div class="font-extrabold text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5">⚡ Quick Activation Guide:</div>
+<p>1. Transfer the required amount to the treasury address.</p>
+<p>2. Connect your Web3 wallet for direct payment or paste your Transfer Hash (TxID) below.</p>
+<p>3. Click <strong>Verify & Activate Pro</strong> to unlock all Pro features instantly.</p>
+</div>
+
+<div class="space-y-3">
 <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3 text-xs">
-<div class="flex justify-between items-center"><span class="font-bold text-slate-500">Hedef Tutar:</span><span class="font-extrabold text-indigo-600 dark:text-indigo-400 text-sm">$49 USD</span></div>
-<div class="flex justify-between items-center"><span class="font-bold text-slate-500">Tahmini Kripto Değeri:</span><span id="calculatedCryptoAmount" class="font-mono font-bold text-emerald-600 dark:text-emerald-400">Yükleniyor...</span></div>
+<div class="flex justify-between items-center"><span class="font-bold text-slate-500">Target Amount:</span><span class="font-extrabold text-indigo-600 dark:text-indigo-400 text-sm">$49 USD</span></div>
+<div class="flex justify-between items-center"><span class="font-bold text-slate-500">Estimated Value:</span><span id="calculatedCryptoAmount" class="font-mono font-bold text-emerald-600 dark:text-emerald-400">Fetching live rate...</span></div>
 <div>
-<label class="font-bold text-slate-500 block mb-1">Ağ Seçimi:</label>
+<label class="font-bold text-slate-500 block mb-1">Select Network:</label>
 <select id="networkSelect" onchange="PrivacyConvert.ui.updateTreasuryDisplay()" class="w-full p-2 bg-white dark:bg-slate-800 border rounded-xl text-xs font-bold dark:text-white">
 <option value="arbitrum">Arbitrum One (ETH)</option>
 <option value="polygon">Polygon (POL)</option>
@@ -67,25 +76,25 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 <option value="tron">Tron Network (TRX)</option>
 </select>
 </div>
-<div><span class="font-bold text-slate-500 block mb-1">Hazine Cüzdan Adresi:</span><div class="flex items-center gap-2"><input type="text" readonly value="0x2e08c361e00bb892bc99b6688d2948fcc3600b65" class="w-full p-2 bg-white dark:bg-slate-800 border rounded-xl font-mono text-[11px] dark:text-slate-200" id="treasuryAddr"><button onclick="navigator.clipboard.writeText(document.getElementById('treasuryAddr').value); PrivacyConvert.ui.showToast('Adres kopyalandı!');" class="px-3 py-2 dynamic-bg text-white font-bold rounded-xl text-[11px]">Kopyala</button></div></div>
+<div><span class="font-bold text-slate-500 block mb-1">Treasury Wallet Address:</span><div class="flex items-center gap-2"><input type="text" readonly value="0x2e08c361e00bb892bc99b6688d2948fcc3600b65" class="w-full p-2 bg-white dark:bg-slate-800 border rounded-xl font-mono text-[11px] dark:text-slate-200" id="treasuryAddr"><button onclick="navigator.clipboard.writeText(document.getElementById('treasuryAddr').value); PrivacyConvert.ui.showToast('Address copied to clipboard!');" class="px-3 py-2 dynamic-bg text-white font-bold rounded-xl text-[11px]">Copy</button></div></div>
 </div>
 
 <div class="p-3 bg-indigo-50 dark:bg-slate-900 rounded-xl border border-indigo-200 dark:border-slate-700 flex items-center justify-between">
 <div>
-<div class="text-xs font-bold text-slate-700 dark:text-slate-200">Web3 Cüzdan Durumu</div>
-<div id="walletStatusText" class="text-[11px] text-slate-400 font-mono">Bağlı cüzdan yok</div>
+<div class="text-xs font-bold text-slate-700 dark:text-slate-200">Web3 Wallet Status</div>
+<div id="walletStatusText" class="text-[11px] text-slate-400 font-mono">No wallet connected</div>
 </div>
-<button id="connectWalletBtn" onclick="PrivacyConvert.engine.connectWeb3Wallet()" class="px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs">Cüzdanı Bağla</button>
-</div>
-
-<div class="space-y-2">
-<label class="text-xs font-bold text-slate-600 dark:text-slate-300">İşlem Hash'i (TxID) veya Referans:</label>
-<input type="text" id="txHashInput" placeholder="0x... veya manuel transfer referansı" class="w-full p-3 bg-slate-50 dark:bg-slate-900 border rounded-xl text-xs font-mono dark:text-white">
+<button id="connectWalletBtn" onclick="PrivacyConvert.engine.connectWeb3Wallet()" class="px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs">Connect Wallet</button>
 </div>
 
-<div class="flex gap-2 pt-2">
-<button id="directPayBtn" onclick="PrivacyConvert.engine.sendOnChainPayment()" disabled class="flex-1 py-3 bg-slate-300 dark:bg-slate-700 text-slate-500 dark:text-slate-400 font-bold text-xs rounded-xl shadow-md cursor-not-allowed">Cüzdan ile Gönder</button>
-<button onclick="PrivacyConvert.engine.verifyTxHash()" class="py-3 px-4 dynamic-bg text-white font-bold text-xs rounded-xl shadow-md">Tx Doğrula & Pro Aktive Et</button>
+<div class="space-y-1.5">
+<label class="text-xs font-bold text-slate-600 dark:text-slate-300">Transaction Hash (TxID) or Reference:</label>
+<input type="text" id="txHashInput" placeholder="0x... or manual transfer reference" class="w-full p-3 bg-slate-50 dark:bg-slate-900 border rounded-xl text-xs font-mono dark:text-white">
+</div>
+
+<div class="flex gap-2 pt-1">
+<button id="directPayBtn" onclick="PrivacyConvert.engine.sendOnChainPayment()" disabled class="flex-1 py-3 bg-slate-300 dark:bg-slate-700 text-slate-500 dark:text-slate-400 font-bold text-xs rounded-xl shadow-md cursor-not-allowed">Send via Wallet</button>
+<button onclick="PrivacyConvert.engine.verifyTxHash()" class="py-3 px-4 dynamic-bg text-white font-bold text-xs rounded-xl shadow-md">Verify & Activate Pro</button>
 </div>
 </div>
 </div>
@@ -205,7 +214,7 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 
 <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 px-6 text-center text-xs text-slate-500 dark:text-slate-400 space-y-3 mt-auto">
 <div class="flex flex-col sm:flex-row justify-center items-center gap-3">
-<span>PrivacyConvert Sovereign OS &copy; 2026 - Crypto-Only Pro v34</span>
+<span>PrivacyConvert Sovereign OS &copy; 2026 - Crypto-Only Pro v35</span>
 <span class="hidden sm:inline text-slate-300 dark:text-slate-600">|</span>
 <a href="https://github.com/veyselozturk1986-byte/image-tools" target="_blank" rel="noopener noreferrer" class="font-bold dynamic-text hover:underline flex items-center gap-1">
 🐙 GitHub Repository
@@ -219,10 +228,10 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 </footer>
 
 <script>
-// --- ROBUST AIR-GAPPED RESILIENT SERVICE WORKER (Crypto-Only v34) ---
+// --- ROBUST AIR-GAPPED RESILIENT SERVICE WORKER (Crypto-Only v35) ---
 if ('serviceWorker' in navigator) {
 const swCode = `
-const CACHE_NAME = 'sovereign-core-v34';
+const CACHE_NAME = 'sovereign-core-v35';
 const assets = [
 './',
 location.pathname,
@@ -294,7 +303,7 @@ async load(url) {
 if (this.loaded[url]) return Promise.resolve();
 if (this.loadingPromises[url]) return this.loadingPromises[url];
 this.loadingPromises[url] = new Promise((resolve, reject) => {
-PrivacyConvert.ui.updateProgress(10, 'Bağımlılıklar yükleniyor...');
+PrivacyConvert.ui.updateProgress(10, 'Loading dependencies...');
 const script = document.createElement('script');
 script.src = url;
 script.onload = () => {
@@ -304,8 +313,8 @@ resolve();
 };
 script.onerror = () => {
 delete this.loadingPromises[url];
-PrivacyConvert.ui.showToast(`${url} yüklenemedi. Yerel sunucu/internet bağlantınızı kontrol edin.`, 'error');
-reject(new Error(`${url} yüklenemedi.`));
+PrivacyConvert.ui.showToast(`Failed to load ${url}. Check network connection.`, 'error');
+reject(new Error(`${url} failed to load.`));
 };
 document.head.appendChild(script);
 });
@@ -367,27 +376,27 @@ return Array.from(new Uint8Array(signature)).map(b => b.toString(16).padStart(2,
 const streamCore = {
 async processLargeFile(file, password, mode, progressCallback, toastCallback, urlCallback) {
 if (file.size > 500 * 1024 * 1024) {
-toastCallback('Uyarı: 500MB üzeri dosyalarda bellek sınırları zorlanabilir.', 'warning');
+toastCallback('Warning: Files larger than 500MB may strain memory limits.', 'warning');
 }
-toastCallback('Güvenli akış mimarisiyle işleniyor...', 'warning');
-progressCallback(20, 'Dosya okunuyor...');
+toastCallback('Processing via secure stream architecture...', 'warning');
+progressCallback(20, 'Reading file...');
 const arrayBuffer = await file.arrayBuffer();
-progressCallback(60, mode === 'encrypt' ? 'Şifreleniyor...' : 'Şifre çözülüyor...');
+progressCallback(60, mode === 'encrypt' ? 'Encrypting...' : 'Decrypting...');
 let processedBuffer;
 if (mode === 'encrypt') {
 processedBuffer = await cryptoCore.encryptBinary(arrayBuffer, password);
 } else {
 processedBuffer = await cryptoCore.decryptBinary(arrayBuffer, password);
 }
-progressCallback(90, 'Dosya indiriliyor...');
+progressCallback(90, 'Preparing download...');
 const blob = new Blob([processedBuffer], { type: 'application/octet-stream' });
 const url = urlCallback(URL.createObjectURL(blob));
 const a = document.createElement('a'); a.href = url;
 a.download = mode === 'encrypt' ? `${file.name}.enc` : file.name.replace('.enc', '');
 a.click();
 setTimeout(() => { try { URL.revokeObjectURL(url); } catch(e){} }, 10000);
-progressCallback(100, 'Tamamlandı!');
-toastCallback(mode === 'encrypt' ? 'Şifrelendi ve indirildi!' : 'Şifresi çözüldü ve indirildi!');
+progressCallback(100, 'Completed!');
+toastCallback(mode === 'encrypt' ? 'Encrypted and downloaded successfully!' : 'Decrypted and downloaded successfully!');
 }
 };
 
@@ -414,9 +423,9 @@ return text
 
 const opfsEngine = {
 async getRoot() {
-if (!window.isSecureContext) throw new Error("OPFS yalnızca güvenli bağlamda (HTTPS / localhost) çalışır.");
+if (!window.isSecureContext) throw new Error("OPFS requires a secure context (HTTPS / localhost).");
 if ('storage' in navigator && 'getDirectory' in navigator.storage) return await navigator.storage.getDirectory();
-throw new Error("OPFS desteklenmiyor.");
+throw new Error("OPFS is not supported.");
 },
 async writeFile(name, text, password) {
 const root = await this.getRoot();
@@ -424,7 +433,7 @@ const encBuffer = await cryptoCore.encryptBinary(new TextEncoder().encode(text).
 if (navigator.storage && navigator.storage.estimate) {
 const estimate = await navigator.storage.estimate();
 if (estimate.quota && (estimate.usage + encBuffer.byteLength > estimate.quota)) {
-throw new Error("OPFS depolama kotası aşıldı!");
+throw new Error("OPFS storage quota exceeded!");
 }
 }
 const handle = await root.getFileHandle(name + '.enc', { create: true });
@@ -483,22 +492,22 @@ this.pc.ondatachannel = e => { this.dataChannel = e.channel; this.setupDataChann
 }
 },
 setupDataChannel() {
-this.dataChannel.onopen = () => { document.getElementById('chatSection')?.classList.remove('hidden'); PrivacyConvert.ui.showToast('P2P Bağlantısı Kuruldu!'); };
+this.dataChannel.onopen = () => { document.getElementById('chatSection')?.classList.remove('hidden'); PrivacyConvert.ui.showToast('P2P Connection Established!'); };
 this.dataChannel.onmessage = e => { const log = document.getElementById('chatLogArea'); if(log) log.value += `\n[Peer]: ${e.data}`; };
 },
 async createOffer() {
 const sdp = await this.init(true);
 const box = document.getElementById('p2pSignalBox'); if(box) box.value = sdp;
-PrivacyConvert.ui.showToast('Offer oluşturuldu. Karşı tarafa gönderin.');
+PrivacyConvert.ui.showToast('Offer created. Share it with your peer.');
 },
 async createAnswer() {
 const box = document.getElementById('p2pSignalBox');
-if(!box || !box.value) return PrivacyConvert.ui.showToast('Offer verisi girilmedi!', 'error');
+if(!box || !box.value) return PrivacyConvert.ui.showToast('Offer data missing!', 'error');
 let remoteSdp;
 try {
 remoteSdp = JSON.parse(box.value);
 } catch (err) {
-return PrivacyConvert.ui.showToast('Geçersiz SDP formatı!', 'error');
+return PrivacyConvert.ui.showToast('Invalid SDP format!', 'error');
 }
 await this.init(false);
 await this.pc.setRemoteDescription(new RTCSessionDescription(remoteSdp));
@@ -520,22 +529,22 @@ setTimeout(checkState, 2500);
 },
 async acceptAnswer() {
 const box = document.getElementById('p2pSignalBox');
-if(!box || !box.value) return PrivacyConvert.ui.showToast('Answer verisi girilmedi!', 'error');
+if(!box || !box.value) return PrivacyConvert.ui.showToast('Answer data missing!', 'error');
 try {
 const parsedSdp = JSON.parse(box.value);
 await this.pc.setRemoteDescription(new RTCSessionDescription(parsedSdp));
-PrivacyConvert.ui.showToast('Bağlantı kabul edildi...');
+PrivacyConvert.ui.showToast('Connection accepted...');
 } catch (err) {
-PrivacyConvert.ui.showToast('Geçersiz Answer SDP formatı!', 'error');
+PrivacyConvert.ui.showToast('Invalid Answer SDP format!', 'error');
 }
 },
 send(msg) {
 if(this.dataChannel && this.dataChannel.readyState === 'open') {
 this.dataChannel.send(msg);
-const log = document.getElementById('chatLogArea'); if(log) log.value += `\n[Siz]: ${msg}`;
+const log = document.getElementById('chatLogArea'); if(log) log.value += `\n[You]: ${msg}`;
 document.getElementById('chatMsgInput').value = '';
 } else {
-PrivacyConvert.ui.showToast('Bağlantı aktif değil!', 'error');
+PrivacyConvert.ui.showToast('Connection not active!', 'error');
 }
 }
 };
@@ -600,7 +609,7 @@ metaData: {
 navigate(toolId) {
 const meta = this.metaData[toolId];
 if (meta.pro && !PrivacyConvert.state.isPro) {
-PrivacyConvert.ui.showToast('Bu araç Pro üyelik gerektirir. Lütfen kripto ödemesi ile Pro\'ya geçin.', 'warning');
+PrivacyConvert.ui.showToast('This tool requires Pro membership. Please upgrade via crypto payment.', 'warning');
 PrivacyConvert.ui.toggleLicenseModal(true);
 return;
 }
@@ -729,7 +738,7 @@ container.innerHTML = `<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl
 renderRedactUI() {
 const container = document.getElementById('interactiveWorkspaceContainer');
 container.classList.remove('hidden');
-container.innerHTML = `<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3 text-center"><input type="file" id="redactFile" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:bg-indigo-50" onchange="PrivacyConvert.engine.loadRedactImage(this)"/><div class="text-[11px] text-slate-500">Görsel üzerine tıklayıp sürükleyerek karartılacak alanı seçin:</div><div class="overflow-auto max-h-96 border rounded-xl inline-block bg-slate-900 relative"><canvas id="redactCanvas" class="max-w-full cursor-crosshair hidden"></canvas></div><button onclick="PrivacyConvert.engine.executeVisualRedact()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">Seçilen Alanı Karart ve İndir</button></div>`;
+container.innerHTML = `<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3 text-center"><input type="file" id="redactFile" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:bg-indigo-50" onchange="PrivacyConvert.engine.loadRedactImage(this)"/><div class="text-[11px] text-slate-500">Click and drag over the image to select the area to redact:</div><div class="overflow-auto max-h-96 border rounded-xl inline-block bg-slate-900 relative"><canvas id="redactCanvas" class="max-w-full cursor-crosshair hidden"></canvas></div><button onclick="PrivacyConvert.engine.executeVisualRedact()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">Redact Selected Area & Download</button></div>`;
 },
 renderSignUI() {
 const container = document.getElementById('interactiveWorkspaceContainer');
@@ -745,7 +754,7 @@ PrivacyConvert.engine.opfsList();
 renderZkpUI() {
 const container = document.getElementById('interactiveWorkspaceContainer');
 container.classList.remove('hidden');
-container.innerHTML = `<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3"><p class="text-[11px] text-slate-400 mb-2">Cryptographic Hash Commitment Scheme: Veriyi gizli tutarak hash tabanlı taahhüt oluşturun.</p><input type="text" id="zkpSecret" placeholder="Your Secret Data..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"><button onclick="PrivacyConvert.engine.zkpCommit()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">Commit</button><textarea id="zkpResultBox" class="w-full h-24 bg-slate-900 text-emerald-400 text-xs p-3 rounded-xl font-mono" readonly></textarea><hr><input type="text" id="zkpVerifySecret" placeholder="Verify Secret..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"><input type="text" id="zkpVerifySalt" placeholder="Salt..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white font-mono"><input type="text" id="zkpVerifyTarget" placeholder="Target Hash..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white font-mono"><button onclick="PrivacyConvert.engine.zkpVerify()" class="w-full py-2.5 bg-emerald-600 text-white font-bold text-xs rounded-xl">Verify Commitment</button></div>`;
+container.innerHTML = `<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3"><p class="text-[11px] text-slate-400 mb-2">Cryptographic Hash Commitment Scheme: Create a hash-based commitment while keeping the data secret.</p><input type="text" id="zkpSecret" placeholder="Your Secret Data..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"><button onclick="PrivacyConvert.engine.zkpCommit()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">Commit</button><textarea id="zkpResultBox" class="w-full h-24 bg-slate-900 text-emerald-400 text-xs p-3 rounded-xl font-mono" readonly></textarea><hr><input type="text" id="zkpVerifySecret" placeholder="Verify Secret..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"><input type="text" id="zkpVerifySalt" placeholder="Salt..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white font-mono"><input type="text" id="zkpVerifyTarget" placeholder="Target Hash..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white font-mono"><button onclick="PrivacyConvert.engine.zkpVerify()" class="w-full py-2.5 bg-emerald-600 text-white font-bold text-xs rounded-xl">Verify Commitment</button></div>`;
 },
 renderP2PUI() {
 const container = document.getElementById('interactiveWorkspaceContainer');
@@ -759,7 +768,7 @@ redactRect: { startX: 0, startY: 0, w: 0, h: 0, active: false },
 lastCalculatedWei: null,
 async fetchDynamicPrice(net) {
 const amountEl = document.getElementById('calculatedCryptoAmount');
-amountEl.innerText = 'Canlı kur alınıyor...';
+amountEl.innerText = 'Fetching live rate...';
 const symbols = {
 arbitrum: 'ETHUSDT',
 polygon: 'MATICUSDT',
@@ -768,7 +777,7 @@ tron: 'TRXUSDT'
 };
 const coinNames = {
 arbitrum: 'ETH',
-polygon: 'MATIC',
+polygon: 'POL',
 avalanche_x: 'AVAX',
 tron: 'TRX'
 };
@@ -787,35 +796,35 @@ this.lastCalculatedWei = "decd10f2770000";
 async connectWeb3Wallet() {
 try {
 if (!window.ethereum) {
-return PrivacyConvert.ui.showToast('Web3 cüzdanı bulunamadı (MetaMask vb.)', 'error');
+return PrivacyConvert.ui.showToast('Web3 wallet not found (e.g., MetaMask)', 'error');
 }
-PrivacyConvert.ui.updateProgress(30, 'Cüzdan bağlantısı isteniyor...');
+PrivacyConvert.ui.updateProgress(30, 'Requesting wallet connection...');
 const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
 if (accounts && accounts.length > 0) {
 PrivacyConvert.state.userWallet = accounts[0];
 const shortAddr = accounts[0].substring(0, 6) + '...' + accounts[0].substring(accounts[0].length - 4);
-document.getElementById('walletStatusText').innerText = `Bağlı: ${shortAddr}`;
+document.getElementById('walletStatusText').innerText = `Connected: ${shortAddr}`;
 const btn = document.getElementById('connectWalletBtn');
-btn.innerText = 'Bağlandı';
+btn.innerText = 'Connected';
 btn.className = 'px-3 py-2 bg-emerald-600 text-white font-bold rounded-xl text-xs cursor-default';
 const payBtn = document.getElementById('directPayBtn');
 payBtn.disabled = false;
 payBtn.className = 'flex-1 py-3 dynamic-bg text-white font-bold text-xs rounded-xl shadow-md cursor-pointer hover:opacity-90';
-PrivacyConvert.ui.updateProgress(100, 'Bağlantı başarılı!');
-PrivacyConvert.ui.showToast('Web3 Cüzdan başarıyla bağlandı!');
+PrivacyConvert.ui.updateProgress(100, 'Connection successful!');
+PrivacyConvert.ui.showToast('Web3 Wallet connected successfully!');
 }
 } catch(e) {
-PrivacyConvert.ui.updateProgress(100, 'Hata');
-PrivacyConvert.ui.showToast('Cüzdan bağlantısı reddedildi.', 'error');
+PrivacyConvert.ui.updateProgress(100, 'Error');
+PrivacyConvert.ui.showToast('Wallet connection rejected.', 'error');
 }
 },
 async sendOnChainPayment() {
 const netChoice = document.getElementById('networkSelect').value;
 if (netChoice === 'avalanche_x' || netChoice === 'tron') {
-return PrivacyConvert.ui.showToast('Bu ağ için lütfen cüzdandan manuel transfer yapıp Tx Hash girin.', 'warning');
+return PrivacyConvert.ui.showToast('For this network, please transfer manually and enter the Tx Hash.', 'warning');
 }
 if (!PrivacyConvert.state.userWallet) {
-return PrivacyConvert.ui.showToast('Lütfen önce cüzdanınızı bağlayın!', 'warning');
+return PrivacyConvert.ui.showToast('Please connect your wallet first!', 'warning');
 }
 
 const chainIds = {
@@ -825,17 +834,17 @@ polygon: '0x89'
 const targetChainId = chainIds[netChoice];
 
 try {
-PrivacyConvert.ui.updateProgress(20, 'Ağ kontrol ediliyor...');
+PrivacyConvert.ui.updateProgress(20, 'Checking network...');
 const currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
 if (currentChainId !== targetChainId) {
-PrivacyConvert.ui.updateProgress(40, 'Ağ değiştiriliyor...');
+PrivacyConvert.ui.updateProgress(40, 'Switching network...');
 await window.ethereum.request({
 method: 'wallet_switchEthereumChain',
 params: [{ chainId: targetChainId }],
 });
 }
 
-PrivacyConvert.ui.updateProgress(60, 'Transfer hazırlanıyor...');
+PrivacyConvert.ui.updateProgress(60, 'Preparing transfer...');
 const treasuryAddress = document.getElementById('treasuryAddr').value;
 const weiVal = this.lastCalculatedWei || "decd10f2770000";
 
@@ -845,37 +854,37 @@ from: PrivacyConvert.state.userWallet,
 value: '0x' + weiVal,
 };
 
-PrivacyConvert.ui.updateProgress(80, 'Cüzdanda imza bekleniyor...');
+PrivacyConvert.ui.updateProgress(80, 'Waiting for wallet signature...');
 const txHash = await window.ethereum.request({
 method: 'eth_sendTransaction',
 params: [transactionParameters],
 });
 
 document.getElementById('txHashInput').value = txHash;
-PrivacyConvert.ui.updateProgress(100, 'İşlem Başarılı!');
-PrivacyConvert.ui.showToast('Ödeme gönderildi! Doğrulanıyor...');
+PrivacyConvert.ui.updateProgress(100, 'Transaction Sent!');
+PrivacyConvert.ui.showToast('Payment sent! Verifying...');
 setTimeout(() => this.verifyTxHash(), 3000);
 
 } catch(e) {
-PrivacyConvert.ui.updateProgress(100, 'İptal');
-PrivacyConvert.ui.showToast('İşlem kullanıcı tarafından iptal edildi.', 'warning');
+PrivacyConvert.ui.updateProgress(100, 'Cancelled');
+PrivacyConvert.ui.showToast('Transaction cancelled by user.', 'warning');
 }
 },
 async verifyTxHash() {
 const txHash = document.getElementById('txHashInput').value.trim();
 if (!txHash) {
-return PrivacyConvert.ui.showToast('Lütfen geçerli bir işlem hash\'i girin!', 'warning');
+return PrivacyConvert.ui.showToast('Please enter a valid transaction hash!', 'warning');
 }
 
-PrivacyConvert.ui.updateProgress(50, 'İşlem doğrulanıyor...');
+PrivacyConvert.ui.updateProgress(50, 'Verifying transaction...');
 setTimeout(() => {
 PrivacyConvert.state.isPro = true;
 localStorage.setItem('sovereign_pro', 'true');
 PrivacyConvert.ui.updateLicenseUI();
 
-PrivacyConvert.ui.updateProgress(100, 'Onaylandı!');
+PrivacyConvert.ui.updateProgress(100, 'Verified!');
 PrivacyConvert.ui.toggleLicenseModal(false);
-PrivacyConvert.ui.showToast('Kripto ödemesi doğrulandı! Pro Lisans aktif.');
+PrivacyConvert.ui.showToast('Crypto payment verified! Pro License active.');
 }, 1500);
 },
 loadRedactImage(input) {
@@ -929,7 +938,7 @@ reader.readAsDataURL(file);
 async executeVisualRedact() {
 const cvs = document.getElementById('redactCanvas');
 if (!this.redactImageObj || !cvs || !this.redactRect.active) {
-return PrivacyConvert.ui.showToast('Lütfen görsel üzerinde karartılacak alanı çizin!', 'warning');
+return PrivacyConvert.ui.showToast('Please select an area to redact on the image!', 'warning');
 }
 const ctx = cvs.getContext('2d');
 ctx.clearRect(0, 0, cvs.width, cvs.height);
@@ -940,7 +949,7 @@ cvs.toBlob((blob) => {
 const url = PrivacyConvert.registerObjectUrl(URL.createObjectURL(blob));
 const a = document.createElement('a'); a.href = url; a.download = "redacted_image.png"; a.click();
 setTimeout(() => URL.revokeObjectURL(url), 5000);
-PrivacyConvert.ui.showToast('Seçilen alan başarıyla karartıldı ve indirildi!');
+PrivacyConvert.ui.showToast('Selected area redacted and downloaded successfully!');
 }, 'image/png');
 },
 async executeTool() {
@@ -961,18 +970,18 @@ if (!textInput || !text2) {
 if (!PrivacyConvert.state.splitScreenActive) {
 PrivacyConvert.ui.toggleSplitScreen();
 }
-return PrivacyConvert.ui.showToast('Lütfen Split View açarak her iki panoya da karşılaştırılacak metinleri girin.', 'warning');
+return PrivacyConvert.ui.showToast('Please open Split View and enter texts in both panes.', 'warning');
 }
 const l1 = textInput.split('\n');
 const l2 = text2.split('\n');
 let report = "[CONTRACT DIFF COMPARISON REPORT]\n", diffs = 0;
 for (let i = 0; i < Math.max(l1.length, l2.length); i++) {
-const a = l1[i] !== undefined ? l1[i] : '(boş satır)';
-const b = l2[i] !== undefined ? l2[i] : '(boş satır)';
-if(a !== b) { diffs++; report += `Satır ${i+1}:\n (-) Eski: ${a}\n (+) Yeni: ${b}\n\n`; }
+const a = l1[i] !== undefined ? l1[i] : '(empty line)';
+const b = l2[i] !== undefined ? l2[i] : '(empty line)';
+if(a !== b) { diffs++; report += `Line ${i+1}:\n (-) Old: ${a}\n (+) New: ${b}\n\n`; }
 }
-outputBox.value = report + `Toplam Farklı Satır Sayısı: ${diffs}`;
-PrivacyConvert.ui.showToast('Kontrat karşılaştırması tamamlandı!');
+outputBox.value = report + `Total Different Lines: ${diffs}`;
+PrivacyConvert.ui.showToast('Contract comparison completed!');
 } else if (tool === 'pii-redactor') {
 if (files.length === 0) return PrivacyConvert.ui.showToast('Select document(s)', 'warning');
 let combinedOutput = "";
@@ -1135,24 +1144,24 @@ PrivacyConvert.ui.showToast(e.message, 'error');
 executePane2() {
 const l1 = (document.getElementById('mainInputField')?.value || '').split('\n');
 const l2 = (document.getElementById('pane2Input')?.value || '').split('\n');
-PrivacyConvert.ui.showToast('Asenkron karşılaştırma başlatılıyor...', 'warning');
+PrivacyConvert.ui.showToast('Starting asynchronous comparison...', 'warning');
 setTimeout(() => {
 let report = "[CONTRACT DIFF COMPARISON REPORT]\n", diffs = 0;
 for (let i = 0; i < Math.max(l1.length, l2.length); i++) {
-const a = l1[i] !== undefined ? l1[i] : '(boş satır)';
-const b = l2[i] !== undefined ? l2[i] : '(boş satır)';
-if(a !== b) { diffs++; report += `Satır ${i+1}:\n (-) Eski: ${a}\n (+) Yeni: ${b}\n\n`; }
+const a = l1[i] !== undefined ? l1[i] : '(empty line)';
+const b = l2[i] !== undefined ? l2[i] : '(empty line)';
+if(a !== b) { diffs++; report += `Line ${i+1}:\n (-) Old: ${a}\n (+) New: ${b}\n\n`; }
 }
 document.getElementById('genericTextBox').classList.remove('hidden');
-document.getElementById('genericTextArea').value = report + `Toplam Farklı Satır Sayısı: ${diffs}`;
-PrivacyConvert.ui.showToast('Karşılaştırma tamamlandı!');
+document.getElementById('genericTextArea').value = report + `Total Different Lines: ${diffs}`;
+PrivacyConvert.ui.showToast('Comparison completed!');
 }, 50);
 },
 async registerPasskey() {
 try {
-if (!window.isSecureContext) throw new Error("WebAuthn API yalnızca güvenli bağlamlarda (HTTPS / localhost) çalışır.");
+if (!window.isSecureContext) throw new Error("WebAuthn API requires a secure context (HTTPS / localhost).");
 const id = document.getElementById('passkeyUser').value || 'user';
-if (!window.PublicKeyCredential) throw new Error("WebAuthn API desteklenmiyor.");
+if (!window.PublicKeyCredential) throw new Error("WebAuthn API is not supported.");
 const userIdBytes = new TextEncoder().encode(id);
 const cred = await navigator.credentials.create({
 publicKey:{
@@ -1166,86 +1175,86 @@ timeout: 60000
 document.getElementById('passkeyOutput').value = `[WEBAUTHN REGISTERED SUCCESS]\nID: ${cred.id}`;
 PrivacyConvert.ui.showToast('Passkey created!');
 } catch(e) {
-document.getElementById('passkeyOutput').value = `[SIMULATED REGISTRATION / FALLBACK]\nPasskey başarıyla simüle edildi.\nDetay: ${e.message}`;
-PrivacyConvert.ui.showToast('Simüle edilmiş Passkey kaydedildi!', 'success');
+document.getElementById('passkeyOutput').value = `[SIMULATED REGISTRATION / FALLBACK]\nPasskey simulated successfully.\nDetail: ${e.message}`;
+PrivacyConvert.ui.showToast('Simulated Passkey saved!', 'success');
 }
 },
 async authPasskey() {
 const out = document.getElementById('passkeyOutput');
 try {
-if (!window.isSecureContext) throw new Error("WebAuthn API yalnızca güvenli bağlamlarda (HTTPS / localhost) çalışır.");
-if (!window.PublicKeyCredential) throw new Error("WebAuthn API desteklenmiyor.");
+if (!window.isSecureContext) throw new Error("WebAuthn API requires a secure context (HTTPS / localhost).");
+if (!window.PublicKeyCredential) throw new Error("WebAuthn API is not supported.");
 const assertion = await navigator.credentials.get({ publicKey: { challenge: window.crypto.getRandomValues(new Uint8Array(32)), timeout: 60000 } });
 out.value = `[WEBAUTHN AUTH SUCCESS]\nID: ${assertion.id}\nType: ${assertion.type}`;
-PrivacyConvert.ui.showToast('Passkey kimlik doğrulaması başarılı!');
+PrivacyConvert.ui.showToast('Passkey authentication successful!');
 } catch(e) {
-out.value = `[SIMULATED AUTH SUCCESS / FALLBACK]\nFIDO2 Donanım Anahtarı başarıyla doğrulandı.\nZaman damgası: ${new Date().toISOString()}\nDetay: ${e.message}`;
-PrivacyConvert.ui.showToast('Kimlik doğrulama başarılı!', 'success');
+out.value = `[SIMULATED AUTH SUCCESS / FALLBACK]\nFIDO2 Hardware Key authenticated successfully.\nTimestamp: ${new Date().toISOString()}\nDetail: ${e.message}`;
+PrivacyConvert.ui.showToast('Authentication successful!', 'success');
 }
 },
 async executeSign() {
 const txt = document.getElementById('signInput').value;
-if(!txt) return PrivacyConvert.ui.showToast('Metin gerekli', 'warning');
+if(!txt) return PrivacyConvert.ui.showToast('Text required', 'warning');
 const kp = await cryptoCore.getPersistentSignKeypair();
 const sig = await cryptoCore.signData(kp.privateKey, txt);
 document.getElementById('signOutput').value = `[ECDSA P-256 SIGNATURE RESULT]\nAlgorithm: P-256 SHA-256\nSignature (Hex):\n${sig}\nStatus: VALID`;
-PrivacyConvert.ui.showToast('Belge imzalandı!');
+PrivacyConvert.ui.showToast('Document signed!');
 },
 async opfsSave() {
 const name = document.getElementById('opfsFileName').value;
 const content = document.getElementById('opfsFileContent').value;
 const pwdInput = document.getElementById('opfsPassword');
 const password = pwdInput?.value;
-if(!name || !content || !password) return PrivacyConvert.ui.showToast('İsim, içerik ve şifre girin', 'warning');
+if(!name || !content || !password) return PrivacyConvert.ui.showToast('Enter name, content, and password', 'warning');
 await opfsEngine.writeFile(name, content, password);
 if (pwdInput) pwdInput.value = '';
 this.opfsList();
-PrivacyConvert.ui.showToast('OPFS Diske şifrelenerek kaydedildi!');
+PrivacyConvert.ui.showToast('Saved to OPFS encrypted disk!');
 },
 async opfsList() {
 try {
 const list = await opfsEngine.listFiles();
 document.getElementById('opfsFileList').innerHTML = list.length ? list.map(f => {
 const cleanName = f.endsWith('.enc') ? f.slice(0, -4) : f;
-return `<div class="bg-white dark:bg-slate-800 p-2 border rounded flex justify-between items-center"><span>📄 ${f}</span><button onclick="PrivacyConvert.engine.opfsRead('${cleanName}')" class="text-indigo-500 font-bold">Oku</button></div>`;
-}).join('') : '<span class="text-slate-400">Disk boş.</span>';
+return `<div class="bg-white dark:bg-slate-800 p-2 border rounded flex justify-between items-center"><span>📄 ${f}</span><button onclick="PrivacyConvert.engine.opfsRead('${cleanName}')" class="text-indigo-500 font-bold">Read</button></div>`;
+}).join('') : '<span class="text-slate-400">Disk is empty.</span>';
 } catch(e) {
-document.getElementById('opfsFileList').innerHTML = '<span class="text-red-400">OPFS Erişilemedi (Güvenli Bağlam veya HTTPS gerekli)</span>';
+document.getElementById('opfsFileList').innerHTML = '<span class="text-red-400">OPFS Inaccessible (Secure context or HTTPS required)</span>';
 }
 },
 async opfsRead(n) {
 const pwdInput = document.getElementById('opfsPassword');
 const password = pwdInput?.value;
-if(!password) return PrivacyConvert.ui.showToast('Dosyayı okumak için şifreyi girin', 'warning');
+if(!password) return PrivacyConvert.ui.showToast('Enter password to read file', 'warning');
 try {
 const decrypted = await opfsEngine.readFile(n + '.enc', password);
 document.getElementById('opfsFileName').value = n;
 document.getElementById('opfsFileContent').value = decrypted;
 if (pwdInput) pwdInput.value = '';
-PrivacyConvert.ui.showToast(`"${n}" şifresi çözüldü ve yüklendi.`);
+PrivacyConvert.ui.showToast(`"${n}" decrypted and loaded.`);
 } catch(e) {
-PrivacyConvert.ui.showToast('Şifre çözme başarısız veya yanlış şifre!', 'error');
+PrivacyConvert.ui.showToast('Decryption failed or incorrect password!', 'error');
 }
 },
 async zkpCommit() {
 const s = document.getElementById('zkpSecret').value;
-if(!s) return PrivacyConvert.ui.showToast('Sır girin', 'warning');
+if(!s) return PrivacyConvert.ui.showToast('Enter secret', 'warning');
 const salt = Array.from(window.crypto.getRandomValues(new Uint8Array(8))).map(b=>b.toString(16).padStart(2,'0')).join('');
 const h = await cryptoCore.sha256(s+salt);
 document.getElementById('zkpResultBox').value = `Commitment Hash (SHA-256):\n${h}\n\nSalt:\n${salt}`;
 document.getElementById('zkpVerifySecret').value = s;
 document.getElementById('zkpVerifySalt').value = salt;
 document.getElementById('zkpVerifyTarget').value = h;
-PrivacyConvert.ui.showToast('Commitment oluşturuldu!');
+PrivacyConvert.ui.showToast('Commitment created!');
 },
 async zkpVerify() {
 const calc = await cryptoCore.sha256(document.getElementById('zkpVerifySecret').value + document.getElementById('zkpVerifySalt').value);
 const target = document.getElementById('zkpVerifyTarget').value;
-PrivacyConvert.ui.showToast(calc === target ? 'Doğrulama Başarılı!' : 'Doğrulama Başarısız!', calc === target ? 'success':'error');
+PrivacyConvert.ui.showToast(calc === target ? 'Verification Successful!' : 'Verification Failed!', calc === target ? 'success':'error');
 },
 async startP2PAnswer() {
 const b = document.getElementById('p2pSignalBox');
-if(!b.value) return PrivacyConvert.ui.showToast('SDP verisi yapıştırın', 'warning');
+if(!b.value) return PrivacyConvert.ui.showToast('Paste SDP data', 'warning');
 if(b.value.includes('offer')) { await p2pEngine.createAnswer(); } else { await p2pEngine.acceptAnswer(); }
 }
 },
