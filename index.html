@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; worker-src 'self' blob: https://unpkg.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' wss: https: data: blob:;">
-<title>PrivacyConvert Sovereign OS - Pro Suite (Ultimate v39.7)</title>
+<title>PrivacyConvert Sovereign OS - Pro Suite (Ultimate v39.8)</title>
 <meta name="theme-color" content="#4f46e5">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
@@ -72,8 +72,9 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 <div class="flex justify-between items-center"><span class="font-bold text-slate-500">Target Amount:</span><span class="font-extrabold text-indigo-600 dark:text-indigo-400 text-sm">$49 USD</span></div>
 <div class="flex justify-between items-center"><span class="font-bold text-slate-500">Estimated Value:</span><span id="calculatedCryptoAmount" class="font-mono font-bold text-emerald-600 dark:text-emerald-400">Fetching live rate...</span></div>
 <div>
-<label class="font-bold text-slate-500 block mb-1">Select Network:</label>
+<label class="font-bold text-slate-500 block mb-1">Select Network / Asset:</label>
 <select id="networkSelect" onchange="PrivacyConvert.ui.updateTreasuryDisplay()" class="w-full p-2 bg-white dark:bg-slate-800 border rounded-xl text-xs font-bold dark:text-white">
+<option value="usdt_evm">🪙 USDT (Tether - Arbitrum / Polygon)</option>
 <option value="arbitrum">Arbitrum One (ETH)</option>
 <option value="polygon">Polygon (POL)</option>
 <option value="avalanche_x">Avalanche X-Chain (AVAX)</option>
@@ -227,7 +228,7 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 
 <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 px-6 text-center text-xs text-slate-500 dark:text-slate-400 space-y-3 mt-auto">
 <div class="flex flex-col sm:flex-row justify-center items-center gap-3">
-<span>PrivacyConvert Sovereign OS &copy; 2026 - Ultimate Sovereign v39.7</span>
+<span>PrivacyConvert Sovereign OS &copy; 2026 - Ultimate Sovereign v39.8</span>
 <span class="hidden sm:inline text-slate-300 dark:text-slate-600">|</span>
 <a href="https://github.com/veyselozturk1986-byte/image-tools" target="_blank" rel="noopener noreferrer" class="font-bold dynamic-text hover:underline flex items-center gap-1">
 🐙 GitHub Repository
@@ -241,10 +242,10 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 </footer>
 
 <script>
-// --- ROBUST AIR-GAPPED RESILIENT SERVICE WORKER (v39.7 Ultimate) ---
+// --- ROBUST AIR-GAPPED RESILIENT SERVICE WORKER (v39.8 Ultimate) ---
 if ('serviceWorker' in navigator) {
 const swCode = `
-const CACHE_NAME = 'sovereign-core-v39.7';
+const CACHE_NAME = 'sovereign-core-v39.8';
 const assets = [
 './',
 location.pathname,
@@ -700,6 +701,7 @@ m.classList.add('hidden');
 updateTreasuryDisplay() {
 const net = document.getElementById('networkSelect').value;
 const addrs = {
+usdt_evm: '0x2e08c361e00bb892bc99b6688d2948fcc3600b65',
 arbitrum: '0x2e08c361e00bb892bc99b6688d2948fcc3600b65',
 polygon: '0x2e08c361e00bb892bc99b6688d2948fcc3600b65',
 avalanche_x: 'X-avax16qqvf3ze08wglq0ctfr2869j8nqxcdthjq53ws',
@@ -815,6 +817,11 @@ redactRect: { startX: 0, startY: 0, w: 0, h: 0, active: false },
 lastCalculatedWei: null,
 async fetchDynamicPrice(net) {
 const amountEl = document.getElementById('calculatedCryptoAmount');
+if (net === 'usdt_evm') {
+amountEl.innerText = '49.00 USDT (Exact)';
+this.lastCalculatedWei = "decd10f2770000";
+return;
+}
 amountEl.innerText = 'Fetching live rate...';
 const symbols = { arbitrum: 'ETHUSDT', polygon: 'MATICUSDT', avalanche_x: 'AVAXUSDT', tron: 'TRXUSDT' };
 const coinNames = { arbitrum: 'ETH', polygon: 'POL', avalanche_x: 'AVAX', tron: 'TRX' };
@@ -859,12 +866,12 @@ if (netChoice === 'avalanche_x' || netChoice === 'tron') {
 return PrivacyConvert.ui.showToast('For this network, please transfer manually and enter reference.', 'warning');
 }
 if (!PrivacyConvert.state.userWallet) return PrivacyConvert.ui.showToast('Connect wallet first!', 'warning');
-const chainIds = { arbitrum: '0xa4b1', polygon: '0x89' };
+const chainIds = { usdt_evm: '0xa4b1', arbitrum: '0xa4b1', polygon: '0x89' };
 try {
 PrivacyConvert.ui.updateProgress(20, 'Checking network...');
 const currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
-if (currentChainId !== chainIds[netChoice]) {
-await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: chainIds[netChoice] }] });
+if (currentChainId !== (chainIds[netChoice] || '0xa4b1')) {
+await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: (chainIds[netChoice] || '0xa4b1') }] });
 }
 PrivacyConvert.ui.updateProgress(60, 'Preparing transfer...');
 const txHash = await window.ethereum.request({
@@ -1256,7 +1263,7 @@ if(b.value.includes('offer')) { await p2pEngine.createAnswer(); } else { await p
 }
 },
 async init() {
-console.log("Ultimate Sovereign OS Core v39.7 Loaded.");
+console.log("Ultimate Sovereign OS Core v39.8 Loaded.");
 await cryptoCore.getDeviceFingerprint();
 PrivacyConvert.ui.updateLicenseUI();
 const dz = document.getElementById('dropZone'), fi = document.getElementById('fileInput');
