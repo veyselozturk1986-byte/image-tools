@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; worker-src 'self' blob: https://unpkg.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' wss: https: data: blob:;">
-<title>PrivacyConvert Sovereign OS - Pro Suite (Production Hardened v24 Final)</title>
+<title>PrivacyConvert Sovereign OS - Pro Suite (Production Hardened v25 Final)</title>
 <meta name="theme-color" content="#4f46e5">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
@@ -191,7 +191,7 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 
 <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 px-6 text-center text-xs text-slate-500 dark:text-slate-400 space-y-3 mt-auto">
 <div class="flex flex-col sm:flex-row justify-center items-center gap-3">
-<span>PrivacyConvert Sovereign OS &copy; 2026 - Production Hardened v24 Final</span>
+<span>PrivacyConvert Sovereign OS &copy; 2026 - Production Hardened v25 Final</span>
 <span class="hidden sm:inline text-slate-300 dark:text-slate-600">|</span>
 <a href="https://github.com/veyselozturk1986-byte/image-tools" target="_blank" rel="noopener noreferrer" class="font-bold dynamic-text hover:underline flex items-center gap-1">
 🐙 GitHub Repository
@@ -205,10 +205,10 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 </footer>
 
 <script>
-// --- ROBUST AIR-GAPPED RESILIENT SERVICE WORKER (v24 Final) ---
+// --- ROBUST AIR-GAPPED RESILIENT SERVICE WORKER (v25 Final) ---
 if ('serviceWorker' in navigator) {
 const swCode = `
-const CACHE_NAME = 'sovereign-core-v24';
+const CACHE_NAME = 'sovereign-core-v25';
 const assets = [
 './',
 location.pathname,
@@ -700,6 +700,9 @@ if(meta.type === 'crypto') document.getElementById('cryptoOptions').classList.re
 document.getElementById('actionArea').classList.remove('hidden');
 document.getElementById('textInputGroup').classList.remove('hidden');
 document.getElementById('genericTextBox').classList.remove('hidden');
+if (PrivacyConvert.state.tool === 'doc-diff' && !PrivacyConvert.state.splitScreenActive) {
+PrivacyConvert.ui.toggleSplitScreen();
+}
 } else if (meta.type === 'action') {
 PrivacyConvert.engine.executeTool();
 } else if (meta.type === 'webauthn') {
@@ -869,6 +872,24 @@ if (tool === 'live-pii-shield') {
 if(!textInput) return PrivacyConvert.ui.showToast('Enter text', 'warning');
 outputBox.value = `[AI REDACTION]\n\n${aiEngine.maskPII(textInput)}`;
 PrivacyConvert.ui.showToast('Masked!');
+} else if (tool === 'doc-diff') {
+const text2 = document.getElementById('pane2Input')?.value || '';
+if (!textInput || !text2) {
+if (!PrivacyConvert.state.splitScreenActive) {
+PrivacyConvert.ui.toggleSplitScreen();
+}
+return PrivacyConvert.ui.showToast('Lütfen Split View açarak her iki panoya da karşılaştırılacak metinleri girin.', 'warning');
+}
+const l1 = textInput.split('\n');
+const l2 = text2.split('\n');
+let report = "[CONTRACT DIFF COMPARISON REPORT]\n", diffs = 0;
+for (let i = 0; i < Math.max(l1.length, l2.length); i++) {
+const a = l1[i] !== undefined ? l1[i] : '(boş satır)';
+const b = l2[i] !== undefined ? l2[i] : '(boş satır)';
+if(a !== b) { diffs++; report += `Satır ${i+1}:\n (-) Eski: ${a}\n (+) Yeni: ${b}\n\n`; }
+}
+outputBox.value = report + `Toplam Farklı Satır Sayısı: ${diffs}`;
+PrivacyConvert.ui.showToast('Kontrat karşılaştırması tamamlandı!');
 } else if (tool === 'pii-redactor') {
 if (files.length === 0) return PrivacyConvert.ui.showToast('Select document(s)', 'warning');
 let combinedOutput = "";
