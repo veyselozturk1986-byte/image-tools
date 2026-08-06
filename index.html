@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; worker-src 'self' blob: https://unpkg.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' wss: https: data: blob:;">
-<title>PrivacyConvert Sovereign OS - Pro Suite (Production Hardened v21)</title>
+<title>PrivacyConvert Sovereign OS - Pro Suite (Production Hardened v22 Final)</title>
 <meta name="theme-color" content="#4f46e5">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
@@ -169,10 +169,10 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 </main>
 
 <script>
-// --- ROBUST AIR-GAPPED RESILIENT SERVICE WORKER (v21) ---
+// --- ROBUST AIR-GAPPED RESILIENT SERVICE WORKER (v22 Final) ---
 if ('serviceWorker' in navigator) {
 const swCode = `
-const CACHE_NAME = 'sovereign-core-v21';
+const CACHE_NAME = 'sovereign-core-v22';
 const assets = [
 './',
 location.pathname,
@@ -254,7 +254,7 @@ resolve();
 };
 script.onerror = () => {
 delete this.loadingPromises[url];
-PrivacyConvert.ui.showToast(`${url} yüklenemedi. Lütfen internet bağlantınızı veya yerel sunucu yapılandırmanızı kontrol edin.`, 'error');
+PrivacyConvert.ui.showToast(`${url} yüklenemedi. Lütfen yerel sunucu veya internet bağlantısını kontrol edin.`, 'error');
 reject(new Error(`${url} yüklenemedi.`));
 };
 document.head.appendChild(script);
