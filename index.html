@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; worker-src 'self' blob: https://unpkg.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' wss: https: data: blob:;">
-<title>PrivacyConvert Sovereign OS - Pro Suite (Ultimate v39.1)</title>
+<title>PrivacyConvert Sovereign OS - Pro Suite (Ultimate v39.2 - Machine Locked)</title>
 <meta name="theme-color" content="#4f46e5">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
@@ -58,9 +58,9 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 
 <!-- ACTIVATION GUIDE -->
 <div class="bg-indigo-50 dark:bg-slate-900 p-3.5 rounded-2xl border border-indigo-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-300 space-y-1.5 shadow-inner">
-<div class="font-extrabold text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5">⚡ Decentralized Activation & Backup:</div>
+<div class="font-extrabold text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5">⚡ Machine-Locked Decentralized Activation:</div>
 <p>1. Transfer $49 equivalent to the treasury or verify via Web3 wallet / TxID.</p>
-<p>2. Once Pro is active, use the main screen to download your offline <strong>.lic License File</strong>.</p>
+<p>2. Exported <strong>.lic files</strong> are strictly bound to this computer's hardware/browser fingerprint and cannot be used on other machines.</p>
 </div>
 
 <div class="space-y-3">
@@ -116,10 +116,10 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 <div class="flex items-center gap-3 flex-wrap">
 <span class="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">⚡ Sovereign OS Core</span>
 <span id="licenseBadge" class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300">FREE PLAN</span>
-<!-- ANA EKRANA TAŞINAN LİSANS YEDEKLEME BUTONLARI -->
+<!-- LİSANS YEDEKLEME BUTONLARI -->
 <div class="flex items-center gap-1.5 ml-2">
-<button onclick="PrivacyConvert.engine.exportLicenseFile()" title="Export Pro License File (.lic)" class="text-[11px] font-bold px-2.5 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 rounded-lg transition shadow-sm border border-slate-200 dark:border-slate-600 flex items-center gap-1">📥 Export .lic</button>
-<label title="Import Pro License File (.lic)" class="text-[11px] font-bold px-2.5 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 rounded-lg transition shadow-sm border border-slate-200 dark:border-slate-600 flex items-center gap-1 cursor-pointer">📤 Import .lic<input type="file" accept=".lic" onchange="PrivacyConvert.engine.importLicenseFile(this)" class="hidden"/></label>
+<button onclick="PrivacyConvert.engine.exportLicenseFile()" title="Export Machine-Locked Pro License File (.lic)" class="text-[11px] font-bold px-2.5 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 rounded-lg transition shadow-sm border border-slate-200 dark:border-slate-600 flex items-center gap-1">📥 Export .lic</button>
+<label title="Import Machine-Locked Pro License File (.lic)" class="text-[11px] font-bold px-2.5 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 rounded-lg transition shadow-sm border border-slate-200 dark:border-slate-600 flex items-center gap-1 cursor-pointer">📤 Import .lic<input type="file" accept=".lic" onchange="PrivacyConvert.engine.importLicenseFile(this)" class="hidden"/></label>
 </div>
 </div>
 <div class="flex items-center gap-2">
@@ -202,8 +202,8 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 </h2>
 <div class="space-y-4 text-xs sm:text-sm">
 <div class="space-y-1">
-<h3 class="font-bold text-slate-800 dark:text-slate-200">Q: What is a .lic backup file and how does it work?</h3>
-<p class="text-slate-500 dark:text-slate-400">A: The <strong>.lic file</strong> is an offline, cryptographically portable credential file that securely stores your Pro membership status. Because Sovereign OS operates 100% air-gapped on the client-side without external database tracking, clearing your browser's <code class="bg-slate-100 dark:bg-slate-700 px-1 py-0.5 rounded font-mono">localStorage</code> would normally reset your plan. By clicking <strong>Export .lic</strong>, you save your signed Pro credentials to your device. You can then use <strong>Import .lic</strong> anytime in any browser or after clearing cache to instantly restore your Pro status offline without needing a new blockchain transaction.</p>
+<h3 class="font-bold text-slate-800 dark:text-slate-200">Q: How does Machine-Locked .lic backup work?</h3>
+<p class="text-slate-500 dark:text-slate-400">A: When you export a <code class="bg-slate-100 dark:bg-slate-700 px-1 py-0.5 rounded font-mono">.lic</code> file, Sovereign OS embeds a secure cryptographic device fingerprint (<code class="bg-slate-100 dark:bg-slate-700 px-1 py-0.5 rounded font-mono">machineId</code>) into the file. This ensures that the backup file is strictly locked to your computer/browser environment. If someone copies your license file to another machine, the system will detect the fingerprint mismatch and reject it.</p>
 </div>
 <div class="space-y-1">
 <h3 class="font-bold text-slate-800 dark:text-slate-200">Q: What technical conditions are required for all tools to work fully functionally?</h3>
@@ -223,7 +223,7 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 
 <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 px-6 text-center text-xs text-slate-500 dark:text-slate-400 space-y-3 mt-auto">
 <div class="flex flex-col sm:flex-row justify-center items-center gap-3">
-<span>PrivacyConvert Sovereign OS &copy; 2026 - Ultimate Sovereign v39.1</span>
+<span>PrivacyConvert Sovereign OS &copy; 2026 - Ultimate Sovereign v39.2</span>
 <span class="hidden sm:inline text-slate-300 dark:text-slate-600">|</span>
 <a href="https://github.com/veyselozturk1986-byte/image-tools" target="_blank" rel="noopener noreferrer" class="font-bold dynamic-text hover:underline flex items-center gap-1">
 🐙 GitHub Repository
@@ -237,10 +237,10 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 </footer>
 
 <script>
-// --- ROBUST AIR-GAPPED RESILIENT SERVICE WORKER (v39.1 Ultimate) ---
+// --- ROBUST AIR-GAPPED RESILIENT SERVICE WORKER (v39.2 Ultimate) ---
 if ('serviceWorker' in navigator) {
 const swCode = `
-const CACHE_NAME = 'sovereign-core-v39.1';
+const CACHE_NAME = 'sovereign-core-v39.2';
 const assets = [
 './',
 location.pathname,
@@ -380,6 +380,24 @@ async signData(privateKey, text) {
 const encoded = new TextEncoder().encode(text);
 const signature = await window.crypto.subtle.sign({ name: "ECDSA", hash: { name: "SHA-256" } }, privateKey, encoded);
 return Array.from(new Uint8Array(signature)).map(b => b.toString(16).padStart(2, '0')).join('');
+},
+async getDeviceFingerprint() {
+let machineId = localStorage.getItem('sovereign_machine_id');
+if (!machineId) {
+const nav = window.navigator;
+const screen = window.screen;
+const raw = [
+nav.userAgent,
+nav.language,
+nav.hardwareConcurrency || '4',
+screen.width + 'x' + screen.height,
+Intl.DateTimeFormat().resolvedOptions().timeZone,
+window.crypto.randomUUID()
+].join('|');
+machineId = await this.sha256(raw);
+localStorage.setItem('sovereign_machine_id', machineId);
+}
+return machineId;
 }
 };
 
@@ -872,29 +890,41 @@ return;
 }
 PrivacyConvert.ui.showToast('Verification successful!', 'success');
 },
-exportLicenseFile() {
+async exportLicenseFile() {
 if (!PrivacyConvert.state.isPro) return PrivacyConvert.ui.showToast('No active Pro license to export!', 'warning');
-const licenseData = JSON.stringify({ pro: true, timestamp: new Date().toISOString(), pubKey: localStorage.getItem('sovereign_pub_jwk') });
+const machineId = await cryptoCore.getDeviceFingerprint();
+const licenseData = JSON.stringify({ 
+  pro: true, 
+  machineId: machineId,
+  timestamp: new Date().toISOString(), 
+  pubKey: localStorage.getItem('sovereign_pub_jwk') 
+});
 const blob = new Blob([licenseData], { type: 'application/json' });
 const url = URL.createObjectURL(blob);
 const a = document.createElement('a'); a.href = url; a.download = 'sovereign_pro.lic'; a.click();
 setTimeout(() => URL.revokeObjectURL(url), 1000);
-PrivacyConvert.ui.showToast('Pro license backup (.lic) exported!');
+PrivacyConvert.ui.showToast('Machine-locked Pro license exported!');
 },
-importLicenseFile(input) {
+async importLicenseFile(input) {
 const file = input.files[0];
 if (!file) return;
 const reader = new FileReader();
-reader.onload = (e) => {
+reader.onload = async (e) => {
 try {
 const data = JSON.parse(e.target.result);
 if (data.pro) {
+const currentMachineId = await cryptoCore.getDeviceFingerprint();
+if (data.machineId && data.machineId !== currentMachineId) {
+PrivacyConvert.ui.showToast('Error: This license belongs to another computer!', 'error');
+return;
+}
 PrivacyConvert.state.isPro = true;
 localStorage.setItem('sovereign_pro', 'true');
 if(data.pubKey) localStorage.setItem('sovereign_pub_jwk', data.pubKey);
+if(data.machineId) localStorage.setItem('sovereign_machine_id', data.machineId);
 PrivacyConvert.ui.updateLicenseUI();
 PrivacyConvert.ui.toggleLicenseModal(false);
-PrivacyConvert.ui.showToast('Pro License restored successfully from file!');
+PrivacyConvert.ui.showToast('Pro License restored successfully on this device!');
 } else {
 PrivacyConvert.ui.showToast('Invalid license file!', 'error');
 }
@@ -1142,8 +1172,9 @@ if(!b.value) return PrivacyConvert.ui.showToast('Paste SDP', 'warning');
 if(b.value.includes('offer')) { await p2pEngine.createAnswer(); } else { await p2pEngine.acceptAnswer(); }
 }
 },
-init() {
-console.log("Ultimate Sovereign OS Core v39.1 Loaded.");
+async init() {
+console.log("Ultimate Sovereign OS Core v39.2 Machine-Locked Loaded.");
+await cryptoCore.getDeviceFingerprint(); // Initialize device fingerprint
 PrivacyConvert.ui.updateLicenseUI();
 const dz = document.getElementById('dropZone'), fi = document.getElementById('fileInput');
 dz.addEventListener('click', () => fi.click());
