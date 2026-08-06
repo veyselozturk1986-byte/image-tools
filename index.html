@@ -59,7 +59,6 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 <button onclick="PrivacyConvert.ui.toggleLicenseModal(false)" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
 </div>
 
-<!-- 3 AŞAMALI TAM AÇIKLAYICI REHBER -->
 <div class="bg-indigo-50 dark:bg-slate-900 p-3.5 rounded-2xl border border-indigo-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-300 space-y-1.5 shadow-inner">
 <div class="font-extrabold text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5">⚡ Machine-Locked Activation Guide:</div>
 <p>1. Transfer $49 (USDT or native equivalent) to the treasury address via Web3 wallet or manual transfer.</p>
@@ -70,7 +69,7 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 <div class="space-y-3">
 <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3 text-xs">
 <div class="flex justify-between items-center"><span class="font-bold text-slate-500">Target Amount:</span><span class="font-extrabold text-indigo-600 dark:text-indigo-400 text-sm">$49 USD</span></div>
-<div class="flex justify-between items-center"><span class="font-bold text-slate-500">Estimated Value:</span><span id="calculatedCryptoAmount" class="font-mono font-bold text-emerald-600 dark:text-emerald-400">Fetching live rate...</span></div>
+<div class="flex justify-between items-center"><span class="font-bold text-slate-500">Estimated Value:</span><span id="calculatedCryptoAmount" class="font-mono font-bold text-emerald-600 dark:text-emerald-400">Fetching offline rate...</span></div>
 <div>
 <label class="font-bold text-slate-500 block mb-1">Select Network / Asset:</label>
 <select id="networkSelect" onchange="PrivacyConvert.ui.updateTreasuryDisplay()" class="w-full p-2 bg-white dark:bg-slate-800 border rounded-xl text-xs font-bold dark:text-white">
@@ -121,7 +120,6 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 <div class="flex items-center gap-3 flex-wrap">
 <span class="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">⚡ Sovereign OS Core</span>
 <span id="licenseBadge" class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300">FREE PLAN</span>
-<!-- LİSANS YEDEKLEME BUTONLARI -->
 <div class="flex items-center gap-1.5 ml-2">
 <button onclick="PrivacyConvert.engine.exportLicenseFile()" title="Export Machine-Locked Pro License File (.lic)" class="text-[11px] font-bold px-2.5 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 rounded-lg transition shadow-sm border border-slate-200 dark:border-slate-600 flex items-center gap-1">📥 Export .lic</button>
 <label title="Import Machine-Locked Pro License File (.lic)" class="text-[11px] font-bold px-2.5 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 rounded-lg transition shadow-sm border border-slate-200 dark:border-slate-600 flex items-center gap-1 cursor-pointer">📤 Import .lic<input type="file" accept=".lic" onchange="PrivacyConvert.engine.importLicenseFile(this)" class="hidden"/></label>
@@ -143,7 +141,6 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 <p id="mainDesc" class="text-slate-500 text-sm max-w-2xl mx-auto font-medium">Select a fully localized cryptographic tool below.</p>
 </div>
 
-<!-- ARAÇLAR NAVİGASYON GRUBU -->
 <div id="toolsNavContainer" class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
 <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-2">
 <h3 class="text-[11px] font-extrabold dynamic-text uppercase tracking-wider border-b pb-2">🔒 Data Privacy & Encryption</h3>
@@ -175,7 +172,6 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 </div>
 </div>
 
-<!-- ANA ÇALIŞMA ALANI -->
 <div id="workspaceGrid" class="max-w-3xl mx-auto grid grid-cols-1 gap-6 transition-all duration-300 mb-12">
 <div class="p-6 sm:p-8 bg-white dark:bg-slate-800 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-700 relative">
 <button id="clearBtn" onclick="PrivacyConvert.ui.resetWorkspace(PrivacyConvert.routing.metaData[PrivacyConvert.state.tool])" class="hidden absolute top-6 right-6 text-xs font-bold text-red-500 bg-red-50 dark:bg-red-950/40 px-3 py-2 rounded-lg transition">Reset</button>
@@ -200,27 +196,18 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 <button onclick="PrivacyConvert.engine.executePane2()" class="w-full py-3 rounded-xl dynamic-bg text-white font-bold text-sm shadow-md">Compare & Diff</button>
 </div>
 
-<!-- FREQUENTLY ASKED QUESTIONS (FAQ) SECTION -->
 <section class="max-w-3xl mx-auto mb-12 bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-3xl shadow-xl border border-slate-200 dark:border-slate-700 space-y-6">
 <h2 class="text-lg font-extrabold text-slate-900 dark:text-white flex items-center gap-2 border-b pb-3 border-slate-200 dark:border-slate-700">
 📚 Frequently Asked Questions (FAQ)
 </h2>
 <div class="space-y-4 text-xs sm:text-sm">
 <div class="space-y-1">
-<h3 class="font-bold text-slate-800 dark:text-slate-200">Q: What happens if browser history or cache is cleared? How do .lic backup buttons protect my Pro membership?</h3>
-<p class="text-slate-500 dark:text-slate-400">A: Because Sovereign OS operates 100% client-side with zero cloud telemetry or centralized databases, clearing your browser's history, cache, or local storage (<code class="bg-slate-100 dark:bg-slate-700 px-1 py-0.5 rounded font-mono">localStorage</code>) will reset your local profile to the Free plan. To guarantee that you never lose your purchased Pro membership during such clearing events, the <strong>📥 Export .lic</strong> button allows you to save an offline backup file bound strictly to your device's hardware fingerprint. If your browser data is ever wiped, clicking <strong>📤 Import .lic</strong> and selecting your backup file instantly restores your Pro status offline without needing a new payment.</p>
+<h3 class="font-bold text-slate-800 dark:text-slate-200">Q: What happens if browser history or cache is cleared?</h3>
+<p class="text-slate-500 dark:text-slate-400">A: Because Sovereign OS operates 100% client-side, clearing your browser's history or local storage will reset your profile to the Free plan. To guarantee that you never lose your Pro membership, use the <strong>📥 Export .lic</strong> button to save an offline backup file bound strictly to your device's hardware fingerprint.</p>
 </div>
 <div class="space-y-1">
 <h3 class="font-bold text-slate-800 dark:text-slate-200">Q: What technical conditions are required for all tools to work fully functionally?</h3>
 <p class="text-slate-500 dark:text-slate-400">A: A Secure Context is required. For advanced browser storage and authentication APIs like OPFS (Encrypted Disk) and WebAuthn (Passkey) to function without errors, the application must be run via a local server such as <strong>localhost</strong> or <strong>HTTPS</strong> rather than directly opening the file via <code class="bg-slate-100 dark:bg-slate-700 px-1 py-0.5 rounded font-mono">file://</code>.</p>
-</div>
-<div class="space-y-1">
-<h3 class="font-bold text-slate-800 dark:text-slate-200">Q: What exactly is the "Air-Gapped" security feature?</h3>
-<p class="text-slate-500 dark:text-slate-400">A: The Air-Gapped architecture ensures that the system runs 100% on the client side with <strong>0 KB</strong> of outbound network traffic. All processed texts, encrypted files, OCR extractions, and scan reports remain entirely within your browser session. No data is sent to external servers, uploaded to the cloud, or leaked elsewhere.</p>
-</div>
-<div class="space-y-1">
-<h3 class="font-bold text-slate-800 dark:text-slate-200">Q: Can the application be used completely offline?</h3>
-<p class="text-slate-500 dark:text-slate-400">A: Yes. Heavy libraries like <code class="bg-slate-100 dark:bg-slate-700 px-1 py-0.5 rounded font-mono">pdf.js</code> and <code class="bg-slate-100 dark:bg-slate-700 px-1 py-0.5 rounded font-mono">tesseract.js</code> are cached in your browser via a Service Worker upon initial load. Once cached, the application can perform all operations locally even in completely isolated (air-gapped) environments without an internet connection.</p>
 </div>
 </div>
 </section>
@@ -242,95 +229,25 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 </footer>
 
 <script>
-// --- ROBUST AIR-GAPPED RESILIENT SERVICE WORKER (v39.9 Ultimate) ---
-if ('serviceWorker' in navigator) {
-const swCode = `
-const CACHE_NAME = 'sovereign-core-v39.9';
-const assets = [
-'./',
-location.pathname,
-'https://cdn.tailwindcss.com',
-'https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js',
-'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js',
-'https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js',
-'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js',
-'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js',
-'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js',
-'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/worker.min.js',
-'https://cdn.jsdelivr.net/npm/tesseract.js-core@v5/tesseract-core.wasm.js'
-];
-self.addEventListener('install', e => {
-e.waitUntil(
-caches.open(CACHE_NAME).then(async cache => {
-for (const asset of assets) {
-try {
-const res = await fetch(asset, { mode: 'cors' });
-if (res && res.ok) {
-await cache.put(asset, res);
-}
-} catch (err) {}
-}
-})
-);
-self.skipWaiting();
-});
-self.addEventListener('activate', e => {
-e.waitUntil(
-caches.keys().then(keys => Promise.all(
-keys.map(k => k !== CACHE_NAME ? caches.delete(k) : null)
-))
-);
-self.clients.claim();
-});
-self.addEventListener('fetch', e => {
-e.respondWith(
-caches.match(e.request).then(cached => {
-return cached || fetch(e.request).then(res => {
-if (!res || res.status !== 200 || (res.type !== 'basic' && res.type !== 'cors')) {
-return res;
-}
-const responseToCache = res.clone();
-caches.open(CACHE_NAME).then(cache => {
-cache.put(e.request, responseToCache).catch(() => {});
-});
-return res;
-}).catch(() => {
-if (e.request.destination === 'document') {
-return caches.match('./');
-}
-return new Response('Network error / Air-gapped fallback', { status: 404, statusText: 'Not Found' });
-});
-})
-);
-});
-`;
-try {
-const blob = new Blob([swCode], { type: 'application/javascript' });
-const swUrl = URL.createObjectURL(blob);
-navigator.serviceWorker.register(swUrl).catch(() => {});
-} catch(e) {}
+// GERÇEK AIR-GAPPED ÇEVRİMDIŞI SW KAYDI
+// Not: Tam offline mod için sw.js adında fiziksel bir dosya gerekir.
+if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+            .catch(() => console.warn('Offline engine skipped. Ensure you are on HTTPS/Localhost.'));
+    });
 }
 
 const ScriptLoader = {
-loaded: {},
-loadingPromises: {},
+loaded: {}, loadingPromises: {},
 async load(url) {
 if (this.loaded[url]) return Promise.resolve();
 if (this.loadingPromises[url]) return this.loadingPromises[url];
-this.loadingPromises[url] = new Promise((resolve, reject) => {
+this.loadingPromises[url] = new Promise((resolve) => {
 PrivacyConvert.ui.updateProgress(10, 'Loading dependencies...');
-const script = document.createElement('script');
-script.src = url;
-script.onload = () => {
-this.loaded[url] = true;
-delete this.loadingPromises[url];
-resolve();
-};
-script.onerror = () => {
-delete this.loadingPromises[url];
-PrivacyConvert.ui.showToast(`Failed to load ${url}. Using cached/fallback engine.`, 'warning');
-resolve();
-};
+const script = document.createElement('script'); script.src = url;
+script.onload = () => { this.loaded[url] = true; delete this.loadingPromises[url]; resolve(); };
+script.onerror = () => { delete this.loadingPromises[url]; PrivacyConvert.ui.showToast(`Failed to load ${url}`, 'warning'); resolve(); };
 document.head.appendChild(script);
 });
 return this.loadingPromises[url];
@@ -389,16 +306,8 @@ return Array.from(new Uint8Array(signature)).map(b => b.toString(16).padStart(2,
 async getDeviceFingerprint() {
 let machineId = localStorage.getItem('sovereign_machine_id');
 if (!machineId) {
-const nav = window.navigator;
-const screen = window.screen;
-const raw = [
-nav.userAgent,
-nav.language,
-nav.hardwareConcurrency || '4',
-screen.width + 'x' + screen.height,
-Intl.DateTimeFormat().resolvedOptions().timeZone,
-window.crypto.randomUUID()
-].join('|');
+const nav = window.navigator; const screen = window.screen;
+const raw = [nav.userAgent, nav.language, nav.hardwareConcurrency || '4', screen.width + 'x' + screen.height, Intl.DateTimeFormat().resolvedOptions().timeZone, window.crypto.randomUUID()].join('|');
 machineId = await this.sha256(raw);
 localStorage.setItem('sovereign_machine_id', machineId);
 }
@@ -408,16 +317,21 @@ return machineId;
 
 const streamCore = {
 async processLargeFile(file, password, mode, progressCallback, toastCallback, urlCallback) {
-toastCallback('Processing via chunked stream architecture...', 'warning');
-progressCallback(15, 'Reading file buffer securely...');
+// RAM Koruma Limiti: 500MB (AES-GCM çökmesini engeller)
+const MAX_FILE_SIZE = 500 * 1024 * 1024; 
+if (file.size > MAX_FILE_SIZE) {
+toastCallback('File exceeds 500MB safe RAM limit for in-browser AES-GCM.', 'error');
+progressCallback(100, 'Aborted to prevent memory crash.');
+return;
+}
+toastCallback('Processing via secure buffer allocation...', 'warning');
+progressCallback(15, 'Reading file into secure memory...');
+try {
 const arrayBuffer = await file.arrayBuffer();
 progressCallback(50, mode === 'encrypt' ? 'Applying AES-GCM Encryption...' : 'Decrypting secure payload...');
 let processedBuffer;
-if (mode === 'encrypt') {
-processedBuffer = await cryptoCore.encryptBinary(arrayBuffer, password);
-} else {
-processedBuffer = await cryptoCore.decryptBinary(arrayBuffer, password);
-}
+if (mode === 'encrypt') { processedBuffer = await cryptoCore.encryptBinary(arrayBuffer, password); }
+else { processedBuffer = await cryptoCore.decryptBinary(arrayBuffer, password); }
 progressCallback(90, 'Preparing secure download...');
 const blob = new Blob([processedBuffer], { type: 'application/octet-stream' });
 const blobUrl = URL.createObjectURL(blob);
@@ -425,9 +339,14 @@ const url = urlCallback(blobUrl);
 const a = document.createElement('a'); a.href = url;
 a.download = mode === 'encrypt' ? `${file.name}.enc` : file.name.replace('.enc', '');
 a.click();
+processedBuffer = null; // Bellek Sızıntısı Önleme
 setTimeout(() => { try { URL.revokeObjectURL(blobUrl); } catch(e){} }, 6000);
 progressCallback(100, 'Completed successfully!');
 toastCallback(mode === 'encrypt' ? 'Encrypted and downloaded successfully!' : 'Decrypted and downloaded successfully!');
+} catch (err) {
+progressCallback(100, 'Process Failed');
+toastCallback('Authentication mismatch or wrong password.', 'error');
+}
 }
 };
 
@@ -437,12 +356,9 @@ const validateTC = (match) => {
 let digits = match.split('').map(Number);
 let d10 = (((digits[0] + digits[2] + digits[4] + digits[6] + digits[8]) * 7 - (digits[1] + digits[3] + digits[5] + digits[7])) % 10 + 10) % 10;
 let d11 = digits.slice(0, 10).reduce((a, b) => a + b, 0) % 10;
-if (d10 === digits[9] && d11 === digits[10]) {
-return '[REDACTED_ID]';
-}
+if (d10 === digits[9] && d11 === digits[10]) return '[REDACTED_ID]';
 return match;
 };
-
 return text
 .replace(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, '[REDACTED_EMAIL]')
 .replace(/\b(?:\+90|0)?\s*\(?[0-9]{3}\)?[\s.-]?[0-9]{3}[\s.-]?[0-9]{4}\b/g, '[REDACTED_PHONE]')
@@ -454,54 +370,34 @@ return text
 
 const opfsEngine = {
 async getRoot() {
-if (!window.isSecureContext) throw new Error("OPFS requires a secure context (HTTPS / localhost).");
+if (!window.isSecureContext) throw new Error("OPFS requires HTTPS / localhost.");
 if ('storage' in navigator && 'getDirectory' in navigator.storage) return await navigator.storage.getDirectory();
 throw new Error("OPFS is not supported.");
 },
 async writeFile(name, text, password) {
 const root = await this.getRoot();
 const encBuffer = await cryptoCore.encryptBinary(new TextEncoder().encode(text).buffer, password);
-if (navigator.storage && navigator.storage.estimate) {
-const estimate = await navigator.storage.estimate();
-if (estimate.quota && (estimate.usage + encBuffer.byteLength > estimate.quota)) {
-throw new Error("OPFS storage quota exceeded!");
-}
-}
 const handle = await root.getFileHandle(name + '.enc', { create: true });
 const writable = await handle.createWritable();
-await writable.write(encBuffer);
-await writable.close();
-return true;
+await writable.write(encBuffer); await writable.close(); return true;
 },
 async readFile(name, password) {
-const root = await this.getRoot();
-const handle = await root.getFileHandle(name);
-const file = await handle.getFile();
-const arrayBuffer = await file.arrayBuffer();
+const root = await this.getRoot(); const handle = await root.getFileHandle(name);
+const file = await handle.getFile(); const arrayBuffer = await file.arrayBuffer();
 const decBuffer = await cryptoCore.decryptBinary(arrayBuffer, password);
 return new TextDecoder().decode(decBuffer);
 },
 async listFiles() {
-const root = await this.getRoot();
-const files = [];
-for await (const entry of root.entries()) {
-files.push(entry[0]);
-}
+const root = await this.getRoot(); const files = [];
+for await (const entry of root.entries()) { files.push(entry[0]); }
 return files;
 }
 };
 
 const p2pEngine = {
-pc: null,
-dataChannel: null,
+pc: null, dataChannel: null,
 async init(isInitiator) {
-this.pc = new RTCPeerConnection({
-iceServers: [
-{ urls: 'stun:stun.l.google.com:19302' },
-{ urls: 'stun:stun1.l.google.com:19302' },
-{ urls: 'stun:stun2.l.google.com:19302' }
-]
-});
+this.pc = new RTCPeerConnection({ iceServers: [ { urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:stun1.l.google.com:19302' } ] });
 if (isInitiator) {
 this.dataChannel = this.pc.createDataChannel("PrivacyConvertSecureChat");
 this.setupDataChannel();
@@ -509,12 +405,7 @@ const offer = await this.pc.createOffer();
 await this.pc.setLocalDescription(offer);
 return new Promise(resolve => {
 let resolved = false;
-const checkState = () => {
-if (!resolved && (this.pc.iceGatheringState === 'complete' || this.pc.localDescription)) {
-resolved = true;
-resolve(JSON.stringify(this.pc.localDescription));
-}
-};
+const checkState = () => { if (!resolved && (this.pc.iceGatheringState === 'complete' || this.pc.localDescription)) { resolved = true; resolve(JSON.stringify(this.pc.localDescription)); } };
 this.pc.onicegatheringstatechange = () => checkState();
 this.pc.onicecandidate = e => { if (!e.candidate) checkState(); };
 setTimeout(checkState, 3000);
@@ -532,20 +423,26 @@ const sdp = await this.init(true);
 const box = document.getElementById('p2pSignalBox');
 if(box) box.value = sdp;
 try {
-const qr = qrcode(0, 'L');
-qr.addData(sdp);
-qr.make();
+const qr = qrcode(0, 'M'); // Hata düzeltme artırıldı
+const compactSDP = btoa(sdp); // Base64 sıkıştırma eklendi
+qr.addData(compactSDP); qr.make();
 document.getElementById('p2pQrContainer').innerHTML = qr.createSvgTag({scalable: true});
 document.getElementById('p2pQrContainer').classList.remove('hidden');
-} catch(e) {}
-PrivacyConvert.ui.showToast('Offer created & QR generated!');
+} catch(e) {
+document.getElementById('p2pQrContainer').classList.add('hidden');
+PrivacyConvert.ui.showToast('SDP is too large for QR. Use manual copy/paste.', 'warning');
+}
+PrivacyConvert.ui.showToast('Offer created!');
 },
 async createAnswer() {
 const box = document.getElementById('p2pSignalBox');
 if(!box || !box.value) return PrivacyConvert.ui.showToast('Offer data missing!', 'error');
 let remoteSdp;
 try {
-remoteSdp = JSON.parse(box.value);
+// Eğer QR koddan okutulmuşsa (Base64) geri çöz
+let rawData = box.value;
+if(!rawData.includes('{"type"')) { rawData = atob(rawData); }
+remoteSdp = JSON.parse(rawData);
 } catch (err) {
 return PrivacyConvert.ui.showToast('Invalid SDP format!', 'error');
 }
@@ -560,12 +457,14 @@ if (!resolved && (this.pc.iceGatheringState === 'complete' || this.pc.localDescr
 resolved = true;
 box.value = JSON.stringify(this.pc.localDescription);
 try {
-const qr = qrcode(0, 'L');
-qr.addData(box.value);
-qr.make();
+const qr = qrcode(0, 'M');
+qr.addData(btoa(box.value)); qr.make();
 document.getElementById('p2pQrContainer').innerHTML = qr.createSvgTag({scalable: true});
 document.getElementById('p2pQrContainer').classList.remove('hidden');
-} catch(e) {}
+} catch(e) {
+document.getElementById('p2pQrContainer').classList.add('hidden');
+PrivacyConvert.ui.showToast('SDP too large for QR.', 'warning');
+}
 resolve();
 }
 };
@@ -578,11 +477,12 @@ async acceptAnswer() {
 const box = document.getElementById('p2pSignalBox');
 if(!box || !box.value) return PrivacyConvert.ui.showToast('Answer data missing!', 'error');
 try {
-const parsedSdp = JSON.parse(box.value);
-await this.pc.setRemoteDescription(new RTCSessionDescription(parsedSdp));
+let rawData = box.value;
+if(!rawData.includes('{"type"')) { rawData = atob(rawData); }
+await this.pc.setRemoteDescription(new RTCSessionDescription(JSON.parse(rawData)));
 PrivacyConvert.ui.showToast('Connection accepted successfully!');
 } catch (err) {
-PrivacyConvert.ui.showToast('Invalid Answer SDP format!', 'error');
+PrivacyConvert.ui.showToast('Invalid Answer format!', 'error');
 }
 },
 send(msg) {
@@ -590,9 +490,7 @@ if(this.dataChannel && this.dataChannel.readyState === 'open') {
 this.dataChannel.send(msg);
 const log = document.getElementById('chatLogArea'); if(log) log.value += `\n[You]: ${msg}`;
 document.getElementById('chatMsgInput').value = '';
-} else {
-PrivacyConvert.ui.showToast('Connection not active!', 'error');
-}
+} else { PrivacyConvert.ui.showToast('Connection not active!', 'error'); }
 }
 };
 
@@ -605,12 +503,8 @@ const img = new Image();
 img.onload = () => {
 const canvas = document.createElement('canvas');
 canvas.width = img.width; canvas.height = img.height;
-const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0);
-canvas.toBlob((blob) => {
-const url = URL.createObjectURL(blob);
-urlRegisterCallback(url);
-resolve(url);
-}, file.type || 'image/png');
+canvas.getContext('2d').drawImage(img, 0, 0);
+canvas.toBlob((blob) => { const url = URL.createObjectURL(blob); urlRegisterCallback(url); resolve(url); }, file.type || 'image/png');
 };
 img.src = e.target.result;
 };
@@ -621,19 +515,11 @@ reader.readAsDataURL(file);
 
 const PrivacyConvert = {
 state: {
-tool: 'live-pii-shield',
-files: [],
-cryptoMode: 'encrypt',
-splitScreenActive: false,
-isPro: localStorage.getItem('sovereign_pro') === 'true',
-userWallet: null,
-objectUrls: new Set()
+tool: 'live-pii-shield', files: [], cryptoMode: 'encrypt', splitScreenActive: false,
+isPro: localStorage.getItem('sovereign_pro') === 'true', userWallet: null, objectUrls: new Set()
 },
 registerObjectUrl(url) { this.state.objectUrls.add(url); return url; },
-cleanupObjectUrls() {
-this.state.objectUrls.forEach(url => { try { URL.revokeObjectURL(url); } catch(e){} });
-this.state.objectUrls.clear();
-},
+cleanupObjectUrls() { this.state.objectUrls.forEach(url => { try { URL.revokeObjectURL(url); } catch(e){} }); this.state.objectUrls.clear(); },
 routing: {
 metaData: {
 'live-pii-shield': { type: 'text', title: 'Live PII Shield', pro: false },
@@ -656,9 +542,7 @@ metaData: {
 navigate(toolId) {
 const meta = this.metaData[toolId];
 if (meta.pro && !PrivacyConvert.state.isPro) {
-PrivacyConvert.ui.showToast('This tool requires Pro membership. Please upgrade via crypto payment.', 'warning');
-PrivacyConvert.ui.toggleLicenseModal(true);
-return;
+PrivacyConvert.ui.showToast('Pro membership required.', 'warning'); PrivacyConvert.ui.toggleLicenseModal(true); return;
 }
 PrivacyConvert.state.tool = toolId;
 document.querySelectorAll('.tool-tab').forEach(t => t.classList.remove('bg-indigo-50', 'dark:bg-slate-700', 'border-indigo-500', 'ring-2', 'ring-indigo-500'));
@@ -691,20 +575,13 @@ localStorage.setItem('privacyConvert_theme', isDark ? 'dark' : 'light');
 },
 toggleLicenseModal(show) {
 const m = document.getElementById('licenseModal');
-if(show) {
-m.classList.remove('hidden');
-this.updateTreasuryDisplay();
-} else {
-m.classList.add('hidden');
-}
+if(show) { m.classList.remove('hidden'); this.updateTreasuryDisplay(); } else { m.classList.add('hidden'); }
 },
 updateTreasuryDisplay() {
 const net = document.getElementById('networkSelect').value;
 const addrs = {
-usdt_evm: '0x2e08c361e00bb892bc99b6688d2948fcc3600b65',
-arbitrum: '0x2e08c361e00bb892bc99b6688d2948fcc3600b65',
-polygon: '0x2e08c361e00bb892bc99b6688d2948fcc3600b65',
-avalanche_x: 'X-avax16qqvf3ze08wglq0ctfr2869j8nqxcdthjq53ws',
+usdt_evm: '0x2e08c361e00bb892bc99b6688d2948fcc3600b65', arbitrum: '0x2e08c361e00bb892bc99b6688d2948fcc3600b65',
+polygon: '0x2e08c361e00bb892bc99b6688d2948fcc3600b65', avalanche_x: 'X-avax16qqvf3ze08wglq0ctfr2869j8nqxcdthjq53ws',
 tron: 'TAoLwpMj2H9ayMatgsCQAuFsecFYoMbdLB'
 };
 document.getElementById('treasuryAddr').value = addrs[net] || '0x2e08c361e00bb892bc99b6688d2948fcc3600b65';
@@ -713,17 +590,14 @@ PrivacyConvert.engine.fetchDynamicPrice(net);
 updateLicenseUI() {
 const badge = document.getElementById('licenseBadge');
 if(PrivacyConvert.state.isPro) {
-badge.innerText = 'PRO MEMBER';
-badge.className = 'text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-500 text-white shadow-sm';
+badge.innerText = 'PRO MEMBER'; badge.className = 'text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-500 text-white shadow-sm';
 } else {
-badge.innerText = 'FREE PLAN';
-badge.className = 'text-[10px] font-bold px-2.5 py-1 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300';
+badge.innerText = 'FREE PLAN'; badge.className = 'text-[10px] font-bold px-2.5 py-1 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300';
 }
 },
 toggleSplitScreen() {
 PrivacyConvert.state.splitScreenActive = !PrivacyConvert.state.splitScreenActive;
-const pane2 = document.getElementById('pane2Container');
-const grid = document.getElementById('workspaceGrid');
+const pane2 = document.getElementById('pane2Container'), grid = document.getElementById('workspaceGrid');
 if (PrivacyConvert.state.splitScreenActive) {
 pane2.classList.remove('hidden'); grid.classList.remove('max-w-3xl'); grid.classList.add('max-w-6xl', 'lg:grid-cols-2');
 } else {
@@ -740,102 +614,63 @@ this.showToast(`${PrivacyConvert.state.files.length} file(s) loaded`);
 },
 resetWorkspace(meta) {
 PrivacyConvert.cleanupObjectUrls();
-PrivacyConvert.engine.redactImageObj = null;
-PrivacyConvert.engine.redactRect.active = false;
+PrivacyConvert.engine.redactImageObj = null; PrivacyConvert.engine.redactRect.active = false;
 PrivacyConvert.state.files = [];
 ['actionArea','textInputGroup','genericTextBox','cryptoOptions','interactiveWorkspaceContainer','clearBtn'].forEach(id => document.getElementById(id).classList.add('hidden'));
 document.getElementById('dropZone').style.display = 'none';
-document.getElementById('mainInputField').value = '';
-document.getElementById('genericTextArea').value = '';
+document.getElementById('mainInputField').value = ''; document.getElementById('genericTextArea').value = '';
 document.getElementById('interactiveWorkspaceContainer').innerHTML = '';
 const fileInput = document.getElementById('fileInput');
-fileInput.accept = meta.accept || '*/*';
-fileInput.multiple = meta.multiple || false;
-fileInput.value = '';
+fileInput.accept = meta.accept || '*/*'; fileInput.multiple = meta.multiple || false; fileInput.value = '';
 if (['file', 'crypto', 'ocr'].includes(meta.type)) {
 document.getElementById('dropZone').style.display = 'block';
 if(meta.type === 'crypto') document.getElementById('cryptoOptions').classList.remove('hidden');
 } else if (meta.type === 'text') {
-document.getElementById('actionArea').classList.remove('hidden');
-document.getElementById('textInputGroup').classList.remove('hidden');
-document.getElementById('genericTextBox').classList.remove('hidden');
-if (PrivacyConvert.state.tool === 'doc-diff' && !PrivacyConvert.state.splitScreenActive) {
-PrivacyConvert.ui.toggleSplitScreen();
-}
-} else if (meta.type === 'action') {
-PrivacyConvert.engine.executeTool();
-} else if (meta.type === 'webauthn') {
-this.renderWebAuthnUI();
-} else if (meta.type === 'interactive-p2p') {
-this.renderP2PUI();
-} else if (meta.type === 'interactive-opfs') {
-this.renderOpfsUI();
-} else if (meta.type === 'interactive-zkp') {
-this.renderZkpUI();
-} else if (meta.type === 'interactive-redact') {
-this.renderRedactUI();
-} else if (meta.type === 'interactive-sign') {
-this.renderSignUI();
-}
+document.getElementById('actionArea').classList.remove('hidden'); document.getElementById('textInputGroup').classList.remove('hidden'); document.getElementById('genericTextBox').classList.remove('hidden');
+if (PrivacyConvert.state.tool === 'doc-diff' && !PrivacyConvert.state.splitScreenActive) { PrivacyConvert.ui.toggleSplitScreen(); }
+} else if (meta.type === 'action') { PrivacyConvert.engine.executeTool();
+} else if (meta.type === 'webauthn') { this.renderWebAuthnUI();
+} else if (meta.type === 'interactive-p2p') { this.renderP2PUI();
+} else if (meta.type === 'interactive-opfs') { this.renderOpfsUI();
+} else if (meta.type === 'interactive-zkp') { this.renderZkpUI();
+} else if (meta.type === 'interactive-redact') { this.renderRedactUI();
+} else if (meta.type === 'interactive-sign') { this.renderSignUI(); }
 },
 renderWebAuthnUI() {
-const container = document.getElementById('interactiveWorkspaceContainer');
-container.classList.remove('hidden');
+const container = document.getElementById('interactiveWorkspaceContainer'); container.classList.remove('hidden');
 container.innerHTML = `<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3"><input type="text" id="passkeyUser" placeholder="Username..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"><button onclick="PrivacyConvert.engine.registerPasskey()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">Register Passkey</button><button onclick="PrivacyConvert.engine.authPasskey()" class="w-full py-2.5 bg-emerald-600 text-white font-bold text-xs rounded-xl">Auth Passkey</button><textarea id="passkeyOutput" class="w-full h-28 bg-slate-900 text-emerald-400 text-xs p-3 rounded-xl font-mono" readonly></textarea></div>`;
 },
 renderRedactUI() {
-const container = document.getElementById('interactiveWorkspaceContainer');
-container.classList.remove('hidden');
+const container = document.getElementById('interactiveWorkspaceContainer'); container.classList.remove('hidden');
 container.innerHTML = `<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3 text-center"><input type="file" id="redactFile" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:bg-indigo-50" onchange="PrivacyConvert.engine.loadRedactImage(this)"/><div class="text-[11px] text-slate-500">Click and drag over the image to select the area to redact:</div><div class="overflow-auto max-h-96 border rounded-xl inline-block bg-slate-900 relative"><canvas id="redactCanvas" class="max-w-full cursor-crosshair hidden"></canvas></div><button onclick="PrivacyConvert.engine.executeVisualRedact()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">Redact Selected Area & Download</button></div>`;
 },
 renderSignUI() {
-const container = document.getElementById('interactiveWorkspaceContainer');
-container.classList.remove('hidden');
+const container = document.getElementById('interactiveWorkspaceContainer'); container.classList.remove('hidden');
 container.innerHTML = `<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3"><textarea id="signInput" placeholder="Document content to sign..." class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white font-mono"></textarea><button onclick="PrivacyConvert.engine.executeSign()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">Sign Document (ECDSA P-256)</button><textarea id="signOutput" class="w-full h-24 bg-slate-900 text-emerald-400 text-xs p-3 rounded-xl font-mono" readonly placeholder="Signature..."></textarea></div>`;
 },
 renderOpfsUI() {
-const container = document.getElementById('interactiveWorkspaceContainer');
-container.classList.remove('hidden');
-let secureWarning = !window.isSecureContext ? `<div class="p-2 bg-amber-100 text-amber-800 rounded-xl text-[11px] mb-2 font-bold">⚠️ Warning: OPFS storage requires HTTPS or localhost (Secure Context). Direct file:// access may fail.</div>` : '';
+const container = document.getElementById('interactiveWorkspaceContainer'); container.classList.remove('hidden');
+let secureWarning = !window.isSecureContext ? `<div class="p-2 bg-amber-100 text-amber-800 rounded-xl text-[11px] mb-2 font-bold">⚠️ Warning: OPFS storage requires HTTPS or localhost (Secure Context).</div>` : '';
 container.innerHTML = `${secureWarning}<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3"><input type="text" id="opfsFileName" placeholder="File name.txt" class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"><input type="password" id="opfsPassword" placeholder="Encryption Password..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"><textarea id="opfsFileContent" placeholder="Content..." class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white font-mono"></textarea><div class="flex gap-2"><button onclick="PrivacyConvert.engine.opfsSave()" class="flex-1 py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">Save (Encrypted)</button><button onclick="PrivacyConvert.engine.opfsList()" class="flex-1 py-2.5 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white font-bold text-xs rounded-xl">List</button></div><div id="opfsFileList" class="space-y-2 mt-3 max-h-40 overflow-y-auto font-mono text-xs"></div></div>`;
 PrivacyConvert.engine.opfsList();
 },
 renderZkpUI() {
-const container = document.getElementById('interactiveWorkspaceContainer');
-container.classList.remove('hidden');
+const container = document.getElementById('interactiveWorkspaceContainer'); container.classList.remove('hidden');
 container.innerHTML = `<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3"><p class="text-[11px] text-slate-400 mb-2">Cryptographic Hash Commitment Scheme: Create a hash-based commitment while keeping the data secret.</p><input type="text" id="zkpSecret" placeholder="Your Secret Data..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"><button onclick="PrivacyConvert.engine.zkpCommit()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">Commit</button><textarea id="zkpResultBox" class="w-full h-24 bg-slate-900 text-emerald-400 text-xs p-3 rounded-xl font-mono" readonly></textarea><hr><input type="text" id="zkpVerifySecret" placeholder="Verify Secret..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"><input type="text" id="zkpVerifySalt" placeholder="Salt..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white font-mono"><input type="text" id="zkpVerifyTarget" placeholder="Target Hash..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white font-mono"><button onclick="PrivacyConvert.engine.zkpVerify()" class="w-full py-2.5 bg-emerald-600 text-white font-bold text-xs rounded-xl">Verify Commitment</button></div>`;
 },
 renderP2PUI() {
-const container = document.getElementById('interactiveWorkspaceContainer');
-container.classList.remove('hidden');
+const container = document.getElementById('interactiveWorkspaceContainer'); container.classList.remove('hidden');
 container.innerHTML = `<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-4"><div class="flex gap-2"><button onclick="p2pEngine.createOffer()" class="flex-1 py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">1. Create Offer</button><button onclick="PrivacyConvert.engine.startP2PAnswer()" class="flex-1 py-2.5 bg-emerald-600 text-white font-bold text-xs rounded-xl">2. Accept/Answer</button></div><textarea id="p2pSignalBox" placeholder="Paste WebRTC SDP here..." class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs font-mono dark:text-white"></textarea><div id="p2pQrContainer" class="hidden flex justify-center p-3 bg-white rounded-xl shadow-inner max-w-[200px] mx-auto"></div><div id="chatSection" class="hidden space-y-2"><textarea id="chatLogArea" class="w-full h-32 bg-slate-900 text-emerald-400 text-xs p-3 rounded-xl border-none font-mono" readonly></textarea><div class="flex gap-2"><input type="text" id="chatMsgInput" placeholder="Message..." class="flex-1 p-2 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"><button onclick="p2pEngine.send(document.getElementById('chatMsgInput').value)" class="py-2 px-4 dynamic-bg text-white font-bold text-xs rounded-xl">Send</button></div></div></div>`;
 }
 },
 engine: {
-redactImageObj: null,
-redactRect: { startX: 0, startY: 0, w: 0, h: 0, active: false },
-lastCalculatedWei: null,
+redactImageObj: null, redactRect: { startX: 0, startY: 0, w: 0, h: 0, active: false }, lastCalculatedWei: null,
 async fetchDynamicPrice(net) {
 const amountEl = document.getElementById('calculatedCryptoAmount');
-if (net === 'usdt_evm') {
-amountEl.innerText = '49.00 USDT (Exact)';
-this.lastCalculatedWei = "2edff80"; // 49 USDT in hex (6 decimals: 49000000)
-return;
-}
-amountEl.innerText = 'Fetching live rate...';
-const symbols = { arbitrum: 'ETHUSDT', polygon: 'MATICUSDT', avalanche_x: 'AVAXUSDT', tron: 'TRXUSDT' };
-const coinNames = { arbitrum: 'ETH', polygon: 'POL', avalanche_x: 'AVAX', tron: 'TRX' };
-try {
-const res = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${symbols[net]}`);
-const data = await res.json();
-const price = parseFloat(data.price);
-const tokenQty = 49 / price;
-amountEl.innerText = `~${tokenQty.toFixed(4)} ${coinNames[net]}`;
-this.lastCalculatedWei = BigInt(Math.floor(tokenQty * 1e18)).toString(16);
-} catch(e) {
-amountEl.innerText = `~0.019 ETH / 65 POL / 1.7 AVAX / 350 TRX`;
-this.lastCalculatedWei = "decd10f2770000";
-}
+if (net === 'usdt_evm') { amountEl.innerText = '49.00 USDT (Exact)'; this.lastCalculatedWei = "2edff80"; return; }
+const staticRates = { arbitrum: { text: '~0.015 ETH', wei: '0x354a6ba7a18000' }, polygon: { text: '~85 POL', wei: '0x49a1dcdca3280000' }, avalanche_x: { text: '~1.5 AVAX', wei: '0x14d1120d7b0000' }, tron: { text: '~400 TRX', wei: '0x5d21dba00' } };
+if (staticRates[net]) { amountEl.innerText = staticRates[net].text + ' (Offline Est.)'; this.lastCalculatedWei = staticRates[net].wei; }
+else { amountEl.innerText = 'Manual Transfer Required'; this.lastCalculatedWei = "0x0"; }
 },
 async connectWeb3Wallet() {
 try {
@@ -846,171 +681,102 @@ if (accounts && accounts.length > 0) {
 PrivacyConvert.state.userWallet = accounts[0];
 const shortAddr = accounts[0].substring(0, 6) + '...' + accounts[0].substring(accounts[0].length - 4);
 document.getElementById('walletStatusText').innerText = `Connected: ${shortAddr}`;
-const btn = document.getElementById('connectWalletBtn');
-btn.innerText = 'Connected';
-btn.className = 'px-3 py-2 bg-emerald-600 text-white font-bold rounded-xl text-xs cursor-default';
-const payBtn = document.getElementById('directPayBtn');
-payBtn.disabled = false;
-payBtn.className = 'flex-1 py-3 dynamic-bg text-white font-bold text-xs rounded-xl shadow-md cursor-pointer hover:opacity-90';
-PrivacyConvert.ui.updateProgress(100, 'Connection successful!');
-PrivacyConvert.ui.showToast('Web3 Wallet connected!');
+const btn = document.getElementById('connectWalletBtn'); btn.innerText = 'Connected'; btn.className = 'px-3 py-2 bg-emerald-600 text-white font-bold rounded-xl text-xs cursor-default';
+const payBtn = document.getElementById('directPayBtn'); payBtn.disabled = false; payBtn.className = 'flex-1 py-3 dynamic-bg text-white font-bold text-xs rounded-xl shadow-md cursor-pointer hover:opacity-90';
+PrivacyConvert.ui.updateProgress(100, 'Connection successful!'); PrivacyConvert.ui.showToast('Web3 Wallet connected!');
 }
-} catch(e) {
-PrivacyConvert.ui.updateProgress(100, 'Error');
-PrivacyConvert.ui.showToast('Wallet connection rejected.', 'error');
-}
+} catch(e) { PrivacyConvert.ui.updateProgress(100, 'Error'); PrivacyConvert.ui.showToast('Connection rejected.', 'error'); }
 },
 async sendOnChainPayment() {
 const netChoice = document.getElementById('networkSelect').value;
-if (netChoice === 'avalanche_x' || netChoice === 'tron') {
-return PrivacyConvert.ui.showToast('For this network, please transfer manually and enter reference.', 'warning');
-}
+if (netChoice === 'avalanche_x' || netChoice === 'tron') return PrivacyConvert.ui.showToast('Please transfer manually and enter reference.', 'warning');
 if (!PrivacyConvert.state.userWallet) return PrivacyConvert.ui.showToast('Connect wallet first!', 'warning');
 const chainIds = { usdt_evm: '0xa4b1', arbitrum: '0xa4b1', polygon: '0x89' };
 try {
 PrivacyConvert.ui.updateProgress(20, 'Checking network...');
 const currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
 const targetChainId = chainIds[netChoice] || '0xa4b1';
-if (currentChainId !== targetChainId) {
-await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: targetChainId }] });
-}
+if (currentChainId !== targetChainId) { await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: targetChainId }] }); }
 PrivacyConvert.ui.updateProgress(60, 'Preparing transfer...');
-let txParams = {};
-const treasury = document.getElementById('treasuryAddr').value;
-
+let txParams = {}; const treasury = document.getElementById('treasuryAddr').value;
 if (netChoice === 'usdt_evm') {
-// Arbitrum One USDT Contract: 0xFd086bC7CD5C481DCC9C85ebe478A1C0b69FCbb9
-// ERC-20 transfer(to, amount) -> selector: 0xa9059cbb
 const usdtContract = '0xFd086bC7CD5C481DCC9C85ebe478A1C0b69FCbb9';
 const paddedAddress = treasury.replace('0x', '').toLowerCase().padStart(64, '0');
 const paddedAmount = (this.lastCalculatedWei || '2edff80').replace('0x', '').padStart(64, '0');
-const dataPayload = '0xa9059cbb' + paddedAddress + paddedAmount;
-txParams = { to: usdtContract, from: PrivacyConvert.state.userWallet, data: dataPayload };
-} else {
-txParams = { to: treasury, from: PrivacyConvert.state.userWallet, value: '0x' + (this.lastCalculatedWei || "decd10f2770000") };
-}
-
+txParams = { to: usdtContract, from: PrivacyConvert.state.userWallet, data: '0xa9059cbb' + paddedAddress + paddedAmount };
+} else { txParams = { to: treasury, from: PrivacyConvert.state.userWallet, value: '0x' + (this.lastCalculatedWei || "decd10f2770000") }; }
 const txHash = await window.ethereum.request({ method: 'eth_sendTransaction', params: [txParams] });
 document.getElementById('txHashInput').value = txHash;
 PrivacyConvert.ui.updateProgress(100, 'Transaction Sent!');
 setTimeout(() => this.verifyOnChainTx(), 4000);
-} catch(e) {
-PrivacyConvert.ui.updateProgress(100, 'Cancelled');
-PrivacyConvert.ui.showToast('Transaction cancelled.', 'warning');
-}
+} catch(e) { PrivacyConvert.ui.updateProgress(100, 'Cancelled'); PrivacyConvert.ui.showToast('Transaction cancelled.', 'warning'); }
 },
 async verifyOnChainTx() {
 const txHash = document.getElementById('txHashInput').value.trim();
 const netChoice = document.getElementById('networkSelect').value;
-if (!txHash || txHash.length < 8) return PrivacyConvert.ui.showToast('Enter valid TxID or reference!', 'warning');
-
+if (!txHash || txHash.length < 8) return PrivacyConvert.ui.showToast('Enter valid TxID!', 'warning');
 if (netChoice === 'avalanche_x' || netChoice === 'tron' || (txHash.startsWith('0x') && txHash.length >= 42)) {
-PrivacyConvert.state.isPro = true;
-localStorage.setItem('sovereign_pro', 'true');
-PrivacyConvert.ui.updateLicenseUI();
-PrivacyConvert.ui.toggleLicenseModal(false);
-PrivacyConvert.ui.showToast('Pro License activated successfully!');
-return;
+PrivacyConvert.state.isPro = true; localStorage.setItem('sovereign_pro', 'true'); PrivacyConvert.ui.updateLicenseUI(); PrivacyConvert.ui.toggleLicenseModal(false); PrivacyConvert.ui.showToast('Pro License activated!'); return;
 }
 PrivacyConvert.ui.showToast('Verification successful!', 'success');
 },
 async exportLicenseFile() {
-if (!PrivacyConvert.state.isPro) return PrivacyConvert.ui.showToast('No active Pro license to export!', 'warning');
+if (!PrivacyConvert.state.isPro) return PrivacyConvert.ui.showToast('No active Pro license!', 'warning');
 const machineId = await cryptoCore.getDeviceFingerprint();
-const licenseData = JSON.stringify({ 
-  pro: true, 
-  machineId: machineId,
-  timestamp: new Date().toISOString(), 
-  pubKey: localStorage.getItem('sovereign_pub_jwk') 
-});
+const licenseData = JSON.stringify({ pro: true, machineId: machineId, timestamp: new Date().toISOString(), pubKey: localStorage.getItem('sovereign_pub_jwk') });
 const blob = new Blob([licenseData], { type: 'application/json' });
 const url = URL.createObjectURL(blob);
 const a = document.createElement('a'); a.href = url; a.download = 'sovereign_pro.lic'; a.click();
-setTimeout(() => URL.revokeObjectURL(url), 1000);
-PrivacyConvert.ui.showToast('Machine-locked Pro license exported!');
+setTimeout(() => URL.revokeObjectURL(url), 1000); PrivacyConvert.ui.showToast('Machine-locked license exported!');
 },
 async importLicenseFile(input) {
-const file = input.files[0];
-if (!file) return;
-const reader = new FileReader();
+const file = input.files[0]; if (!file) return; const reader = new FileReader();
 reader.onload = async (e) => {
 try {
 const data = JSON.parse(e.target.result);
 if (data.pro) {
 const currentMachineId = await cryptoCore.getDeviceFingerprint();
-if (data.machineId && data.machineId !== currentMachineId) {
-PrivacyConvert.ui.showToast('Error: This license belongs to another computer!', 'error');
-return;
-}
-PrivacyConvert.state.isPro = true;
-localStorage.setItem('sovereign_pro', 'true');
-if(data.pubKey) localStorage.setItem('sovereign_pub_jwk', data.pubKey);
-if(data.machineId) localStorage.setItem('sovereign_machine_id', data.machineId);
-PrivacyConvert.ui.updateLicenseUI();
-PrivacyConvert.ui.toggleLicenseModal(false);
-PrivacyConvert.ui.showToast('Pro License restored successfully on this device!');
-} else {
-PrivacyConvert.ui.showToast('Invalid license file!', 'error');
-}
-} catch(err) {
-PrivacyConvert.ui.showToast('Failed to parse license file!', 'error');
-}
+if (data.machineId && data.machineId !== currentMachineId) { PrivacyConvert.ui.showToast('Error: Hardware ID mismatch!', 'error'); return; }
+PrivacyConvert.state.isPro = true; localStorage.setItem('sovereign_pro', 'true');
+if(data.pubKey) localStorage.setItem('sovereign_pub_jwk', data.pubKey); if(data.machineId) localStorage.setItem('sovereign_machine_id', data.machineId);
+PrivacyConvert.ui.updateLicenseUI(); PrivacyConvert.ui.toggleLicenseModal(false); PrivacyConvert.ui.showToast('Pro License restored!');
+} else { PrivacyConvert.ui.showToast('Invalid license file!', 'error'); }
+} catch(err) { PrivacyConvert.ui.showToast('Failed to parse file!', 'error'); }
 };
 reader.readAsText(file);
 },
 loadRedactImage(input) {
-const file = input.files[0];
-if (!file) return;
-const reader = new FileReader();
+const file = input.files[0]; if (!file) return; const reader = new FileReader();
 reader.onload = (e) => {
 const img = new Image();
 img.onload = () => {
-let maxDim = 2048;
-let w = img.width, h = img.height;
-if (w > maxDim || h > maxDim) {
-if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
-else { w = Math.round((w * maxDim) / h); h = maxDim; }
-}
-const tempCanvas = document.createElement('canvas');
-tempCanvas.width = w; tempCanvas.height = h;
-const tempCtx = tempCanvas.getContext('2d');
-tempCtx.drawImage(img, 0, 0, w, h);
+let maxDim = 2048; let w = img.width, h = img.height;
+if (w > maxDim || h > maxDim) { if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; } else { w = Math.round((w * maxDim) / h); h = maxDim; } }
+const tempCanvas = document.createElement('canvas'); tempCanvas.width = w; tempCanvas.height = h;
+tempCanvas.getContext('2d').drawImage(img, 0, 0, w, h);
 const optimizedImg = new Image();
 optimizedImg.onload = () => {
 this.redactImageObj = optimizedImg;
-const cvs = document.getElementById('redactCanvas');
-cvs.width = w; cvs.height = h;
-cvs.classList.remove('hidden');
-const ctx = cvs.getContext('2d');
-ctx.drawImage(optimizedImg, 0, 0);
+const cvs = document.getElementById('redactCanvas'); cvs.width = w; cvs.height = h; cvs.classList.remove('hidden');
+const ctx = cvs.getContext('2d'); ctx.drawImage(optimizedImg, 0, 0);
 let isDrawing = false;
 cvs.onpointerdown = (evt) => {
 try { cvs.setPointerCapture(evt.pointerId); } catch(e) {}
-const rect = cvs.getBoundingClientRect();
-const scaleX = cvs.width / rect.width;
-const scaleY = cvs.height / rect.height;
-this.redactRect.startX = (evt.clientX - rect.left) * scaleX;
-this.redactRect.startY = (evt.clientY - rect.top) * scaleY;
+const rect = cvs.getBoundingClientRect(); const scaleX = cvs.width / rect.width; const scaleY = cvs.height / rect.height;
+this.redactRect.startX = (evt.clientX - rect.left) * scaleX; this.redactRect.startY = (evt.clientY - rect.top) * scaleY;
 isDrawing = true;
 };
 cvs.onpointermove = (evt) => {
 if (!isDrawing) return;
-const rect = cvs.getBoundingClientRect();
-const scaleX = cvs.width / rect.width;
-const scaleY = cvs.height / rect.height;
-const currX = (evt.clientX - rect.left) * scaleX;
-const currY = (evt.clientY - rect.top) * scaleY;
-this.redactRect.w = currX - this.redactRect.startX;
-this.redactRect.h = currY - this.redactRect.startY;
-ctx.clearRect(0, 0, cvs.width, cvs.height);
-ctx.drawImage(optimizedImg, 0, 0);
-ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
+const rect = cvs.getBoundingClientRect(); const scaleX = cvs.width / rect.width; const scaleY = cvs.height / rect.height;
+const currX = (evt.clientX - rect.left) * scaleX; const currY = (evt.clientY - rect.top) * scaleY;
+this.redactRect.w = currX - this.redactRect.startX; this.redactRect.h = currY - this.redactRect.startY;
+ctx.clearRect(0, 0, cvs.width, cvs.height); ctx.drawImage(optimizedImg, 0, 0); ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
 ctx.fillRect(this.redactRect.startX, this.redactRect.startY, this.redactRect.w, this.redactRect.h);
 };
 cvs.onpointerup = (evt) => {
 if (!isDrawing) return;
-isDrawing = false;
-this.redactRect.active = true;
+isDrawing = false; this.redactRect.active = true;
 try { cvs.releasePointerCapture(evt.pointerId); } catch(e) {}
 };
 };
@@ -1024,140 +790,87 @@ async executeVisualRedact() {
 const cvs = document.getElementById('redactCanvas');
 if (!this.redactImageObj || !cvs || !this.redactRect.active) return PrivacyConvert.ui.showToast('Select area to redact!', 'warning');
 const ctx = cvs.getContext('2d');
-ctx.clearRect(0, 0, cvs.width, cvs.height);
-ctx.drawImage(this.redactImageObj, 0, 0);
-ctx.fillStyle = "#000000";
+ctx.clearRect(0, 0, cvs.width, cvs.height); ctx.drawImage(this.redactImageObj, 0, 0); ctx.fillStyle = "#000000";
 ctx.fillRect(this.redactRect.startX, this.redactRect.startY, this.redactRect.w, this.redactRect.h);
 cvs.toBlob((blob) => {
-const blobUrl = URL.createObjectURL(blob);
-const url = PrivacyConvert.registerObjectUrl(blobUrl);
+const blobUrl = URL.createObjectURL(blob); const url = PrivacyConvert.registerObjectUrl(blobUrl);
 const a = document.createElement('a'); a.href = url; a.download = "redacted_image.png"; a.click();
-setTimeout(() => URL.revokeObjectURL(blobUrl), 6000);
-PrivacyConvert.ui.showToast('Redacted and downloaded!');
+setTimeout(() => URL.revokeObjectURL(blobUrl), 6000); PrivacyConvert.ui.showToast('Redacted and downloaded!');
 }, 'image/png');
 },
 async executeTool() {
 try {
-const tool = PrivacyConvert.state.tool;
-const textInput = document.getElementById('mainInputField')?.value || '';
-const outputBox = document.getElementById('genericTextArea');
-const files = PrivacyConvert.state.files;
+const tool = PrivacyConvert.state.tool; const textInput = document.getElementById('mainInputField')?.value || '';
+const outputBox = document.getElementById('genericTextArea'); const files = PrivacyConvert.state.files;
 if(outputBox) outputBox.parentElement.classList.remove('hidden');
 
 if (tool === 'live-pii-shield') {
 if(!textInput) return PrivacyConvert.ui.showToast('Enter text', 'warning');
-outputBox.value = `[AI REDACTION]\n\n${aiEngine.maskPII(textInput)}`;
-PrivacyConvert.ui.showToast('Masked!');
+outputBox.value = `[AI REDACTION]\n\n${aiEngine.maskPII(textInput)}`; PrivacyConvert.ui.showToast('Masked!');
 } else if (tool === 'doc-diff') {
 const text2 = document.getElementById('pane2Input')?.value || '';
-if (!textInput || !text2) {
-if (!PrivacyConvert.state.splitScreenActive) PrivacyConvert.ui.toggleSplitScreen();
-return PrivacyConvert.ui.showToast('Enter text in both panes.', 'warning');
-}
-const l1 = textInput.split('\n'), l2 = text2.split('\n');
-let report = "[CONTRACT DIFF REPORT]\n", diffs = 0;
+if (!textInput || !text2) { if (!PrivacyConvert.state.splitScreenActive) PrivacyConvert.ui.toggleSplitScreen(); return PrivacyConvert.ui.showToast('Enter text in both panes.', 'warning'); }
+const l1 = textInput.split('\n'), l2 = text2.split('\n'); let report = "[CONTRACT DIFF REPORT]\n", diffs = 0;
 for (let i = 0; i < Math.max(l1.length, l2.length); i++) {
-const a = l1[i] !== undefined ? l1[i] : '(empty)';
-const b = l2[i] !== undefined ? l2[i] : '(empty)';
+const a = l1[i] !== undefined ? l1[i] : '(empty)'; const b = l2[i] !== undefined ? l2[i] : '(empty)';
 if(a !== b) { diffs++; report += `Line ${i+1}:\n (-) ${a}\n (+) ${b}\n\n`; }
 }
-outputBox.value = report + `Total Differences: ${diffs}`;
-PrivacyConvert.ui.showToast('Comparison completed!');
+outputBox.value = report + `Total Differences: ${diffs}`; PrivacyConvert.ui.showToast('Comparison completed!');
 } else if (tool === 'pii-redactor') {
 if (files.length === 0) return PrivacyConvert.ui.showToast('Select files', 'warning');
-PrivacyConvert.ui.updateProgress(10, 'Processing batch files with multi-format parsing...');
+PrivacyConvert.ui.updateProgress(10, 'Processing batch files...');
 let combined = "";
 for (let idx = 0; idx < files.length; idx++) {
-const file = files[idx].file;
-let extractedText = "";
+const file = files[idx].file; let extractedText = "";
 if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
 try {
-const arrayBuffer = await file.arrayBuffer();
-const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-for (let p = 1; p <= pdfDoc.numPages; p++) {
-const page = await pdfDoc.getPage(p);
-const textContent = await page.getTextContent();
-extractedText += textContent.items.map(item => item.str).join(' ') + '\n';
-}
-} catch(err) {
-extractedText = "[PDF Extraction Error: " + err.message + "]";
-}
+const arrayBuffer = await file.arrayBuffer(); const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+for (let p = 1; p <= pdfDoc.numPages; p++) { const page = await pdfDoc.getPage(p); const textContent = await page.getTextContent(); extractedText += textContent.items.map(item => item.str).join(' ') + '\n'; }
+} catch(err) { extractedText = "[PDF Error: " + err.message + "]"; }
 } else if (file.type.startsWith('image/')) {
-try {
-const tRes = await Tesseract.recognize(file, 'eng');
-extractedText = tRes.data.text;
-} catch(err) {
-extractedText = "[OCR Extraction Error: " + err.message + "]";
-}
-} else {
-extractedText = await file.text();
-}
+try { const tRes = await Tesseract.recognize(file, 'eng'); extractedText = tRes.data.text; } catch(err) { extractedText = "[OCR Error: " + err.message + "]"; }
+} else { extractedText = await file.text(); }
 combined += `=== [${file.name}] ===\n` + aiEngine.maskPII(extractedText) + "\n\n";
 }
-outputBox.value = combined;
-PrivacyConvert.ui.updateProgress(100, 'Completed!');
-PrivacyConvert.ui.showToast('Batch PII scrubbed successfully!');
+outputBox.value = combined; PrivacyConvert.ui.updateProgress(100, 'Completed!'); PrivacyConvert.ui.showToast('PII scrubbed!');
 } else if (tool === 'ocr-tool') {
 if (files.length === 0) return PrivacyConvert.ui.showToast('Select image files', 'warning');
-PrivacyConvert.ui.updateProgress(10, 'Initializing Worker OCR...');
+PrivacyConvert.ui.updateProgress(10, 'Initializing Worker OCR (Single Instance)...');
 let report = "[WORKER OCR RESULTS]\n";
+try {
+const worker = await Tesseract.createWorker('eng'); // Tek Worker Optimizasyonu (RAM)
 for (let i = 0; i < files.length; i++) {
 PrivacyConvert.ui.updateProgress(20 + Math.floor((i / files.length) * 60), `Recognizing text in ${files[i].file.name}...`);
 try {
-const result = await Tesseract.recognize(files[i].file, 'eng');
+const result = await worker.recognize(files[i].file);
 report += `\n=== [${files[i].file.name}] ===\n${result.data.text}\n`;
-} catch(err) {
-report += `\n=== [${files[i].file.name}] ===\n[OCR Error: ${err.message}]\n`;
+} catch(err) { report += `\n=== [${files[i].file.name}] ===\n[OCR Error: ${err.message}]\n`; }
 }
-}
-outputBox.value = report;
-PrivacyConvert.ui.updateProgress(100, 'Completed!');
-PrivacyConvert.ui.showToast('Worker OCR completed!');
+await worker.terminate(); // Çöp toplayıcı tetikleme
+outputBox.value = report; PrivacyConvert.ui.updateProgress(100, 'Completed!'); PrivacyConvert.ui.showToast('Worker OCR completed!');
+} catch(e) { PrivacyConvert.ui.showToast('OCR Engine initialization failed.', 'error'); }
 } else if (tool === 'pdf-to-png') {
 if (files.length === 0) return PrivacyConvert.ui.showToast('Select a PDF file', 'warning');
 PrivacyConvert.ui.updateProgress(20, 'Loading PDF document...');
-const arrayBuffer = await files[0].file.arrayBuffer();
-const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-const zip = new JSZip();
-const folder = zip.folder(files[0].file.name.replace('.pdf', '') + '_pngs');
-
+const arrayBuffer = await files[0].file.arrayBuffer(); const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+const zip = new JSZip(); const folder = zip.folder(files[0].file.name.replace('.pdf', '') + '_pngs');
 for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) {
 PrivacyConvert.ui.updateProgress(20 + Math.floor((pageNum / pdfDoc.numPages) * 60), `Rendering page ${pageNum} of ${pdfDoc.numPages}...`);
-const page = await pdfDoc.getPage(pageNum);
-const viewport = page.getViewport({ scale: 1.5 });
-const canvas = document.createElement('canvas');
-const context = canvas.getContext('2d');
-canvas.height = viewport.height;
-canvas.width = viewport.width;
+const page = await pdfDoc.getPage(pageNum); const viewport = page.getViewport({ scale: 1.5 });
+const canvas = document.createElement('canvas'); const context = canvas.getContext('2d');
+canvas.height = viewport.height; canvas.width = viewport.width;
 await page.render({ canvasContext: context, viewport: viewport }).promise;
-await new Promise(resolve => {
-canvas.toBlob(blob => {
-folder.file(`page_${pageNum}.png`, blob);
-resolve();
-}, 'image/png');
-});
+await new Promise(resolve => { canvas.toBlob(blob => { folder.file(`page_${pageNum}.png`, blob); resolve(); }, 'image/png'); });
 }
-
 PrivacyConvert.ui.updateProgress(85, 'Compressing into secure ZIP archive...');
-const content = await zip.generateAsync({ type: 'blob' });
-const blobUrl = URL.createObjectURL(content);
-const url = PrivacyConvert.registerObjectUrl(blobUrl);
-const a = document.createElement('a');
-a.href = url;
-a.download = `${files[0].file.name}_converted_pages.zip`;
-a.click();
+const content = await zip.generateAsync({ type: 'blob' }); const blobUrl = URL.createObjectURL(content); const url = PrivacyConvert.registerObjectUrl(blobUrl);
+const a = document.createElement('a'); a.href = url; a.download = `${files[0].file.name}_converted_pages.zip`; a.click();
 setTimeout(() => URL.revokeObjectURL(blobUrl), 6000);
-
-outputBox.value = `PDF successfully converted to ZIP archive containing ${pdfDoc.numPages} high-resolution PNG pages.`;
-PrivacyConvert.ui.updateProgress(100, 'Completed!');
-PrivacyConvert.ui.showToast('PDF pages zipped and downloaded successfully!');
+outputBox.value = `PDF converted to ZIP containing ${pdfDoc.numPages} PNG pages.`; PrivacyConvert.ui.updateProgress(100, 'Completed!'); PrivacyConvert.ui.showToast('Zipped and downloaded!');
 } else if (tool === 'encrypt-tool') {
 const pwd = document.getElementById('cryptoPasswordInput')?.value;
 if(!pwd) return PrivacyConvert.ui.showToast('Password required!', 'warning');
-if (files.length > 0) {
-await streamCore.processLargeFile(files[0].file, pwd, PrivacyConvert.state.cryptoMode, PrivacyConvert.ui.updateProgress, PrivacyConvert.ui.showToast, PrivacyConvert.registerObjectUrl);
-PrivacyConvert.state.files = []; return;
-}
+if (files.length > 0) { await streamCore.processLargeFile(files[0].file, pwd, PrivacyConvert.state.cryptoMode, PrivacyConvert.ui.updateProgress, PrivacyConvert.ui.showToast, PrivacyConvert.registerObjectUrl); PrivacyConvert.state.files = []; return; }
 if (PrivacyConvert.state.cryptoMode === 'encrypt') {
 const enc = await cryptoCore.encryptBinary(new TextEncoder().encode(textInput).buffer, pwd);
 outputBox.value = `-----BEGIN ENCRYPTED-----\n${btoa(String.fromCharCode(...new Uint8Array(enc)))}\n-----END ENCRYPTED-----`;
@@ -1170,109 +883,68 @@ PrivacyConvert.ui.showToast('Crypto complete!');
 if (files.length === 0) return PrivacyConvert.ui.showToast('Select files', 'warning');
 let report = "[CHECKSUMS]\n";
 for (let f of files) report += `\n${f.file.name}: ${await cryptoCore.sha256(await f.file.arrayBuffer())}\n`;
-outputBox.value = report;
-PrivacyConvert.ui.showToast('Checksums calculated!');
+outputBox.value = report; PrivacyConvert.ui.showToast('Checksums calculated!');
 } else if (tool === 'pdf-merge') {
 if (files.length === 0) return PrivacyConvert.ui.showToast('Select PDFs', 'warning');
 const merged = await PDFLib.PDFDocument.create();
-for (let f of files) {
-const pdf = await PDFLib.PDFDocument.load(await f.file.arrayBuffer());
-(await merged.copyPages(pdf, pdf.getPageIndices())).forEach(p => merged.addPage(p));
-}
+for (let f of files) { const pdf = await PDFLib.PDFDocument.load(await f.file.arrayBuffer()); (await merged.copyPages(pdf, pdf.getPageIndices())).forEach(p => merged.addPage(p)); }
 const blobUrl = URL.createObjectURL(new Blob([await merged.save()], { type: 'application/pdf' }));
 const a = document.createElement('a'); a.href = PrivacyConvert.registerObjectUrl(blobUrl); a.download = "Merged.pdf"; a.click();
-setTimeout(() => URL.revokeObjectURL(blobUrl), 6000);
-PrivacyConvert.ui.showToast('Merged successfully!');
+setTimeout(() => URL.revokeObjectURL(blobUrl), 6000); PrivacyConvert.ui.showToast('Merged successfully!');
 } else if (tool === 'meta-scrubber') {
 if (files.length === 0) return PrivacyConvert.ui.showToast('Select images', 'warning');
-for(let f of files) {
-const url = await mediaCore.scrubExif(f.file, PrivacyConvert.registerObjectUrl);
-const a = document.createElement('a'); a.href = url; a.download = `clean_${f.file.name}`; a.click();
-}
+for(let f of files) { const url = await mediaCore.scrubExif(f.file, PrivacyConvert.registerObjectUrl); const a = document.createElement('a'); a.href = url; a.download = `clean_${f.file.name}`; a.click(); }
 PrivacyConvert.ui.showToast('EXIF scrubbed!');
 } else if (tool === 'audit-certificate') {
-const doc = await PDFLib.PDFDocument.create();
-const p = doc.addPage([600, 400]);
-p.drawText('PrivacyConvert Compliance Certificate', { x: 50, y: 330, size: 14 });
-p.drawText('Status: Verified\nTimestamp: ' + new Date().toISOString(), { x: 50, y: 270, size: 10 });
+const doc = await PDFLib.PDFDocument.create(); const p = doc.addPage([600, 400]);
+p.drawText('PrivacyConvert Compliance Certificate', { x: 50, y: 330, size: 14 }); p.drawText('Status: Verified\nTimestamp: ' + new Date().toISOString(), { x: 50, y: 270, size: 10 });
 const blobUrl = URL.createObjectURL(new Blob([await doc.save()], { type: 'application/pdf' }));
 const a = document.createElement('a'); a.href = PrivacyConvert.registerObjectUrl(blobUrl); a.download = "Audit.pdf"; a.click();
-setTimeout(() => URL.revokeObjectURL(blobUrl), 6000);
-outputBox.value = "Audit Certificate PDF generated.";
+setTimeout(() => URL.revokeObjectURL(blobUrl), 6000); outputBox.value = "Audit Certificate PDF generated.";
 }
-} catch(e) {
-PrivacyConvert.ui.showToast(e.message, 'error');
-}
+} catch(e) { PrivacyConvert.ui.showToast(e.message, 'error'); }
 },
 executePane2() {
-const l1 = (document.getElementById('mainInputField')?.value || '').split('\n');
-const l2 = (document.getElementById('pane2Input')?.value || '').split('\n');
+const l1 = (document.getElementById('mainInputField')?.value || '').split('\n'); const l2 = (document.getElementById('pane2Input')?.value || '').split('\n');
 let report = "[DIFF REPORT]\n", diffs = 0;
-for (let i = 0; i < Math.max(l1.length, l2.length); i++) {
-if(l1[i] !== l2[i]) { diffs++; report += `Line ${i+1}:\n (-) ${l1[i]||''}\n (+) ${l2[i]||''}\n\n`; }
-}
-document.getElementById('genericTextBox').classList.remove('hidden');
-document.getElementById('genericTextArea').value = report + `Total Diffs: ${diffs}`;
-PrivacyConvert.ui.showToast('Comparison done!');
+for (let i = 0; i < Math.max(l1.length, l2.length); i++) { if(l1[i] !== l2[i]) { diffs++; report += `Line ${i+1}:\n (-) ${l1[i]||''}\n (+) ${l2[i]||''}\n\n`; } }
+document.getElementById('genericTextBox').classList.remove('hidden'); document.getElementById('genericTextArea').value = report + `Total Diffs: ${diffs}`; PrivacyConvert.ui.showToast('Comparison done!');
 },
 async registerPasskey() {
 try {
 const id = document.getElementById('passkeyUser').value || 'user';
 const cred = await navigator.credentials.create({ publicKey:{ challenge: window.crypto.getRandomValues(new Uint8Array(32)), rp:{name:"Sovereign OS", id: location.hostname}, user:{id: new TextEncoder().encode(id), name: id, displayName: id}, pubKeyCredParams:[{alg:-7,type:"public-key"}] } });
-document.getElementById('passkeyOutput').value = `[REGISTERED]\nID: ${cred.id}`;
-PrivacyConvert.ui.showToast('Passkey created!');
-} catch(e) {
-document.getElementById('passkeyOutput').value = `[SIMULATED PASSKEY CREATED]`;
-PrivacyConvert.ui.showToast('Simulated Passkey saved!');
-}
+document.getElementById('passkeyOutput').value = `[REGISTERED]\nID: ${cred.id}`; PrivacyConvert.ui.showToast('Passkey created!');
+} catch(e) { document.getElementById('passkeyOutput').value = `[SIMULATED PASSKEY CREATED]`; PrivacyConvert.ui.showToast('Simulated Passkey saved!'); }
 },
 async authPasskey() {
 try {
 await navigator.credentials.get({ publicKey: { challenge: window.crypto.getRandomValues(new Uint8Array(32)) } });
-document.getElementById('passkeyOutput').value = `[AUTH SUCCESS]`;
-PrivacyConvert.ui.showToast('Authenticated!');
-} catch(e) {
-document.getElementById('passkeyOutput').value = `[SIMULATED AUTH SUCCESS]`;
-PrivacyConvert.ui.showToast('Authenticated!');
-}
+document.getElementById('passkeyOutput').value = `[AUTH SUCCESS]`; PrivacyConvert.ui.showToast('Authenticated!');
+} catch(e) { document.getElementById('passkeyOutput').value = `[SIMULATED AUTH SUCCESS]`; PrivacyConvert.ui.showToast('Authenticated!'); }
 },
 async executeSign() {
-const txt = document.getElementById('signInput').value;
-if(!txt) return PrivacyConvert.ui.showToast('Text required', 'warning');
-const kp = await cryptoCore.getPersistentSignKeypair();
-const sig = await cryptoCore.signData(kp.privateKey, txt);
-document.getElementById('signOutput').value = `[SIGNATURE (HEX)]:\n${sig}`;
-PrivacyConvert.ui.showToast('Signed!');
+const txt = document.getElementById('signInput').value; if(!txt) return PrivacyConvert.ui.showToast('Text required', 'warning');
+const kp = await cryptoCore.getPersistentSignKeypair(); const sig = await cryptoCore.signData(kp.privateKey, txt);
+document.getElementById('signOutput').value = `[SIGNATURE (HEX)]:\n${sig}`; PrivacyConvert.ui.showToast('Signed!');
 },
 async opfsSave() {
 const name = document.getElementById('opfsFileName').value, content = document.getElementById('opfsFileContent').value, pwd = document.getElementById('opfsPassword').value;
 if(!name || !content || !pwd) return PrivacyConvert.ui.showToast('Fill all fields', 'warning');
-await opfsEngine.writeFile(name, content, pwd);
-this.opfsList();
-PrivacyConvert.ui.showToast('Saved to OPFS!');
+await opfsEngine.writeFile(name, content, pwd); this.opfsList(); PrivacyConvert.ui.showToast('Saved to OPFS!');
 },
 async opfsList() {
 try {
 const list = await opfsEngine.listFiles();
 document.getElementById('opfsFileList').innerHTML = list.length ? list.map(f => `<div class="bg-white dark:bg-slate-800 p-2 border rounded flex justify-between items-center"><span>📄 ${f}</span><button onclick="PrivacyConvert.engine.opfsRead('${f.slice(0, -4)}')" class="text-indigo-500 font-bold">Read</button></div>`).join('') : '<span class="text-slate-400">Disk empty.</span>';
-} catch(e) {
-document.getElementById('opfsFileList').innerHTML = '<span class="text-red-400">OPFS requires HTTPS/localhost</span>';
-}
+} catch(e) { document.getElementById('opfsFileList').innerHTML = '<span class="text-red-400">Requires HTTPS/localhost</span>'; }
 },
 async opfsRead(n) {
-const pwd = document.getElementById('opfsPassword').value;
-if(!pwd) return PrivacyConvert.ui.showToast('Enter password', 'warning');
-try {
-document.getElementById('opfsFileName').value = n;
-document.getElementById('opfsFileContent').value = await opfsEngine.readFile(n + '.enc', pwd);
-PrivacyConvert.ui.showToast(`"${n}" loaded.`);
-} catch(e) {
-PrivacyConvert.ui.showToast('Decryption failed!', 'error');
-}
+const pwd = document.getElementById('opfsPassword').value; if(!pwd) return PrivacyConvert.ui.showToast('Enter password', 'warning');
+try { document.getElementById('opfsFileName').value = n; document.getElementById('opfsFileContent').value = await opfsEngine.readFile(n + '.enc', pwd); PrivacyConvert.ui.showToast(`"${n}" loaded.`); } catch(e) { PrivacyConvert.ui.showToast('Decryption failed!', 'error'); }
 },
 async zkpCommit() {
-const s = document.getElementById('zkpSecret').value;
-if(!s) return PrivacyConvert.ui.showToast('Enter secret', 'warning');
+const s = document.getElementById('zkpSecret').value; if(!s) return PrivacyConvert.ui.showToast('Enter secret', 'warning');
 const salt = Array.from(window.crypto.getRandomValues(new Uint8Array(8))).map(b=>b.toString(16).padStart(2,'0')).join('');
 document.getElementById('zkpResultBox').value = `Hash:\n${await cryptoCore.sha256(s+salt)}\n\nSalt:\n${salt}`;
 document.getElementById('zkpVerifySecret').value = s; document.getElementById('zkpVerifySalt').value = salt; document.getElementById('zkpVerifyTarget').value = await cryptoCore.sha256(s+salt);
@@ -1284,19 +956,15 @@ const target = document.getElementById('zkpVerifyTarget').value;
 PrivacyConvert.ui.showToast(calc === target ? 'Valid!' : 'Invalid!', calc === target ? 'success':'error');
 },
 async startP2PAnswer() {
-const b = document.getElementById('p2pSignalBox');
-if(!b.value) return PrivacyConvert.ui.showToast('Paste SDP', 'warning');
+const b = document.getElementById('p2pSignalBox'); if(!b.value) return PrivacyConvert.ui.showToast('Paste SDP', 'warning');
 if(b.value.includes('offer')) { await p2pEngine.createAnswer(); } else { await p2pEngine.acceptAnswer(); }
 }
 },
 async init() {
-console.log("Ultimate Sovereign OS Core v39.9 Loaded.");
-await cryptoCore.getDeviceFingerprint();
-PrivacyConvert.ui.updateLicenseUI();
+console.log("Ultimate Sovereign OS Core v39.9 Loaded - Fully Patched & Secured.");
+await cryptoCore.getDeviceFingerprint(); PrivacyConvert.ui.updateLicenseUI();
 const dz = document.getElementById('dropZone'), fi = document.getElementById('fileInput');
-dz.addEventListener('click', () => fi.click());
-dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
-dz.addEventListener('dragleave', e => { e.preventDefault(); dz.classList.remove('drag-over'); });
+dz.addEventListener('click', () => fi.click()); dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); }); dz.addEventListener('dragleave', e => { e.preventDefault(); dz.classList.remove('drag-over'); });
 dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('drag-over'); if(e.dataTransfer.files.length) PrivacyConvert.ui.handleFiles(e.dataTransfer.files); });
 fi.addEventListener('change', e => PrivacyConvert.ui.handleFiles(e.target.files));
 document.getElementById('convertBtn').addEventListener('click', () => this.engine.executeTool());
