@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; worker-src 'self' blob: https://unpkg.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' wss: https: data: blob:;">
-<title>PrivacyConvert Sovereign OS - Pro Suite (Production Hardened v30 USDT)</title>
+<title>PrivacyConvert Sovereign OS - Pro Suite (Production Hardened v31 Dynamic Native)</title>
 <meta name="theme-color" content="#4f46e5">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
@@ -51,24 +51,25 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 <div id="licenseModal" class="hidden fixed inset-0 bg-slate-900/80 z-50 flex items-center justify-center backdrop-blur-sm p-4">
 <div class="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-3xl shadow-2xl w-full max-w-lg border border-slate-200 dark:border-slate-700 space-y-5">
 <div class="flex justify-between items-center">
-<h3 class="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">💎 Sovereign OS Pro (USDT)</h3>
+<h3 class="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">💎 Sovereign OS Pro (Native Asset)</h3>
 <button onclick="PrivacyConvert.ui.toggleLicenseModal(false)" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
 </div>
 <div class="flex border-b border-slate-200 dark:border-slate-700">
-<button onclick="PrivacyConvert.ui.switchModalTab('crypto')" id="tabCryptoBtn" class="flex-1 pb-3 text-xs font-bold border-b-2 border-indigo-600 text-indigo-600 dark:text-indigo-400">Web3 / USDT Ödeme</button>
+<button onclick="PrivacyConvert.ui.switchModalTab('crypto')" id="tabCryptoBtn" class="flex-1 pb-3 text-xs font-bold border-b-2 border-indigo-600 text-indigo-600 dark:text-indigo-400">Web3 / Kripto Ödeme</button>
 <button onclick="PrivacyConvert.ui.switchModalTab('key')" id="tabKeyBtn" class="flex-1 pb-3 text-xs font-bold text-slate-400">Lisans Anahtarı Gir</button>
 </div>
 <!-- KRİPTO ÖDEME PANELİ -->
 <div id="modalCryptoPanel" class="space-y-4">
 <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3 text-xs">
-<div class="flex justify-between items-center"><span class="font-bold text-slate-500">Sabit Abonelik:</span><span class="font-extrabold text-indigo-600 dark:text-indigo-400 text-sm">49 USDT / Yıl</span></div>
+<div class="flex justify-between items-center"><span class="font-bold text-slate-500">Hedef Tutar:</span><span class="font-extrabold text-indigo-600 dark:text-indigo-400 text-sm">$49 USD</span></div>
+<div class="flex justify-between items-center"><span class="font-bold text-slate-500">Canlı Kur Karşılığı:</span><span id="calculatedCryptoAmount" class="font-mono font-bold text-emerald-600 dark:text-emerald-400">Hesaplanıyor...</span></div>
 <div>
 <label class="font-bold text-slate-500 block mb-1">Ağ Seçimi:</label>
 <select id="networkSelect" onchange="PrivacyConvert.ui.updateTreasuryDisplay()" class="w-full p-2 bg-white dark:bg-slate-800 border rounded-xl text-xs font-bold dark:text-white">
-<option value="arbitrum">Arbitrum One (USDT)</option>
-<option value="polygon">Polygon (USDT)</option>
-<option value="avalanche_x">Avalanche X-Chain (Manuel USDT)</option>
-<option value="tron">Tron Network (TRC20 USDT)</option>
+<option value="arbitrum">Arbitrum One (ETH)</option>
+<option value="polygon">Polygon (POL)</option>
+<option value="avalanche_x">Avalanche X-Chain (AVAX)</option>
+<option value="tron">Tron Network (TRX)</option>
 </select>
 </div>
 <div><span class="font-bold text-slate-500 block mb-1">Hazine Cüzdan Adresi:</span><div class="flex items-center gap-2"><input type="text" readonly value="0x2e08c361e00bb892bc99b6688d2948fcc3600b65" class="w-full p-2 bg-white dark:bg-slate-800 border rounded-xl font-mono text-[11px] dark:text-slate-200" id="treasuryAddr"><button onclick="navigator.clipboard.writeText(document.getElementById('treasuryAddr').value); PrivacyConvert.ui.showToast('Adres kopyalandı!');" class="px-3 py-2 dynamic-bg text-white font-bold rounded-xl text-[11px]">Kopyala</button></div></div>
@@ -84,11 +85,11 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 
 <div class="space-y-2">
 <label class="text-xs font-bold text-slate-600 dark:text-slate-300">İşlem Hash'i (TxID):</label>
-<input type="text" id="txHashInput" placeholder="0x... veya Tron TxID" class="w-full p-3 bg-slate-50 dark:bg-slate-900 border rounded-xl text-xs font-mono dark:text-white">
+<input type="text" id="txHashInput" placeholder="0x... veya işlem referansı" class="w-full p-3 bg-slate-50 dark:bg-slate-900 border rounded-xl text-xs font-mono dark:text-white">
 </div>
 
 <div class="flex gap-2 pt-2">
-<button id="directPayBtn" onclick="PrivacyConvert.engine.sendOnChainPayment()" disabled class="flex-1 py-3 bg-slate-300 dark:bg-slate-700 text-slate-500 dark:text-slate-400 font-bold text-xs rounded-xl shadow-md cursor-not-allowed">49 USDT Gönder</button>
+<button id="directPayBtn" onclick="PrivacyConvert.engine.sendOnChainPayment()" disabled class="flex-1 py-3 bg-slate-300 dark:bg-slate-700 text-slate-500 dark:text-slate-400 font-bold text-xs rounded-xl shadow-md cursor-not-allowed">Anlık Kur ile Öde</button>
 <button onclick="PrivacyConvert.engine.verifyTxHash()" class="py-3 px-3 dynamic-bg text-white font-bold text-xs rounded-xl shadow-md">Tx Doğrula</button>
 <button onclick="PrivacyConvert.engine.simulatePro()" class="py-3 px-3 bg-emerald-600 text-white font-bold text-xs rounded-xl shadow-md">Simüle Et</button>
 </div>
@@ -216,7 +217,7 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 
 <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 px-6 text-center text-xs text-slate-500 dark:text-slate-400 space-y-3 mt-auto">
 <div class="flex flex-col sm:flex-row justify-center items-center gap-3">
-<span>PrivacyConvert Sovereign OS &copy; 2026 - Production Hardened v30 USDT</span>
+<span>PrivacyConvert Sovereign OS &copy; 2026 - Production Hardened v31 Dynamic Native</span>
 <span class="hidden sm:inline text-slate-300 dark:text-slate-600">|</span>
 <a href="https://github.com/veyselozturk1986-byte/image-tools" target="_blank" rel="noopener noreferrer" class="font-bold dynamic-text hover:underline flex items-center gap-1">
 🐙 GitHub Repository
@@ -230,10 +231,10 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 </footer>
 
 <script>
-// --- ROBUST AIR-GAPPED RESILIENT SERVICE WORKER (v30 USDT) ---
+// --- ROBUST AIR-GAPPED RESILIENT SERVICE WORKER (v31 Dynamic Native) ---
 if ('serviceWorker' in navigator) {
 const swCode = `
-const CACHE_NAME = 'sovereign-core-v30';
+const CACHE_NAME = 'sovereign-core-v31';
 const assets = [
 './',
 location.pathname,
@@ -660,7 +661,12 @@ localStorage.setItem('privacyConvert_theme', isDark ? 'dark' : 'light');
 },
 toggleLicenseModal(show) {
 const m = document.getElementById('licenseModal');
-if(show) m.classList.remove('hidden'); else m.classList.add('hidden');
+if(show) {
+m.classList.remove('hidden');
+this.updateTreasuryDisplay();
+} else {
+m.classList.add('hidden');
+}
 },
 switchModalTab(tab) {
 const cPanel = document.getElementById('modalCryptoPanel');
@@ -677,7 +683,7 @@ kBtn.className = "flex-1 pb-3 text-xs font-bold border-b-2 border-indigo-600 tex
 cBtn.className = "flex-1 pb-3 text-xs font-bold text-slate-400";
 }
 },
-updateTreasuryDisplay() {
+async updateTreasuryDisplay() {
 const net = document.getElementById('networkSelect').value;
 const addrs = {
 arbitrum: '0x2e08c361e00bb892bc99b6688d2948fcc3600b65',
@@ -686,6 +692,7 @@ avalanche_x: 'X-avax16qqvf3ze08wglq0ctfr2869j8nqxcdthjq53ws',
 tron: 'TAoLwpMj2H9ayMatgsCQAuFsecFYoMbdLB'
 };
 document.getElementById('treasuryAddr').value = addrs[net] || '';
+await PrivacyConvert.engine.fetchDynamicPrice(net);
 },
 updateLicenseUI() {
 const badge = document.getElementById('licenseBadge');
@@ -790,6 +797,33 @@ container.innerHTML = `<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl
 engine: {
 redactImageObj: null,
 redactRect: { startX: 0, startY: 0, w: 0, h: 0, active: false },
+lastCalculatedWei: null,
+async fetchDynamicPrice(net) {
+const amountEl = document.getElementById('calculatedCryptoAmount');
+amountEl.innerText = 'Kurlar yükleniyor...';
+const symbols = {
+arbitrum: 'ETHUSDT',
+polygon: 'POLUSDT',
+avalanche_x: 'AVAXUSDT',
+tron: 'TRXUSDT'
+};
+const coinNames = {
+arbitrum: 'ETH',
+polygon: 'POL',
+avalanche_x: 'AVAX',
+tron: 'TRX'
+};
+try {
+const res = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${symbols[net]}`);
+const data = await res.json();
+const price = parseFloat(data.price);
+const tokenQty = 49 / price;
+amountEl.innerText = `~${tokenQty.toFixed(4)} ${coinNames[net]}`;
+this.lastCalculatedWei = BigInt(Math.floor(tokenQty * 1e18)).toString(16);
+} catch(e) {
+amountEl.innerText = `Hata / Kur Alınamadı`;
+}
+},
 async connectWeb3Wallet() {
 try {
 if (!window.ethereum) {
@@ -818,43 +852,41 @@ PrivacyConvert.ui.showToast('Cüzdan bağlantısı reddedildi.', 'error');
 async sendOnChainPayment() {
 const netChoice = document.getElementById('networkSelect').value;
 if (netChoice === 'avalanche_x' || netChoice === 'tron') {
-return PrivacyConvert.ui.showToast('Bu ağ için lütfen cüzdanınızdan 49 USDT gönderip Tx Hash girin.', 'warning');
+return PrivacyConvert.ui.showToast('Bu ağ için lütfen cüzdandan transfer yapıp Tx Hash girin.', 'warning');
 }
 if (!PrivacyConvert.state.userWallet) {
 return PrivacyConvert.ui.showToast('Lütfen önce cüzdanınızı bağlayın!', 'warning');
 }
+if (!this.lastCalculatedWei) {
+return PrivacyConvert.ui.showToast('Canlı kur henüz hesaplanmadı!', 'warning');
+}
 
-const chainData = {
-arbitrum: { id: '0xa4b1', usdt: '0xFd086bc7CD5C481DCC9C85ebe478A1C0b69FCbb9', decimals: 6 },
-polygon: { id: '0x89', usdt: '0xc2132d05d31c914a87c6611c10748aeb04b58e8f', decimals: 6 }
+const chainIds = {
+arbitrum: '0xa4b1',
+polygon: '0x89'
 };
-const currentChain = chainData[netChoice];
+const targetChainId = chainIds[netChoice];
 
 try {
 PrivacyConvert.ui.updateProgress(10, 'Ağ doğrulanıyor...');
 const currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
-if (currentChainId !== currentChain.id) {
-PrivacyConvert.ui.updateProgress(30, 'Seçilen USDT ağına geçiş isteniyor...');
+if (currentChainId !== targetChainId) {
+PrivacyConvert.ui.updateProgress(30, 'Seçilen ağa geçiş isteniyor...');
 await window.ethereum.request({
 method: 'wallet_switchEthereumChain',
-params: [{ chainId: currentChain.id }],
+params: [{ chainId: targetChainId }],
 });
 }
 
-PrivacyConvert.ui.updateProgress(50, '49 USDT transfer kontratı hazırlanıyor...');
+PrivacyConvert.ui.updateProgress(50, 'Canlı bakiye ile transfer hazırlanıyor...');
 const treasuryAddress = document.getElementById('treasuryAddr').value;
-// ERC-20 transfer fonksiyon imzası: transfer(address to, uint256 value) -> method id: 0xa9059cbb
-const cleanedReceiver = treasuryAddress.toLowerCase().replace('0x', '').padStart(64, '0');
-const amountHex = BigInt(49 * Math.pow(10, currentChain.decimals)).toString(16).padStart(64, '0');
-const dataPayload = '0xa9059cbb' + cleanedReceiver + amountHex;
-
 const transactionParameters = {
-to: currentChain.usdt,
+to: treasuryAddress,
 from: PrivacyConvert.state.userWallet,
-data: dataPayload
+value: '0x' + this.lastCalculatedWei,
 };
 
-PrivacyConvert.ui.updateProgress(80, 'Cüzdanda USDT onayı bekleniyor...');
+PrivacyConvert.ui.updateProgress(80, 'Cüzdanda imza bekleniyor...');
 const txHash = await window.ethereum.request({
 method: 'eth_sendTransaction',
 params: [transactionParameters],
@@ -869,7 +901,7 @@ PrivacyConvert.engine.verifyTxHash();
 
 } catch(e) {
 PrivacyConvert.ui.updateProgress(100, 'İptal / Hata');
-PrivacyConvert.ui.showToast('İşlem iptal edildi veya yeterli USDT/Gas yok.', 'error');
+PrivacyConvert.ui.showToast('İşlem iptal edildi veya yetersiz bakiye.', 'error');
 }
 },
 async verifyTxHash() {
@@ -895,8 +927,8 @@ PrivacyConvert.ui.updateProgress(100, 'Başarısız');
 return PrivacyConvert.ui.showToast('İşlem bulunamadı veya ağda başarısız oldu.', 'error');
 }
 
-PrivacyConvert.ui.updateProgress(90, 'USDT ödemesi onaylandı, lisans üretiliyor...');
-const samplePayload = { user: PrivacyConvert.state.userWallet || "verified_usdt_user@sovereign.os", plan: "Pro", exp: Date.now() + (86400000 * 365) };
+PrivacyConvert.ui.updateProgress(90, 'İşlem onaylandı, lisans üretiliyor...');
+const samplePayload = { user: PrivacyConvert.state.userWallet || "verified_user@sovereign.os", plan: "Pro", exp: Date.now() + (86400000 * 365) };
 const sampleKey = "-----BEGIN SOVEREIGN LICENSE-----\n" + btoa(JSON.stringify(samplePayload)) + "\n-----END SOVEREIGN LICENSE-----";
 
 document.getElementById('licenseKeyInput').value = sampleKey;
@@ -906,7 +938,7 @@ PrivacyConvert.ui.updateLicenseUI();
 
 PrivacyConvert.ui.updateProgress(100, 'Başarılı!');
 PrivacyConvert.ui.toggleLicenseModal(false);
-PrivacyConvert.ui.showToast('49 USDT ödemeniz doğrulandı! Pro Lisans aktif.');
+PrivacyConvert.ui.showToast('Ödemeniz doğrulandı! Pro Lisans aktif.');
 
 } catch (error) {
 PrivacyConvert.ui.updateProgress(100, 'Hata');
