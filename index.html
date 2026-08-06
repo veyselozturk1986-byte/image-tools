@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; worker-src 'self' blob: https://unpkg.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' wss: https: data: blob:;">
-<title>PrivacyConvert Sovereign OS - Pro Suite (Production Hardened v22 Final)</title>
+<title>PrivacyConvert Sovereign OS - Pro Suite (Production Hardened v23 Final)</title>
 <meta name="theme-color" content="#4f46e5">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
@@ -191,7 +191,7 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 
 <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 px-6 text-center text-xs text-slate-500 dark:text-slate-400 space-y-3 mt-auto">
 <div class="flex flex-col sm:flex-row justify-center items-center gap-3">
-<span>PrivacyConvert Sovereign OS &copy; 2026 - Production Hardened v22 Final</span>
+<span>PrivacyConvert Sovereign OS &copy; 2026 - Production Hardened v23 Final</span>
 <span class="hidden sm:inline text-slate-300 dark:text-slate-600">|</span>
 <a href="https://github.com/veyselozturk1986-byte/image-tools" target="_blank" rel="noopener noreferrer" class="font-bold dynamic-text hover:underline flex items-center gap-1">
 🐙 GitHub Repository
@@ -205,10 +205,10 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 </footer>
 
 <script>
-// --- ROBUST AIR-GAPPED RESILIENT SERVICE WORKER (v22 Final) ---
+// --- ROBUST AIR-GAPPED RESILIENT SERVICE WORKER (v23 Final) ---
 if ('serviceWorker' in navigator) {
 const swCode = `
-const CACHE_NAME = 'sovereign-core-v22';
+const CACHE_NAME = 'sovereign-core-v23';
 const assets = [
 './',
 location.pathname,
@@ -290,7 +290,7 @@ resolve();
 };
 script.onerror = () => {
 delete this.loadingPromises[url];
-PrivacyConvert.ui.showToast(`${url} yüklenemedi. Lütfen yerel sunucu veya internet bağlantısını kontrol edin.`, 'error');
+PrivacyConvert.ui.showToast(`${url} yüklenemedi. Yerel sunucu/internet bağlantınızı kontrol edin.`, 'error');
 reject(new Error(`${url} yüklenemedi.`));
 };
 document.head.appendChild(script);
@@ -367,7 +367,7 @@ throw new Error("Geçersiz veya bozulmuş lisans anahtarı: " + e.message);
 const streamCore = {
 async processLargeFile(file, password, mode, progressCallback, toastCallback, urlCallback) {
 if (file.size > 500 * 1024 * 1024) {
-toastCallback('Uyarı: 500MB üzeri dosyalarda tarayıcı belleği (RAM) sınırları zorlanabilir.', 'warning');
+toastCallback('Uyarı: 500MB üzeri dosyalarda bellek sınırları zorlanabilir.', 'warning');
 }
 toastCallback('Güvenli akış mimarisiyle işleniyor...', 'warning');
 progressCallback(20, 'Dosya okunuyor...');
@@ -414,8 +414,9 @@ return text
 
 const opfsEngine = {
 async getRoot() {
+if (!window.isSecureContext) throw new Error("OPFS yalnızca güvenli bağlamda (HTTPS / localhost) çalışır.");
 if ('storage' in navigator && 'getDirectory' in navigator.storage) return await navigator.storage.getDirectory();
-throw new Error("OPFS desteklenmiyor veya güvenli bağlamda (HTTPS/localhost) değil.");
+throw new Error("OPFS desteklenmiyor.");
 },
 async writeFile(name, text, password) {
 const root = await this.getRoot();
@@ -423,7 +424,7 @@ const encBuffer = await cryptoCore.encryptBinary(new TextEncoder().encode(text).
 if (navigator.storage && navigator.storage.estimate) {
 const estimate = await navigator.storage.estimate();
 if (estimate.quota && (estimate.usage + encBuffer.byteLength > estimate.quota)) {
-throw new Error("OPFS depolama kotası aşıldı! Yetersiz disk alanı.");
+throw new Error("OPFS depolama kotası aşıldı!");
 }
 }
 const handle = await root.getFileHandle(name + '.enc', { create: true });
@@ -460,7 +461,6 @@ iceServers: [
 { urls: 'stun:stun1.l.google.com:19302' }
 ]
 });
-this.pc.onicecandidateerror = (e) => {};
 if (isInitiator) {
 this.dataChannel = this.pc.createDataChannel("PrivacyConvertSecureChat");
 this.setupDataChannel();
@@ -498,7 +498,7 @@ let remoteSdp;
 try {
 remoteSdp = JSON.parse(box.value);
 } catch (err) {
-return PrivacyConvert.ui.showToast('Geçersiz SDP formatı! Lütfen doğru veriyi yapıştırın.', 'error');
+return PrivacyConvert.ui.showToast('Geçersiz SDP formatı!', 'error');
 }
 await this.init(false);
 await this.pc.setRemoteDescription(new RTCSessionDescription(remoteSdp));
@@ -740,7 +740,7 @@ PrivacyConvert.engine.opfsList();
 renderZkpUI() {
 const container = document.getElementById('interactiveWorkspaceContainer');
 container.classList.remove('hidden');
-container.innerHTML = `<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3"><p class="text-[11px] text-slate-400 mb-2">Cryptographic Hash Commitment Scheme: Veriyi gizli tutarak hash tabanlı taahhüt (commitment) oluşturun.</p><input type="text" id="zkpSecret" placeholder="Your Secret Data..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"><button onclick="PrivacyConvert.engine.zkpCommit()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">Commit</button><textarea id="zkpResultBox" class="w-full h-24 bg-slate-900 text-emerald-400 text-xs p-3 rounded-xl font-mono" readonly></textarea><hr><input type="text" id="zkpVerifySecret" placeholder="Verify Secret..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"><input type="text" id="zkpVerifySalt" placeholder="Salt..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white font-mono"><input type="text" id="zkpVerifyTarget" placeholder="Target Hash..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white font-mono"><button onclick="PrivacyConvert.engine.zkpVerify()" class="w-full py-2.5 bg-emerald-600 text-white font-bold text-xs rounded-xl">Verify Commitment</button></div>`;
+container.innerHTML = `<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3"><p class="text-[11px] text-slate-400 mb-2">Cryptographic Hash Commitment Scheme: Veriyi gizli tutarak hash tabanlı taahhüt oluşturun.</p><input type="text" id="zkpSecret" placeholder="Your Secret Data..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"><button onclick="PrivacyConvert.engine.zkpCommit()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">Commit</button><textarea id="zkpResultBox" class="w-full h-24 bg-slate-900 text-emerald-400 text-xs p-3 rounded-xl font-mono" readonly></textarea><hr><input type="text" id="zkpVerifySecret" placeholder="Verify Secret..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"><input type="text" id="zkpVerifySalt" placeholder="Salt..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white font-mono"><input type="text" id="zkpVerifyTarget" placeholder="Target Hash..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white font-mono"><button onclick="PrivacyConvert.engine.zkpVerify()" class="w-full py-2.5 bg-emerald-600 text-white font-bold text-xs rounded-xl">Verify Commitment</button></div>`;
 },
 renderP2PUI() {
 const container = document.getElementById('interactiveWorkspaceContainer');
@@ -1057,13 +1057,14 @@ try {
 if (!window.isSecureContext) throw new Error("WebAuthn API yalnızca güvenli bağlamlarda (HTTPS / localhost) çalışır.");
 const id = document.getElementById('passkeyUser').value || 'user';
 if (!window.PublicKeyCredential) throw new Error("WebAuthn API desteklenmiyor.");
+const userIdBytes = new TextEncoder().encode(id);
 const cred = await navigator.credentials.create({
 publicKey:{
-challenge:window.crypto.getRandomValues(new Uint8Array(32)),
-rp:{name:"OS",id:location.hostname},
-user:{id:new TextEncoder().encode(id),name:id,displayName:id},
+challenge: window.crypto.getRandomValues(new Uint8Array(32)),
+rp:{name:"Sovereign OS", id: location.hostname},
+user:{id: userIdBytes.buffer, name: id, displayName: id},
 pubKeyCredParams:[{alg:-7,type:"public-key"}],
-timeout:60000
+timeout: 60000
 }
 });
 document.getElementById('passkeyOutput').value = `[WEBAUTHN REGISTERED SUCCESS]\nID: ${cred.id}`;
@@ -1113,7 +1114,7 @@ const cleanName = f.endsWith('.enc') ? f.slice(0, -4) : f;
 return `<div class="bg-white dark:bg-slate-800 p-2 border rounded flex justify-between items-center"><span>📄 ${f}</span><button onclick="PrivacyConvert.engine.opfsRead('${cleanName}')" class="text-indigo-500 font-bold">Oku</button></div>`;
 }).join('') : '<span class="text-slate-400">Disk boş.</span>';
 } catch(e) {
-document.getElementById('opfsFileList').innerHTML = '<span class="text-red-400">OPFS Erişilemedi (Secure Context Gerekli)</span>';
+document.getElementById('opfsFileList').innerHTML = '<span class="text-red-400">OPFS Erişilemedi (Güvenli Bağlam veya HTTPS gerekli)</span>';
 }
 },
 async opfsRead(n) {
