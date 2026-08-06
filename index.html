@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; worker-src 'self' blob: https://unpkg.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' wss: https: data: blob:;">
-<title>PrivacyConvert Sovereign OS - Pro Suite (Ultimate v39.3)</title>
+<title>PrivacyConvert Sovereign OS - Pro Suite (Ultimate v39.4)</title>
 <meta name="theme-color" content="#4f46e5">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
@@ -56,11 +56,12 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 <button onclick="PrivacyConvert.ui.toggleLicenseModal(false)" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
 </div>
 
-<!-- ACTIVATION GUIDE -->
+<!-- 3 AŞAMALI TAM AÇIKLAYICI REHBER -->
 <div class="bg-indigo-50 dark:bg-slate-900 p-3.5 rounded-2xl border border-indigo-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-300 space-y-1.5 shadow-inner">
-<div class="font-extrabold text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5">⚡ Machine-Locked Decentralized Activation:</div>
-<p>1. Transfer $49 equivalent to the treasury or verify via Web3 wallet / TxID.</p>
-<p>2. Exported <strong>.lic files</strong> are strictly bound to this computer's hardware/browser fingerprint and guarantee lifetime recovery.</p>
+<div class="font-extrabold text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5">⚡ Machine-Locked Activation Guide:</div>
+<p>1. Transfer the $49 equivalent to the treasury address via Web3 wallet or manual transfer.</p>
+<p>2. Enter your <strong>Transaction Hash (TxID)</strong> or transfer reference ID into the field below.</p>
+<p>3. Verify to activate Pro, then use <strong>Export .lic</strong> on the main screen to secure your lifetime offline backup.</p>
 </div>
 
 <div class="space-y-3">
@@ -223,7 +224,7 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 
 <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 px-6 text-center text-xs text-slate-500 dark:text-slate-400 space-y-3 mt-auto">
 <div class="flex flex-col sm:flex-row justify-center items-center gap-3">
-<span>PrivacyConvert Sovereign OS &copy; 2026 - Ultimate Sovereign v39.3</span>
+<span>PrivacyConvert Sovereign OS &copy; 2026 - Ultimate Sovereign v39.4</span>
 <span class="hidden sm:inline text-slate-300 dark:text-slate-600">|</span>
 <a href="https://github.com/veyselozturk1986-byte/image-tools" target="_blank" rel="noopener noreferrer" class="font-bold dynamic-text hover:underline flex items-center gap-1">
 🐙 GitHub Repository
@@ -237,10 +238,10 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 </footer>
 
 <script>
-// --- ROBUST AIR-GAPPED RESILIENT SERVICE WORKER (v39.3 Ultimate) ---
+// --- ROBUST AIR-GAPPED RESILIENT SERVICE WORKER (v39.4 Ultimate) ---
 if ('serviceWorker' in navigator) {
 const swCode = `
-const CACHE_NAME = 'sovereign-core-v39.3';
+const CACHE_NAME = 'sovereign-core-v39.4';
 const assets = [
 './',
 location.pathname,
@@ -1173,7 +1174,7 @@ if(b.value.includes('offer')) { await p2pEngine.createAnswer(); } else { await p
 }
 },
 async init() {
-console.log("Ultimate Sovereign OS Core v39.3 Loaded.");
+console.log("Ultimate Sovereign OS Core v39.4 Loaded.");
 await cryptoCore.getDeviceFingerprint();
 PrivacyConvert.ui.updateLicenseUI();
 const dz = document.getElementById('dropZone'), fi = document.getElementById('fileInput');
