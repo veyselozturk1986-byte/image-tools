@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; worker-src 'self' blob: https://unpkg.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' wss: https: data: blob:;">
-<title>PrivacyConvert Sovereign OS - Pro Suite (Ultimate v39)</title>
+<title>PrivacyConvert Sovereign OS - Pro Suite (Ultimate v39.1)</title>
 <meta name="theme-color" content="#4f46e5">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
@@ -60,7 +60,7 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 <div class="bg-indigo-50 dark:bg-slate-900 p-3.5 rounded-2xl border border-indigo-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-300 space-y-1.5 shadow-inner">
 <div class="font-extrabold text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5">⚡ Decentralized Activation & Backup:</div>
 <p>1. Transfer $49 equivalent to the treasury or verify via Web3 wallet / TxID.</p>
-<p>2. Once Pro is active, download your offline <strong>.lic License File</strong> to prevent loss if browser storage is cleared.</p>
+<p>2. Once Pro is active, use the main screen to download your offline <strong>.lic License File</strong>.</p>
 </div>
 
 <div class="space-y-3">
@@ -96,12 +96,6 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 <button id="directPayBtn" onclick="PrivacyConvert.engine.sendOnChainPayment()" disabled class="flex-1 py-3 bg-slate-300 dark:bg-slate-700 text-slate-500 dark:text-slate-400 font-bold text-xs rounded-xl shadow-md cursor-not-allowed">Send via Wallet</button>
 <button onclick="PrivacyConvert.engine.verifyOnChainTx()" class="py-3 px-4 dynamic-bg text-white font-bold text-xs rounded-xl shadow-md">Verify & Activate Pro</button>
 </div>
-
-<!-- LİSANS YEDEKLEME VE GERİ YÜKLEME BUTONLARI -->
-<div class="border-t pt-3 flex gap-2">
-<button onclick="PrivacyConvert.engine.exportLicenseFile()" class="flex-1 py-2.5 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs rounded-xl hover:bg-slate-200">📥 Export .lic Backup</button>
-<label class="flex-1 py-2.5 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs rounded-xl text-center cursor-pointer hover:bg-slate-200">📤 Import .lic<input type="file" accept=".lic" onchange="PrivacyConvert.engine.importLicenseFile(this)" class="hidden"/></label>
-</div>
 </div>
 </div>
 </div>
@@ -118,10 +112,15 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 </div>
 
 <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 py-4 px-6 shadow-sm sticky top-0 z-30 transition-colors duration-300">
-<div class="max-w-6xl mx-auto flex justify-between items-center">
-<div class="flex items-center gap-3">
+<div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
+<div class="flex items-center gap-3 flex-wrap">
 <span class="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">⚡ Sovereign OS Core</span>
 <span id="licenseBadge" class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300">FREE PLAN</span>
+<!-- ANA EKRANA TAŞINAN LİSANS YEDEKLEME BUTONLARI -->
+<div class="flex items-center gap-1.5 ml-2">
+<button onclick="PrivacyConvert.engine.exportLicenseFile()" title="Export Pro License File (.lic)" class="text-[11px] font-bold px-2.5 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 rounded-lg transition shadow-sm border border-slate-200 dark:border-slate-600 flex items-center gap-1">📥 Export .lic</button>
+<label title="Import Pro License File (.lic)" class="text-[11px] font-bold px-2.5 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 rounded-lg transition shadow-sm border border-slate-200 dark:border-slate-600 flex items-center gap-1 cursor-pointer">📤 Import .lic<input type="file" accept=".lic" onchange="PrivacyConvert.engine.importLicenseFile(this)" class="hidden"/></label>
+</div>
 </div>
 <div class="flex items-center gap-2">
 <button onclick="PrivacyConvert.ui.toggleLicenseModal(true)" class="bg-amber-500 hover:bg-amber-600 text-white text-xs px-3 py-2 rounded-xl font-bold transition shadow-sm">💎 Upgrade Pro</button>
@@ -203,6 +202,10 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 </h2>
 <div class="space-y-4 text-xs sm:text-sm">
 <div class="space-y-1">
+<h3 class="font-bold text-slate-800 dark:text-slate-200">Q: What is a .lic backup file and how does it work?</h3>
+<p class="text-slate-500 dark:text-slate-400">A: The <strong>.lic file</strong> is an offline, cryptographically portable credential file that securely stores your Pro membership status. Because Sovereign OS operates 100% air-gapped on the client-side without external database tracking, clearing your browser's <code class="bg-slate-100 dark:bg-slate-700 px-1 py-0.5 rounded font-mono">localStorage</code> would normally reset your plan. By clicking <strong>Export .lic</strong>, you save your signed Pro credentials to your device. You can then use <strong>Import .lic</strong> anytime in any browser or after clearing cache to instantly restore your Pro status offline without needing a new blockchain transaction.</p>
+</div>
+<div class="space-y-1">
 <h3 class="font-bold text-slate-800 dark:text-slate-200">Q: What technical conditions are required for all tools to work fully functionally?</h3>
 <p class="text-slate-500 dark:text-slate-400">A: A Secure Context is required. For advanced browser storage and authentication APIs like OPFS (Encrypted Disk) and WebAuthn (Passkey) to function without errors, the application must be run via a local server such as <strong>localhost</strong> or <strong>HTTPS</strong> rather than directly opening the file via <code class="bg-slate-100 dark:bg-slate-700 px-1 py-0.5 rounded font-mono">file://</code>.</p>
 </div>
@@ -220,7 +223,7 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 
 <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 px-6 text-center text-xs text-slate-500 dark:text-slate-400 space-y-3 mt-auto">
 <div class="flex flex-col sm:flex-row justify-center items-center gap-3">
-<span>PrivacyConvert Sovereign OS &copy; 2026 - Ultimate Sovereign v39</span>
+<span>PrivacyConvert Sovereign OS &copy; 2026 - Ultimate Sovereign v39.1</span>
 <span class="hidden sm:inline text-slate-300 dark:text-slate-600">|</span>
 <a href="https://github.com/veyselozturk1986-byte/image-tools" target="_blank" rel="noopener noreferrer" class="font-bold dynamic-text hover:underline flex items-center gap-1">
 🐙 GitHub Repository
@@ -234,10 +237,10 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 </footer>
 
 <script>
-// --- ROBUST AIR-GAPPED RESILIENT SERVICE WORKER (v39 Ultimate) ---
+// --- ROBUST AIR-GAPPED RESILIENT SERVICE WORKER (v39.1 Ultimate) ---
 if ('serviceWorker' in navigator) {
 const swCode = `
-const CACHE_NAME = 'sovereign-core-v39';
+const CACHE_NAME = 'sovereign-core-v39.1';
 const assets = [
 './',
 location.pathname,
@@ -505,7 +508,6 @@ async createOffer() {
 const sdp = await this.init(true);
 const box = document.getElementById('p2pSignalBox');
 if(box) box.value = sdp;
-// Generate QR code for SDP
 try {
 const qr = qrcode(0, 'L');
 qr.addData(sdp);
@@ -1141,7 +1143,7 @@ if(b.value.includes('offer')) { await p2pEngine.createAnswer(); } else { await p
 }
 },
 init() {
-console.log("Ultimate Sovereign OS Core v39 Loaded.");
+console.log("Ultimate Sovereign OS Core v39.1 Loaded.");
 PrivacyConvert.ui.updateLicenseUI();
 const dz = document.getElementById('dropZone'), fi = document.getElementById('fileInput');
 dz.addEventListener('click', () => fi.click());
