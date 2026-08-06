@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; worker-src 'self' blob: https://unpkg.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' wss: https: data: blob:;">
-<title>PrivacyConvert Sovereign OS - Pro Suite (Ultimate v39.8)</title>
+<title>PrivacyConvert Sovereign OS - Pro Suite (Ultimate v39.9)</title>
 <meta name="theme-color" content="#4f46e5">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
@@ -62,7 +62,7 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 <!-- 3 AŞAMALI TAM AÇIKLAYICI REHBER -->
 <div class="bg-indigo-50 dark:bg-slate-900 p-3.5 rounded-2xl border border-indigo-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-300 space-y-1.5 shadow-inner">
 <div class="font-extrabold text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5">⚡ Machine-Locked Activation Guide:</div>
-<p>1. Transfer the $49 equivalent to the treasury address via Web3 wallet or manual transfer.</p>
+<p>1. Transfer $49 (USDT or native equivalent) to the treasury address via Web3 wallet or manual transfer.</p>
 <p>2. Enter your <strong>Transaction Hash (TxID)</strong> or transfer reference ID into the field below.</p>
 <p>3. Verify to activate Pro, then use <strong>Export .lic</strong> on the main screen to secure your lifetime offline backup.</p>
 </div>
@@ -74,7 +74,7 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 <div>
 <label class="font-bold text-slate-500 block mb-1">Select Network / Asset:</label>
 <select id="networkSelect" onchange="PrivacyConvert.ui.updateTreasuryDisplay()" class="w-full p-2 bg-white dark:bg-slate-800 border rounded-xl text-xs font-bold dark:text-white">
-<option value="usdt_evm">🪙 USDT (Tether - Arbitrum / Polygon)</option>
+<option value="usdt_evm">🪙 USDT (Tether - Arbitrum One)</option>
 <option value="arbitrum">Arbitrum One (ETH)</option>
 <option value="polygon">Polygon (POL)</option>
 <option value="avalanche_x">Avalanche X-Chain (AVAX)</option>
@@ -228,7 +228,7 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 
 <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 px-6 text-center text-xs text-slate-500 dark:text-slate-400 space-y-3 mt-auto">
 <div class="flex flex-col sm:flex-row justify-center items-center gap-3">
-<span>PrivacyConvert Sovereign OS &copy; 2026 - Ultimate Sovereign v39.8</span>
+<span>PrivacyConvert Sovereign OS &copy; 2026 - Ultimate Sovereign v39.9</span>
 <span class="hidden sm:inline text-slate-300 dark:text-slate-600">|</span>
 <a href="https://github.com/veyselozturk1986-byte/image-tools" target="_blank" rel="noopener noreferrer" class="font-bold dynamic-text hover:underline flex items-center gap-1">
 🐙 GitHub Repository
@@ -242,10 +242,10 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 </footer>
 
 <script>
-// --- ROBUST AIR-GAPPED RESILIENT SERVICE WORKER (v39.8 Ultimate) ---
+// --- ROBUST AIR-GAPPED RESILIENT SERVICE WORKER (v39.9 Ultimate) ---
 if ('serviceWorker' in navigator) {
 const swCode = `
-const CACHE_NAME = 'sovereign-core-v39.8';
+const CACHE_NAME = 'sovereign-core-v39.9';
 const assets = [
 './',
 location.pathname,
@@ -819,7 +819,7 @@ async fetchDynamicPrice(net) {
 const amountEl = document.getElementById('calculatedCryptoAmount');
 if (net === 'usdt_evm') {
 amountEl.innerText = '49.00 USDT (Exact)';
-this.lastCalculatedWei = "decd10f2770000";
+this.lastCalculatedWei = "2edff80"; // 49 USDT in hex (6 decimals: 49000000)
 return;
 }
 amountEl.innerText = 'Fetching live rate...';
@@ -870,14 +870,27 @@ const chainIds = { usdt_evm: '0xa4b1', arbitrum: '0xa4b1', polygon: '0x89' };
 try {
 PrivacyConvert.ui.updateProgress(20, 'Checking network...');
 const currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
-if (currentChainId !== (chainIds[netChoice] || '0xa4b1')) {
-await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: (chainIds[netChoice] || '0xa4b1') }] });
+const targetChainId = chainIds[netChoice] || '0xa4b1';
+if (currentChainId !== targetChainId) {
+await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: targetChainId }] });
 }
 PrivacyConvert.ui.updateProgress(60, 'Preparing transfer...');
-const txHash = await window.ethereum.request({
-method: 'eth_sendTransaction',
-params: [{ to: document.getElementById('treasuryAddr').value, from: PrivacyConvert.state.userWallet, value: '0x' + (this.lastCalculatedWei || "decd10f2770000") }]
-});
+let txParams = {};
+const treasury = document.getElementById('treasuryAddr').value;
+
+if (netChoice === 'usdt_evm') {
+// Arbitrum One USDT Contract: 0xFd086bC7CD5C481DCC9C85ebe478A1C0b69FCbb9
+// ERC-20 transfer(to, amount) -> selector: 0xa9059cbb
+const usdtContract = '0xFd086bC7CD5C481DCC9C85ebe478A1C0b69FCbb9';
+const paddedAddress = treasury.replace('0x', '').toLowerCase().padStart(64, '0');
+const paddedAmount = (this.lastCalculatedWei || '2edff80').replace('0x', '').padStart(64, '0');
+const dataPayload = '0xa9059cbb' + paddedAddress + paddedAmount;
+txParams = { to: usdtContract, from: PrivacyConvert.state.userWallet, data: dataPayload };
+} else {
+txParams = { to: treasury, from: PrivacyConvert.state.userWallet, value: '0x' + (this.lastCalculatedWei || "decd10f2770000") };
+}
+
+const txHash = await window.ethereum.request({ method: 'eth_sendTransaction', params: [txParams] });
 document.getElementById('txHashInput').value = txHash;
 PrivacyConvert.ui.updateProgress(100, 'Transaction Sent!');
 setTimeout(() => this.verifyOnChainTx(), 4000);
@@ -952,12 +965,24 @@ const reader = new FileReader();
 reader.onload = (e) => {
 const img = new Image();
 img.onload = () => {
-this.redactImageObj = img;
+let maxDim = 2048;
+let w = img.width, h = img.height;
+if (w > maxDim || h > maxDim) {
+if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
+else { w = Math.round((w * maxDim) / h); h = maxDim; }
+}
+const tempCanvas = document.createElement('canvas');
+tempCanvas.width = w; tempCanvas.height = h;
+const tempCtx = tempCanvas.getContext('2d');
+tempCtx.drawImage(img, 0, 0, w, h);
+const optimizedImg = new Image();
+optimizedImg.onload = () => {
+this.redactImageObj = optimizedImg;
 const cvs = document.getElementById('redactCanvas');
-cvs.width = img.width; cvs.height = img.height;
+cvs.width = w; cvs.height = h;
 cvs.classList.remove('hidden');
 const ctx = cvs.getContext('2d');
-ctx.drawImage(img, 0, 0);
+ctx.drawImage(optimizedImg, 0, 0);
 let isDrawing = false;
 cvs.onpointerdown = (evt) => {
 try { cvs.setPointerCapture(evt.pointerId); } catch(e) {}
@@ -978,7 +1003,7 @@ const currY = (evt.clientY - rect.top) * scaleY;
 this.redactRect.w = currX - this.redactRect.startX;
 this.redactRect.h = currY - this.redactRect.startY;
 ctx.clearRect(0, 0, cvs.width, cvs.height);
-ctx.drawImage(img, 0, 0);
+ctx.drawImage(optimizedImg, 0, 0);
 ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
 ctx.fillRect(this.redactRect.startX, this.redactRect.startY, this.redactRect.w, this.redactRect.h);
 };
@@ -988,6 +1013,8 @@ isDrawing = false;
 this.redactRect.active = true;
 try { cvs.releasePointerCapture(evt.pointerId); } catch(e) {}
 };
+};
+optimizedImg.src = tempCanvas.toDataURL('image/png');
 };
 img.src = e.target.result;
 };
@@ -1263,7 +1290,7 @@ if(b.value.includes('offer')) { await p2pEngine.createAnswer(); } else { await p
 }
 },
 async init() {
-console.log("Ultimate Sovereign OS Core v39.8 Loaded.");
+console.log("Ultimate Sovereign OS Core v39.9 Loaded.");
 await cryptoCore.getDeviceFingerprint();
 PrivacyConvert.ui.updateLicenseUI();
 const dz = document.getElementById('dropZone'), fi = document.getElementById('fileInput');
