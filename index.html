@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; worker-src 'self' blob: https://unpkg.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' wss: https: data: blob:;">
-<title>PrivacyConvert Sovereign OS - Pro Suite (Production Hardened v32 Stable)</title>
+<title>PrivacyConvert Sovereign OS - Pro Suite (Crypto-Only v34)</title>
 <meta name="theme-color" content="#4f46e5">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
@@ -47,22 +47,17 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 <body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-300 relative">
 <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-3 pointer-events-none"></div>
 
-<!-- MULTI-NETWORK WEB3 ÖDEME MODALI -->
+<!-- KRİPTO ÖDEME MODALI (YALNIZCA KRİPTO) -->
 <div id="licenseModal" class="hidden fixed inset-0 bg-slate-900/80 z-50 flex items-center justify-center backdrop-blur-sm p-4">
 <div class="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-3xl shadow-2xl w-full max-w-lg border border-slate-200 dark:border-slate-700 space-y-5">
 <div class="flex justify-between items-center">
-<h3 class="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">💎 Sovereign OS Pro Suite</h3>
+<h3 class="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">💎 Sovereign OS Pro Suite - Kripto Ödeme</h3>
 <button onclick="PrivacyConvert.ui.toggleLicenseModal(false)" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
 </div>
-<div class="flex border-b border-slate-200 dark:border-slate-700">
-<button onclick="PrivacyConvert.ui.switchModalTab('crypto')" id="tabCryptoBtn" class="flex-1 pb-3 text-xs font-bold border-b-2 border-indigo-600 text-indigo-600 dark:text-indigo-400">Web3 / Kripto Ödeme</button>
-<button onclick="PrivacyConvert.ui.switchModalTab('key')" id="tabKeyBtn" class="flex-1 pb-3 text-xs font-bold text-slate-400">Lisans Anahtarı Gir</button>
-</div>
-<!-- KRİPTO ÖDEME PANELİ -->
-<div id="modalCryptoPanel" class="space-y-4">
+<div class="space-y-4">
 <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3 text-xs">
 <div class="flex justify-between items-center"><span class="font-bold text-slate-500">Hedef Tutar:</span><span class="font-extrabold text-indigo-600 dark:text-indigo-400 text-sm">$49 USD</span></div>
-<div class="flex justify-between items-center"><span class="font-bold text-slate-500">Tahmini Kripto Değeri:</span><span id="calculatedCryptoAmount" class="font-mono font-bold text-emerald-600 dark:text-emerald-400">~0.019 ETH / 65 POL / 1.7 AVAX / 350 TRX</span></div>
+<div class="flex justify-between items-center"><span class="font-bold text-slate-500">Tahmini Kripto Değeri:</span><span id="calculatedCryptoAmount" class="font-mono font-bold text-emerald-600 dark:text-emerald-400">Yükleniyor...</span></div>
 <div>
 <label class="font-bold text-slate-500 block mb-1">Ağ Seçimi:</label>
 <select id="networkSelect" onchange="PrivacyConvert.ui.updateTreasuryDisplay()" class="w-full p-2 bg-white dark:bg-slate-800 border rounded-xl text-xs font-bold dark:text-white">
@@ -90,15 +85,8 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 
 <div class="flex gap-2 pt-2">
 <button id="directPayBtn" onclick="PrivacyConvert.engine.sendOnChainPayment()" disabled class="flex-1 py-3 bg-slate-300 dark:bg-slate-700 text-slate-500 dark:text-slate-400 font-bold text-xs rounded-xl shadow-md cursor-not-allowed">Cüzdan ile Gönder</button>
-<button onclick="PrivacyConvert.engine.verifyTxHash()" class="py-3 px-3 dynamic-bg text-white font-bold text-xs rounded-xl shadow-md">Tx Doğrula</button>
-<button onclick="PrivacyConvert.engine.simulatePro()" class="py-3 px-3 bg-emerald-600 text-white font-bold text-xs rounded-xl shadow-md">Anında Pro Aktive Et</button>
+<button onclick="PrivacyConvert.engine.verifyTxHash()" class="py-3 px-4 dynamic-bg text-white font-bold text-xs rounded-xl shadow-md">Tx Doğrula & Pro Aktive Et</button>
 </div>
-</div>
-<!-- LİSANS ANAHTARI GİRİŞ PANELİ -->
-<div id="modalKeyPanel" class="hidden space-y-4">
-<p class="text-xs text-slate-500">Çevrimdışı şifreli lisans anahtarınızı veya üretilen anahtarı buraya yapıştırın.</p>
-<textarea id="licenseKeyInput" placeholder="-----BEGIN SOVEREIGN LICENSE-----\n..." class="w-full h-32 p-3 bg-slate-50 dark:bg-slate-900 border rounded-xl text-xs font-mono dark:text-white"></textarea>
-<button onclick="PrivacyConvert.engine.activateLicense()" class="w-full py-3 dynamic-bg text-white font-bold text-xs rounded-xl shadow-md">Çevrimdışı Lisansı Doğrula</button>
 </div>
 </div>
 </div>
@@ -217,7 +205,7 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 
 <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 px-6 text-center text-xs text-slate-500 dark:text-slate-400 space-y-3 mt-auto">
 <div class="flex flex-col sm:flex-row justify-center items-center gap-3">
-<span>PrivacyConvert Sovereign OS &copy; 2026 - Production Hardened v32 Stable</span>
+<span>PrivacyConvert Sovereign OS &copy; 2026 - Crypto-Only Pro v34</span>
 <span class="hidden sm:inline text-slate-300 dark:text-slate-600">|</span>
 <a href="https://github.com/veyselozturk1986-byte/image-tools" target="_blank" rel="noopener noreferrer" class="font-bold dynamic-text hover:underline flex items-center gap-1">
 🐙 GitHub Repository
@@ -231,10 +219,10 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 </footer>
 
 <script>
-// --- ROBUST AIR-GAPPED RESILIENT SERVICE WORKER (v32 Stable) ---
+// --- ROBUST AIR-GAPPED RESILIENT SERVICE WORKER (Crypto-Only v34) ---
 if ('serviceWorker' in navigator) {
 const swCode = `
-const CACHE_NAME = 'sovereign-core-v32';
+const CACHE_NAME = 'sovereign-core-v34';
 const assets = [
 './',
 location.pathname,
@@ -373,20 +361,6 @@ async signData(privateKey, text) {
 const encoded = new TextEncoder().encode(text);
 const signature = await window.crypto.subtle.sign({ name: "ECDSA", hash: { name: "SHA-256" } }, privateKey, encoded);
 return Array.from(new Uint8Array(signature)).map(b => b.toString(16).padStart(2, '0')).join('');
-}
-};
-
-const licenseCore = {
-async verifyOfflineLicense(licenseText) {
-try {
-const cleanData = licenseText.replace(/-----(BEGIN|END).*?-----/g, '').trim();
-const parsed = JSON.parse(atob(cleanData));
-if (Date.now() > parsed.exp) throw new Error("Lisans süresi dolmuş.");
-if (!parsed.user || !parsed.plan) throw new Error("Geçersiz lisans yapısı.");
-return { valid: true, user: parsed.user, plan: parsed.plan };
-} catch(e) {
-throw new Error("Geçersiz veya bozulmuş lisans anahtarı: " + e.message);
-}
 }
 };
 
@@ -626,7 +600,7 @@ metaData: {
 navigate(toolId) {
 const meta = this.metaData[toolId];
 if (meta.pro && !PrivacyConvert.state.isPro) {
-PrivacyConvert.ui.showToast('Bu araç Pro üyelik gerektirir. Lütfen Web3 ile Pro\'ya geçin.', 'warning');
+PrivacyConvert.ui.showToast('Bu araç Pro üyelik gerektirir. Lütfen kripto ödemesi ile Pro\'ya geçin.', 'warning');
 PrivacyConvert.ui.toggleLicenseModal(true);
 return;
 }
@@ -666,21 +640,6 @@ m.classList.remove('hidden');
 this.updateTreasuryDisplay();
 } else {
 m.classList.add('hidden');
-}
-},
-switchModalTab(tab) {
-const cPanel = document.getElementById('modalCryptoPanel');
-const kPanel = document.getElementById('modalKeyPanel');
-const cBtn = document.getElementById('tabCryptoBtn');
-const kBtn = document.getElementById('tabKeyBtn');
-if (tab === 'crypto') {
-cPanel.classList.remove('hidden'); kPanel.classList.add('hidden');
-cBtn.className = "flex-1 pb-3 text-xs font-bold border-b-2 border-indigo-600 text-indigo-600 dark:text-indigo-400";
-kBtn.className = "flex-1 pb-3 text-xs font-bold text-slate-400";
-} else {
-cPanel.classList.add('hidden'); kPanel.classList.remove('hidden');
-kBtn.className = "flex-1 pb-3 text-xs font-bold border-b-2 border-indigo-600 text-indigo-600 dark:text-indigo-400";
-cBtn.className = "flex-1 pb-3 text-xs font-bold text-slate-400";
 }
 },
 updateTreasuryDisplay() {
@@ -822,7 +781,7 @@ amountEl.innerText = `~${tokenQty.toFixed(4)} ${coinNames[net]}`;
 this.lastCalculatedWei = BigInt(Math.floor(tokenQty * 1e18)).toString(16);
 } catch(e) {
 amountEl.innerText = `~0.019 ETH / 65 POL / 1.7 AVAX / 350 TRX`;
-this.lastCalculatedWei = "decd10f2770000"; // Fallback hex value (~0.019 ETH)
+this.lastCalculatedWei = "decd10f2770000";
 }
 },
 async connectWeb3Wallet() {
@@ -910,41 +869,14 @@ return PrivacyConvert.ui.showToast('Lütfen geçerli bir işlem hash\'i girin!',
 
 PrivacyConvert.ui.updateProgress(50, 'İşlem doğrulanıyor...');
 setTimeout(() => {
-const samplePayload = { user: PrivacyConvert.state.userWallet || "verified_user@sovereign.os", plan: "Pro", exp: Date.now() + (86400000 * 365) };
-const sampleKey = "-----BEGIN SOVEREIGN LICENSE-----\n" + btoa(JSON.stringify(samplePayload)) + "\n-----END SOVEREIGN LICENSE-----";
-
-document.getElementById('licenseKeyInput').value = sampleKey;
 PrivacyConvert.state.isPro = true;
 localStorage.setItem('sovereign_pro', 'true');
 PrivacyConvert.ui.updateLicenseUI();
 
 PrivacyConvert.ui.updateProgress(100, 'Onaylandı!');
 PrivacyConvert.ui.toggleLicenseModal(false);
-PrivacyConvert.ui.showToast('Ödeme ve işlem başarıyla doğrulandı! Pro Lisans aktif.');
+PrivacyConvert.ui.showToast('Kripto ödemesi doğrulandı! Pro Lisans aktif.');
 }, 1500);
-},
-async activateLicense() {
-const key = document.getElementById('licenseKeyInput').value;
-try {
-const res = await licenseCore.verifyOfflineLicense(key);
-PrivacyConvert.state.isPro = true;
-localStorage.setItem('sovereign_pro', 'true');
-PrivacyConvert.ui.updateLicenseUI();
-PrivacyConvert.ui.toggleLicenseModal(false);
-PrivacyConvert.ui.showToast(`Pro Lisans Etkinleştirildi: ${res.user}`);
-} catch(e) {
-PrivacyConvert.ui.showToast(e.message, 'error');
-}
-},
-simulatePro() {
-const samplePayload = { user: "demo_pro@sovereign.os", plan: "Pro", exp: Date.now() + (86400000 * 365) };
-const sampleKey = "-----BEGIN SOVEREIGN LICENSE-----\n" + btoa(JSON.stringify(samplePayload)) + "\n-----END SOVEREIGN LICENSE-----";
-document.getElementById('licenseKeyInput').value = sampleKey;
-PrivacyConvert.state.isPro = true;
-localStorage.setItem('sovereign_pro', 'true');
-PrivacyConvert.ui.updateLicenseUI();
-PrivacyConvert.ui.toggleLicenseModal(false);
-PrivacyConvert.ui.showToast('Pro Lisans başarıyla aktif edildi!');
 },
 loadRedactImage(input) {
 const file = input.files[0];
@@ -1318,7 +1250,7 @@ if(b.value.includes('offer')) { await p2pEngine.createAnswer(); } else { await p
 }
 },
 init() {
-console.log("Sovereign OS Core Loaded Successfully.");
+console.log("Sovereign OS Crypto-Only Core Loaded Successfully.");
 PrivacyConvert.ui.updateLicenseUI();
 const dz = document.getElementById('dropZone'), fi = document.getElementById('fileInput');
 dz.addEventListener('click', () => fi.click());
