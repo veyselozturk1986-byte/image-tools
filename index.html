@@ -167,37 +167,41 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 <button onclick="PrivacyConvert.engine.executePane2()" class="w-full py-3 rounded-xl dynamic-bg text-white font-bold text-sm shadow-md">Compare & Diff</button>
 </div>
 
-<!-- SIKÇA SORULAN SORULAR (SSS) BİLGİLENDİRME ALANI -->
+<!-- FREQUENTLY ASKED QUESTIONS (FAQ) SECTION -->
 <section class="max-w-3xl mx-auto mb-12 bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-3xl shadow-xl border border-slate-200 dark:border-slate-700 space-y-6">
 <h2 class="text-lg font-extrabold text-slate-900 dark:text-white flex items-center gap-2 border-b pb-3 border-slate-200 dark:border-slate-700">
-📚 Sıkça Sorulan Sorular (SSS)
+📚 Frequently Asked Questions (FAQ)
 </h2>
 <div class="space-y-4 text-xs sm:text-sm">
 <div class="space-y-1">
-<h3 class="font-bold text-slate-800 dark:text-slate-200">S: Uygulamanın tüm araçlarının tam fonksiyonel çalışabilmesi için hangi teknik koşullar gereklidir?</h3>
-<p class="text-slate-500 dark:text-slate-400">C: Güvenli Bağlam (Secure Context) zorunluluğu vardır. OPFS (Şifreli Disk) ve WebAuthn (Passkey) gibi gelişmiş tarayıcı depolama ve kimlik doğrulama API'lerinin hatasız çalışabilmesi için uygulamanın doğrudan dosya (<code class="bg-slate-100 dark:bg-slate-700 px-1 py-0.5 rounded font-mono">file://</code>) yoluyla açılmak yerine, <strong>localhost</strong> veya <strong>HTTPS</strong> tabanlı bir yerel sunucu üzerinden çalıştırılması gerekir.</p>
+<h3 class="font-bold text-slate-800 dark:text-slate-200">Q: What technical conditions are required for all tools to work fully functionally?</h3>
+<p class="text-slate-500 dark:text-slate-400">A: A Secure Context is required. For advanced browser storage and authentication APIs like OPFS (Encrypted Disk) and WebAuthn (Passkey) to function without errors, the application must be run via a local server such as <strong>localhost</strong> or <strong>HTTPS</strong> rather than directly opening the file via <code class="bg-slate-100 dark:bg-slate-700 px-1 py-0.5 rounded font-mono">file://</code>.</p>
 </div>
 <div class="space-y-1">
-<h3 class="font-bold text-slate-800 dark:text-slate-200">S: "Air-Gapped" (İzole / Hava Boşluklu) güvenlik özelliği tam olarak nedir?</h3>
-<p class="text-slate-500 dark:text-slate-400">C: Air-Gapped mimari, sistemin %100 istemci tarafında (client-side) çalışmasını ve dışarıya giden ağ trafiğinin (Outbound Traffic) <strong>0 KB</strong> olmasını sağlar. İşlenen tüm metinler, şifrelenmiş dosyalar, OCR metin çıkarımları ve tarama raporları tamamen sizin tarayıcı oturumunuzda kalır. Hiçbir veri dış sunuculara iletilmez, buluta yüklenmez ve harici bir alana sızdırılmaz.</p>
+<h3 class="font-bold text-slate-800 dark:text-slate-200">Q: What exactly is the "Air-Gapped" security feature?</h3>
+<p class="text-slate-500 dark:text-slate-400">A: The Air-Gapped architecture ensures that the system runs 100% on the client side with <strong>0 KB</strong> of outbound network traffic. All processed texts, encrypted files, OCR extractions, and scan reports remain entirely within your browser session. No data is sent to external servers, uploaded to the cloud, or leaked elsewhere.</p>
 </div>
 <div class="space-y-1">
-<h3 class="font-bold text-slate-800 dark:text-slate-200">S: Uygulama tamamen çevrimdışı (offline) ortamlarda kullanılabilir mi?</h3>
-<p class="text-slate-500 dark:text-slate-400">C: Evet. <code class="bg-slate-100 dark:bg-slate-700 px-1 py-0.5 rounded font-mono">pdf.js</code> ve <code class="bg-slate-100 dark:bg-slate-700 px-1 py-0.5 rounded font-mono">tesseract.js</code> gibi ağır kütüphaneler ilk bağlantıda Service Worker aracılığıyla tarayıcı önbelleğine kaydedilir. Bu önbellekleme tamamlandıktan sonra uygulama, internet bağlantısı bulunmayan tamamen izole (air-gapped) ortamlarda bile tüm işlevlerini yerel olarak yerine getirmeye devam eder.</p>
+<h3 class="font-bold text-slate-800 dark:text-slate-200">Q: Can the application be used completely offline?</h3>
+<p class="text-slate-500 dark:text-slate-400">A: Yes. Heavy libraries like <code class="bg-slate-100 dark:bg-slate-700 px-1 py-0.5 rounded font-mono">pdf.js</code> and <code class="bg-slate-100 dark:bg-slate-700 px-1 py-0.5 rounded font-mono">tesseract.js</code> are cached in your browser via a Service Worker upon initial load. Once cached, the application can perform all operations locally even in completely isolated (air-gapped) environments without an internet connection.</p>
 </div>
 </div>
 </section>
 </main>
 
-<footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 px-6 text-center text-xs text-slate-500 dark:text-slate-400 space-y-2 mt-auto">
+<footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 px-6 text-center text-xs text-slate-500 dark:text-slate-400 space-y-3 mt-auto">
 <div class="flex flex-col sm:flex-row justify-center items-center gap-3">
 <span>PrivacyConvert Sovereign OS &copy; 2026 - Production Hardened v22 Final</span>
 <span class="hidden sm:inline text-slate-300 dark:text-slate-600">|</span>
 <a href="https://github.com/veyselozturk/PrivacyConvert-Sovereign-OS" target="_blank" rel="noopener noreferrer" class="font-bold dynamic-text hover:underline flex items-center gap-1">
-🐙 GitHub Kaynak Kodu
+🐙 GitHub Repository
+</a>
+<span class="hidden sm:inline text-slate-300 dark:text-slate-600">|</span>
+<a href="#privacy" onclick="alert('Privacy Statement: 100% Client-Side execution. No data is stored or transmitted externally. Your privacy is mathematically guaranteed.'); return false;" class="font-bold text-slate-600 dark:text-slate-300 hover:underline">
+🔒 Privacy Policy
 </a>
 </div>
-<p>100% Client-Side & Air-Gapped Security Architecture.</p>
+<p>100% Client-Side & Air-Gapped Security Architecture. Zero External Telemetry.</p>
 </footer>
 
 <script>
