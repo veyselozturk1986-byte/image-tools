@@ -4,13 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; worker-src 'self' blob: https://unpkg.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' wss: https: data: blob:;">
-<title>PrivacyConvert Sovereign OS - Pro Suite (Ultimate v39.4)</title>
+<title>PrivacyConvert Sovereign OS - Pro Suite (Ultimate v39.7)</title>
 <meta name="theme-color" content="#4f46e5">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <script>
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 const savedTheme = localStorage.getItem('privacyConvert_theme') || 'light';
 const savedAccent = localStorage.getItem('privacyConvert_accent') || 'indigo';
 const accents = {
@@ -224,7 +227,7 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 
 <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 px-6 text-center text-xs text-slate-500 dark:text-slate-400 space-y-3 mt-auto">
 <div class="flex flex-col sm:flex-row justify-center items-center gap-3">
-<span>PrivacyConvert Sovereign OS &copy; 2026 - Ultimate Sovereign v39.4</span>
+<span>PrivacyConvert Sovereign OS &copy; 2026 - Ultimate Sovereign v39.7</span>
 <span class="hidden sm:inline text-slate-300 dark:text-slate-600">|</span>
 <a href="https://github.com/veyselozturk1986-byte/image-tools" target="_blank" rel="noopener noreferrer" class="font-bold dynamic-text hover:underline flex items-center gap-1">
 🐙 GitHub Repository
@@ -238,10 +241,10 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 </footer>
 
 <script>
-// --- ROBUST AIR-GAPPED RESILIENT SERVICE WORKER (v39.4 Ultimate) ---
+// --- ROBUST AIR-GAPPED RESILIENT SERVICE WORKER (v39.7 Ultimate) ---
 if ('serviceWorker' in navigator) {
 const swCode = `
-const CACHE_NAME = 'sovereign-core-v39.4';
+const CACHE_NAME = 'sovereign-core-v39.7';
 const assets = [
 './',
 location.pathname,
@@ -644,7 +647,7 @@ metaData: {
 'p2p-share': { type: 'interactive-p2p', title: 'P2P WebRTC Transfer', pro: true },
 'meta-scrubber': { type: 'file', multiple: true, accept: 'image/*', title: 'EXIF Scrubber', pro: false },
 'pdf-merge': { type: 'file', accept: 'application/pdf', multiple: true, title: 'PDF Merger', pro: false },
-'pdf-to-png': { type: 'file', accept: 'application/pdf', title: 'PDF to PNG', pro: false },
+'pdf-to-png': { type: 'file', accept: 'application/pdf', title: 'PDF to PNG', pro: true },
 'ocr-tool': { type: 'ocr', accept: 'image/*', multiple: true, title: 'Worker OCR', pro: true },
 'doc-diff': { type: 'text', title: 'Contract Diff Engine', pro: false },
 'audit-certificate': { type: 'action', title: 'Generate Audit PDF', pro: true }
@@ -702,7 +705,7 @@ polygon: '0x2e08c361e00bb892bc99b6688d2948fcc3600b65',
 avalanche_x: 'X-avax16qqvf3ze08wglq0ctfr2869j8nqxcdthjq53ws',
 tron: 'TAoLwpMj2H9ayMatgsCQAuFsecFYoMbdLB'
 };
-document.getElementById('treasuryAddr').value = addrs[net] || '';
+document.getElementById('treasuryAddr').value = addrs[net] || '0x2e08c361e00bb892bc99b6688d2948fcc3600b65';
 PrivacyConvert.engine.fetchDynamicPrice(net);
 },
 updateLicenseUI() {
@@ -1028,13 +1031,92 @@ outputBox.value = report + `Total Differences: ${diffs}`;
 PrivacyConvert.ui.showToast('Comparison completed!');
 } else if (tool === 'pii-redactor') {
 if (files.length === 0) return PrivacyConvert.ui.showToast('Select files', 'warning');
+PrivacyConvert.ui.updateProgress(10, 'Processing batch files with multi-format parsing...');
 let combined = "";
 for (let idx = 0; idx < files.length; idx++) {
-let extracted = await files[idx].file.text();
-combined += `=== [${files[idx].file.name}] ===\n` + aiEngine.maskPII(extracted) + "\n\n";
+const file = files[idx].file;
+let extractedText = "";
+if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
+try {
+const arrayBuffer = await file.arrayBuffer();
+const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+for (let p = 1; p <= pdfDoc.numPages; p++) {
+const page = await pdfDoc.getPage(p);
+const textContent = await page.getTextContent();
+extractedText += textContent.items.map(item => item.str).join(' ') + '\n';
+}
+} catch(err) {
+extractedText = "[PDF Extraction Error: " + err.message + "]";
+}
+} else if (file.type.startsWith('image/')) {
+try {
+const tRes = await Tesseract.recognize(file, 'eng');
+extractedText = tRes.data.text;
+} catch(err) {
+extractedText = "[OCR Extraction Error: " + err.message + "]";
+}
+} else {
+extractedText = await file.text();
+}
+combined += `=== [${file.name}] ===\n` + aiEngine.maskPII(extractedText) + "\n\n";
 }
 outputBox.value = combined;
-PrivacyConvert.ui.showToast('Batch PII scrubbed!');
+PrivacyConvert.ui.updateProgress(100, 'Completed!');
+PrivacyConvert.ui.showToast('Batch PII scrubbed successfully!');
+} else if (tool === 'ocr-tool') {
+if (files.length === 0) return PrivacyConvert.ui.showToast('Select image files', 'warning');
+PrivacyConvert.ui.updateProgress(10, 'Initializing Worker OCR...');
+let report = "[WORKER OCR RESULTS]\n";
+for (let i = 0; i < files.length; i++) {
+PrivacyConvert.ui.updateProgress(20 + Math.floor((i / files.length) * 60), `Recognizing text in ${files[i].file.name}...`);
+try {
+const result = await Tesseract.recognize(files[i].file, 'eng');
+report += `\n=== [${files[i].file.name}] ===\n${result.data.text}\n`;
+} catch(err) {
+report += `\n=== [${files[i].file.name}] ===\n[OCR Error: ${err.message}]\n`;
+}
+}
+outputBox.value = report;
+PrivacyConvert.ui.updateProgress(100, 'Completed!');
+PrivacyConvert.ui.showToast('Worker OCR completed!');
+} else if (tool === 'pdf-to-png') {
+if (files.length === 0) return PrivacyConvert.ui.showToast('Select a PDF file', 'warning');
+PrivacyConvert.ui.updateProgress(20, 'Loading PDF document...');
+const arrayBuffer = await files[0].file.arrayBuffer();
+const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+const zip = new JSZip();
+const folder = zip.folder(files[0].file.name.replace('.pdf', '') + '_pngs');
+
+for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) {
+PrivacyConvert.ui.updateProgress(20 + Math.floor((pageNum / pdfDoc.numPages) * 60), `Rendering page ${pageNum} of ${pdfDoc.numPages}...`);
+const page = await pdfDoc.getPage(pageNum);
+const viewport = page.getViewport({ scale: 1.5 });
+const canvas = document.createElement('canvas');
+const context = canvas.getContext('2d');
+canvas.height = viewport.height;
+canvas.width = viewport.width;
+await page.render({ canvasContext: context, viewport: viewport }).promise;
+await new Promise(resolve => {
+canvas.toBlob(blob => {
+folder.file(`page_${pageNum}.png`, blob);
+resolve();
+}, 'image/png');
+});
+}
+
+PrivacyConvert.ui.updateProgress(85, 'Compressing into secure ZIP archive...');
+const content = await zip.generateAsync({ type: 'blob' });
+const blobUrl = URL.createObjectURL(content);
+const url = PrivacyConvert.registerObjectUrl(blobUrl);
+const a = document.createElement('a');
+a.href = url;
+a.download = `${files[0].file.name}_converted_pages.zip`;
+a.click();
+setTimeout(() => URL.revokeObjectURL(blobUrl), 6000);
+
+outputBox.value = `PDF successfully converted to ZIP archive containing ${pdfDoc.numPages} high-resolution PNG pages.`;
+PrivacyConvert.ui.updateProgress(100, 'Completed!');
+PrivacyConvert.ui.showToast('PDF pages zipped and downloaded successfully!');
 } else if (tool === 'encrypt-tool') {
 const pwd = document.getElementById('cryptoPasswordInput')?.value;
 if(!pwd) return PrivacyConvert.ui.showToast('Password required!', 'warning');
@@ -1174,7 +1256,7 @@ if(b.value.includes('offer')) { await p2pEngine.createAnswer(); } else { await p
 }
 },
 async init() {
-console.log("Ultimate Sovereign OS Core v39.4 Loaded.");
+console.log("Ultimate Sovereign OS Core v39.7 Loaded.");
 await cryptoCore.getDeviceFingerprint();
 PrivacyConvert.ui.updateLicenseUI();
 const dz = document.getElementById('dropZone'), fi = document.getElementById('fileInput');
