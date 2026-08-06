@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" dir="ltr" class="light">
 <head>
@@ -196,18 +197,27 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 <button onclick="PrivacyConvert.engine.executePane2()" class="w-full py-3 rounded-xl dynamic-bg text-white font-bold text-sm shadow-md">Compare & Diff</button>
 </div>
 
+<!-- TÜM 4 SORUYLA TAM FAQ (SSS) BÖLÜMÜ -->
 <section class="max-w-3xl mx-auto mb-12 bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-3xl shadow-xl border border-slate-200 dark:border-slate-700 space-y-6">
 <h2 class="text-lg font-extrabold text-slate-900 dark:text-white flex items-center gap-2 border-b pb-3 border-slate-200 dark:border-slate-700">
 📚 Frequently Asked Questions (FAQ)
 </h2>
 <div class="space-y-4 text-xs sm:text-sm">
 <div class="space-y-1">
-<h3 class="font-bold text-slate-800 dark:text-slate-200">Q: What happens if browser history or cache is cleared?</h3>
-<p class="text-slate-500 dark:text-slate-400">A: Because Sovereign OS operates 100% client-side, clearing your browser's history or local storage will reset your profile to the Free plan. To guarantee that you never lose your Pro membership, use the <strong>📥 Export .lic</strong> button to save an offline backup file bound strictly to your device's hardware fingerprint.</p>
+<h3 class="font-bold text-slate-800 dark:text-slate-200">Q: What happens if browser history or cache is cleared? How do .lic backup buttons protect my Pro membership?</h3>
+<p class="text-slate-500 dark:text-slate-400">A: Because Sovereign OS operates 100% client-side with zero cloud telemetry or centralized databases, clearing your browser's history, cache, or local storage (<code class="bg-slate-100 dark:bg-slate-700 px-1 py-0.5 rounded font-mono">localStorage</code>) will reset your local profile to the Free plan. To guarantee that you never lose your purchased Pro membership during such clearing events, the <strong>📥 Export .lic</strong> button allows you to save an offline backup file bound strictly to your device's hardware fingerprint. If your browser data is ever wiped, clicking <strong>📤 Import .lic</strong> and selecting your backup file instantly restores your Pro status offline without needing a new payment.</p>
 </div>
 <div class="space-y-1">
 <h3 class="font-bold text-slate-800 dark:text-slate-200">Q: What technical conditions are required for all tools to work fully functionally?</h3>
 <p class="text-slate-500 dark:text-slate-400">A: A Secure Context is required. For advanced browser storage and authentication APIs like OPFS (Encrypted Disk) and WebAuthn (Passkey) to function without errors, the application must be run via a local server such as <strong>localhost</strong> or <strong>HTTPS</strong> rather than directly opening the file via <code class="bg-slate-100 dark:bg-slate-700 px-1 py-0.5 rounded font-mono">file://</code>.</p>
+</div>
+<div class="space-y-1">
+<h3 class="font-bold text-slate-800 dark:text-slate-200">Q: What exactly is the "Air-Gapped" security feature?</h3>
+<p class="text-slate-500 dark:text-slate-400">A: The Air-Gapped architecture ensures that the system runs 100% on the client side with <strong>0 KB</strong> of outbound network traffic. All processed texts, encrypted files, OCR extractions, and scan reports remain entirely within your browser session. No data is sent to external servers, uploaded to the cloud, or leaked elsewhere.</p>
+</div>
+<div class="space-y-1">
+<h3 class="font-bold text-slate-800 dark:text-slate-200">Q: Can the application be used completely offline?</h3>
+<p class="text-slate-500 dark:text-slate-400">A: Yes. Heavy libraries like <code class="bg-slate-100 dark:bg-slate-700 px-1 py-0.5 rounded font-mono">pdf.js</code> and <code class="bg-slate-100 dark:bg-slate-700 px-1 py-0.5 rounded font-mono">tesseract.js</code> are cached in your browser via a Service Worker upon initial load. Once cached, the application can perform all operations locally even in completely isolated (air-gapped) environments without an internet connection.</p>
 </div>
 </div>
 </section>
@@ -229,8 +239,6 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 </footer>
 
 <script>
-// GERÇEK AIR-GAPPED ÇEVRİMDIŞI SW KAYDI
-// Not: Tam offline mod için sw.js adında fiziksel bir dosya gerekir.
 if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
@@ -317,7 +325,6 @@ return machineId;
 
 const streamCore = {
 async processLargeFile(file, password, mode, progressCallback, toastCallback, urlCallback) {
-// RAM Koruma Limiti: 500MB (AES-GCM çökmesini engeller)
 const MAX_FILE_SIZE = 500 * 1024 * 1024; 
 if (file.size > MAX_FILE_SIZE) {
 toastCallback('File exceeds 500MB safe RAM limit for in-browser AES-GCM.', 'error');
@@ -339,7 +346,7 @@ const url = urlCallback(blobUrl);
 const a = document.createElement('a'); a.href = url;
 a.download = mode === 'encrypt' ? `${file.name}.enc` : file.name.replace('.enc', '');
 a.click();
-processedBuffer = null; // Bellek Sızıntısı Önleme
+processedBuffer = null;
 setTimeout(() => { try { URL.revokeObjectURL(blobUrl); } catch(e){} }, 6000);
 progressCallback(100, 'Completed successfully!');
 toastCallback(mode === 'encrypt' ? 'Encrypted and downloaded successfully!' : 'Decrypted and downloaded successfully!');
@@ -423,8 +430,8 @@ const sdp = await this.init(true);
 const box = document.getElementById('p2pSignalBox');
 if(box) box.value = sdp;
 try {
-const qr = qrcode(0, 'M'); // Hata düzeltme artırıldı
-const compactSDP = btoa(sdp); // Base64 sıkıştırma eklendi
+const qr = qrcode(0, 'M');
+const compactSDP = btoa(sdp);
 qr.addData(compactSDP); qr.make();
 document.getElementById('p2pQrContainer').innerHTML = qr.createSvgTag({scalable: true});
 document.getElementById('p2pQrContainer').classList.remove('hidden');
@@ -439,7 +446,6 @@ const box = document.getElementById('p2pSignalBox');
 if(!box || !box.value) return PrivacyConvert.ui.showToast('Offer data missing!', 'error');
 let remoteSdp;
 try {
-// Eğer QR koddan okutulmuşsa (Base64) geri çöz
 let rawData = box.value;
 if(!rawData.includes('{"type"')) { rawData = atob(rawData); }
 remoteSdp = JSON.parse(rawData);
@@ -838,7 +844,7 @@ if (files.length === 0) return PrivacyConvert.ui.showToast('Select image files',
 PrivacyConvert.ui.updateProgress(10, 'Initializing Worker OCR (Single Instance)...');
 let report = "[WORKER OCR RESULTS]\n";
 try {
-const worker = await Tesseract.createWorker('eng'); // Tek Worker Optimizasyonu (RAM)
+const worker = await Tesseract.createWorker('eng');
 for (let i = 0; i < files.length; i++) {
 PrivacyConvert.ui.updateProgress(20 + Math.floor((i / files.length) * 60), `Recognizing text in ${files[i].file.name}...`);
 try {
@@ -846,7 +852,7 @@ const result = await worker.recognize(files[i].file);
 report += `\n=== [${files[i].file.name}] ===\n${result.data.text}\n`;
 } catch(err) { report += `\n=== [${files[i].file.name}] ===\n[OCR Error: ${err.message}]\n`; }
 }
-await worker.terminate(); // Çöp toplayıcı tetikleme
+await worker.terminate();
 outputBox.value = report; PrivacyConvert.ui.updateProgress(100, 'Completed!'); PrivacyConvert.ui.showToast('Worker OCR completed!');
 } catch(e) { PrivacyConvert.ui.showToast('OCR Engine initialization failed.', 'error'); }
 } else if (tool === 'pdf-to-png') {
