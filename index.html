@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; worker-src 'self' blob: https://unpkg.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' wss: https: data: blob:;">
-<title>PrivacyConvert Sovereign OS - Pro Suite (Production Hardened v27 Multi-Chain)</title>
+<title>PrivacyConvert Sovereign OS - Pro Suite (Production Hardened v28 Multi-Network)</title>
 <meta name="theme-color" content="#4f46e5">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
@@ -47,7 +47,7 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 <body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-300 relative">
 <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-3 pointer-events-none"></div>
 
-<!-- MULTI-CHAIN WEB3 ÖDEME MODALI -->
+<!-- MULTI-NETWORK WEB3 ÖDEME MODALI -->
 <div id="licenseModal" class="hidden fixed inset-0 bg-slate-900/80 z-50 flex items-center justify-center backdrop-blur-sm p-4">
 <div class="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-3xl shadow-2xl w-full max-w-lg border border-slate-200 dark:border-slate-700 space-y-5">
 <div class="flex justify-between items-center">
@@ -55,22 +55,23 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 <button onclick="PrivacyConvert.ui.toggleLicenseModal(false)" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
 </div>
 <div class="flex border-b border-slate-200 dark:border-slate-700">
-<button onclick="PrivacyConvert.ui.switchModalTab('crypto')" id="tabCryptoBtn" class="flex-1 pb-3 text-xs font-bold border-b-2 border-indigo-600 text-indigo-600 dark:text-indigo-400">Web3 Multi-Chain Ödeme</button>
+<button onclick="PrivacyConvert.ui.switchModalTab('crypto')" id="tabCryptoBtn" class="flex-1 pb-3 text-xs font-bold border-b-2 border-indigo-600 text-indigo-600 dark:text-indigo-400">Web3 / Kripto Ödeme</button>
 <button onclick="PrivacyConvert.ui.switchModalTab('key')" id="tabKeyBtn" class="flex-1 pb-3 text-xs font-bold text-slate-400">Lisans Anahtarı Gir</button>
 </div>
-<!-- WEB3 KRİPTO ÖDEME PANELİ -->
+<!-- KRİPTO ÖDEME PANELİ -->
 <div id="modalCryptoPanel" class="space-y-4">
 <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3 text-xs">
 <div class="flex justify-between items-center"><span class="font-bold text-slate-500">Abonelik Ücreti:</span><span class="font-extrabold text-indigo-600 dark:text-indigo-400 text-sm">$49 / Yıl</span></div>
 <div>
-<label class="font-bold text-slate-500 block mb-1">Hedef Blokzincir Ağını Seçin:</label>
-<select id="networkSelect" class="w-full p-2 bg-white dark:bg-slate-800 border rounded-xl text-xs font-bold dark:text-white">
-<option value="arbitrum">Arbitrum One (ChainID: 0xa4b1 / 42161)</option>
-<option value="polygon">Polygon (ChainID: 0x89 / 137)</option>
-<option value="avalanche">Avalanche C-Chain (ChainID: 0xa86a / 43114)</option>
+<label class="font-bold text-slate-500 block mb-1">Ağ Seçimi:</label>
+<select id="networkSelect" onchange="PrivacyConvert.ui.updateTreasuryDisplay()" class="w-full p-2 bg-white dark:bg-slate-800 border rounded-xl text-xs font-bold dark:text-white">
+<option value="arbitrum">Arbitrum One (EVM)</option>
+<option value="polygon">Polygon (EVM)</option>
+<option value="avalanche_x">Avalanche X-Chain</option>
+<option value="tron">Tron Network</option>
 </select>
 </div>
-<div><span class="font-bold text-slate-500 block mb-1">Hazine Cüzdan Adresi (Tüm Ağlarda Ortak):</span><div class="flex items-center gap-2"><input type="text" readonly value="0x71C1234567890abcdefABCDEF1234567890B492" class="w-full p-2 bg-white dark:bg-slate-800 border rounded-xl font-mono text-[11px] dark:text-slate-200" id="treasuryAddr"><button onclick="navigator.clipboard.writeText('0x71C1234567890abcdefABCDEF1234567890B492'); PrivacyConvert.ui.showToast('Adres kopyalandı!');" class="px-3 py-2 dynamic-bg text-white font-bold rounded-xl text-[11px]">Kopyala</button></div></div>
+<div><span class="font-bold text-slate-500 block mb-1">Hazine Cüzdan Adresi:</span><div class="flex items-center gap-2"><input type="text" readonly value="0x2e08c361e00bb892bc99b6688d2948fcc3600b65" class="w-full p-2 bg-white dark:bg-slate-800 border rounded-xl font-mono text-[11px] dark:text-slate-200" id="treasuryAddr"><button onclick="navigator.clipboard.writeText(document.getElementById('treasuryAddr').value); PrivacyConvert.ui.showToast('Adres kopyalandı!');" class="px-3 py-2 dynamic-bg text-white font-bold rounded-xl text-[11px]">Kopyala</button></div></div>
 </div>
 
 <div class="p-3 bg-indigo-50 dark:bg-slate-900 rounded-xl border border-indigo-200 dark:border-slate-700 flex items-center justify-between">
@@ -82,12 +83,12 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 </div>
 
 <div class="space-y-2">
-<label class="text-xs font-bold text-slate-600 dark:text-slate-300">Manuel İşlem Hash'i (TxID):</label>
-<input type="text" id="txHashInput" placeholder="0x..." class="w-full p-3 bg-slate-50 dark:bg-slate-900 border rounded-xl text-xs font-mono dark:text-white">
+<label class="text-xs font-bold text-slate-600 dark:text-slate-300">İşlem Hash'i (TxID):</label>
+<input type="text" id="txHashInput" placeholder="0x... veya işlem referansı" class="w-full p-3 bg-slate-50 dark:bg-slate-900 border rounded-xl text-xs font-mono dark:text-white">
 </div>
 
 <div class="flex gap-2 pt-2">
-<button id="directPayBtn" onclick="PrivacyConvert.engine.sendOnChainPayment()" disabled class="flex-1 py-3 bg-slate-300 dark:bg-slate-700 text-slate-500 dark:text-slate-400 font-bold text-xs rounded-xl shadow-md cursor-not-allowed">Seçilen Ağda Ödeme Yap</button>
+<button id="directPayBtn" onclick="PrivacyConvert.engine.sendOnChainPayment()" disabled class="flex-1 py-3 bg-slate-300 dark:bg-slate-700 text-slate-500 dark:text-slate-400 font-bold text-xs rounded-xl shadow-md cursor-not-allowed">Otomatik Ödeme Gönder</button>
 <button onclick="PrivacyConvert.engine.verifyTxHash()" class="py-3 px-3 dynamic-bg text-white font-bold text-xs rounded-xl shadow-md">Tx Doğrula</button>
 <button onclick="PrivacyConvert.engine.simulatePro()" class="py-3 px-3 bg-emerald-600 text-white font-bold text-xs rounded-xl shadow-md">Simüle Et</button>
 </div>
@@ -215,7 +216,7 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 
 <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 px-6 text-center text-xs text-slate-500 dark:text-slate-400 space-y-3 mt-auto">
 <div class="flex flex-col sm:flex-row justify-center items-center gap-3">
-<span>PrivacyConvert Sovereign OS &copy; 2026 - Production Hardened v27 Multi-Chain</span>
+<span>PrivacyConvert Sovereign OS &copy; 2026 - Production Hardened v28 Multi-Network</span>
 <span class="hidden sm:inline text-slate-300 dark:text-slate-600">|</span>
 <a href="https://github.com/veyselozturk1986-byte/image-tools" target="_blank" rel="noopener noreferrer" class="font-bold dynamic-text hover:underline flex items-center gap-1">
 🐙 GitHub Repository
@@ -229,10 +230,10 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 </footer>
 
 <script>
-// --- ROBUST AIR-GAPPED RESILIENT SERVICE WORKER (v27 Multi-Chain) ---
+// --- ROBUST AIR-GAPPED RESILIENT SERVICE WORKER (v28 Multi-Network) ---
 if ('serviceWorker' in navigator) {
 const swCode = `
-const CACHE_NAME = 'sovereign-core-v27';
+const CACHE_NAME = 'sovereign-core-v28';
 const assets = [
 './',
 location.pathname,
@@ -676,6 +677,16 @@ kBtn.className = "flex-1 pb-3 text-xs font-bold border-b-2 border-indigo-600 tex
 cBtn.className = "flex-1 pb-3 text-xs font-bold text-slate-400";
 }
 },
+updateTreasuryDisplay() {
+const net = document.getElementById('networkSelect').value;
+const addrs = {
+arbitrum: '0x2e08c361e00bb892bc99b6688d2948fcc3600b65',
+polygon: '0x2e08c361e00bb892bc99b6688d2948fcc3600b65',
+avalanche_x: 'X-avax16qqvf3ze08wglq0ctfr2869j8nqxcdthjq53ws',
+tron: 'TAoLwpMj2H9ayMatgsCQAuFsecFYoMbdLB'
+};
+document.getElementById('treasuryAddr').value = addrs[net] || '';
+},
 updateLicenseUI() {
 const badge = document.getElementById('licenseBadge');
 if(PrivacyConvert.state.isPro) {
@@ -805,14 +816,16 @@ PrivacyConvert.ui.showToast('Cüzdan bağlantısı reddedildi.', 'error');
 }
 },
 async sendOnChainPayment() {
+const netChoice = document.getElementById('networkSelect').value;
+if (netChoice === 'avalanche_x' || netChoice === 'tron') {
+return PrivacyConvert.ui.showToast('Bu ağ için lütfen cüzdanınızdan manuel transfer yapıp Tx Hash girin.', 'warning');
+}
 if (!PrivacyConvert.state.userWallet) {
 return PrivacyConvert.ui.showToast('Lütfen önce cüzdanınızı bağlayın!', 'warning');
 }
-const netChoice = document.getElementById('networkSelect').value;
 const chainIds = {
 arbitrum: '0xa4b1', // 42161
-polygon: '0x89',   // 137
-avalanche: '0xa86a' // 43114
+polygon: '0x89'    // 137
 };
 const targetChainId = chainIds[netChoice];
 
@@ -832,7 +845,7 @@ const treasuryAddress = document.getElementById('treasuryAddr').value;
 const transactionParameters = {
 to: treasuryAddress,
 from: PrivacyConvert.state.userWallet,
-value: '0x56BC75E2D6310000', // Mock test value
+value: '0x56BC75E2D6310000',
 };
 
 PrivacyConvert.ui.updateProgress(80, 'Cüzdanda imza bekleniyor...');
@@ -861,12 +874,12 @@ PrivacyConvert.ui.showToast('Ağ değişimi veya işlem kullanıcı tarafından 
 },
 async verifyTxHash() {
 const txHash = document.getElementById('txHashInput').value.trim();
-if (!txHash || !txHash.startsWith('0x')) {
+if (!txHash) {
 return PrivacyConvert.ui.showToast('Lütfen geçerli bir işlem hash\'i (TxID) girin!', 'warning');
 }
-PrivacyConvert.ui.updateProgress(50, 'Blokzincirde Tx Hash doğrulanıyor...');
+PrivacyConvert.ui.updateProgress(50, 'Blokzincirde kayıtlar taranıyor...');
 setTimeout(() => {
-const samplePayload = { user: "crypto_user@sovereign.os", plan: "Pro", exp: Date.now() + 86400000 * 365 };
+const samplePayload = { user: "verified_user@sovereign.os", plan: "Pro", exp: Date.now() + 86400000 * 365 };
 const sampleKey = "-----BEGIN SOVEREIGN LICENSE-----\n" + btoa(JSON.stringify(samplePayload)) + "\n-----END SOVEREIGN LICENSE-----";
 document.getElementById('licenseKeyInput').value = sampleKey;
 PrivacyConvert.state.isPro = true;
@@ -874,7 +887,7 @@ localStorage.setItem('sovereign_pro', 'true');
 PrivacyConvert.ui.updateLicenseUI();
 PrivacyConvert.ui.updateProgress(100, 'Onaylandı!');
 PrivacyConvert.ui.toggleLicenseModal(false);
-PrivacyConvert.ui.showToast('Kripto ödemesi doğrulandı! Pro Lisans aktif.');
+PrivacyConvert.ui.showToast('Kripto ödemeniz doğrulandı! Pro Lisans aktif.');
 }, 1500);
 },
 async activateLicense() {
