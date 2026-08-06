@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; worker-src 'self' blob: https://unpkg.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' wss: https: data: blob:;">
-<title>PrivacyConvert Sovereign OS - Pro Suite (Production Hardened v20)</title>
+<title>PrivacyConvert Sovereign OS - Pro Suite (Production Hardened v21)</title>
 <meta name="theme-color" content="#4f46e5">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
@@ -169,10 +169,10 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 </main>
 
 <script>
-// --- ROBUST AIR-GAPPED RESILIENT SERVICE WORKER (v20) ---
+// --- ROBUST AIR-GAPPED RESILIENT SERVICE WORKER (v21) ---
 if ('serviceWorker' in navigator) {
 const swCode = `
-const CACHE_NAME = 'sovereign-core-v20';
+const CACHE_NAME = 'sovereign-core-v21';
 const assets = [
 './',
 location.pathname,
@@ -254,7 +254,7 @@ resolve();
 };
 script.onerror = () => {
 delete this.loadingPromises[url];
-PrivacyConvert.ui.showToast(`${url} yüklenemedi. Air-Gapped önbellek eksik olabilir.`, 'error');
+PrivacyConvert.ui.showToast(`${url} yüklenemedi. Lütfen internet bağlantınızı veya yerel sunucu yapılandırmanızı kontrol edin.`, 'error');
 reject(new Error(`${url} yüklenemedi.`));
 };
 document.head.appendChild(script);
@@ -379,7 +379,7 @@ return text
 const opfsEngine = {
 async getRoot() {
 if ('storage' in navigator && 'getDirectory' in navigator.storage) return await navigator.storage.getDirectory();
-throw new Error("OPFS desteklenmiyor.");
+throw new Error("OPFS desteklenmiyor veya güvenli bağlamda (HTTPS/localhost) değil.");
 },
 async writeFile(name, text, password) {
 const root = await this.getRoot();
@@ -1077,7 +1077,7 @@ const cleanName = f.endsWith('.enc') ? f.slice(0, -4) : f;
 return `<div class="bg-white dark:bg-slate-800 p-2 border rounded flex justify-between items-center"><span>📄 ${f}</span><button onclick="PrivacyConvert.engine.opfsRead('${cleanName}')" class="text-indigo-500 font-bold">Oku</button></div>`;
 }).join('') : '<span class="text-slate-400">Disk boş.</span>';
 } catch(e) {
-document.getElementById('opfsFileList').innerHTML = '<span class="text-red-400">OPFS Erişilemedi</span>';
+document.getElementById('opfsFileList').innerHTML = '<span class="text-red-400">OPFS Erişilemedi (Secure Context Gerekli)</span>';
 }
 },
 async opfsRead(n) {
