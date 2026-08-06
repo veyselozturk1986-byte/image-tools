@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; worker-src 'self' blob: https://unpkg.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' wss: https: data: blob:;">
-<title>PrivacyConvert Sovereign OS - Pro Suite (Ultimate v39.2 - Machine Locked)</title>
+<title>PrivacyConvert Sovereign OS - Pro Suite (Ultimate v39.3)</title>
 <meta name="theme-color" content="#4f46e5">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
@@ -60,7 +60,7 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 <div class="bg-indigo-50 dark:bg-slate-900 p-3.5 rounded-2xl border border-indigo-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-300 space-y-1.5 shadow-inner">
 <div class="font-extrabold text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5">⚡ Machine-Locked Decentralized Activation:</div>
 <p>1. Transfer $49 equivalent to the treasury or verify via Web3 wallet / TxID.</p>
-<p>2. Exported <strong>.lic files</strong> are strictly bound to this computer's hardware/browser fingerprint and cannot be used on other machines.</p>
+<p>2. Exported <strong>.lic files</strong> are strictly bound to this computer's hardware/browser fingerprint and guarantee lifetime recovery.</p>
 </div>
 
 <div class="space-y-3">
@@ -202,8 +202,8 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 </h2>
 <div class="space-y-4 text-xs sm:text-sm">
 <div class="space-y-1">
-<h3 class="font-bold text-slate-800 dark:text-slate-200">Q: How does Machine-Locked .lic backup work?</h3>
-<p class="text-slate-500 dark:text-slate-400">A: When you export a <code class="bg-slate-100 dark:bg-slate-700 px-1 py-0.5 rounded font-mono">.lic</code> file, Sovereign OS embeds a secure cryptographic device fingerprint (<code class="bg-slate-100 dark:bg-slate-700 px-1 py-0.5 rounded font-mono">machineId</code>) into the file. This ensures that the backup file is strictly locked to your computer/browser environment. If someone copies your license file to another machine, the system will detect the fingerprint mismatch and reject it.</p>
+<h3 class="font-bold text-slate-800 dark:text-slate-200">Q: What happens if browser history or cache is cleared? How do .lic backup buttons protect my Pro membership?</h3>
+<p class="text-slate-500 dark:text-slate-400">A: Because Sovereign OS operates 100% client-side with zero cloud telemetry or centralized databases, clearing your browser's history, cache, or local storage (<code class="bg-slate-100 dark:bg-slate-700 px-1 py-0.5 rounded font-mono">localStorage</code>) will reset your local profile to the Free plan. To guarantee that you never lose your purchased Pro membership during such clearing events, the <strong>📥 Export .lic</strong> button allows you to save an offline backup file bound strictly to your device's hardware fingerprint. If your browser data is ever wiped, clicking <strong>📤 Import .lic</strong> and selecting your backup file instantly restores your Pro status offline without needing a new payment.</p>
 </div>
 <div class="space-y-1">
 <h3 class="font-bold text-slate-800 dark:text-slate-200">Q: What technical conditions are required for all tools to work fully functionally?</h3>
@@ -223,7 +223,7 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 
 <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 px-6 text-center text-xs text-slate-500 dark:text-slate-400 space-y-3 mt-auto">
 <div class="flex flex-col sm:flex-row justify-center items-center gap-3">
-<span>PrivacyConvert Sovereign OS &copy; 2026 - Ultimate Sovereign v39.2</span>
+<span>PrivacyConvert Sovereign OS &copy; 2026 - Ultimate Sovereign v39.3</span>
 <span class="hidden sm:inline text-slate-300 dark:text-slate-600">|</span>
 <a href="https://github.com/veyselozturk1986-byte/image-tools" target="_blank" rel="noopener noreferrer" class="font-bold dynamic-text hover:underline flex items-center gap-1">
 🐙 GitHub Repository
@@ -237,10 +237,10 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 </footer>
 
 <script>
-// --- ROBUST AIR-GAPPED RESILIENT SERVICE WORKER (v39.2 Ultimate) ---
+// --- ROBUST AIR-GAPPED RESILIENT SERVICE WORKER (v39.3 Ultimate) ---
 if ('serviceWorker' in navigator) {
 const swCode = `
-const CACHE_NAME = 'sovereign-core-v39.2';
+const CACHE_NAME = 'sovereign-core-v39.3';
 const assets = [
 './',
 location.pathname,
@@ -1173,8 +1173,8 @@ if(b.value.includes('offer')) { await p2pEngine.createAnswer(); } else { await p
 }
 },
 async init() {
-console.log("Ultimate Sovereign OS Core v39.2 Machine-Locked Loaded.");
-await cryptoCore.getDeviceFingerprint(); // Initialize device fingerprint
+console.log("Ultimate Sovereign OS Core v39.3 Loaded.");
+await cryptoCore.getDeviceFingerprint();
 PrivacyConvert.ui.updateLicenseUI();
 const dz = document.getElementById('dropZone'), fi = document.getElementById('fileInput');
 dz.addEventListener('click', () => fi.click());
