@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; worker-src 'self' blob: https://unpkg.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' wss: https: data: blob:;">
-<title>PrivacyConvert Sovereign OS - Pro Suite (Ultimate v40.3 - Fully Patched)</title>
+<title>PrivacyConvert Sovereign OS - Pro Suite (Ultimate v40.4 - Fully Patched)</title>
 <meta name="theme-color" content="#4f46e5">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
@@ -172,7 +172,7 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 </div>
 </div>
 
-<!-- DÜZELTİLMİŞ GRID YAPISI VE İKİNCİ BÖLME ENTEGRASYONU -->
+<!-- GRID YAPISI VE İKİNCİ BÖLME ENTEGRASYONU -->
 <div id="workspaceGrid" class="max-w-3xl mx-auto grid grid-cols-1 gap-6 transition-all duration-300 mb-12">
 <div class="p-6 sm:p-8 bg-white dark:bg-slate-800 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-700 relative">
 <button id="clearBtn" onclick="PrivacyConvert.ui.resetWorkspace(PrivacyConvert.routing.metaData[PrivacyConvert.state.tool])" class="hidden absolute top-6 right-6 text-xs font-bold text-red-500 bg-red-50 dark:bg-red-950/40 px-3 py-2 rounded-lg transition">Reset</button>
@@ -228,7 +228,7 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 
 <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 px-6 text-center text-xs text-slate-500 dark:text-slate-400 space-y-3 mt-auto">
 <div class="flex flex-col sm:flex-row justify-center items-center gap-3">
-<span>PrivacyConvert Sovereign OS &copy; 2026 - Ultimate Sovereign v40.3</span>
+<span>PrivacyConvert Sovereign OS &copy; 2026 - Ultimate Sovereign v40.4</span>
 <span class="hidden sm:inline text-slate-300 dark:text-slate-600">|</span>
 <a href="https://github.com/veyselozturk1986-byte/image-tools" target="_blank" rel="noopener noreferrer" class="font-bold dynamic-text hover:underline flex items-center gap-1">
 🐙 GitHub Repository
@@ -662,8 +662,15 @@ const container = document.getElementById('interactiveWorkspaceContainer'); cont
 container.innerHTML = `<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3"><input type="text" id="passkeyUser" placeholder="Username..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"><button onclick="PrivacyConvert.engine.registerPasskey()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">Register Passkey</button><button onclick="PrivacyConvert.engine.authPasskey()" class="w-full py-2.5 bg-emerald-600 text-white font-bold text-xs rounded-xl">Auth Passkey</button><textarea id="passkeyOutput" class="w-full h-28 bg-slate-900 text-emerald-400 text-xs p-3 rounded-xl font-mono" readonly></textarea></div>`;
 },
 renderRedactUI() {
-const container = document.getElementById('interactiveWorkspaceContainer'); container.classList.remove('hidden');
-container.innerHTML = `<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3 text-center"><input type="file" id="redactFile" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:bg-indigo-50" onchange="PrivacyConvert.engine.loadRedactImage(this)"/><div class="text-[11px] text-slate-500 font-medium">Click and drag over the image to select the area to redact:</div><div class="overflow-auto max-h-96 border rounded-xl inline-block bg-slate-900 relative"><canvas id="redactCanvas" class="max-w-full cursor-crosshair hidden"></canvas></div><button onclick="PrivacyConvert.engine.executeVisualRedact()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl shadow-md hover:opacity-90 transition">Redact Selected Area & Download</button></div>`;
+const container = document.getElementById('interactiveWorkspaceContainer'); 
+container.classList.remove('hidden');
+container.innerHTML = `
+<div class="bg-slate-50 dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3 text-center shadow-inner">
+<input type="file" id="redactFile" accept="image/*" class="w-full text-xs text-slate-500 dark:text-slate-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:font-bold file:bg-indigo-50 file:text-indigo-600 dark:file:bg-slate-800 dark:file:text-indigo-400 cursor-pointer" onchange="PrivacyConvert.engine.loadRedactImage(this)"/>
+<div class="text-xs text-slate-600 dark:text-slate-300 font-semibold px-2">🔒 Secure Area Redaction: Select an image file above, then click and drag directly over any sensitive data on the preview canvas to black it out locally.</div>
+<div class="overflow-auto max-h-96 border border-slate-300 dark:border-slate-600 rounded-xl inline-block bg-slate-900 relative shadow-md"><canvas id="redactCanvas" class="max-w-full cursor-crosshair hidden"></canvas></div>
+<button onclick="PrivacyConvert.engine.executeVisualRedact()" class="w-full py-3 dynamic-bg text-white font-bold text-xs rounded-xl shadow-md hover:opacity-90 transition">Apply Redaction & Download Secure Image</button>
+</div>`;
 },
 renderSignUI() {
 const container = document.getElementById('interactiveWorkspaceContainer'); container.classList.remove('hidden');
@@ -996,7 +1003,7 @@ await p2pEngine.acceptAnswer();
 }
 },
 async init() {
-console.log("Ultimate Sovereign OS Core v40.3 Loaded - Fully Patched & Secured.");
+console.log("Ultimate Sovereign OS Core v40.4 Loaded - Fully Patched & Secured.");
 await cryptoCore.getDeviceFingerprint(); PrivacyConvert.ui.updateLicenseUI();
 const dz = document.getElementById('dropZone'), fi = document.getElementById('fileInput');
 dz.addEventListener('click', () => fi.click()); dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); }); dz.addEventListener('dragleave', e => { e.preventDefault(); dz.classList.remove('drag-over'); });
