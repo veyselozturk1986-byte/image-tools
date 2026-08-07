@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; worker-src 'self' blob: https://unpkg.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' wss: https: data: blob:;">
-<title>PrivacyConvert Sovereign OS - Pro Suite (Ultimate v40.6 - Fully Patched)</title>
+<title>PrivacyConvert Sovereign OS - Pro Suite (Ultimate v40.7 - Fully Patched)</title>
 <meta name="theme-color" content="#4f46e5">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
@@ -172,7 +172,7 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 </div>
 </div>
 
-<!-- DÜZELTİLMİŞ GRID YAPISI VE İKİNCİ BÖLME ENTEGRASYONU -->
+<!-- ÇALIŞMA ALANI VE AÇIKLAMA KUTUSU -->
 <div id="workspaceGrid" class="max-w-3xl mx-auto grid grid-cols-1 gap-6 transition-all duration-300 mb-12">
 <div class="p-6 sm:p-8 bg-white dark:bg-slate-800 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-700 relative">
 <button id="clearBtn" onclick="PrivacyConvert.ui.resetWorkspace(PrivacyConvert.routing.metaData[PrivacyConvert.state.tool])" class="hidden absolute top-6 right-6 text-xs font-bold text-red-500 bg-red-50 dark:bg-red-950/40 px-3 py-2 rounded-lg transition">Reset</button>
@@ -229,7 +229,7 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 
 <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 px-6 text-center text-xs text-slate-500 dark:text-slate-400 space-y-3 mt-auto">
 <div class="flex flex-col sm:flex-row justify-center items-center gap-3">
-<span>PrivacyConvert Sovereign OS &copy; 2026 - Ultimate Sovereign v40.6</span>
+<span>PrivacyConvert Sovereign OS &copy; 2026 - Ultimate Sovereign v40.7</span>
 <span class="hidden sm:inline text-slate-300 dark:text-slate-600">|</span>
 <a href="https://github.com/veyselozturk1986-byte/image-tools" target="_blank" rel="noopener noreferrer" class="font-bold dynamic-text hover:underline flex items-center gap-1">
 🐙 GitHub Repository
@@ -406,7 +406,7 @@ return files;
 };
 
 const p2pEngine = {
-pc: null, dataChannel: null,
+pc: null, dataChannel: null, incomingFile: { name: '', size: 0, received: 0, buffer: [] },
 async init(isInitiator) {
 this.pc = new RTCPeerConnection({ iceServers: [ { urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:stun1.l.google.com:19302' } ] });
 if (isInitiator) {
@@ -427,7 +427,41 @@ this.pc.ondatachannel = e => { this.dataChannel = e.channel; this.setupDataChann
 },
 setupDataChannel() {
 this.dataChannel.onopen = () => { document.getElementById('chatSection')?.classList.remove('hidden'); PrivacyConvert.ui.showToast('P2P Connection Established!'); };
-this.dataChannel.onmessage = e => { const log = document.getElementById('chatLogArea'); if(log) log.value += `\n[Peer]: ${e.data}`; };
+this.dataChannel.onmessage = e => {
+if (typeof e.data === 'string') {
+try {
+const data = JSON.parse(e.data);
+if (data.type === 'file-meta') {
+this.incomingFile = { name: data.name, size: data.size, received: 0, buffer: [] };
+const log = document.getElementById('chatLogArea');
+if(log) log.value += `\n[Peer]: Incoming file "${data.name}" (${data.size} bytes)...`;
+return;
+}
+} catch(err) {}
+const log = document.getElementById('chatLogArea'); if(log) log.value += `\n[Peer]: ${e.data}`;
+} else {
+// Binary chunk for file transfer
+this.incomingFile.buffer.push(e.data);
+this.incomingFile.received += e.data.byteLength;
+const progressContainer = document.getElementById('p2pProgressContainer');
+const progressBar = document.getElementById('p2pProgressBar');
+if(progressContainer) progressContainer.classList.remove('hidden');
+const percent = Math.min(100, Math.round((this.incomingFile.received / this.incomingFile.size) * 100));
+if(progressBar) progressBar.style.width = `${percent}%`;
+
+if (this.incomingFile.received >= this.incomingFile.size) {
+const blob = new Blob(this.incomingFile.buffer);
+const blobUrl = URL.createObjectURL(blob);
+const url = PrivacyConvert.registerObjectUrl(blobUrl);
+const a = document.createElement('a'); a.href = url; a.download = this.incomingFile.name; a.click();
+setTimeout(() => URL.revokeObjectURL(blobUrl), 6000);
+const log = document.getElementById('chatLogArea');
+if(log) log.value += `\n[System]: File "${this.incomingFile.name}" received and downloaded successfully!`;
+PrivacyConvert.ui.showToast('File received successfully!');
+if(progressContainer) setTimeout(() => progressContainer.classList.add('hidden'), 2000);
+}
+}
+};
 },
 async createOffer() {
 const sdp = await this.init(true);
@@ -501,6 +535,41 @@ this.dataChannel.send(msg);
 const log = document.getElementById('chatLogArea'); if(log) log.value += `\n[You]: ${msg}`;
 document.getElementById('chatMsgInput').value = '';
 } else { PrivacyConvert.ui.showToast('Connection not active!', 'error'); }
+},
+sendText(msg) {
+if(!msg) return;
+this.send(msg);
+},
+async sendFile() {
+const fileInput = document.getElementById('p2pFileTransferInput');
+if (!fileInput || !fileInput.files[0]) {
+PrivacyConvert.ui.showToast('Please select a file to send.', 'warning');
+return;
+}
+const file = fileInput.files[0];
+if (this.dataChannel && this.dataChannel.readyState === 'open') {
+const metadata = JSON.stringify({ type: 'file-meta', name: file.name, size: file.size, mime: file.type });
+this.dataChannel.send(metadata);
+const log = document.getElementById('chatLogArea');
+if(log) log.value += `\n[You]: Sending file "${file.name}" (${file.size} bytes)...`;
+const arrayBuffer = await file.arrayBuffer();
+const CHUNK_SIZE = 16384;
+const progressContainer = document.getElementById('p2pProgressContainer');
+const progressBar = document.getElementById('p2pProgressBar');
+if(progressContainer) progressContainer.classList.remove('hidden');
+
+for (let offset = 0; offset < arrayBuffer.byteLength; offset += CHUNK_SIZE) {
+const chunk = arrayBuffer.slice(offset, offset + CHUNK_SIZE);
+this.dataChannel.send(chunk);
+const percent = Math.min(100, Math.round(((offset + chunk.byteLength) / arrayBuffer.byteLength) * 100));
+if(progressBar) progressBar.style.width = `${percent}%`;
+}
+PrivacyConvert.ui.showToast('File sent successfully!');
+fileInput.value = '';
+if(progressContainer) setTimeout(() => progressContainer.classList.add('hidden'), 2000);
+} else {
+PrivacyConvert.ui.showToast('Connection not active!', 'error');
+}
 }
 };
 
@@ -1041,7 +1110,7 @@ await p2pEngine.acceptAnswer();
 }
 },
 async init() {
-console.log("Ultimate Sovereign OS Core v40.6 Loaded - Fully Patched & Secured.");
+console.log("Ultimate Sovereign OS Core v40.7 Loaded - Fully Patched & Secured.");
 await cryptoCore.getDeviceFingerprint(); PrivacyConvert.ui.updateLicenseUI();
 const dz = document.getElementById('dropZone'), fi = document.getElementById('fileInput');
 dz.addEventListener('click', () => fi.click()); dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); }); dz.addEventListener('dragleave', e => { e.preventDefault(); dz.classList.remove('drag-over'); });
