@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; worker-src 'self' blob: https://unpkg.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' wss: https: data: blob:;">
-<title>PrivacyConvert Sovereign OS - Pro Suite (Ultimate v40.5 - Fully Patched)</title>
+<title>PrivacyConvert Sovereign OS - Pro Suite (Ultimate v40.6 - Fully Patched)</title>
 <meta name="theme-color" content="#4f46e5">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
@@ -176,6 +176,7 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 <div id="workspaceGrid" class="max-w-3xl mx-auto grid grid-cols-1 gap-6 transition-all duration-300 mb-12">
 <div class="p-6 sm:p-8 bg-white dark:bg-slate-800 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-700 relative">
 <button id="clearBtn" onclick="PrivacyConvert.ui.resetWorkspace(PrivacyConvert.routing.metaData[PrivacyConvert.state.tool])" class="hidden absolute top-6 right-6 text-xs font-bold text-red-500 bg-red-50 dark:bg-red-950/40 px-3 py-2 rounded-lg transition">Reset</button>
+<div id="toolDescriptionBox" class="text-xs text-slate-600 dark:text-slate-300 font-semibold mb-4 bg-slate-50 dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-inner"></div>
 <div id="interactiveWorkspaceContainer" class="hidden mb-4 w-full"></div>
 <div id="dropZone" class="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-2xl p-10 text-center cursor-pointer hover:border-indigo-500 transition mt-2"><p class="text-slate-800 dark:text-slate-200 font-bold text-lg">Click to browse or drag files here</p></div>
 <input type="file" id="fileInput" class="hidden" multiple />
@@ -228,7 +229,7 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 
 <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 px-6 text-center text-xs text-slate-500 dark:text-slate-400 space-y-3 mt-auto">
 <div class="flex flex-col sm:flex-row justify-center items-center gap-3">
-<span>PrivacyConvert Sovereign OS &copy; 2026 - Ultimate Sovereign v40.5</span>
+<span>PrivacyConvert Sovereign OS &copy; 2026 - Ultimate Sovereign v40.6</span>
 <span class="hidden sm:inline text-slate-300 dark:text-slate-600">|</span>
 <a href="https://github.com/veyselozturk1986-byte/image-tools" target="_blank" rel="noopener noreferrer" class="font-bold dynamic-text hover:underline flex items-center gap-1">
 🐙 GitHub Repository
@@ -531,22 +532,22 @@ registerObjectUrl(url) { this.state.objectUrls.add(url); return url; },
 cleanupObjectUrls() { this.state.objectUrls.forEach(url => { try { URL.revokeObjectURL(url); } catch(e){} }); this.state.objectUrls.clear(); },
 routing: {
 metaData: {
-'live-pii-shield': { type: 'text', title: 'Live PII Shield', pro: false },
-'pii-redactor': { type: 'file', accept: 'application/pdf,image/*,text/plain', multiple: true, title: 'Batch PII Redactor', pro: true },
-'encrypt-tool': { type: 'crypto', accept: '*/*', title: 'AES-256 Encryptor', pro: false },
-'visual-redact': { type: 'interactive-redact', accept: 'image/*', title: 'Visual Redaction', pro: true },
-'ed25519-sign': { type: 'interactive-sign', title: 'ECDSA P-256 Signer', pro: true },
-'webauthn-vault': { type: 'webauthn', title: 'WebAuthn Passkey Vault', pro: false },
-'zkp-validator': { type: 'interactive-zkp', title: 'Hash Commitment Scheme', pro: false },
-'chain-custody': { type: 'file', multiple: true, accept: '*/*', title: 'File Hash Checksum', pro: false },
-'opfs-vault': { type: 'interactive-opfs', title: 'OPFS Encrypted Disk', pro: true },
-'p2p-share': { type: 'interactive-p2p', title: 'P2P WebRTC Transfer', pro: true },
-'meta-scrubber': { type: 'file', multiple: true, accept: 'image/*', title: 'EXIF Scrubber', pro: false },
-'pdf-merge': { type: 'file', accept: 'application/pdf', multiple: true, title: 'PDF Merger', pro: false },
-'pdf-to-png': { type: 'file', accept: 'application/pdf', title: 'PDF to PNG', pro: true },
-'ocr-tool': { type: 'ocr', accept: 'image/*', multiple: true, title: 'Worker OCR', pro: true },
-'doc-diff': { type: 'text', title: 'Contract Diff Engine', pro: false },
-'audit-certificate': { type: 'action', title: 'Generate Audit PDF', pro: true }
+'live-pii-shield': { type: 'text', title: 'Live PII Shield', pro: false, desc: '🛡️ Live PII Shield: Instantly detect and mask sensitive personally identifiable information (PII) like TC ID numbers, emails, phones, and credit cards locally.' },
+'pii-redactor': { type: 'file', accept: 'application/pdf,image/*,text/plain', multiple: true, title: 'Batch PII Redactor', pro: true, desc: '🕶️ Batch PII Redactor: Securely scrub and redact sensitive information from multiple PDF, image, or text files in a batch locally.' },
+'encrypt-tool': { type: 'crypto', accept: '*/*', title: 'AES-256 Encryptor', pro: false, desc: '🔒 AES-256 Encryptor: Encrypt or decrypt files and texts securely using military-grade AES-GCM and PBKDF2 key derivation.' },
+'visual-redact': { type: 'interactive-redact', accept: 'image/*', title: 'Visual Redaction', pro: true, desc: '👁️ Visual Redaction: Select an image file, then click and drag directly over sensitive data on the preview canvas to black it out locally.' },
+'ed25519-sign': { type: 'interactive-sign', title: 'ECDSA P-256 Signer', pro: true, desc: '✒️ ECDSA P-256 Signer: Cryptographically sign document text offline using your browser\'s persistent hardware keypair.' },
+'webauthn-vault': { type: 'webauthn', title: 'WebAuthn Passkey Vault', pro: false, desc: '🔐 WebAuthn Passkey: Register and authenticate locally using hardware security keys or biometrics with zero tracking.' },
+'zkp-validator': { type: 'interactive-zkp', title: 'Hash Commitment Scheme', pro: false, desc: '🛡️ Hash Commitment: Create a hash-based cryptographic commitment while keeping your original secret data completely hidden.' },
+'chain-custody': { type: 'file', multiple: true, accept: '*/*', title: 'File Hash Checksum', pro: false, desc: '⚖️ File Hash Checksum: Calculate SHA-256 cryptographic checksums for files to verify integrity and chain of custody.' },
+'opfs-vault': { type: 'interactive-opfs', title: 'OPFS Encrypted Disk', pro: true, desc: '💽 OPFS Encrypted Disk: Store and encrypt files securely in browser-native private high-performance file storage.' },
+'p2p-share': { type: 'interactive-p2p', title: 'P2P WebRTC Transfer', pro: true, desc: '📡 P2P WebRTC Transfer: Establish a direct, encrypted peer-to-peer connection for zero-server messaging and file sharing.' },
+'meta-scrubber': { type: 'file', multiple: true, accept: 'image/*', title: 'EXIF Scrubber', pro: false, desc: '🧹 EXIF & Meta Scrubber: Automatically strip location tags, timestamps, and metadata from images to preserve visual privacy.' },
+'pdf-merge': { type: 'file', accept: 'application/pdf', multiple: true, title: 'PDF Merger', pro: false, desc: '📚 PDF Merger: Combine multiple PDF documents into a single secure file entirely on the client side.' },
+'pdf-to-png': { type: 'file', accept: 'application/pdf', title: 'PDF to PNG', pro: true, desc: '🖼️ PDF to PNG: Render multi-page PDF documents into individual high-resolution PNG image archives locally.' },
+'ocr-tool': { type: 'ocr', accept: 'image/*', multiple: true, title: 'Worker OCR', pro: true, desc: '📝 Worker OCR: Extract text from images locally using a single-instance browser background worker.' },
+'doc-diff': { type: 'text', title: 'Contract Diff Engine', pro: false, desc: '🔄 Contract Diff Engine: Compare two text blocks or contracts line-by-line to instantly highlight changes and differences.' },
+'audit-certificate': { type: 'action', title: 'Generate Audit PDF', pro: true, desc: '📜 Generate Audit PDF: Generate an instant cryptographic compliance and security audit certificate PDF locally.' }
 },
 navigate(toolId) {
 const meta = this.metaData[toolId];
@@ -629,6 +630,13 @@ PrivacyConvert.state.files = [];
 document.getElementById('dropZone').style.display = 'none';
 document.getElementById('mainInputField').value = ''; document.getElementById('genericTextArea').value = '';
 document.getElementById('interactiveWorkspaceContainer').innerHTML = '';
+
+const descBox = document.getElementById('toolDescriptionBox');
+if (descBox && meta && meta.desc) {
+    descBox.innerText = meta.desc;
+    descBox.classList.remove('hidden');
+}
+
 const fileInput = document.getElementById('fileInput');
 fileInput.accept = meta.accept || '*/*'; fileInput.multiple = meta.multiple || false; fileInput.value = '';
 if (['file', 'crypto', 'ocr'].includes(meta.type)) {
@@ -659,7 +667,7 @@ btnEnc.className = 'flex-1 py-2 px-4 rounded-xl text-xs font-bold bg-slate-200 d
 },
 renderWebAuthnUI() {
 const container = document.getElementById('interactiveWorkspaceContainer'); container.classList.remove('hidden');
-container.innerHTML = `<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3"><div class="text-xs text-slate-600 dark:text-slate-300 font-semibold">🔐 WebAuthn Passkey Vault: Register and authenticate locally using hardware security keys or biometrics with zero tracking.</div><input type="text" id="passkeyUser" placeholder="Username..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"><button onclick="PrivacyConvert.engine.registerPasskey()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">Register Passkey</button><button onclick="PrivacyConvert.engine.authPasskey()" class="w-full py-2.5 bg-emerald-600 text-white font-bold text-xs rounded-xl">Auth Passkey</button><textarea id="passkeyOutput" class="w-full h-28 bg-slate-900 text-emerald-400 text-xs p-3 rounded-xl font-mono" readonly></textarea></div>`;
+container.innerHTML = `<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3"><input type="text" id="passkeyUser" placeholder="Username..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"><button onclick="PrivacyConvert.engine.registerPasskey()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">Register Passkey</button><button onclick="PrivacyConvert.engine.authPasskey()" class="w-full py-2.5 bg-emerald-600 text-white font-bold text-xs rounded-xl">Auth Passkey</button><textarea id="passkeyOutput" class="w-full h-28 bg-slate-900 text-emerald-400 text-xs p-3 rounded-xl font-mono" readonly></textarea></div>`;
 },
 renderRedactUI() {
 const container = document.getElementById('interactiveWorkspaceContainer'); 
@@ -671,19 +679,18 @@ container.innerHTML = `
 <span class="px-3 py-1.5 dynamic-bg text-white rounded-lg text-[11px]">Browse</span>
 <input type="file" id="redactFile" accept="image/*" class="hidden" onchange="document.getElementById('redactFileName').innerText = this.files[0] ? this.files[0].name : 'Choose Image File...'; PrivacyConvert.engine.loadRedactImage(this)"/>
 </label>
-<div class="text-xs text-slate-600 dark:text-slate-300 font-semibold px-2">🔒 Secure Area Redaction: Select an image file above, then click and drag directly over any sensitive data on the preview canvas to black it out locally.</div>
 <div class="overflow-auto max-h-96 border border-slate-300 dark:border-slate-600 rounded-xl inline-block bg-slate-900 relative shadow-md"><canvas id="redactCanvas" class="max-w-full cursor-crosshair hidden"></canvas></div>
 <button onclick="PrivacyConvert.engine.executeVisualRedact()" class="w-full py-3 dynamic-bg text-white font-bold text-xs rounded-xl shadow-md hover:opacity-90 transition">Apply Redaction & Download Secure Image</button>
 </div>`;
 },
 renderSignUI() {
 const container = document.getElementById('interactiveWorkspaceContainer'); container.classList.remove('hidden');
-container.innerHTML = `<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3"><div class="text-xs text-slate-600 dark:text-slate-300 font-semibold">✒️ ECDSA P-256 Signer: Cryptographically sign document text offline using your browser's persistent hardware keypair.</div><textarea id="signInput" placeholder="Document content to sign..." class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white font-mono"></textarea><button onclick="PrivacyConvert.engine.executeSign()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">Sign Document (ECDSA P-256)</button><textarea id="signOutput" class="w-full h-24 bg-slate-900 text-emerald-400 text-xs p-3 rounded-xl font-mono" readonly placeholder="Signature..."></textarea></div>`;
+container.innerHTML = `<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3"><textarea id="signInput" placeholder="Document content to sign..." class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white font-mono"></textarea><button onclick="PrivacyConvert.engine.executeSign()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">Sign Document (ECDSA P-256)</button><textarea id="signOutput" class="w-full h-24 bg-slate-900 text-emerald-400 text-xs p-3 rounded-xl font-mono" readonly placeholder="Signature..."></textarea></div>`;
 },
 renderOpfsUI() {
 const container = document.getElementById('interactiveWorkspaceContainer'); container.classList.remove('hidden');
 let secureWarning = !window.isSecureContext ? `<div class="p-2 bg-amber-100 text-amber-800 rounded-xl text-[11px] mb-2 font-bold">⚠️ Warning: OPFS storage requires HTTPS or localhost (Secure Context).</div>` : '';
-container.innerHTML = `${secureWarning}<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3"><div class="text-xs text-slate-600 dark:text-slate-300 font-semibold">💽 OPFS Encrypted Disk: Store and encrypt files securely in browser-native private high-performance file storage.</div><input type="text" id="opfsFileName" placeholder="File name.txt" class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"><input type="password" id="opfsPassword" placeholder="Encryption Password..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"><textarea id="opfsFileContent" placeholder="Content..." class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white font-mono"></textarea><div class="flex gap-2"><button onclick="PrivacyConvert.engine.opfsSave()" class="flex-1 py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">Save (Encrypted)</button><button onclick="PrivacyConvert.engine.opfsList()" class="flex-1 py-2.5 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white font-bold text-xs rounded-xl">List</button></div><div id="opfsFileList" class="space-y-2 mt-3 max-h-40 overflow-y-auto font-mono text-xs"></div></div>`;
+container.innerHTML = `${secureWarning}<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3"><input type="text" id="opfsFileName" placeholder="File name.txt" class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"><input type="password" id="opfsPassword" placeholder="Encryption Password..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"><textarea id="opfsFileContent" placeholder="Content..." class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white font-mono"></textarea><div class="flex gap-2"><button onclick="PrivacyConvert.engine.opfsSave()" class="flex-1 py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">Save (Encrypted)</button><button onclick="PrivacyConvert.engine.opfsList()" class="flex-1 py-2.5 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white font-bold text-xs rounded-xl">List</button></div><div id="opfsFileList" class="space-y-2 mt-3 max-h-40 overflow-y-auto font-mono text-xs"></div></div>`;
 PrivacyConvert.engine.opfsList();
 },
 renderZkpUI() {
@@ -694,7 +701,6 @@ renderP2PUI() {
 const container = document.getElementById('interactiveWorkspaceContainer'); 
 container.classList.remove('hidden');
 container.innerHTML = `<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-4">
-    <div class="text-xs text-slate-600 dark:text-slate-300 font-semibold">📡 P2P WebRTC Transfer: Establish a direct, encrypted peer-to-peer connection for zero-server messaging and file sharing.</div>
     <div class="flex gap-2">
         <button onclick="p2pEngine.createOffer()" class="flex-1 py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">1. Create Offer</button>
         <button onclick="PrivacyConvert.engine.startP2PAnswer()" class="flex-1 py-2.5 bg-emerald-600 text-white font-bold text-xs rounded-xl">2. Accept/Answer</button>
@@ -1035,7 +1041,7 @@ await p2pEngine.acceptAnswer();
 }
 },
 async init() {
-console.log("Ultimate Sovereign OS Core v40.5 Loaded - Fully Patched & Secured.");
+console.log("Ultimate Sovereign OS Core v40.6 Loaded - Fully Patched & Secured.");
 await cryptoCore.getDeviceFingerprint(); PrivacyConvert.ui.updateLicenseUI();
 const dz = document.getElementById('dropZone'), fi = document.getElementById('fileInput');
 dz.addEventListener('click', () => fi.click()); dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); }); dz.addEventListener('dragleave', e => { e.preventDefault(); dz.classList.remove('drag-over'); });
