@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: blob: data:; script-src 'self''unsafe-inline''unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net; style-src 'self''unsafe-inline'; worker-src 'self' blob: https://unpkg.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' wss: https: data: blob:;">
-<title>PrivacyConvert Sovereign OS - Pro Suite (Ultimate v40.1 - Fully Patched)</title>
+<title>PrivacyConvert Sovereign OS - Pro Suite (Ultimate v40.2 - Fully Patched)</title>
 <meta name="theme-color" content="#4f46e5">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
@@ -127,6 +127,7 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 </div>
 </div>
 
+<!-- GRID YAPISI VE İKİNCİ BÖLME (PANE 2) ENTEGRASYONU -->
 <div id="workspaceGrid" class="max-w-3xl mx-auto grid grid-cols-1 gap-6 transition-all duration-300 mb-12">
 <div class="p-6 sm:p-8 bg-white dark:bg-slate-800 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-700 relative">
 <button id="clearBtn" onclick="PrivacyConvert.ui.resetWorkspace(PrivacyConvert.routing.metaData[PrivacyConvert.state.tool])" class="hidden absolute top-6 right-6 text-xs font-bold text-red-500 bg-red-50 dark:bg-red-950/40 px-3 py-2 rounded-lg transition">Reset</button>
@@ -144,12 +145,14 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 <div id="textInputGroup" class="hidden w-full"><textarea id="mainInputField" class="w-full h-32 p-4 text-sm border rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white focus:outline-none resize-none shadow-inner" placeholder="Enter input text here..."></textarea></div>
 <div id="genericTextBox" class="hidden w-full flex flex-col gap-2"><span class="text-xs font-bold text-slate-500 uppercase">System Output / Logs:</span><textarea id="genericTextArea" class="w-full h-48 bg-slate-900 text-emerald-400 text-sm p-4 rounded-xl border-none focus:outline-none resize-none font-mono shadow-inner" readonly></textarea></div>
 <button id="convertBtn" class="dynamic-bg hover:opacity-90 text-white font-bold py-4 px-6 rounded-2xl shadow-lg transition text-lg flex items-center justify-center gap-3">Execute Secure Process</button>
-</div></div></div>
+</div></div>
 
-<div id="pane2Container" class="hidden p-6 sm:p-8 bg-white dark:bg-slate-800 rounded-3xl shadow-xl border mb-12 max-w-3xl mx-auto">
+<!-- İkinci Bölme (Pane 2) Artık Doğrudan Grid İçerisinde -->
+<div id="pane2Container" class="hidden p-6 sm:p-8 bg-white dark:bg-slate-800 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-700 flex flex-col">
 <div class="text-center font-bold text-sm text-slate-400 mb-4 uppercase">Secondary Workspace</div>
-<textarea id="pane2Input" class="w-full h-48 p-4 text-sm border rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white focus:outline-none resize-none font-mono mb-4" placeholder="Secondary text for comparison..."></textarea>
+<textarea id="pane2Input" class="w-full h-48 p-4 text-sm border rounded-xl bg-slate-50 dark:bg-slate-900 dark:text-white focus:outline-none resize-none font-mono mb-4 flex-grow" placeholder="Secondary text for comparison..."></textarea>
 <button onclick="PrivacyConvert.engine.executePane2()" class="w-full py-3 rounded-xl dynamic-bg text-white font-bold text-sm shadow-md">Compare & Diff</button>
+</div>
 </div>
 
 <section class="max-w-3xl mx-auto mb-12 bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-3xl shadow-xl border border-slate-200 dark:border-slate-700 space-y-6">
@@ -162,7 +165,7 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 </div></section></main>
 
 <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 px-6 text-center text-xs text-slate-500 dark:text-slate-400 space-y-3 mt-auto">
-<div class="flex flex-col sm:flex-row justify-center items-center gap-3"><span>PrivacyConvert Sovereign OS &copy; 2026 - Ultimate Sovereign v40.1</span><span class="hidden sm:inline text-slate-300 dark:text-slate-600">|</span><a href="https://github.com/veyselozturk1986-byte/image-tools" target="_blank" rel="noopener noreferrer" class="font-bold dynamic-text hover:underline flex items-center gap-1">🐙 GitHub Repository</a><span class="hidden sm:inline text-slate-300 dark:text-slate-600">|</span><a href="#privacy" onclick="alert('Privacy Statement: 100% Client-Side execution. No data is stored or transmitted externally. Your privacy is mathematically guaranteed.'); return false;" class="font-bold text-slate-600 dark:text-slate-300 hover:underline">🔒 Privacy Policy</a></div>
+<div class="flex flex-col sm:flex-row justify-center items-center gap-3"><span>PrivacyConvert Sovereign OS &copy; 2026 - Ultimate Sovereign v40.2</span><span class="hidden sm:inline text-slate-300 dark:text-slate-600">|</span><a href="https://github.com/veyselozturk1986-byte/image-tools" target="_blank" rel="noopener noreferrer" class="font-bold dynamic-text hover:underline flex items-center gap-1">🐙 GitHub Repository</a><span class="hidden sm:inline text-slate-300 dark:text-slate-600">|</span><a href="#privacy" onclick="alert('Privacy Statement: 100% Client-Side execution. No data is stored or transmitted externally. Your privacy is mathematically guaranteed.'); return false;" class="font-bold text-slate-600 dark:text-slate-300 hover:underline">🔒 Privacy Policy</a></div>
 <p>100% Client-Side & Air-Gapped Security Architecture. Zero External Telemetry.</p></footer>
 
 <script>
@@ -386,7 +389,19 @@ toggleTheme() {const isDark = document.documentElement.classList.toggle('dark');
 toggleLicenseModal(show) {const m = document.getElementById('licenseModal');if(show) { m.classList.remove('hidden'); this.updateTreasuryDisplay(); } else { m.classList.add('hidden'); }},
 updateTreasuryDisplay() {const net = document.getElementById('networkSelect').value;const addrs = {usdt_evm: '0x2e08c361e00bb892bc99b6688d2948fcc3600b65', arbitrum: '0x2e08c361e00bb892bc99b6688d2948fcc3600b65',polygon: '0x2e08c361e00bb892bc99b6688d2948fcc3600b65', avalanche_x: 'X-avax16qqvf3ze08wglq0ctfr2869j8nqxcdthjq53ws',tron: 'TAoLwpMj2H9ayMatgsCQAuFsecFYoMbdLB'};document.getElementById('treasuryAddr').value = addrs[net] || '0x2e08c361e00bb892bc99b6688d2948fcc3600b65';PrivacyConvert.engine.fetchDynamicPrice(net);},
 updateLicenseUI() {const badge = document.getElementById('licenseBadge');if(PrivacyConvert.state.isPro) {badge.innerText = 'PRO MEMBER'; badge.className = 'text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-500 text-white shadow-sm';} else {badge.innerText = 'FREE PLAN'; badge.className = 'text-[10px] font-bold px-2.5 py-1 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300';}},
-toggleSplitScreen() {PrivacyConvert.state.splitScreenActive = !PrivacyConvert.state.splitScreenActive;const pane2 = document.getElementById('pane2Container'), grid = document.getElementById('workspaceGrid');if (PrivacyConvert.state.splitScreenActive) {pane2.classList.remove('hidden'); grid.classList.remove('max-w-3xl'); grid.classList.add('max-w-6xl', 'lg:grid-cols-2');} else {pane2.classList.add('hidden'); grid.classList.remove('max-w-6xl', 'lg:grid-cols-2'); grid.classList.add('max-w-3xl');}},
+toggleSplitScreen() {
+    PrivacyConvert.state.splitScreenActive = !PrivacyConvert.state.splitScreenActive;
+    const pane2 = document.getElementById('pane2Container'), grid = document.getElementById('workspaceGrid');
+    if (PrivacyConvert.state.splitScreenActive) {
+        pane2.classList.remove('hidden'); 
+        grid.classList.remove('max-w-3xl'); 
+        grid.classList.add('max-w-6xl', 'lg:grid-cols-2');
+    } else {
+        pane2.classList.add('hidden'); 
+        grid.classList.remove('max-w-6xl', 'lg:grid-cols-2'); 
+        grid.classList.add('max-w-3xl');
+    }
+},
 handleFiles(files) {PrivacyConvert.state.files = Array.from(files).map(f => ({ file: f, status: 'Ready' }));document.getElementById('dropZone').style.display = 'none';document.getElementById('actionArea').classList.remove('hidden');document.getElementById('clearBtn').classList.remove('hidden');document.getElementById('fileListContainer').innerHTML = PrivacyConvert.state.files.map(f => `<div class="p-2 bg-white dark:bg-slate-800 rounded border text-xs">📄 ${f.file.name}</div>`).join('');this.showToast(`${PrivacyConvert.state.files.length} file(s) loaded`);},
 resetWorkspace(meta) {
     PrivacyConvert.cleanupObjectUrls();
@@ -524,7 +539,7 @@ async startP2PAnswer() {
 }
 },
 
-async init() {console.log("Ultimate Sovereign OS Core v40.1 Loaded - Fully Patched & Secured.");await cryptoCore.getDeviceFingerprint(); PrivacyConvert.ui.updateLicenseUI();const dz = document.getElementById('dropZone'), fi = document.getElementById('fileInput');dz.addEventListener('click', () => fi.click()); dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); }); dz.addEventListener('dragleave', e => { e.preventDefault(); dz.classList.remove('drag-over'); });dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('drag-over'); if(e.dataTransfer.files.length) PrivacyConvert.ui.handleFiles(e.dataTransfer.files); });fi.addEventListener('change', e => PrivacyConvert.ui.handleFiles(e.target.files));document.getElementById('convertBtn').addEventListener('click', () => this.engine.executeTool());this.routing.navigate('live-pii-shield');}
+async init() {console.log("Ultimate Sovereign OS Core v40.2 Loaded - Fully Patched & Secured.");await cryptoCore.getDeviceFingerprint(); PrivacyConvert.ui.updateLicenseUI();const dz = document.getElementById('dropZone'), fi = document.getElementById('fileInput');dz.addEventListener('click', () => fi.click()); dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); }); dz.addEventListener('dragleave', e => { e.preventDefault(); dz.classList.remove('drag-over'); });dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('drag-over'); if(e.dataTransfer.files.length) PrivacyConvert.ui.handleFiles(e.dataTransfer.files); });fi.addEventListener('change', e => PrivacyConvert.ui.handleFiles(e.target.files));document.getElementById('convertBtn').addEventListener('click', () => this.engine.executeTool());this.routing.navigate('live-pii-shield');}
 };
 
 window.PrivacyConvert = PrivacyConvert;
