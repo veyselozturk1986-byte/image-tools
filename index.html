@@ -4,7 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; worker-src 'self' blob: https://unpkg.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' wss: https: data: blob:;">
-    <title>PrivacyConvert Sovereign OS - Pro Suite (Ultimate v40.9 - Fully Patched & Optimized)</title>
+    
+    <!-- SEO & Search Engine Optimization Meta Tags -->
+    <meta name="description" content="KVKK ve GDPR uyumlu, internet gerektirmeyen 100% istemci tarafı çalışan air-gapped gizlilik, şifreleme ve belge araçları paketi.">
+    <meta name="keywords" content="yerel pdf birleştirici, kvkk uyumlu pii maskeleme, air-gapped aes şifreleme, client-side ocr, exifsiz resim temizleme">
+    <meta name="author" content="Veysel Öztürk">
+
+    <title>PrivacyConvert Sovereign OS - Pro Suite (Ultimate v40.9 - Fully Patched & SEO Optimized)</title>
     <meta name="theme-color" content="#4f46e5">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
@@ -13,7 +19,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <script>
-        // PATCHED: PDF.js Worker cross-origin fix via Blob URL wrapper for seamless rendering
+        // PDF.js Worker cross-origin fix via Blob URL wrapper
         const workerBlob = new Blob([`importScripts('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js');`], { type: 'text/javascript' });
         pdfjsLib.GlobalWorkerOptions.workerSrc = URL.createObjectURL(workerBlob);
 
@@ -336,7 +342,7 @@
                 let machineId = localStorage.getItem('sovereign_machine_id');
                 if (!machineId) {
                     const nav = window.navigator; const screen = window.screen;
-                    // PATCHED: Removed randomUUID() to ensure deterministic hardware fingerprinting for .lic restoration
+                    // Deterministic hardware fingerprint for reliable .lic restoration
                     const raw = [nav.userAgent, nav.language, nav.hardwareConcurrency || '4', screen.width + 'x' + screen.height, Intl.DateTimeFormat().resolvedOptions().timeZone].join('|');
                     machineId = await this.sha256(raw);
                     localStorage.setItem('sovereign_machine_id', machineId);
@@ -433,7 +439,7 @@
                     await this.pc.setLocalDescription(offer);
                     return new Promise(resolve => {
                         let resolved = false;
-                        const checkState = () => { if (!resolved && (this.pc.iceGatheringState === 'complete' || this.pc.localDescription)) { resolved = true; resolve(JSON.stringify(this.pc.localDescription)); } };
+                        const checkState = () => { if (!resolved && this.pc.iceGatheringState === 'complete') { resolved = true; resolve(JSON.stringify(this.pc.localDescription)); } };
                         this.pc.onicegatheringstatechange = () => checkState();
                         this.pc.onicecandidate = e => { if (!e.candidate) checkState(); };
                         setTimeout(checkState, 3000);
@@ -512,7 +518,7 @@
                 return new Promise(resolve => {
                     let resolved = false;
                     const checkState = () => {
-                        if (!resolved && (this.pc.iceGatheringState === 'complete' || this.pc.localDescription)) {
+                        if (!resolved && this.pc.iceGatheringState === 'complete') {
                             resolved = true;
                             box.value = JSON.stringify(this.pc.localDescription);
                             try {
@@ -630,9 +636,9 @@
             },
             routing: {
                 metaData: {
-                    'live-pii-shield': { type: 'text', title: 'Live PII Shield', pro: false, desc: '🛡️ Live PII Shield: Instantly detect and mask sensitive personally identifiable information (PII) like TC ID numbers, emails, phones, and credit cards locally.' },
+                    'live-pii-shield': { type: 'text', title: 'Live PII Shield', pro: false, desc: '🛡️ KVKK & GDPR Compliant: Instantly detect and mask sensitive personally identifiable information (PII) like TC ID numbers, emails, phones, and credit cards locally with zero cloud upload.' },
                     'pii-redactor': { type: 'file', accept: 'application/pdf,image/*,text/plain', multiple: true, title: 'Batch PII Redactor', pro: true, desc: '🕶️ Batch PII Redactor: Securely scrub and redact sensitive information from multiple PDF, image, or text files in a batch locally.' },
-                    'encrypt-tool': { type: 'crypto', accept: '*/*', title: 'AES-256 Encryptor', pro: false, desc: '🔒 AES-256 Encryptor: Encrypt or decrypt files and texts securely using military-grade AES-GCM and PBKDF2 key derivation.' },
+                    'encrypt-tool': { type: 'crypto', accept: '*/*', title: 'AES-256 Encryptor', pro: false, desc: '🔒 Air-Gapped AES-256 Encryptor: Encrypt or decrypt files and texts securely offline using military-grade AES-GCM and PBKDF2 key derivation.' },
                     'visual-redact': { type: 'interactive-redact', accept: 'image/*', title: 'Visual Redaction', pro: true, desc: '👁️ Visual Redaction: Select an image file, then click and drag directly over sensitive data on the preview canvas to black it out locally.' },
                     'ed25519-sign': { type: 'interactive-sign', title: 'ECDSA P-256 Signer', pro: true, desc: '✒️ ECDSA P-256 Signer: Cryptographically sign document text offline using your browser\'s persistent hardware keypair.' },
                     'webauthn-vault': { type: 'webauthn', title: 'WebAuthn Passkey Vault', pro: false, desc: '🔐 WebAuthn Passkey: Register and authenticate locally using hardware security keys or biometrics with zero tracking.' },
@@ -641,7 +647,7 @@
                     'opfs-vault': { type: 'interactive-opfs', title: 'OPFS Encrypted Disk', pro: true, desc: '💽 OPFS Encrypted Disk: Store and encrypt files securely in browser-native private high-performance file storage.' },
                     'p2p-share': { type: 'interactive-p2p', title: 'P2P WebRTC Transfer', pro: true, desc: '📡 P2P WebRTC Transfer: Establish a direct, encrypted peer-to-peer connection for zero-server messaging and file sharing.' },
                     'meta-scrubber': { type: 'file', multiple: true, accept: 'image/*', title: 'EXIF Scrubber', pro: false, desc: '🧹 EXIF & Meta Scrubber: Automatically strip location tags, timestamps, and metadata from images to preserve visual privacy.' },
-                    'pdf-merge': { type: 'file', accept: 'application/pdf', multiple: true, title: 'PDF Merger', pro: false, desc: '📚 PDF Merger: Combine multiple PDF documents into a single secure file entirely on the client side.' },
+                    'pdf-merge': { type: 'file', accept: 'application/pdf', multiple: true, title: 'PDF Merger', pro: false, desc: '📚 Local PDF Merger: Combine multiple PDF documents into a single secure file entirely on the client side without uploading.' },
                     'pdf-to-png': { type: 'file', accept: 'application/pdf', title: 'PDF to PNG', pro: true, desc: '🖼️ PDF to PNG: Render multi-page PDF documents into individual high-resolution PNG image archives locally.' },
                     'ocr-tool': { type: 'ocr', accept: 'image/*', multiple: true, title: 'Worker OCR', pro: true, desc: '📝 Worker OCR: Extract text from images locally using a single-instance browser background worker.' },
                     'doc-diff': { type: 'text', title: 'Contract Diff Engine', pro: false, desc: '🔄 Contract Diff Engine: Compare two text blocks or contracts line-by-line to instantly highlight changes and differences.' },
@@ -797,7 +803,7 @@
                 },
                 renderP2PUI() {
                     const container = document.getElementById('interactiveWorkspaceContainer'); container.classList.remove('hidden');
-                    container.innerHTML = `<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-4"><div class="flex gap-2"><button onclick="p2pEngine.createOffer()" class="flex-1 py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">1. Create Offer</button><button onclick="PrivacyConvert.engine.startP2PAnswer()" class="flex-1 py-2.5 bg-emerald-600 text-white font-bold text-xs rounded-xl">2. Accept/Answer</button></div><textarea id="p2pSignalBox" placeholder="Paste WebRTC SDP here..." class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs font-mono dark:text-white"></textarea><div id="p2pQrContainer" class="hidden flex justify-center p-3 bg-white rounded-xl shadow-inner max-w-[200px] mx-auto"></div><div id="chatSection" class="hidden space-y-3 mt-4 border-t border-slate-200 dark:border-slate-700 pt-4"><textarea id="chatLogArea" class="w-full h-32 bg-slate-900 text-emerald-400 text-xs p-3 rounded-xl border-none font-mono" readonly></textarea><div class="flex flex-col gap-2"><div class="flex gap-2"><input type="text" id="chatMsgInput" placeholder="Type a message..." class="flex-1 p-2 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"><button onclick="p2pEngine.sendText(document.getElementById('chatMsgInput').value)" class="py-2 px-4 dynamic-bg text-white font-bold text-xs rounded-xl">Send Text</button></div><div class="flex gap-2 items-center bg-white dark:bg-slate-800 p-2 rounded-xl border"><input type="file" id="p2pFileTransferInput" class="flex-1 text-xs text-slate-500 file:mr-2 file:py-1 file:px-3 file:rounded-lg file:bg-slate-150 file:border-0 dark:file:bg-slate-700 dark:file:text-white"><button onclick="p2pEngine.sendFile()" class="py-2 px-4 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs rounded-xl whitespace-nowrap">Send File</button></div></div><div id="p2pProgressContainer" class="hidden w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1.5 mt-1"><div id="p2pProgressBar" class="dynamic-bg h-1.5 rounded-full transition-all duration-300" style="width: 0%"></div></div></div></div>`;
+                    container.innerHTML = `<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-4"><div class="flex gap-2"><button onclick="p2pEngine.createOffer()" class="flex-1 py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">1. Create Offer</button><button onclick="PrivacyConvert.engine.startP2PAnswer()" class="flex-1 py-2.5 bg-emerald-600 text-white font-bold text-xs rounded-xl">2. Accept/Answer</button></div><textarea id="p2pSignalBox" placeholder="Paste WebRTC SDP here..." class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs font-mono dark:text-white"></textarea><div id="p2pQrContainer" class="hidden flex justify-center p-3 bg-white rounded-xl shadow-inner max-w-[200px] mx-auto"></div><div id="chatSection" class="hidden space-y-3 mt-4 border-t border-slate-200 dark:border-slate-700 pt-4"><textarea id="chatLogArea" class="w-full h-32 bg-slate-900 text-emerald-400 text-xs p-3 rounded-xl border-none font-mono" readonly></textarea><div class="flex flex-col gap-2"><div class="flex gap-2"><input type="text" id="chatMsgInput" placeholder="Type a message..." class="flex-1 p-2 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"><button onclick="p2pEngine.sendText(document.getElementById('chatMsgInput').value)" class="py-2 px-4 dynamic-bg text-white font-bold text-xs rounded-xl">Send Text</button></div><div class="flex gap-2 items-center bg-white dark:bg-slate-800 p-2 rounded-xl border"><input type="file" id="p2pFileTransferInput" class="flex-1 text-xs text-slate-500 file:mr-2 file:py-1 file:px-3 file:rounded-lg file:bg-slate-100 file:border-0 dark:file:bg-slate-700 dark:file:text-white"><button onclick="p2pEngine.sendFile()" class="py-2 px-4 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs rounded-xl whitespace-nowrap">Send File</button></div></div><div id="p2pProgressContainer" class="hidden w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1.5 mt-1"><div id="p2pProgressBar" class="dynamic-bg h-1.5 rounded-full transition-all duration-300" style="width: 0%"></div></div></div></div>`;
                 }
             },
             engine: {
@@ -1013,9 +1019,20 @@
                             }
                             if (PrivacyConvert.state.cryptoMode === 'encrypt') {
                                 const enc = await cryptoCore.encryptBinary(new TextEncoder().encode(textInput).buffer, pwd);
-                                outputBox.value = `-----BEGIN ENCRYPTED-----\n${btoa(String.fromCharCode(...new Uint8Array(enc)))}\n-----END ENCRYPTED-----`;
+                                const uintArray = new Uint8Array(enc);
+                                let binaryStr = '';
+                                for (let i = 0; i < uintArray.byteLength; i++) {
+                                    binaryStr += String.fromCharCode(uintArray[i]);
+                                }
+                                outputBox.value = `-----BEGIN ENCRYPTED-----\n${btoa(binaryStr)}\n-----END ENCRYPTED-----`;
                             } else {
-                                const dec = await cryptoCore.decryptBinary(new Uint8Array([...atob(textInput.replace(/-----(BEGIN|END).*?-----/g, '').trim())].map(c=>c.charCodeAt(0))).buffer, pwd);
+                                const binaryStr = atob(textInput.replace(/-----(BEGIN|END).*?-----/g, '').replace(/\s+/g, ''));
+                                const len = binaryStr.length;
+                                const bytes = new Uint8Array(len);
+                                for (let i = 0; i < len; i++) {
+                                    bytes[i] = binaryStr.charCodeAt(i);
+                                }
+                                const dec = await cryptoCore.decryptBinary(bytes.buffer, pwd);
                                 outputBox.value = new TextDecoder().decode(dec);
                             }
                             PrivacyConvert.ui.showToast('Crypto complete!');
@@ -1102,7 +1119,11 @@
                     if(decodedValue.includes('offer')) { await p2pEngine.createAnswer(); } else { await p2pEngine.acceptAnswer(); }
                 },
                 async init() {
-                    console.log("Ultimate Sovereign OS Core v40.9 Loaded - Fully Patched & Secured.");
+                    console.log("Ultimate Sovereign OS Core v40.9 Loaded - Fully Patched, Secured & SEO Optimized.");
+                    
+                    window.addEventListener('dragover', e => e.preventDefault());
+                    window.addEventListener('drop', e => e.preventDefault());
+
                     await cryptoCore.getDeviceFingerprint(); 
                     PrivacyConvert.ui.updateLicenseUI();
                     
