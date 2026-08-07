@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; worker-src 'self' blob: https://unpkg.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' wss: https: data: blob:;">
-<title>PrivacyConvert Sovereign OS - Pro Suite (Ultimate v40.4 - Fully Patched)</title>
+<title>PrivacyConvert Sovereign OS - Pro Suite (Ultimate v40.5 - Fully Patched)</title>
 <meta name="theme-color" content="#4f46e5">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
@@ -172,7 +172,7 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 </div>
 </div>
 
-<!-- GRID YAPISI VE İKİNCİ BÖLME ENTEGRASYONU -->
+<!-- DÜZELTİLMİŞ GRID YAPISI VE İKİNCİ BÖLME ENTEGRASYONU -->
 <div id="workspaceGrid" class="max-w-3xl mx-auto grid grid-cols-1 gap-6 transition-all duration-300 mb-12">
 <div class="p-6 sm:p-8 bg-white dark:bg-slate-800 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-700 relative">
 <button id="clearBtn" onclick="PrivacyConvert.ui.resetWorkspace(PrivacyConvert.routing.metaData[PrivacyConvert.state.tool])" class="hidden absolute top-6 right-6 text-xs font-bold text-red-500 bg-red-50 dark:bg-red-950/40 px-3 py-2 rounded-lg transition">Reset</button>
@@ -228,7 +228,7 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 
 <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 px-6 text-center text-xs text-slate-500 dark:text-slate-400 space-y-3 mt-auto">
 <div class="flex flex-col sm:flex-row justify-center items-center gap-3">
-<span>PrivacyConvert Sovereign OS &copy; 2026 - Ultimate Sovereign v40.4</span>
+<span>PrivacyConvert Sovereign OS &copy; 2026 - Ultimate Sovereign v40.5</span>
 <span class="hidden sm:inline text-slate-300 dark:text-slate-600">|</span>
 <a href="https://github.com/veyselozturk1986-byte/image-tools" target="_blank" rel="noopener noreferrer" class="font-bold dynamic-text hover:underline flex items-center gap-1">
 🐙 GitHub Repository
@@ -659,14 +659,18 @@ btnEnc.className = 'flex-1 py-2 px-4 rounded-xl text-xs font-bold bg-slate-200 d
 },
 renderWebAuthnUI() {
 const container = document.getElementById('interactiveWorkspaceContainer'); container.classList.remove('hidden');
-container.innerHTML = `<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3"><input type="text" id="passkeyUser" placeholder="Username..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"><button onclick="PrivacyConvert.engine.registerPasskey()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">Register Passkey</button><button onclick="PrivacyConvert.engine.authPasskey()" class="w-full py-2.5 bg-emerald-600 text-white font-bold text-xs rounded-xl">Auth Passkey</button><textarea id="passkeyOutput" class="w-full h-28 bg-slate-900 text-emerald-400 text-xs p-3 rounded-xl font-mono" readonly></textarea></div>`;
+container.innerHTML = `<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3"><div class="text-xs text-slate-600 dark:text-slate-300 font-semibold">🔐 WebAuthn Passkey Vault: Register and authenticate locally using hardware security keys or biometrics with zero tracking.</div><input type="text" id="passkeyUser" placeholder="Username..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"><button onclick="PrivacyConvert.engine.registerPasskey()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">Register Passkey</button><button onclick="PrivacyConvert.engine.authPasskey()" class="w-full py-2.5 bg-emerald-600 text-white font-bold text-xs rounded-xl">Auth Passkey</button><textarea id="passkeyOutput" class="w-full h-28 bg-slate-900 text-emerald-400 text-xs p-3 rounded-xl font-mono" readonly></textarea></div>`;
 },
 renderRedactUI() {
 const container = document.getElementById('interactiveWorkspaceContainer'); 
 container.classList.remove('hidden');
 container.innerHTML = `
 <div class="bg-slate-50 dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3 text-center shadow-inner">
-<input type="file" id="redactFile" accept="image/*" class="w-full text-xs text-slate-500 dark:text-slate-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:font-bold file:bg-indigo-50 file:text-indigo-600 dark:file:bg-slate-800 dark:file:text-indigo-400 cursor-pointer" onchange="PrivacyConvert.engine.loadRedactImage(this)"/>
+<label class="block w-full cursor-pointer bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl p-3 text-xs text-slate-600 dark:text-slate-300 font-bold hover:border-indigo-500 transition flex items-center justify-between shadow-sm">
+<span id="redactFileName">Choose Image File...</span>
+<span class="px-3 py-1.5 dynamic-bg text-white rounded-lg text-[11px]">Browse</span>
+<input type="file" id="redactFile" accept="image/*" class="hidden" onchange="document.getElementById('redactFileName').innerText = this.files[0] ? this.files[0].name : 'Choose Image File...'; PrivacyConvert.engine.loadRedactImage(this)"/>
+</label>
 <div class="text-xs text-slate-600 dark:text-slate-300 font-semibold px-2">🔒 Secure Area Redaction: Select an image file above, then click and drag directly over any sensitive data on the preview canvas to black it out locally.</div>
 <div class="overflow-auto max-h-96 border border-slate-300 dark:border-slate-600 rounded-xl inline-block bg-slate-900 relative shadow-md"><canvas id="redactCanvas" class="max-w-full cursor-crosshair hidden"></canvas></div>
 <button onclick="PrivacyConvert.engine.executeVisualRedact()" class="w-full py-3 dynamic-bg text-white font-bold text-xs rounded-xl shadow-md hover:opacity-90 transition">Apply Redaction & Download Secure Image</button>
@@ -674,12 +678,12 @@ container.innerHTML = `
 },
 renderSignUI() {
 const container = document.getElementById('interactiveWorkspaceContainer'); container.classList.remove('hidden');
-container.innerHTML = `<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3"><textarea id="signInput" placeholder="Document content to sign..." class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white font-mono"></textarea><button onclick="PrivacyConvert.engine.executeSign()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">Sign Document (ECDSA P-256)</button><textarea id="signOutput" class="w-full h-24 bg-slate-900 text-emerald-400 text-xs p-3 rounded-xl font-mono" readonly placeholder="Signature..."></textarea></div>`;
+container.innerHTML = `<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3"><div class="text-xs text-slate-600 dark:text-slate-300 font-semibold">✒️ ECDSA P-256 Signer: Cryptographically sign document text offline using your browser's persistent hardware keypair.</div><textarea id="signInput" placeholder="Document content to sign..." class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white font-mono"></textarea><button onclick="PrivacyConvert.engine.executeSign()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">Sign Document (ECDSA P-256)</button><textarea id="signOutput" class="w-full h-24 bg-slate-900 text-emerald-400 text-xs p-3 rounded-xl font-mono" readonly placeholder="Signature..."></textarea></div>`;
 },
 renderOpfsUI() {
 const container = document.getElementById('interactiveWorkspaceContainer'); container.classList.remove('hidden');
 let secureWarning = !window.isSecureContext ? `<div class="p-2 bg-amber-100 text-amber-800 rounded-xl text-[11px] mb-2 font-bold">⚠️ Warning: OPFS storage requires HTTPS or localhost (Secure Context).</div>` : '';
-container.innerHTML = `${secureWarning}<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3"><input type="text" id="opfsFileName" placeholder="File name.txt" class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"><input type="password" id="opfsPassword" placeholder="Encryption Password..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"><textarea id="opfsFileContent" placeholder="Content..." class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white font-mono"></textarea><div class="flex gap-2"><button onclick="PrivacyConvert.engine.opfsSave()" class="flex-1 py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">Save (Encrypted)</button><button onclick="PrivacyConvert.engine.opfsList()" class="flex-1 py-2.5 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white font-bold text-xs rounded-xl">List</button></div><div id="opfsFileList" class="space-y-2 mt-3 max-h-40 overflow-y-auto font-mono text-xs"></div></div>`;
+container.innerHTML = `${secureWarning}<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3"><div class="text-xs text-slate-600 dark:text-slate-300 font-semibold">💽 OPFS Encrypted Disk: Store and encrypt files securely in browser-native private high-performance file storage.</div><input type="text" id="opfsFileName" placeholder="File name.txt" class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"><input type="password" id="opfsPassword" placeholder="Encryption Password..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"><textarea id="opfsFileContent" placeholder="Content..." class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white font-mono"></textarea><div class="flex gap-2"><button onclick="PrivacyConvert.engine.opfsSave()" class="flex-1 py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">Save (Encrypted)</button><button onclick="PrivacyConvert.engine.opfsList()" class="flex-1 py-2.5 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white font-bold text-xs rounded-xl">List</button></div><div id="opfsFileList" class="space-y-2 mt-3 max-h-40 overflow-y-auto font-mono text-xs"></div></div>`;
 PrivacyConvert.engine.opfsList();
 },
 renderZkpUI() {
@@ -687,8 +691,36 @@ const container = document.getElementById('interactiveWorkspaceContainer'); cont
 container.innerHTML = `<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-3"><p class="text-[11px] text-slate-400 mb-2">Cryptographic Hash Commitment Scheme: Create a hash-based commitment while keeping the data secret.</p><input type="text" id="zkpSecret" placeholder="Your Secret Data..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"><button onclick="PrivacyConvert.engine.zkpCommit()" class="w-full py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">Commit</button><textarea id="zkpResultBox" class="w-full h-24 bg-slate-900 text-emerald-400 text-xs p-3 rounded-xl font-mono" readonly></textarea><hr><input type="text" id="zkpVerifySecret" placeholder="Verify Secret..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"><input type="text" id="zkpVerifySalt" placeholder="Salt..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white font-mono"><input type="text" id="zkpVerifyTarget" placeholder="Target Hash..." class="w-full p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white font-mono"><button onclick="PrivacyConvert.engine.zkpVerify()" class="w-full py-2.5 bg-emerald-600 text-white font-bold text-xs rounded-xl">Verify Commitment</button></div>`;
 },
 renderP2PUI() {
-const container = document.getElementById('interactiveWorkspaceContainer'); container.classList.remove('hidden');
-container.innerHTML = `<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-4"><div class="flex gap-2"><button onclick="p2pEngine.createOffer()" class="flex-1 py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">1. Create Offer</button><button onclick="PrivacyConvert.engine.startP2PAnswer()" class="flex-1 py-2.5 bg-emerald-600 text-white font-bold text-xs rounded-xl">2. Accept/Answer</button></div><textarea id="p2pSignalBox" placeholder="Paste WebRTC SDP here..." class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs font-mono dark:text-white"></textarea><div id="p2pQrContainer" class="hidden flex justify-center p-3 bg-white rounded-xl shadow-inner max-w-[200px] mx-auto"></div><div id="chatSection" class="hidden space-y-2"><textarea id="chatLogArea" class="w-full h-32 bg-slate-900 text-emerald-400 text-xs p-3 rounded-xl border-none font-mono" readonly></textarea><div class="flex gap-2"><input type="text" id="chatMsgInput" placeholder="Message..." class="flex-1 p-2 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white"><button onclick="p2pEngine.send(document.getElementById('chatMsgInput').value)" class="py-2 px-4 dynamic-bg text-white font-bold text-xs rounded-xl">Send</button></div></div></div>`;
+const container = document.getElementById('interactiveWorkspaceContainer'); 
+container.classList.remove('hidden');
+container.innerHTML = `<div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border space-y-4">
+    <div class="text-xs text-slate-600 dark:text-slate-300 font-semibold">📡 P2P WebRTC Transfer: Establish a direct, encrypted peer-to-peer connection for zero-server messaging and file sharing.</div>
+    <div class="flex gap-2">
+        <button onclick="p2pEngine.createOffer()" class="flex-1 py-2.5 dynamic-bg text-white font-bold text-xs rounded-xl">1. Create Offer</button>
+        <button onclick="PrivacyConvert.engine.startP2PAnswer()" class="flex-1 py-2.5 bg-emerald-600 text-white font-bold text-xs rounded-xl">2. Accept/Answer</button>
+    </div>
+    <textarea id="p2pSignalBox" placeholder="Paste WebRTC SDP here..." class="w-full h-24 p-2.5 bg-white dark:bg-slate-800 border rounded-xl text-xs font-mono dark:text-white"></textarea>
+    <div id="p2pQrContainer" class="hidden flex justify-center p-3 bg-white rounded-xl shadow-inner max-w-[200px] mx-auto"></div>
+    
+    <div id="chatSection" class="hidden space-y-3 mt-4 border-t border-slate-200 dark:border-slate-700 pt-4">
+        <textarea id="chatLogArea" class="w-full h-32 bg-slate-900 text-emerald-400 text-xs p-3 rounded-xl border-none font-mono" readonly></textarea>
+        
+        <div class="flex flex-col gap-2">
+            <div class="flex gap-2">
+                <input type="text" id="chatMsgInput" placeholder="Type a message..." class="flex-1 p-2 bg-white dark:bg-slate-800 border rounded-xl text-xs dark:text-white">
+                <button onclick="p2pEngine.sendText(document.getElementById('chatMsgInput').value)" class="py-2 px-4 dynamic-bg text-white font-bold text-xs rounded-xl">Send Text</button>
+            </div>
+            
+            <div class="flex gap-2 items-center bg-white dark:bg-slate-800 p-2 rounded-xl border">
+                <input type="file" id="p2pFileTransferInput" class="flex-1 text-xs text-slate-500 file:mr-2 file:py-1 file:px-3 file:rounded-lg file:bg-slate-100 file:border-0 dark:file:bg-slate-700 dark:file:text-white">
+                <button onclick="p2pEngine.sendFile()" class="py-2 px-4 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs rounded-xl whitespace-nowrap">Send File</button>
+            </div>
+        </div>
+        <div id="p2pProgressContainer" class="hidden w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1.5 mt-1">
+            <div id="p2pProgressBar" class="dynamic-bg h-1.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+        </div>
+    </div>
+</div>`;
 }
 },
 engine: {
@@ -1003,7 +1035,7 @@ await p2pEngine.acceptAnswer();
 }
 },
 async init() {
-console.log("Ultimate Sovereign OS Core v40.4 Loaded - Fully Patched & Secured.");
+console.log("Ultimate Sovereign OS Core v40.5 Loaded - Fully Patched & Secured.");
 await cryptoCore.getDeviceFingerprint(); PrivacyConvert.ui.updateLicenseUI();
 const dz = document.getElementById('dropZone'), fi = document.getElementById('fileInput');
 dz.addEventListener('click', () => fi.click()); dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); }); dz.addEventListener('dragleave', e => { e.preventDefault(); dz.classList.remove('drag-over'); });
