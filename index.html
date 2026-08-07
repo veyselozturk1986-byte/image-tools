@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; worker-src 'self' blob: https://unpkg.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' wss: https: data: blob:;">
-<title>PrivacyConvert Sovereign OS - Pro Suite (Ultimate v40.7 - Fully Patched)</title>
+<title>PrivacyConvert Sovereign OS - Pro Suite (Ultimate v40.8 - Fully Patched)</title>
 <meta name="theme-color" content="#4f46e5">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
@@ -61,7 +61,7 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 
 <div class="bg-indigo-50 dark:bg-slate-900 p-3.5 rounded-2xl border border-indigo-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-300 space-y-1.5 shadow-inner">
 <div class="font-extrabold text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5">⚡ Machine-Locked Activation Guide:</div>
-<p>1. Transfer $49 (USDT or native equivalent) to the treasury address via Web3 wallet or manual transfer.</p>
+<p>1. Transfer $49 (USDT recommended for exact value) to the treasury address via Web3 wallet or manual transfer.</p>
 <p>2. Enter your <strong>Transaction Hash (TxID)</strong> or transfer reference ID into the field below.</p>
 <p>3. Verify to activate Pro, then use <strong>Export .lic</strong> on the main screen to secure your lifetime offline backup.</p>
 </div>
@@ -69,15 +69,15 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 <div class="space-y-3">
 <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3 text-xs">
 <div class="flex justify-between items-center"><span class="font-bold text-slate-500">Target Amount:</span><span class="font-extrabold text-indigo-600 dark:text-indigo-400 text-sm">$49 USD</span></div>
-<div class="flex justify-between items-center"><span class="font-bold text-slate-500">Estimated Value:</span><span id="calculatedCryptoAmount" class="font-mono font-bold text-emerald-600 dark:text-emerald-400">Fetching offline rate...</span></div>
+<div class="flex justify-between items-center"><span class="font-bold text-slate-500">Estimated Value:</span><span id="calculatedCryptoAmount" class="font-mono font-bold text-emerald-600 dark:text-emerald-400">Fetching rate...</span></div>
 <div>
-<label class="font-bold text-slate-500 block mb-1">Select Network / Asset:</label>
+<label class="font-bold text-slate-500 block mb-1">Select Network / Asset (Stablecoin Recommended):</label>
 <select id="networkSelect" onchange="PrivacyConvert.ui.updateTreasuryDisplay()" class="w-full p-2 bg-white dark:bg-slate-800 border rounded-xl text-xs font-bold dark:text-white">
-<option value="usdt_evm">🪙 USDT (Tether - Arbitrum One)</option>
-<option value="arbitrum">Arbitrum One (ETH)</option>
-<option value="polygon">Polygon (POL)</option>
-<option value="avalanche_x">Avalanche X-Chain (AVAX)</option>
-<option value="tron">Tron Network (TRX)</option>
+<option value="usdt_evm">🪙 USDT (Arbitrum One) - Recommended (Exact $49)</option>
+<option value="arbitrum">Arbitrum One (ETH) - Estimated</option>
+<option value="polygon">Polygon (POL) - Estimated</option>
+<option value="avalanche_x">Avalanche X-Chain (AVAX) - Estimated</option>
+<option value="tron">Tron Network (TRX) - Estimated</option>
 </select>
 </div>
 <div><span class="font-bold text-slate-500 block mb-1">Treasury Wallet Address:</span><div class="flex items-center gap-2"><input type="text" readonly value="0x2e08c361e00bb892bc99b6688d2948fcc3600b65" class="w-full p-2 bg-white dark:bg-slate-800 border rounded-xl font-mono text-[11px] dark:text-slate-200" id="treasuryAddr"><button onclick="navigator.clipboard.writeText(document.getElementById('treasuryAddr').value); PrivacyConvert.ui.showToast('Address copied to clipboard!');" class="px-3 py-2 dynamic-bg text-white font-bold rounded-xl text-[11px]">Copy</button></div></div>
@@ -229,7 +229,7 @@ document.documentElement.style.setProperty('--accent-hover', activeAccent.hover)
 
 <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 px-6 text-center text-xs text-slate-500 dark:text-slate-400 space-y-3 mt-auto">
 <div class="flex flex-col sm:flex-row justify-center items-center gap-3">
-<span>PrivacyConvert Sovereign OS &copy; 2026 - Ultimate Sovereign v40.7</span>
+<span>PrivacyConvert Sovereign OS &copy; 2026 - Ultimate Sovereign v40.8</span>
 <span class="hidden sm:inline text-slate-300 dark:text-slate-600">|</span>
 <a href="https://github.com/veyselozturk1986-byte/image-tools" target="_blank" rel="noopener noreferrer" class="font-bold dynamic-text hover:underline flex items-center gap-1">
 🐙 GitHub Repository
@@ -440,7 +440,6 @@ return;
 } catch(err) {}
 const log = document.getElementById('chatLogArea'); if(log) log.value += `\n[Peer]: ${e.data}`;
 } else {
-// Binary chunk for file transfer
 this.incomingFile.buffer.push(e.data);
 this.incomingFile.received += e.data.byteLength;
 const progressContainer = document.getElementById('p2pProgressContainer');
@@ -803,8 +802,13 @@ redactImageObj: null, redactRect: { startX: 0, startY: 0, w: 0, h: 0, active: fa
 async fetchDynamicPrice(net) {
 const amountEl = document.getElementById('calculatedCryptoAmount');
 if (net === 'usdt_evm') { amountEl.innerText = '49.00 USDT (Exact)'; this.lastCalculatedWei = "2edff80"; return; }
-const staticRates = { arbitrum: { text: '~0.015 ETH', wei: '0x354a6ba7a18000' }, polygon: { text: '~85 POL', wei: '0x49a1dcdca3280000' }, avalanche_x: { text: '~1.5 AVAX', wei: '0x14d1120d7b0000' }, tron: { text: '~400 TRX', wei: '0x5d21dba00' } };
-if (staticRates[net]) { amountEl.innerText = staticRates[net].text + ' (Offline Est.)'; this.lastCalculatedWei = staticRates[net].wei; }
+const staticRates = { 
+    arbitrum: { text: '~0.015 ETH (Est.)', wei: '0x354a6ba7a18000' }, 
+    polygon: { text: '~98 POL (Est.)', wei: '0x5341f22b840000' }, 
+    avalanche_x: { text: '~1.8 AVAX (Est.)', wei: '0x1921355440000' }, 
+    tron: { text: '~375 TRX (Est.)', wei: '0x5734aef00' } 
+};
+if (staticRates[net]) { amountEl.innerText = staticRates[net].text; this.lastCalculatedWei = staticRates[net].wei; }
 else { amountEl.innerText = 'Manual Transfer Required'; this.lastCalculatedWei = "0x0"; }
 },
 async connectWeb3Wallet() {
@@ -1110,7 +1114,7 @@ await p2pEngine.acceptAnswer();
 }
 },
 async init() {
-console.log("Ultimate Sovereign OS Core v40.7 Loaded - Fully Patched & Secured.");
+console.log("Ultimate Sovereign OS Core v40.8 Loaded - Fully Patched & Secured.");
 await cryptoCore.getDeviceFingerprint(); PrivacyConvert.ui.updateLicenseUI();
 const dz = document.getElementById('dropZone'), fi = document.getElementById('fileInput');
 dz.addEventListener('click', () => fi.click()); dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); }); dz.addEventListener('dragleave', e => { e.preventDefault(); dz.classList.remove('drag-over'); });
